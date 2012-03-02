@@ -1,0 +1,17 @@
+# use glob syntax
+syntax: glob
+src/biogps/settings_*.py
+*.pyc
+*.pyo
+*.jar
+src/scripts/chk_img/*
+
+# use regexp syntax
+syntax: regexp
+^.tmp/
+^.cache/
+^sqlite/
+^doc/
+^site-packages/
+/migrations/
+^src/.settings/

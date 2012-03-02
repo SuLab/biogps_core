@@ -1,0 +1,151 @@
+{% extends "NEW/base_site.html" %}
+{% load biogps_tags %}
+
+{% block title %}Frequently Asked Questions{% endblock %}
+
+{% block bodyclass %}flatpage{% endblock %}
+{% block content %}
+<article>
+    <div class="in faq">
+    <h1>Frequently Asked Questions</h1>
+
+    <div class="roundBox">
+        <img src="/assets/img/faq_seven_species.png" alt="BioGPS Species Selector" class="right" />
+        <h3>1. What species does BioGPS support?</h3>
+        <p>Currently, BioGPS supports eight species:
+            {% for s in species %}
+                {% if forloop.last %}and{% endif %}
+                <b>{{ s.name|capfirst }}</b>
+                ({{ s.genus|capfirst }}){% if forloop.last %}.{% else %},{% endif %}
+            {% endfor %}
+            BioGPS presents data in an
+            ortholog-centric format, which allows users to display mouse plugins next
+            to human ones. Our data for defining orthologs comes from NCBI's
+            <a href="http://www.ncbi.nlm.nih.gov/homologene" target="_blank">HomoloGene</a>
+            database.</p><br>
+        <p>For plugins that contain data for multiple species, users can switch
+            between allowed species using the species selector in the upper-right corner
+            of the plugin window, as shown at right. Species which are grayed-out mean either
+            that the species does not have an ortholog for that gene, or that the selected
+            plugin does not provide data for that species.</p>
+    </div>
+
+    <div class="roundBox">
+        <h3>2. How do I cite BioGPS in my paper?</h3>
+        <p>The manuscript describing BioGPS has been published in
+            <a href="http://dx.doi.org/10.1186/gb-2009-10-11-r130" target="_blank" title="BioGPS Paper">Genome Biology</a>.
+            Note that when referencing any of the expression data sets in BioGPS,
+            you should also include a citation to the relevant paper describing
+            those data. Please see the Publications section on our
+            <a href="/downloads/">Downloads page</a>.</p>
+    </div>
+
+    <div class="roundBox">
+        <h3>3. How do I deep link to BioGPS?</h3>
+        <p>Deep links (or permalinks) are most easily generated based on Entrez Gene ID.
+            For example, for the gene <i>CDK2</i> (Entrez Gene ID = 1017):</p>
+        <ul class="indent">
+            <li><a href="http://biogps.gnf.org/gene/1017/">http://biogps.gnf.org/gene/1017/</a></li>
+        </ul>
+        <p>Queries based on identifiers can also be constructed using URLs like this:</p>
+        <ul class="indent">
+            <li><a href="http://biogps.gnf.org/?query=CDK2">http://biogps.gnf.org/?query=CDK2</a>
+                (searches by symbols, identifiers, and aliases only)</li>
+            <li><a href="http://biogps.gnf.org/?query=CDK2&qtype=keyword">http://biogps.gnf.org/?query=CDK2&qtype=keyword</a>
+                (searches all text fields)</li>
+        </ul>
+        <p>If additional linking mechanisms are required, please <a href="/help/">contact us</a>.</p>
+    </div>
+
+    <div class="roundBox">
+        <h3>4. What features are available for users who have created an account?</h3>
+        <table class="gridtable">
+            <tr>
+		        <th></th>
+		        <th>Anonymous</th>
+		        <th>Account</th>
+		    </tr>
+		    <tr>
+		        <td>Search</td>
+		        <td class="yes"></td>
+		        <td class="yes"></td>
+		    </tr>
+		    <tr>
+		        <td>View default gene report layouts</td>
+		        <td class="yes"></td>
+		        <td class="yes"></td>
+		    </tr>
+		    <tr>
+		        <td>Customize layouts</td>
+		        <td class="no"></td>
+		        <td class="yes"></td>
+		    </tr>
+		    <tr>
+		        <td>Register new plugins</td>
+		        <td class="no"></td>
+		        <td class="yes"></td>
+		    </tr>
+		    <tr>
+		        <td>Save gene lists</td>
+		        <td class="no"></td>
+		        <td class="yes"></td>
+		    </tr>
+        </table>
+    </div>
+
+    <div class="roundBox">
+        <h3>5. What kind of gene identifiers are supported for a query?</h3>
+        <p>In addition to official symbols and aliases, BioGPS supports most common
+            public gene identifiers, including Entrez Gene, Ensembl, Uniprot, Refseq,
+            UniGene, Gene Ontology, PDB, and Interpro.  In addition, users can search
+            by Affymetrix probe set identifiers from many common gene expression chip
+            types (U133, MOE430, U95, RGU34, GNF1H and GNF1M).</p>
+    </div>
+
+    <div class="roundBox">
+        <h3>6. Help! There are too many scrollbars!</h3>
+        <p>Although not technically a question, this is a frequently heard frustration.
+            Undoubtedly BioGPS works better on higher-resolution monitors, but we also
+            have some pretty effective strategies for limiting scrollbar overload for
+            all users.</p>
+        <ol class="indent">
+            <li>First, <b>use fewer plugins per layout</b>.  In fact, we often
+                create layouts with just a single plugin.</li>
+            <li>Second, <b>use the maximize plugin button</b> in the upper right of the
+                plugin window, which will show one plugin in a large size while freezing
+                the main browser scrollbar.</li>
+            <li>Third, <b>use the "Open in browser" option</b> under the "more options"
+                plugin menu. This option will open the plugin in a new browser tab or window.</li>
+            <li>Fourth, <b> use the "Open all in browser" feature</b> under the layout
+                options menu. Selecting this option will load all plugins, each in its
+                own browser tab or window.</li>
+        </ol>
+        <div class="center">
+            <img src="/assets/img/faq_maximize.png" alt="" />
+            <img src="/assets/img/faq_openinbrowser.png" alt="" />
+            <img src="/assets/img/faq_openallinbrowser.png" alt="" />
+        </div>
+    </div>
+
+    <h1>Gene Expression Charts</h1>
+
+    <div class="roundBox">
+        <h3>7. What are the units of expression?</h3>
+        <p>Expression values from Affymetrix chips relate to fluorescence intensity.
+            Since there are multiple probes for each transcript on the microarray,
+            these intensity values are summarized using various data processing
+            algorithms. In our case, we mostly use gcrma.</p>
+    </div>
+
+    <div class="roundBox">
+        <h3>8. Can I compare values across tissues? across probe sets?</h3>
+        <p>Since each probe and probe set has different background characteristics
+            (depending of cross hybridization, secondary structure, etc.), comparing
+            expression values across different probesets in a single sample is generally
+            not recommended. Microarrays are primarily suited for comparing single
+            probesets across multiple samples.</p>
+    </div>
+
+</div>
+</article>
+{% endblock %}
