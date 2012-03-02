@@ -28,6 +28,17 @@ Extra Python software is required for a production installation, documented in "
 Additional Python software for development (optional) is documented in
 "optional_dev.txt".
 
+== Javascript dependencies ==
+1. ExtJS v3.3.0
+    http://extjs.cachefly.net/ext-3.3.0.zip
+    extract full ExtJS package (not just ext-all.js) to src/assets/js/ext/3.3.0 folder
+
+2. ExtJS plugin ManagedIFrame
+    http://managediframe.googlecode.com/files/miframe2_1_5.zip
+    Extract to src/assets/js/ext/plugins folder
+
+
+
 
 = Credits =
 == Active Developers ==

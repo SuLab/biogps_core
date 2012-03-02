@@ -5,6 +5,7 @@ src/biogps/settings_*.py
 *.pyo
 *.jar
 src/scripts/chk_img/*
+src/assets/js/ext/*
 
 # use regexp syntax
 syntax: regexp
