@@ -4,8 +4,9 @@ src/biogps/settings_*.py
 *.pyc
 *.pyo
 *.jar
-src/scripts/chk_img/*
-src/assets/js/ext/*
+src/assets/less/base_tmp.css
+biogps_cleanup.log
+biogps_updatepopscores.log
 
 # use regexp syntax
 syntax: regexp

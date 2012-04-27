@@ -610,6 +610,14 @@ class BiogpsSpeciesList(object):
                 genus='Xenopus tropicalis',
                 sample_gene=493498      # cdk2
             ))
+            self.add(BiogpsSpecies(
+                name='pig',
+                taxid=9823,
+                prefix='Ss',
+                assembly='susScr2',
+                genus='Sus scrofa',
+                sample_gene=100127490,  # CDK2
+            ))
 
             #assign rank (from 1) to each species in the order of addition
             #assign short_genus to each species (like H. sapiens for human)

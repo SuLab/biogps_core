@@ -6,6 +6,7 @@ class GenereportSitemap(Sitemap):
     changefreq = "monthly"  #"never"
     priority = 0.9
     lastmod = datetime.date(2010,04,14)
+    limit = 5000   #default is 50000 (max allowed)
 
     def items(self):
         return BiogpsRootnode.objects.all()

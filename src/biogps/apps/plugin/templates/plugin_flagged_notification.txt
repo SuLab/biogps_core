@@ -17,12 +17,13 @@ The plugin owner ({{plugin.author}}) has not been notified yet due to missing em
 ===================================
 {% if for_plugin_owner %}
 To view this plugin:
-http://biogps.gnf.org/#goto=pluginlibrary&t=library-plugin&p={{plugin.id}}/
+http://biogps.org/plugin/{{plugin.id}}/
 {% else %}
 To view this flag:
 https://{{site}}/siteadmin/flag/flaggedcontent/{{flaginstance.flagged_content_id}}/
 
 To view this plugin:
+http://biogps.org/plugin/{{plugin.id}}/
 https://{{site}}/siteadmin/www/biogpsplugin/{{plugin.id}}/
 {% endif %}
 

@@ -355,9 +355,15 @@ def login(request, template_name='auth/login.html'):
                 data = {'success': True,
                         'data': {'name': 'Bad Login'}}
             else:
+                if user is not None and not user.is_active:
+                    #if username/password are correct, but user is not activated yet.
+                    #show a more specific err msg below
+                    msg = "Your user account has not been activated yet. Activate your account first using the link we sent to you via email."
+                else:
+                    msg = 'Please enter a correct username and password. Note that both fields are case-sensitive.'
                 return render_login_form(request,
                                          goto_url,
-                                         message='Please enter a correct username and password. Note that both fields are case-sensitive.')
+                                         message=msg)
         if is_ajax:
             return JSONResponse(data)
 

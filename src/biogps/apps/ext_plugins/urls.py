@@ -16,4 +16,9 @@ urlpatterns = patterns('biogps.apps.ext_plugins.views',
                        url(r'^symatlasbar/$',
                            'grSymatlasTable',
                            name='grSymatlasTable'),
+
+                       url(r'^googlescholarproxy/$',
+                           'googleScholarTmpFix',
+                           name='googleScholarProxy'),
+
                       )

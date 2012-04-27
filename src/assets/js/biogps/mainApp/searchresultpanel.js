@@ -156,7 +156,7 @@ Ext.extend(biogps.GeneResultPage, Ext.Panel, {
 	},
 
     renderGeneList2: function(){
-        var taxid_list = [9606, 10090, 10116, 7227, 6239, 7955, 3702, 8364];
+        var taxid_list = [9606, 10090, 10116, 7227, 6239, 7955, 3702, 8364, 9823];
         var prefix_d = {'9606':  'Hs',
                         '10090': 'Mm',
                         '10116': 'Rn',
@@ -164,7 +164,8 @@ Ext.extend(biogps.GeneResultPage, Ext.Panel, {
                         '6239':  'Ce',
                         '7955':  'Dr',
                         '3702':  'At',
-                        '8364':  'Xt'
+                        '8364':  'Xt',
+                        '9823':  'Ss'
                         }
         var species_d = {'9606':  'human',
                          '10090': 'mouse',
@@ -173,7 +174,8 @@ Ext.extend(biogps.GeneResultPage, Ext.Panel, {
                          '6239':  'nematode',
                          '7955':  'zebrafish',
                          '3702':  'thale-cress',
-                         '8364':  'frog'
+                         '8364':  'frog',
+                         '9823':  'pig'
                          }
         var species_menu_labels = {	'human': 'H. sapiens (human)',
 	  				                'mouse': 'M. musculus (mouse)',
@@ -182,7 +184,8 @@ Ext.extend(biogps.GeneResultPage, Ext.Panel, {
 					                'nematode': 'C. elegans (nematode)',
 					                'zebrafish': 'D. rerio (zebrafish)',
 					                'thale-cress': 'A. thaliana (thale cress)',
-					                'frog': 'X. tropicalis (frog)'
+					                'frog': 'X. tropicalis (frog)',
+                                    'pig': 'S. scrofa (pig)'
                 }
         var tpl = new Ext.XTemplate(
 //            '<p style="color:blue;padding: 5px 15px 0 15px;font-size:16px;font-family:\'comic sans ms\', sans-serif;"><img src="/assets/img/message.png" /><span id="new_feature_header">We improved this page! <a id="new_feature_link" style="color:blue" href="javascript:void(0);">Show me.</a></span></p>',

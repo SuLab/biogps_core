@@ -657,7 +657,8 @@ Ext.extend(biogps.Portlet, Ext.ux.ManagedIFrame.Window, {
                                            'nematode': 'C. elegans (nematode)',
                                            'zebrafish': 'D. rerio (zebrafish)',
                                            'thale-cress': 'A. thaliana (thale cress)',
-                                           'frog': 'X. tropicalis (frog)'
+                                           'frog': 'X. tropicalis (frog)',
+                                           'pig': 'S. scrofa (pig)'
                                            }
 
                 biogps.AVAILABLE_SPECIES.each(function(s){species_menu.add({
@@ -721,7 +722,8 @@ Ext.extend(biogps.Portlet, Ext.ux.ManagedIFrame.Window, {
                                   'nematode': '<span class="x-tool-species-label">Species:&nbsp;Ce</span>',
                                   'zebrafish': '<span class="x-tool-species-label">Species:&nbsp;Dr</span>',
                                   'thale-cress': '<span class="x-tool-species-label">Species:&nbsp;At</span>',
-                                  'frog': '<span class="x-tool-species-label">Species:&nbsp;Xt</span>'
+                                  'frog': '<span class="x-tool-species-label">Species:&nbsp;Xt</span>',
+                                  'pig': '<span class="x-tool-species-label">Species:&nbsp;Ss</span>'
                                   }
 
             this.species_button.setText(species_labels[current_species]);

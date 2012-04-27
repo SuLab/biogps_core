@@ -11,6 +11,8 @@ from biogps.utils.helper import (docenabled,
                                GO_CATEGORY,
                                )
 from biogps.apps.boc import boc_svc as svc
+import httplib2
+import urllib
 
 
 def _get_gene(request, geneid):
@@ -174,3 +176,42 @@ def grSymatlasTable(request, geneid=None, forbot=False):
         return render_to_response('grSymatlasBar.html', {'geneobj': geneobj,
                                                          'hide_species': hide_species},
                                    context_instance=RequestContext(request))
+def googleScholarTmpFix(request):
+    url = 'http://scholar.google.com/scholar?' + urllib.urlencode(request.GET)
+    html = '<a href="%s" target="_blank">Click here to view Google Scholar page in a new window.</a>' % url
+    return HttpResponse(html)
+
+def _fix_html(html):
+    #adding base tag
+    html = html.replace('<head>',
+                        '<head><base href="http://scholar.google.com/" target="_blank" />')
+    #block iframe-bust code
+    html = html.replace('top!=self&&top.location.replace(location);',
+                        '/*top!=self&&top.location.replace(location);*/')
+    return html
+
+def googleScholarProxy(request):
+    '''This is a proxy for google scholar website, in order to break their iframe-bust code.
+       This is still not work, due to google does not allow robotic access to their pages.
+    '''
+    h = httplib2.Http()
+    headers = {"Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+               "Accept-Charset":"ISO-8859-1,utf-8;q=0.7,*;q=0.3",
+               "Accept-Encoding":"gzip,deflate,sdch",
+               "Accept-Language":"en-US,en;q=0.8",
+               "Cache-Control":"max-age=0",
+               "Connection":"keep-alive"}
+
+    user_agent = request.META.get('HTTP_USER_AGENT', None)
+    if user_agent:
+        headers['User-Agent'] = user_agent
+    url = 'http://scholar.google.com/scholar?' + urllib.urlencode(request.GET)
+    res, con = h.request(url, headers=headers)
+    if res.status == 200:
+        html = _fix_html(con)
+    else:
+        # fall-back
+        html = '<a href="%s" target="_blank">Click here to view Google Scholar page in a new window.</a>' % url
+    return HttpResponse(html)
+
+

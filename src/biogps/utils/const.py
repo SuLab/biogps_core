@@ -46,7 +46,12 @@ SPECIES_LIST = [ dict(name='human',
                       assembly='xenTro2',
                       genus='Xenopus tropicalis',
                       sample_gene=493498),  # cdk2
-
+                 dict(name='pig',
+                      taxid=9823,
+                      prefix='Ss',
+                      assembly='susScr2',
+                      genus='Sus scrofa',
+                      sample_gene=100127490),  # CDK2
                 ]
 
 AVAILABLE_SPECIES = [s['name'] for s in SPECIES_LIST]
