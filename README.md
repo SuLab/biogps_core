@@ -13,12 +13,15 @@ are required:
 
 ## Installation ##
 
-## Baseline Required Software ##
+You can follow this [step-by-step instruction](https://bitbucket.org/sulab/biogps_core/wiki/edit/setup) to setup a working folder to run BioGPS for development purpose.
+
+The following are the all dependencies needed:
+
+### Baseline Required Software ###
  * Python 2.6+
  * mercurial (for checking out his repo) * 
  * Java JRE 1.6+ (for JS minification)
  * NodeJS 0.2.6+ (for LESS compilation)
-
 
 ### Python Packages ###
 Extra Python software is required for a production installation, documented in "requirements.txt" and installed via pip:
@@ -29,7 +32,7 @@ Additional Python software for development (optional) is documented in "optional
 
     pip install -r optional_dev.txt
 
-## Javascript dependencies ##
+### Javascript dependencies ###
 1. ExtJS v3.3.0
 
    Download from [this link](http://extjs.cachefly.net/ext-3.3.0.zip), and then extract full ExtJS package (not just ext-all.js) to **src/assets/js/ext/3.3.0** folder.
