@@ -17,3 +17,4 @@ syntax: regexp
 #^site-packages/
 /migrations/
 ^src/.settings/
+^src/assets/js/ext/
