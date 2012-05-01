@@ -9,6 +9,11 @@ import os.path
 ######BioGPS specific settings#########
 ROOT_PATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+##Get the current version info
+import subprocess
+hg_cmd = "hg log -r tip --template {latesttag}.{latesttagdistance}-{node|short}"
+BIOGPS_VERSION = subprocess.check_output(hg_cmd.split())
+
 try:
     import uwsgi
     USE_UWSGI = True

@@ -1,7 +1,6 @@
 import datetime
 from django.conf import settings
 from django.template import Library
-import __version__
 
 register = Library()
 
@@ -45,7 +44,7 @@ def biogps_ver():
     '''return a current biogps version number.
       e.g. ver 0.9.7.2964
     '''
-    return 'ver ' + __version__.version
+    return 'ver ' + settings.BIOGPS_VERSION
 
 
 @register.simple_tag
