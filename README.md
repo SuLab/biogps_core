@@ -19,7 +19,7 @@ The following are the all dependencies needed:
 
 ### Baseline Required Software ###
  * Python 2.6+
- * mercurial (for checking out his repo) *
+ * mercurial (for checking out his repo)
  * Java JRE 1.6+ (for JS minification)
  * NodeJS 0.2.6+ (for LESS compilation)
 
