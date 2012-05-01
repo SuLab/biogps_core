@@ -1,0 +1,3 @@
+{% load user_tags %}{% with invitation.to_user as invitation_to_user %}
+"{% user_display invitation_to_user %}" (view profile at http://{{current_site}}{{invitation_to_user.get_absolute_url}} ) has accepted your friend request.
+{% endwith %}

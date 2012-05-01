@@ -1,0 +1,80 @@
+{% extends "NEW/base_auth.html" %}
+{% load i18n %}
+
+{% block title %}
+Edit user account information
+{% endblock %}
+
+
+{% block bodyclass %}authpage register{% endblock %}
+{% block content_title %}{% endblock %}
+
+{% block breadcrumbs %}<div class="breadcrumbs"><a href="/">{% trans 'Home' %} </a> &rsaquo; <a href="{%url auth_dashboard %}"> {% trans 'Account' %}</a> &rsaquo; {% trans 'Edit information' %}</div>{% endblock %}
+
+
+{% block content %}
+<article>
+<div class="in">
+	<div class="editAccountForm roundBoxBlue">
+	    <h1>{% trans 'Edit user account information' %}</h1>
+        <form action="{% url auth_userinfo_edit %}" method="POST">
+        <table>
+        <tr>
+            <td align="right" valign="top">Username:</td>
+            <td>
+                {{ form.user.username }} <br/>
+            </td>
+        </tr>
+        <tr>
+            <td align="right" valign="top">Email:</td>
+            <td>
+                {{ form.user.email }} &nbsp;&nbsp;[<a href="{% url auth_email_change %}" title="Change your email">change</a>]<br/>
+            </td>
+        </tr>
+        <tr>
+            <td align="right" valign="top">First Name:</td>
+            <td>
+                {{ form.first_name }} <br/>
+                {% for error in form.first_name.errors %}
+                <span style="color:red">{{ error }}</span>
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>
+
+        <tr>
+            <td align="right" valign="top">Last Name:</td>
+            <td>
+                {{ form.last_name }} <br/>
+                {% for error in form.last_name.errors %}
+                <span style="color:red">{{ error }}</span>
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>
+
+        <tr>
+            <td align="right" valign="top">Affiliation:</td>
+            <td>
+                {{ form.affiliation }} <br/>
+                {% for error in form.affiliation.errors %}
+                <span style="color:red">{{ error }}</span>
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>
+
+        <tr>
+            <td>&nbsp;</td>
+            <td><input type="submit" value="Submit" /></td>
+        </tr>
+
+        </table>
+        </form>
+    </div>
+    <script type="text/javascript">
+    document.getElementById('id_first_name').focus()
+    </script>
+</div>
+</article>
+{% endblock %}

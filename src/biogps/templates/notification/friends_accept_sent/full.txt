@@ -1,0 +1,1 @@
+{% load user_tags %}{% with invitation.from_user as invitation_from_user %}You accepted "{% user_display invitation_from_user %}'s" (view profile at http://{{current_site}}{{invitation_from_user.get_absolute_url}} ) friend request.{% endwith %}

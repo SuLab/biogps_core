@@ -1,0 +1,20 @@
+/*
+ * CSS3 Transitions
+ * For animating changes in CSS properties.
+ * Parameters:
+ *  @property
+ *    all, color, text-shadow, etc.
+ *  @duration
+ *    0.5s, 1s, 500ms, 1200ms
+ *  @timing
+ *    ease, linear, ease-in, ease-out, ease-in-out
+ *  @delay
+ *    same as duration
+ */
+
+.css3_transition(@property: all, @duration: 1s, @timing: ease-out, @delay: 0s) {
+    -webkit-transition: @property @duration @timing @delay;
+    -moz-transition: @property @duration @timing @delay;
+    -o-transition: @property @duration @timing @delay;
+    transition: @property @duration @timing @delay;
+}
