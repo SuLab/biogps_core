@@ -2,15 +2,6 @@ biogps.renderMainUI = function(){
 
 	Ext.form.Field.prototype.msgTarget = 'side';
 
-	setTimeout(function(){
-        // Ext.get('loading').remove();
-        //         Ext.get('loading-mask').fadeOut({remove:true});
-        Ext.get('loading').hide();
-        Ext.get('loading-mask').fadeOut({remove:false});
-    }, 0);
-
-//   Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
-
    biogps.mainUI_init();
 
    biogps.genelist_panel = new biogps.GeneListPanel();
@@ -57,7 +48,6 @@ biogps.renderMainUI = function(){
                 layoutConfig:{
                     animate:true
                 },
-                //items: [biogps.genelist_panel]
                 items: [biogps.genelist_panel,biogps.geneset_panel]
             },
             new Ext.TabPanel({

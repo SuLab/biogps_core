@@ -349,14 +349,11 @@ def is_nov_email(email):
     return _email.find('@novartis.com') != -1 or _email.find('@chiron.com') != -1
 
 def getCommonDataForMain(request):
-    #current_site = Site.objects.get_current()
     if request.META.get('HTTP_HOST', '').startswith('ec2'):  #in case of dev site from ec2
         current_site = request.META['HTTP_HOST']           #This allows login form on main page, index_ext.html, work for biogps-stage/biogps-trunk server.
     else:
         current_site = Site.objects.get_current()
     user_type = request.user.account_type() if request.user.is_authenticated() else "Anonymous"
-    logo_cnt = 9
-#    dev_server = is_dev_server(request)  #true if running under dev server
     with_https = getattr(settings, 'WITH_HTTPS', False)
 
     #available_species
@@ -367,13 +364,9 @@ def getCommonDataForMain(request):
     else:
         available_species = AVAILABLE_SPECIES
 
-
     d = dict(#extver = EXT_VERSION,
-             logo_idx = random.randint(1, logo_cnt),
              user_type = user_type,
-#             gnf_internal_ip = gnf_internal_ip,
              site=current_site,
-#             dev_server=dev_server,
              with_https=with_https,
              max_query_len = MAX_QUERY_LENGTH,
              available_species = json.dumps(available_species),

@@ -82,19 +82,11 @@ coreDispatcher = {
             }
             if (this.isMainUICommand(cmd)) {
                 this.showWelcome = false;
-                this.showLoading();
             }
         }
         else{
             window.location.hash = '#goto=welcome';
         }
-    },
-
-    showLoading: function(){
-        var dom = document.getElementById('loading-mask');
-        setVisible(dom, true);
-        dom = document.getElementById('loading');
-        setVisible(dom, true);
     },
 
     hideWelcome: function(callback){
