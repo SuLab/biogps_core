@@ -9,10 +9,11 @@ from biogps.utils.models import BioGPSModel
 from biogps.utils.fields.jsonfield import JSONField
 from django.conf import settings
 from django.db import models
-#from biogps.utils.fields import AutoSlugField
 from django_extensions.db.fields import AutoSlugField
 from django.template.defaultfilters import slugify
 from biogps.utils.models import Species
+from biogps.apps.plugin.fields import SpeciesField
+from south.modelsinspector import add_introspection_rules
 
 
 '''
@@ -24,22 +25,17 @@ Note:
 
 
 class BiogpsDataset(BioGPSModel):
-    '''Model definition for BiogpsDataset.'''
-    name = models.CharField(max_length=200)
-    ownerprofile = models.ForeignKey(UserProfile, to_field='sid',
-                                                  db_column='authorid')
-    author = models.CharField(max_length=100)
-    platform = models.CharField(max_length=100)
-    type = models.CharField(max_length=200)
-    taxid = models.PositiveIntegerField()
-    samples = JSONField(blank=True, editable=False)
-    metadata = JSONField(blank=True, editable=False)
-    options = JSONField(blank=True, editable=False)
-    description = models.TextField(blank=True)
-    short_description = models.CharField(blank=True, max_length=140)
+    '''Model definition for BiogpsDataset'''
+    name = models.CharField(max_length=500)
+    summary = models.CharField(blank=True, max_length=10000)
+    ownerprofile = models.ForeignKey(UserProfile, to_field='sid')
+    platform = models.ForeignKey('BiogpsDatasetPlatform', related_name='dataset_platform')
+    geo_id_plat = models.CharField(max_length=100, unique=True)
+    metadata = JSONField(blank=False, editable=True)
     lastmodified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
     slug = AutoSlugField(populate_from='name')
+    species = SpeciesField(max_length=1000)
 
     # Required setting for ModelWithPermission and PermissionManager working
     object_type = 'D'
@@ -55,7 +51,7 @@ class BiogpsDataset(BioGPSModel):
         get_latest_by = 'lastmodified'
 
     def __unicode__(self):
-        return u'"%s" by "%s"' % (self.name, self.author)
+        return u'"%s" by "%s"' % (self.name, self.owner.get_valid_name())
 
     @models.permalink
     def get_absolute_url(self):
@@ -72,135 +68,167 @@ class BiogpsDataset(BioGPSModel):
                                         different dictionary for each purpose.
           @return: an python dictionary
         '''
-        extra_attrs = {None: ['name', 'description', 'short_description',
-                              'type', 'species', 'options', 'metadata']}
+        extra_attrs = {None: ['geo_id_plat', 'metadata', 'name', 'platform', 'species']}
         out = self._object_cvt(extra_attrs=extra_attrs, mode=mode)
+        out['description'] = self.metadata['summary']
         return out
-
-    @property
-    def species(self):
-        return Species[self.taxid].name
 
 try:
     tagging.register(BiogpsDataset)
 except tagging.AlreadyRegistered:
     pass
 
-set_on_the_fly_indexing(BiogpsDataset)
+#set_on_the_fly_indexing(BiogpsDataset)
 
-from south.modelsinspector import add_introspection_rules
 add_introspection_rules([
     (
         [BiogpsDataset], # Class(es) these apply to
         [],         # Positional arguments (not used)
         {           # Keyword argument
             "slug": ["slug", {}],
+            "species": ["species", {}],
         },
     ),
 ], ["^biogps\.apps\.dataset\.models\.BiogpsDataset"])
 
 
-class SL_Dataset:
-    DATASET_URL = 'http://apps-dev.biogps.gnf.org/dataset'
-    #DATASET_URL = 'http://apps.biogps.gnf.org/dataset'
+class BiogpsDatasetData(models.Model):
+    '''Model definition for BiogpsDatasetData'''
+    dataset = models.ForeignKey(BiogpsDataset, related_name='dataset_data')
+    reporter = models.CharField(max_length=200)
+    data = JSONField(blank=False, editable=True)
 
-    def __init__(self, datasetid=None):
-        self.datasetid = datasetid
+    def object_cvt(self, mode='ajax'):
+        '''A helper function to convert a BiogpsDatasetData object to a simplified
+            python dictionary, with all values in python's primary types only.
+            Such a dictionary can be passed directly to fulltext indexer or
+            serializer for ajax return.
 
-    def create(self, name, datafile, description=None, colorfile=None):
-        ''' datafile and colorfile should be just file name only.'''
-        param = dict(name=name, datafile=datafile)
-        if description:
-            param['description'] = description
-        if colorfile:
-            param['colorfile'] = colorfile
-        headers = {'accept': 'application/json',
-                 'content-type': 'text/plain'}
-        credentials = ('cwu@lj.gnf.org', settings.SL_PIN)
-        headers['authorization'] = 'Basic ' + base64.b64encode("%s:%s"
-                                                      % credentials).strip()
-        return callRemoteService(self.DATASET_URL,
-                                 param=param,
-                                 method='POST',
-                                 credentials=credentials,
-                                 headers=headers,
-                                 returnmode='both',
-                                 httpdebuglevel=1)
+          @param mode: can be one of ['ajax', 'es'], used to return slightly
+                                        different dictionary for each purpose.
+          @return: an python dictionary
+        '''
+        extra_attrs = {None: ['name', 'species', 'metadata']}
+        out = self._object_cvt(extra_attrs=extra_attrs, mode=mode)
+        return out
 
-    def add_role(self, role):
-        dataset_id = self.datasetid
-        if not dataset_id:
-            print "Need to specify a datasetid."
-            return
+add_introspection_rules([
+    (
+        [BiogpsDatasetData], # Class(es) these apply to
+        [],         # Positional arguments (not used)
+        {},         # Keyword argument
+    ),
+], ["^biogps\.apps\.dataset\.models\.BiogpsDatasetData"])
 
-        if role in ['Anonymous']:
-            url = self.DATASET_URL + '/%s/roles/%s?r=1&w=0&f=0' % (dataset_id,
-                                                                         role)
-            param = dict(r=1, w=0, f=0)
-            headers = {'accept': 'application/json',
-                     'content-type': 'text/plain',
-                     'Content-Length': '0'}
-            param = {}
-            credentials = ('cwu@lj.gnf.org', settings.SL_PIN)
-            headers['authorization'] = 'Basic ' + base64.b64encode("%s:%s"
-                                                      % credentials).strip()
-            return callRemoteService(url,
-                                     param=param,
-                                     method='PUT',
-                                     credentials=credentials,
-                                     headers=headers,
-                                     returnmode='both',
-                                     httpdebuglevel=1)
-        else:
-            print 'Unknown role specified'
-            print 'Valid roles are: Anonymous'
 
-    def delete(self):
-        if not self.datasetid:
-            print "Need to specify a datasetid."
-            return
+class BiogpsDatasetMatrix(models.Model):
+    '''Model definition for BiogpsDatasetMatrix'''
+    dataset = models.OneToOneField(BiogpsDataset, related_name='dataset_matrix')
+    reporters = JSONField(blank=False, editable=True)
+    _matrix = models.TextField(db_column='matrix')
 
-        s = raw_input('Confirm to delete dataset "%s"? Type "yes" to '\
-                                               'continue: ' % self.datasetid)
-        if s != 'yes':
-            print "Abort!"
-            return
-        s = raw_input('Confirm again, type "yes" to continue: ')
-        if s != 'yes':
-            print "Abort!"
-            return
+    def get_data(self):
+        return base64.decodestring(self._matrix)
 
-        url = self.DATASET_URL + '/%s' % self.datasetid
-        credentials = ('cwu@lj.gnf.org', settings.SL_PIN)
-        #credentials = ('corozco@lj.gnf.org', settings.SL_PIN)
-        headers = {}
-        headers['authorization'] = 'Basic ' + base64.b64encode("%s:%s"
-                                                        % credentials).strip()
-        return callRemoteService(url,
-                                 method='DELETE',
-                                 credentials=credentials,
-                                 headers=headers,
-                                 httpdebuglevel=1)
+    def set_data(self, matrix):
+        self._matrix = base64.encodestring(matrix)
 
-    def update(self, name, datafile, description=None, colorfile=None):
-        if not self.datasetid:
-            print "Need to specify a datasetid."
-            return
+    matrix = property(get_data, set_data)
 
-        #url = self.DATASET_URL+'/%s' % self.datasetid
-        url = self.DATASET_URL     # URL should be the one above ideally
-        credentials = ('cwu@lj.gnf.org', settings.SL_PIN)
-        headers = {}
-        headers['authorization'] = 'Basic ' + base64.b64encode("%s:%s"
-                                                        % credentials).strip()
-        param = dict(id=self.datasetid, name=name, datafile=datafile)
-        if description:
-            param['description'] = description
-        if colorfile:
-            param['colorfile'] = colorfile
-        return callRemoteService(url,
-                                 param=param,
-                                 method='PUT',
-                                 credentials=credentials,
-                                 headers=headers,
-                                 httpdebuglevel=1)
+    def object_cvt(self, mode='ajax'):
+        '''A helper function to convert a BiogpsDatasetMatrix object to a simplified
+            python dictionary, with all values in python's primary types only.
+            Such a dictionary can be passed directly to fulltext indexer or
+            serializer for ajax return.
+
+          @param mode: can be one of ['ajax', 'es'], used to return slightly
+                                        different dictionary for each purpose.
+          @return: an python dictionary
+        '''
+        extra_attrs = {None: ['name', 'description', 'short_description',
+                              'type', 'species', 'options', 'metadata']}
+        out = self._object_cvt(extra_attrs=extra_attrs, mode=mode)
+        return out
+
+add_introspection_rules([
+    (
+        [BiogpsDatasetMatrix], # Class(es) these apply to
+        [],         # Positional arguments (not used)
+        {},         # Keyword argument
+    ),
+], ["^biogps\.apps\.dataset\.models\.BiogpsDatasetMatrix"])
+
+
+class BiogpsDatasetPlatform(models.Model):
+    '''Model definition for BiogpsDatasetPlatform'''
+    platform = models.CharField(max_length=100)
+    reporters = JSONField(blank=False, editable=True)
+
+    def object_cvt(self, mode='ajax'):
+        '''A helper function to convert a BiogpsDatasetMatrix object to a simplified
+            python dictionary, with all values in python's primary types only.
+            Such a dictionary can be passed directly to fulltext indexer or
+            serializer for ajax return.
+
+          @param mode: can be one of ['ajax', 'es'], used to return slightly
+                                        different dictionary for each purpose.
+          @return: an python dictionary
+        '''
+        extra_attrs = {None: ['name', 'description', 'short_description',
+                              'type', 'species', 'options', 'metadata']}
+        out = self._object_cvt(extra_attrs=extra_attrs, mode=mode)
+        return out
+
+add_introspection_rules([
+    (
+        [BiogpsDatasetPlatform], # Class(es) these apply to
+        [],         # Positional arguments (not used)
+        {},         # Keyword argument
+    ),
+], ["^biogps\.apps\.dataset\.models\.BiogpsDatasetPlatform"])
+
+
+class BiogpsDatasetGeoLoaded(models.Model):
+    '''Model definition for BiogpsDatasetGeoLoaded. This model tracks what
+       GEO datasets have been loaded.'''
+    geo_type = models.CharField(max_length=10)
+    datasets = JSONField(blank=False, editable=True)
+
+add_introspection_rules([
+    (
+        [BiogpsDatasetGeoLoaded], # Class(es) these apply to
+        [],         # Positional arguments (not used)
+        {},         # Keyword argument
+    ),
+], ["^biogps\.apps\.dataset\.models\.BiogpsDatasetGeoLoaded"])
+
+
+class BiogpsDatasetGeoFlagged(models.Model):
+    '''Model definition for BiogpsDatasetGeoFlagged. This model tracks what
+       GEO datasets have been flagged, and the reason why.'''
+    geo_type = models.CharField(max_length=10)
+    dataset = models.ForeignKey(BiogpsDataset, related_name='dataset_flagged')
+    reason = models.CharField(max_length=1000)
+
+add_introspection_rules([
+    (
+        [BiogpsDatasetGeoFlagged], # Class(es) these apply to
+        [],         # Positional arguments (not used)
+        {},         # Keyword argument
+    ),
+], ["^biogps\.apps\.dataset\.models\.BiogpsDatasetGeoFlagged"])
+
+
+class BiogpsDatasetProcessing(models.Model):
+    '''Model definition for BiogpsDatasetProcessing. This model tracks what
+       datasets are currently being loaded, to allow for multi-threaded
+       processing.'''
+    datasets = JSONField(blank=False, editable=True)
+
+add_introspection_rules([
+    (
+        [BiogpsDatasetProcessing], # Class(es) these apply to
+        [],         # Positional arguments (not used)
+        {},         # Keyword argument
+    ),
+], ["^biogps\.apps\.dataset\.models\.BiogpsDatasetProcessing"])

@@ -1,410 +1,524 @@
-'''
-This file defines all views for URL pattern /dataset/*
-'''
+from __future__ import division
+from collections import OrderedDict
 from django.conf import settings
-from django.shortcuts import get_object_or_404
-from django.utils.encoding import smart_unicode
-from django.contrib.sites.models import Site
-from django.template.loader import render_to_string
-
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.http import HttpResponse, HttpResponseNotFound
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.encoding import smart_str
+from biogps.apps.search.es_lib import ESPages
+from biogps.utils.http import JSONResponse
 from biogps.utils.restview import RestView
-from biogps.utils.decorators import loginrequired
-from biogps.utils.http import (JSONResponse, render_to_formatted_response,
-                               json_error)
-from biogps.utils.models import set_object_permission, Species
+from json import loads
+from math import ceil, floor, sqrt
+from operator import itemgetter
+from pyes import ES, HasChildQuery, TermsQuery
+from pyes.exceptions import (NotFoundException, IndexMissingException,
+                             ElasticSearchException)
+from StringIO import StringIO
+from time import time
+import numpy as np
+import psycopg2
+import sys
+import urllib
 
-from tagging.models import Tag
-from biogps.apps.rating.models import Rating
-from biogps.apps.search.navigations import BiogpsSearchNavigation
-from biogps.apps.search.es_lib import ESQuery
-from models import BiogpsDataset
-#from forms import BiogpsDatasetForm
-
-import logging
-log = logging.getLogger('biogps')
+from biogps.apps.dataset.models import BiogpsDataset, BiogpsDatasetData, BiogpsDatasetMatrix
 
 
-class DatasetLibraryView(RestView):
-    '''This class defines views for REST URL:
-         /dataset/
-    '''
-    def get(self, request):
-        # Get the assorted dataset lists that will go in tabs.
-        _dbobjects = BiogpsDataset.objects.get_available(request.user)
-        max_in_list = 15
+def mean(values):
+    # Return avg of list of values
+    try:
+        avg = round(sum(values)/len(values), 3)
+    except ZeroDivisionError:
+        return 0
+    return avg
 
-        list1 = []
-        list1.append({
-            'name': 'Most Popular',
-            'more': '/dataset/all/?sort=popular',
-            #'items': _dbobjects.filter(popularity__score__isnull=False).order_by('-popularity__score')[:max_in_list]
-        })
-        list1.append({
-            'name': 'Newest Additions',
-            # 'more': '/dataset/all/?sort=newest',
-            'items': _dbobjects.order_by('-created')[:max_in_list]
-        })
-        if request.user.is_authenticated():
-            mine = {
-                'name': 'My Datasets',
-                # 'more': '/dataset/mine/',
-                'items': BiogpsDataset.objects.get_mine(request.user)
-            }
-            if len(mine['items']) > 0:
-                list1.append(mine)
-
-        # Get the assorted datasets lists that will go in large category boxes.
-        list2 = []
-        list2.append({
-            'name': 'Expression data',
-            'more': '/dataset/tag/expression/',
-            'items': _dbobjects.filter(id__in=[26, 430, 440, 58, 9, 469, 38, 200]).order_by('name')
-        })
-        list2.append({
-            'name': 'Protein resources',
-            'more': '/dataset/tag/protein/',
-            'items': _dbobjects.filter(id__in=[29, 431, 37, 65, 22, 428, 25, 179, 39]).order_by('name')
-        })
-        list2.append({
-            'name': 'Genetics resources',
-            'more': '/dataset/tag/genetics/',
-            'items': _dbobjects.filter(id__in=[221, 320, 80, 35, 120, 495, 31, 462, 125, 241, 424]).order_by('name')
-        })
-        list2.append({
-            'name': 'Gene portals and MODs',
-            'more': '/dataset/tag/portal/',
-            'items': _dbobjects.filter(id__in=[27, 69, 10, 30, 47, 32, 135]).order_by('name')
-        })
-        list2.append({
-            'name': 'Pathway databases',
-            'more': '/dataset/tag/pathway/',
-            'items': _dbobjects.filter(id__in=[565, 15, 66, 500, 159, 259, 319]).order_by('name')
-        })
-        list2.append({
-            'name': 'Literature',
-            'more': '/dataset/tag/literature/',
-            'items': _dbobjects.filter(id__in=[68, 49, 470, 322, 339, 48]).order_by('name')
-        })
-        # Sort the list by the number of datasets, which makes the final
-        # rendering look nice at all resolutions.
-        list2.sort( key=lambda x:( len(x['items']), x['name'] ) )
-
-        # Set up the navigation controls
-        # We use ES to give us the category facets
-        es = ESQuery(request.user)
-        res = es.query(None, only_in='dataset', start=0, size=1)
-        nav = BiogpsSearchNavigation(request, type='dataset', es_results=res)
-
-        # Do the basic page setup and rendering
-        prepare_breadcrumb(request)
-        html_template = 'dataset/index.html'
-        html_dictionary = {
-            'list1': list1,
-            'list2': list2,
-            'species': Species,
-            'all_tags': Tag.objects.all(),
-            'navigation': nav
-        }
-        return render_to_formatted_response(request,
-                                            data=None,
-                                            allowed_formats=['html'],
-                                            html_template=html_template,
-                                            html_dictionary=html_dictionary)
-
-    @loginrequired
-    def post(self, request, sendemail=True):
-        '''
-        If sendemail is True, an notification email will be sent out for every new dataset added.
-        '''
-        rolepermission = request.POST.get('rolepermission', None)
-        userpermission = request.POST.get('userpermission', None)
-        tags = request.POST.get('tags', None)
-        data = {'success': False}
-
-        f = BiogpsDatasetForm(request.POST)
-        if f.is_valid():
-            dataset = f.save(commit=False)
-            dataset.type = 'iframe'
-            dataset.ownerprofile = request.user.get_profile()
-            dataset.save()
-
-            if rolepermission or userpermission:
-                set_object_permission(dataset, rolepermission, userpermission, sep=',')
-
-            if tags is not None:
-                dataset.tags = smart_unicode(tags)
-
-            dataset.save()   # Save again to trigger ES index update
-            data['success'] = True
-            data['id'] = dataset.id
+def median(values):
+    # Return median of list of values
+    vals = sorted(values)
+    count = len(vals)
+    mdn = 0
+    try:
+        if count % 2 == 1:
+            mdn = vals[int((count+1)/2) - 1]
         else:
-            data['success'] = False
-            data['errors'] = f.errors
+            lower = vals[int(count/2) - 1]
+            upper = vals[int(count/2)]
+            mdn = round((lower + upper)/2, 3)
+    except ZeroDivisionError:
+        return mdn
+    return mdn
 
-        #flag to allow save duplicated (same url, type, options) dataset
-        allowdup = (request.POST.get('allowdup', None) == '1')
-        allowdup = True # Temporarily disabling this feature.
-
-        if not allowdup:
-            all_datasets = BiogpsDataset.objects.get_available(request.user)
-            dup_datasets = all_datasets.filter(url=f.cleaned_data['url'])
-
-            if dup_datasets.count() > 0:
-                data = {'success': False,
-                        'dup_datasets': [dict(id=p.id, text=unicode(p)) for p in dup_datasets],
-                        'error': 'Duplicated dataset exists!'}
-                return JSONResponse(data, status=400)
-
-
-        #logging dataset add
-        log.info('username=%s clientip=%s action=dataset_add id=%s',
-                    getattr(request.user, 'username', ''),
-                    request.META.get('REMOTE_ADDR', ''),
-                    dataset.id)
-
-        if not settings.DEBUG and sendemail:
-            #send email notification
-            from biogps.utils.helper import mail_managers_in_html
-            current_site = Site.objects.get_current()
-            subject = 'New Dataset "%s" by %s' % (dataset.name, dataset.author)
-            message = render_to_string('dataset/newdataset_notification.html', {'p': dataset, 'site': current_site})
-            mail_managers_in_html(subject, message, fail_silently=True)
-
-        return JSONResponse(data, status=200 if data['success'] else 400)
+def std_err(values):
+    # Return standard error of values
+    avg = mean(values)
+    count = len(values)
+    try:
+        std_dev = sqrt(sum([(i - avg)**2 for i in values]) / (count - 1))
+    except ZeroDivisionError:
+        std_dev = sqrt(sum([(i - avg)**2 for i in values]) / count)
+    std_err = std_dev / sqrt(count)
+    return std_err
 
 
-class DatasetListView(RestView):
-    '''This class defines views for REST URL:
-         /dataset/all/
-         /dataset/mine/
-         /dataset/popular/
-         /dataset/tag/expression/
-         /dataset/species/human/
-         /dataset/species/human/tag/expression/
-    '''
-    def get(self, request, *args, **kwargs):
-        prepare_breadcrumb(request)
-        from biogps.apps.search.views import list as list_view
-        kwargs.update( {'in':'dataset'} )
-        return list_view(request, *args, **kwargs)
+class DatasetQuery():
+    '''Generic class container for dataset query functions'''
+    @staticmethod
+    def get_obj(ds_model, *vals, **filters):
+        '''**Currently unused/untested** Helper method for generic queries.
+           If querying for values pass list of values. Filters including
+           exact matches are passed as dict eg.
+           {'dataset__exact': 100, 'reporter__in': ['1007_s_at', '1053_at']}
+        '''
+        if vals:
+            return ds_model.objects.get(**filters).values(*vals)
+        else:
+            return ds_model.objects.get(**filters)
+
+    @staticmethod
+    def get_ds_li(rep_li):
+        '''Return dataset list for provided reporters'''
+        ds_li = list()
+        conn = ES(settings.ES_HOST[0], timeout=10.0)
+        q_terms = TermsQuery('reporter', rep_li.strip(' ').split(','))
+        # *** No spaces between field names. Undocumented and important! ***
+        res = conn.search(query=HasChildQuery(type='by_reporter',
+                                  query=q_terms), **{'fields': 'id,name'})
+        try:
+            [ds_li.append(ds['fields']) for ds in res['hits']['hits']]
+        except KeyError:
+            # Likely empty response
+            pass
+        return ds_li
+
+    @staticmethod
+    def get_ds_page(rep_li, page):
+        '''Return page of dataset results for provided reporters'''
+        q_terms = TermsQuery('reporter', rep_li.strip(' ').split(','))
+        # *** No spaces between field names. Undocumented and important! ***
+        kwargs = {'doc_types': 'dataset', 'indices': 'biogps_dataset', 'fields': 'id,name'}
+        es_pages = ESPages(HasChildQuery(type='by_reporter', query=q_terms), **kwargs)
+
+        # Now have total number of results, use Django paginator example at:
+        # https://docs.djangoproject.com/en/1.4/topics/pagination/#using-paginator-in-a-view
+        paginator = Paginator(es_pages, 15)
+        try:
+            _datasets = paginator.page(int(page))
+        except (PageNotAnInteger, ValueError):
+            # If page is not an integer, deliver first page.
+            _datasets = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            _datasets = paginator.page(paginator.num_pages)
+        return _datasets.object_list
+
+    @staticmethod
+    def get_mygene_reps(gene_id):
+        '''Return reporter list for provided gene'''
+        rep_li = list()
+        mygene_res = urllib.urlopen('http://mygene.info/gene/{}/'\
+                                    '?filter=entrezgene,reporter,'\
+                                    'refseq.rna'.format(gene_id))
+        if mygene_res.getcode() == 200:
+            _results = loads(mygene_res.read())
+            rep_dict = _results['reporter']
+            for key in rep_dict.keys():
+                for val in rep_dict[key]:
+                    rep_li.append(val)
+        return rep_li
+     
+    @staticmethod
+    def get_ds_metadata(ds_id):
+        '''Return dataset metadata for provided ID'''
+        try:
+            return BiogpsDataset.objects.get(id=ds_id).metadata
+        except BiogpsDataset.DoesNotExist:
+            return None
+     
+    @staticmethod
+    def get_ds_data(ds_id, rep_li):
+        '''Return dataset data for provided ID and reporters'''
+        ds_name = ''
+        rep_dict = OrderedDict()
+        try:
+            d = BiogpsDatasetData.objects.filter(dataset=ds_id, reporter__in=rep_li)
+        except BiogpsDatasetData.DoesNotExist:
+            return None
+        for i in d:
+            # Parse each reporter's results
+            ds_name = i.dataset.name
+            rep_dict[i.reporter] = i.data
+        probeset_list = [{i: {"values": rep_dict[i]}} for i in rep_dict]
+        return OrderedDict([('id', ds_id), ('name', ds_name), ('probeset_list', probeset_list)])
+     
+    @staticmethod
+    def get_ds_chart(ds_id, rep_id):
+        '''Return dataset static chart URL for provided ID and reporter'''
+        try:
+            rep_data = BiogpsDatasetData.objects.get(dataset=ds_id, reporter=rep_id)
+        except BiogpsDatasetData.DoesNotExist:
+            return None
+
+        # Probset values sorted by order index
+        ps_values = rep_data.data
+        ps_mean = mean(ps_values)
+        ps_median_flt = median(ps_values)
+        ps_median_int = int(ps_median_flt)
+        ps_median_x10 = 0
+        ps_median_x30 = 0
+        ps_min = int(min(ps_values))
+        ps_max = int(max(ps_values))
+
+        # Get dataset metadata
+        m = rep_data.dataset.metadata
+        ds_factors = zip(m['factors'], ps_values)
+
+        ds_params = m['display_params']
+        try:
+            _agg = ds_params['aggregate'][0]
+        except IndexError:
+            # No aggregate display param
+            _agg = None
+        try:
+            _sort = ds_params['sort'][0]
+        except IndexError:
+            _sort = None
+        try:
+            _color = ds_params['color'][0]
+        except IndexError:
+            _color = None
+
+        if _agg:
+            # Parse data values, handle replicates based on 'aggregate' param
+
+            # agg_list is same format and order as ds_factors:
+            # [{'aggregate_title': {'order_idx': 1, ...}}, etc]
+            agg_list = list()
+
+            # agg_dict stores the sum and numbers of replicate data in
+            # ps_values: {'rep': [sum, number of replicates]}
+            agg_dict = dict()
+
+            # Temp list to track what's already been aggregated
+            agg_vals = list()
+
+            for idx, smp_dict in enumerate(ds_factors):
+                smp_dict_vals = smp_dict[0].values()[0]
+                agg_val = smp_dict_vals[_agg]
+
+                if agg_val not in agg_vals:
+                    # New sample aggregate
+                    agg_vals.append(agg_val)
+                    agg_dict[agg_val] = [ps_values[idx], 1]
+                    # Append full sample metadata for possible use in
+                    # sorting and coloring 
+                    agg_list.append({agg_val: smp_dict_vals})
+                else:
+                    # Only using first-encountered replicate's metadata,
+                    # just update aggregated data values
+                    agg_dict[agg_val][0] += ps_values[idx]
+                    agg_dict[agg_val][1] += 1
+
+            # Condense ps_values to avg per replicate group
+            agg_sums = dict()
+            for i in agg_dict:
+                agg_nums = agg_dict[i]
+                agg_sums[i] = round(agg_nums[0]/agg_nums[1], 2)
+
+            # Combine aggregate metadata with data average 
+            for smp_dict in agg_list:
+                smp_dict.values()[0]['data'] = agg_sums[smp_dict.keys()[0]]
+
+            ds_factors = agg_list
+        else:
+            # No aggregation, construct list of dicts in same format as if
+            # there had been aggregation
+            _tmp = list()
+            for idx, smp_dict in enumerate(ds_factors):
+                smp_dict_vals = smp_dict[0].values()[0]
+                smp_dict_vals['data'] = smp_dict[1]
+                _tmp.append({smp_dict_vals['title']: smp_dict_vals})
+            ds_factors = _tmp
+
+        if _sort:
+            ds_factors.sort(key=lambda x: x.values()[0][_sort])
+
+        # Colors taken from GNF chart service
+        color_codes = ['9400D3', '2F4F4F', '483D8B', '8FBC8B', 'E9967A', '8B0000', '9932CC', 'FF8C00', '556B2F', '8B008B', 'BDB76B', '7FFFD4', 'A9A9A9', 'B8860B', '008B8B', '00008B', '00FFFF', 'DC143C', '6495ED', 'FF7F50', 'D2691E', '7FFF00', '5F9EA0', 'DEB887', 'A52A2A', '8A2BE2', '0000FF', '000000', 'FFE4C4', '006400', '00FFFF']
+        if _color:
+            # Color groupings
+            color_groups = list()
+            color_idx = 0
+            prev_color = ''
+            for idx, smp_dict in enumerate(ds_factors):
+                current_color = smp_dict.values()[0][_color]
+                if idx == 0:
+                    prev_color = current_color
+                    color_groups.append(color_codes[0])
+                else:
+                    if current_color == prev_color:
+                        color_groups.append(color_groups[-1])
+                    else:
+                        prev_color = current_color
+                        color_idx += 1
+                        try:
+                            color_groups.append(color_codes[color_idx])
+                        except IndexError:
+                            # Rewind to beginning of colors
+                            prev_color, color_idx = 0, 0
+                            color_groups.append(color_codes[0])
+            chart_colors = '|'.join(color_groups)
+        else:
+            # No coloring info - single color
+            chart_colors = color_codes[-1]
+
+        # Set chart min, max value to a nice round number
+        if ps_min > 0:
+            chart_min_val = 0
+        elif ps_min < -100:
+            # Nearest hundred
+            chart_min_val = int(floor( round((ps_min * 1.15)/100, 2) ) * 100)
+        elif ps_min < -50:
+            chart_min_val = int(floor( round((ps_min * 1.15)/100, 2) ) * 50)
+        else:
+            chart_min_val = int(floor( round((ps_min * 1.15)/100, 2) ) * 10)
+        if ps_max < 10:
+            chart_max_val = int(ceil( round((ps_max * 1.15)/100, 2) ) * 10)
+        elif ps_max < 50:
+            chart_max_val = int(ceil( round((ps_max * 1.15)/100, 2) ) * 50)
+        else:
+            chart_max_val = int(ceil( round((ps_max * 1.15)/100, 2) ) * 100)
+        check_x10 = ps_median_int * 10
+        if check_x10 > chart_min_val and check_x10 < chart_max_val:
+            ps_median_x10 = check_x10
+        check_x30 = ps_median_int * 30
+        if check_x30 > chart_min_val and check_x30 < chart_max_val:
+            ps_median_x30 = check_x30
+
+        # Format data for posting to Google Charts
+        # Google Chart API documentation at
+        # http://code.google.com/apis/chart/image/docs/making_charts.html
+        chart_url = 'https://chart.googleapis.com/chart'
+        chart_size_w = '370'
+        if len(ps_values) > 180:
+            chart_size_h = '810'
+            y_axis_label_size = 5
+        else:
+            chart_size_h = '772'
+            y_axis_label_size = 9
+        chart_size = '%sx%s' % (chart_size_w, chart_size_h)
+        chart_type = 'bhg'
+        chart_data = 't:%s' % ','.join(str(smp_dict.values()[0]['data']) for idx, smp_dict in enumerate(ds_factors))
+        chart_title = rep_id
+        chart_title_style = '000000,16'
+        chart_axes = 'x,y,r,t,x'
+        chart_x_t_axes_range = '0,%s,%s|4,%s,%s' % (chart_min_val, chart_max_val, chart_min_val, chart_max_val)
+
+        # Chart x and top axis labels
+        if chart_min_val < 0:
+            x_t_min_label = chart_min_val
+        else:
+            x_t_min_label = 0
+        if chart_min_val == -chart_max_val:
+            x_t_mid_label = 0
+        else:
+            x_t_mid_label = int(round(chart_max_val/2))
+        x_t_labels = '%s|%s|%s' % (x_t_min_label, x_t_mid_label, chart_max_val) 
+        x_labels = '0:|%s' % x_t_labels
+        # Use Django's smart_str for non-English characters, encoding in UTF-8
+        y_labels = [smart_str(smp_dict.values()[0]['title']) for smp_dict in ds_factors]
+        # The order for Google Charts data and labels are opposite... yeah
+        y_labels = '1:|%s' % '|'.join(reversed(y_labels))
+        r_labels = '2:|'
+        t_labels = '3:|%s' % x_t_labels
+        median_label = 'Median(%s)' % round(ps_median_flt, 2)
+        if ps_median_x10 and ps_median_x30:
+            x2_labels = '4:|%s|10xM|30xM' % median_label
+        elif ps_median_x10:
+            x2_labels = '4:|%s|10xM' % median_label
+        else:
+            x2_labels = '4:|%s' % median_label
+        chart_axes_labels = '%s' % '|'.join([x_labels, y_labels, r_labels, t_labels, x2_labels])
+        chart_bar_width_spacing = 'a,2,2'
+        chart_axes_tick_lengths = '2,0|3,0|4,-%s' % chart_size_h
+        chart_axes_label_styles = '0,000000,12,0,lt,000000,000000|1,000000,%s,1,lt,000000,000000|2,000000|3,000000,12|4,990066,11,0,lt,990066' % y_axis_label_size
+        chart_data_scale = '%s,%s' % (chart_min_val, chart_max_val)
+        chart_grid_lines = '25,100,1,5'
+        if ps_median_x10 and ps_median_x30:
+            chart_median_label_positions = '4,%s,%s,%s' % (ps_median_int, ps_median_x10, ps_median_x30)
+        elif ps_median_x10:
+            chart_median_label_positions = '4,%s,%s' % (ps_median_int, ps_median_x10)
+        else:
+            chart_median_label_positions = '4,%s' % (ps_median_int)
+
+        params = urllib.urlencode({'chs': chart_size,
+                                   'cht': chart_type,
+                                   'chd': chart_data,
+                                   'chco': chart_colors,
+                                   'chtt': chart_title,
+                                   'chts': chart_title_style,
+                                   'chxt': chart_axes,
+                                   'chxr': chart_x_t_axes_range,
+                                   'chxl': chart_axes_labels,
+                                   'chbh': chart_bar_width_spacing,
+                                   'chxtc': chart_axes_tick_lengths,
+                                   'chxs': chart_axes_label_styles,
+                                   'chds': chart_data_scale,
+                                   'chg': chart_grid_lines,
+                                   'chxp': chart_median_label_positions
+                                  })
+        return urllib.urlopen(chart_url, params)
+     
+    @staticmethod
+    def get_ds_corr(ds_id, rep_id, min_corr):
+        '''Return NumPy correlation matrix for provided ID, reporter,
+           and correlation coefficient
+        '''
+        def pearsonr(v, m):
+            # Pearson correlation calculation taken from NumPy's implementation
+            v_m = v.mean()
+            m_m = m.mean(axis=1)
+            r_num = ((v-v_m) * (m.transpose()-m_m).transpose()).sum(axis=1)
+            r_den = np.sqrt(((v-v_m)**2).sum() * (((m.transpose()-m_m).transpose())**2).sum(axis=1))
+            r = r_num/r_den
+            return r
+
+        # Reconstruct dataset matrix
+        try:
+            _matrix = BiogpsDatasetMatrix.objects.get(dataset=ds_id)
+        except BiogpsDatasetMatrix.DoesNotExist:
+            return None
+        reporters = _matrix.reporters
+
+        # Get position of reporter
+        if rep_id in reporters.keys():
+            rep_pos = reporters[rep_id]
+
+            # Pearson correlations for provided reporter
+            matrix_data = np.load(StringIO(_matrix.matrix))
+            rep_vector = matrix_data[rep_pos]
+            corrs = pearsonr(rep_vector, matrix_data)
+
+            # Get indices of sufficiently correlated reporters
+            idx_corrs = np.where(corrs > min_corr)[0]
+
+            # Get values for those indices
+            val_corrs = corrs.take(idx_corrs)
+
+            # Return highest correlated first
+            corrs = zip(val_corrs, idx_corrs)
+            corrs.sort(reverse=True)
+            return [{'Reporter': reporters[str(i[1])], 'Value': round(i[0], 4)} for i in corrs]
 
 
+@csrf_exempt
 class DatasetView(RestView):
     '''This class defines views for REST URL:
-         /dataset/<dataset_id>/
+       /dataset/<datasetID>/?format=
+
+       Return all metadata for a dataset.
+       ** Note: eventually change this to behave
+       ** more like the PluginView.
     '''
-    def before(self, request, args, kwargs):
-        if request.method == 'GET':
-            available_datasets = BiogpsDataset.objects.get_available(request.user)
+    def get(self, request, datasetID, slug=None):
+        '''Get a specific plugin page/object via GET
+           format = html (default)    display plugin details page
+                    json              return a plugin object in json format
+                    xml               return a plugin object in xml format
+        '''
+        meta = DatasetQuery.get_ds_metadata(datasetID)
+        if meta: 
+            # If dataset has ordering information,
+            # sort according to it
+            try:
+                meta['factors'].sort(key=lambda x: x.values()[0]['order_idx'])
+            except KeyError:
+                pass
+            return JSONResponse(meta)
         else:
-            available_datasets = BiogpsDataset.objects.get_mine(request.user)
-        kwargs['dataset'] = get_object_or_404(available_datasets,
-                                             id=kwargs.pop('dataset_id'))
-
-    def get(self, request, dataset, slug=None):
-        '''Get a specific dataset page/object via GET
-           format = html (default)    display dataset details page
-                    json              return a dataset object in json format
-                    xml               return a dataset object in xml format
-        '''
-        if request.user.is_authenticated():
-            dataset.prep_user_data(request.user)
-
-        nav = BiogpsSearchNavigation(request, params={'only_in':['dataset']})
-        prepare_breadcrumb(request)
-        request.breadcrumbs( dataset.name[:50] + '...'  if len(dataset.name)
-                            > 53 else dataset.name, dataset.get_absolute_url )
-        html_template = 'dataset/show.html'
-        html_dictionary = {
-            'current_obj': dataset,
-            'rating_scale': Rating.rating_scale,
-            'rating_static': Rating.rating_static,
-            'canonical': dataset.get_absolute_url(),
-            'navigation': nav
-        }
-        return render_to_formatted_response(request,
-                                            data=dataset,
-                                            allowed_formats=['html', 'json', 'xml'],
-                                            model_serializer='object_cvt',
-                                            html_template=html_template,
-                                            html_dictionary=html_dictionary)
-
-    @loginrequired
-    def put(self, request, dataset, slug=None):
-        '''
-        Modify a dataset via PUT.
-        '''
-        rolepermission = request.PUT.get('rolepermission', None)
-        userpermission = request.PUT.get('userpermission', None)
-        tags = request.PUT.get('tags', None)
-        data = {'success': False}
-
-        f = BiogpsDatasetForm(request.PUT, instance=dataset)
-        if f.is_valid():
-            if rolepermission or userpermission:
-                set_object_permission(dataset, rolepermission, userpermission, sep=',')
-
-            if tags is not None:
-                dataset.tags = smart_unicode(tags)
-
-            f.save()
-            data['success'] = True
-        else:
-            data['success'] = False
-            data['errors'] = f.errors
-
-        return JSONResponse(data, status=200 if data['success'] else 400)
-
-    @loginrequired
-    def delete(self, request, dataset, slug=None):
-        dataset.delete()
-        del dataset.permission
-
-        #logging dataset delete
-        log.info('username=%s clientip=%s action=dataset_delete id=%s',
-                    getattr(request.user, 'username', ''),
-                    request.META.get('REMOTE_ADDR', ''),
-                    dataset.id)
-
-        data = {'success': True}
-
-        return JSONResponse(data)
+            return HttpResponseNotFound("Dataset ID #{} does not exist.".format(datasetID));
 
 
-class DatasetEditView(RestView):
+@csrf_exempt
+class DatasetSearchView(RestView):
     '''This class defines views for REST URL:
-         /dataset/<dataset_id>/edit/
-    '''
-    def before(self, request, args, kwargs):
-        available_datasets = BiogpsDataset.objects.get_mine(request.user)
-        kwargs['dataset'] = get_object_or_404(available_datasets,
-                                             id=kwargs.pop('dataset_id'))
+        /dataset/search/
 
-    @loginrequired
-    def get(self, request, dataset):
-        '''Get an editing form for a specific dataset object via GET
-           format = html (default)    display dataset edit page
-        '''
-        form = BiogpsDatasetForm(instance=dataset)
+       Given a list of reporters, return the datasets
+       that contain them.
 
-        nav = BiogpsSearchNavigation(request, params={'only_in':['dataset']})
-        prepare_breadcrumb(request)
-        request.breadcrumbs( dataset.name[:50] + '...' if len(dataset.name)
-                           > 53 else dataset.name, dataset.get_absolute_url )
-        request.breadcrumbs( 'Edit', request.path_info )
-        html_template = 'dataset/edit.html'
-        html_dictionary = {
-            'dataset': dataset,
-            'form': form,
-            'species': Species,
-            'all_tags': Tag.objects.all(),
-            'navigation': nav
-        }
-        return render_to_formatted_response(request,
-                                            data=dataset,
-                                            allowed_formats=['html'],
-                                            html_template=html_template,
-                                            html_dictionary=html_dictionary)
-
-
-class DatasetNewView(RestView):
-    '''This class defines views for REST URL:
-         /dataset/new/
-    '''
-    @loginrequired
-    def get(self, request):
-        '''Get an creation form for a new dataset object via GET
-           format = html (default)    display dataset creation page
-        '''
-        form = BiogpsDatasetForm()
-        nav = BiogpsSearchNavigation(request, params={'only_in':['dataset']})
-        prepare_breadcrumb(request)
-        request.breadcrumbs( 'New Dataset', request.path_info )
-        html_template = 'dataset/new.html'
-        html_dictionary = {
-            'form': form,
-            'species': Species,
-            'all_tags': Tag.objects.all(),
-            'navigation': nav
-        }
-        return render_to_formatted_response(request,
-                                            data=None,
-                                            allowed_formats=['html'],
-                                            html_template=html_template,
-                                            html_dictionary=html_dictionary)
-
-
-
-class DatasetTagView(RestView):
-    '''This class defines views for REST URL:
-         /dataset/tag/
+       Given a gene ID, return the relevant datasets,
+       dataset names, and reporters.
     '''
     def get(self, request):
-        _dbobjects = BiogpsDataset.objects.get_available(request.user)
-        tags = Tag.objects.usage_for_queryset(_dbobjects, counts=True, min_count=2)
+        dbug = False
+        json_response = None
+        reporters = list()
+        page = request.GET.get('page', 1)
+        if request.GET.get('debug'):
+            dbug = True
+            search_start = time()
+        if request.GET.get('gene'):
+            # Gene ID search
+            gene_id = request.GET['gene']
 
-        # Set up the navigation controls
-        # We use ES to give us the category facets
-        es = ESQuery(request.user)
-        res = es.query(None, only_in='dataset', start=0, size=1)
-        nav = BiogpsSearchNavigation(request, type='dataset', es_results=res)
+            # Get reporters from mygene.info
+            reporters = DatasetQuery.get_mygene_reps(gene_id)
+        else:
+            try:
+                reporters = request.GET.get('reporters')
+            except KeyError:
+                return HttpResponseNotFound("<b>No list of reporters provided.</b>"\
+                                            "<br>Please provide reporters in the"\
+                                            " form of 'reporter1, reporter2'")
+        # Get datasets corresponding to reporters
+        if reporters is not None:
+            json_response = DatasetQuery.get_ds_page(reporters, page)
 
-        # Do the basic page setup and rendering
-        prepare_breadcrumb(request)
-        request.breadcrumbs( 'Tags', request.path_info )
-        html_template = 'dataset/tags.html'
-        html_dictionary = {
-            'all_tags': tags,
-            'navigation': nav
-        }
-        return render_to_formatted_response(request,
-                                            data=None,
-                                            allowed_formats=['html'],
-                                            html_template=html_template,
-                                            html_dictionary=html_dictionary)
+        if dbug:
+            search_end = time()
+            json_response += ['DEBUG:', 'Search {} secs'.format(round(search_end-search_start, 3))]
+        return JSONResponse(json_response)
 
 
-def prepare_breadcrumb(request):
-    '''This function sets up the initial breadcrumb trail for all pages
-       in the dataset library.
+@csrf_exempt
+class DatasetValuesView(RestView):
+    '''This class defines views for REST URL:
+        /dataset/<datasetID>/values/?reporters=
     '''
-    request.breadcrumbs( 'Library', '/library/' )
-    request.breadcrumbs( 'Datasets', '/dataset/' )
+    def get(self, request, datasetID):
+        get_reporters = [i for i in request.GET['reporters'].split(',')]
+        return JSONResponse(DatasetQuery.get_ds_data(datasetID, get_reporters))
 
 
-def test_dataset_url(request):
-    '''This view is used to test a url template with a given gene.
-       http://biogps-dev.gnf.org/dataset/test?url=http://www.google.com/search?q={{Symbol}}&geneid=1017
-       http://biogps-dev.gnf.org/dataset/test?url=http://www.google.com/search?q={{MGI}}&species=mouse&geneid=1017
+@csrf_exempt
+class DatasetStaticChartView(RestView):
+    '''This class defines views for REST URL:
+        /dataset/<datasetID>/chart/<reporterID>/
 
-       if species is not provided, all available species are assumed.
+       Given a dataset ID and reporter,
+       return the static chart image.
     '''
-    from biogps.apps.boc import boc_svc as svc
-    from biogps.apps.dataset.dataset import DatasetUrlRenderError
-    from biogps.utils.helper import is_valid_geneid
+    def get(self, request, datasetID, reporterID):
+        chart_img = DatasetQuery.get_ds_chart(datasetID, reporterID)
+        try:
+            return HttpResponse(chart_img.read(), mimetype=chart_img.info().type) 
+        except AttributeError:
+            return HttpResponseNotFound("Dataset ID #{} does not exist.".format(datasetID));
 
-    geneid = request.GET.get('geneid', '').strip()
-    url = request.GET.get('url', '').strip()
-    species = [s.strip() for s in request.GET.get('species', '').split(',')]
-    species = None if species == [''] else species
-    if not geneid or not url:
-        return json_error('Missing required parameter.', status=400)
-    if not is_valid_geneid(geneid):
-        return json_error('Invalid input parameters!', status=400)
-    dataset = BiogpsDataset(url=url, species=species)
-    ds = svc.DataService()
-    g = ds.getgene2(geneid)
 
-    if not g or len(g['SpeciesList']) == 0:
-        return json_error('Unknown gene id.', status=400)
+@csrf_exempt
+class DatasetCorrelationView(RestView):
+    '''This class defines views for REST URL:
+        /dataset/<datasetID>/corr/<reporterID>?co=
 
-    try:
-        url = dataset.geturl(g)
-    except DatasetUrlRenderError, err:
-        return json_error(err.args[0], status=400)
-
-    data = {'success': True,
-            'geneid': geneid,
-            'url': url}
-    return JSONResponse(data)
-
+       Run Pearson correlation for provided reporter
+       against all reporters in dataset.
+    '''
+    def get(self, request, datasetID, reporterID):
+        try:
+            min_corr = float(request.GET['co'])
+        except KeyError:
+            return HttpResponseNotFound("<b>No correlation value provided.</b>"\
+                                        "<br>Please provide a correlation cutoff"\
+                                        " value in the form of ?co=0.9, etc.")
+        return JSONResponse(DatasetQuery.get_ds_corr(datasetID, reporterID, min_corr))
