@@ -125,10 +125,10 @@ urlpatterns += patterns('',
 #    (r'^genelist/', include('biogps.apps.genelist.urls')),
     (r'^search/', include('biogps.apps.search.urls')),
 )
-if settings.DEBUG:
-    urlpatterns += patterns('',
-        (r'^dataset/', include('biogps.apps.dataset.urls')),
-    )
+# Datasets
+urlpatterns += patterns('',
+    (r'^dataset/', include('biogps.apps.dataset.urls')),
+)
 
 # redirect /genereport/<geneid>/ to /gene/<geneid>/ for back-compatibility
 urlpatterns += patterns('django.views.generic.simple',

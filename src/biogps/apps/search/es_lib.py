@@ -335,3 +335,25 @@ class ESQuery():
 
         q = FilteredQuery(q, filter)
         return self.query(q, only_in=['gene'], **kwargs)
+
+
+class ESPages():
+    ''' For use with Django's paginator'''
+    def __init__(self, es_query, **kwargs):
+        ''' Make initial ES query'''
+        self.conn = ES(settings.ES_HOST[0], timeout=10.0)
+        self.es_query = es_query
+        res = self.conn.search(query=self.es_query, size='0', **kwargs)
+        self.total_hits = res['hits']['total']
+
+    def count(self):
+        return self.total_hits
+
+    def __getitem__(self, q_slice):
+        ''' Make ES query for range of hits'''
+        q = self.es_query.search(start=str(q_slice.start), size=str(q_slice.stop-q_slice.start+1))
+        res = self.conn.search(q)
+        return res['hits']['hits']
+
+    def __len__(self):
+        return self.count()
