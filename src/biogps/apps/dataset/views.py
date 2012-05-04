@@ -96,11 +96,11 @@ class DatasetQuery():
         q_terms = TermsQuery('reporter', rep_li.strip(' ').split(','))
         # *** No spaces between field names. Undocumented and important! ***
         kwargs = {'doc_types': 'dataset', 'indices': 'biogps_dataset', 'fields': 'id,name'}
-        es_pages = ESPages(HasChildQuery(type='by_reporter', query=q_terms), **kwargs)
+        all_results = ESPages(HasChildQuery(type='by_reporter', query=q_terms), **kwargs)
 
         # Now have total number of results, use Django paginator example at:
         # https://docs.djangoproject.com/en/1.4/topics/pagination/#using-paginator-in-a-view
-        paginator = Paginator(es_pages, 15)
+        paginator = Paginator(all_results, 15)
         try:
             _datasets = paginator.page(int(page))
         except (PageNotAnInteger, ValueError):
@@ -109,7 +109,7 @@ class DatasetQuery():
         except EmptyPage:
             # If page is out of range (e.g. 9999), deliver last page of results.
             _datasets = paginator.page(paginator.num_pages)
-        return _datasets.object_list
+        return (all_results.count(), paginator.num_pages, _datasets.object_list)
 
     @staticmethod
     def get_mygene_reps(gene_id):
