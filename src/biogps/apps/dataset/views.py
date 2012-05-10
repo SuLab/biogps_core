@@ -11,7 +11,7 @@ from biogps.utils.restview import RestView
 from json import loads
 from math import ceil, floor, sqrt
 from operator import itemgetter
-from pyes import ES, HasChildQuery, TermsQuery
+from pyes import ES, FilteredQuery, HasChildQuery, QueryFilter, StringQuery, TermsQuery
 from pyes.exceptions import (NotFoundException, IndexMissingException,
                              ElasticSearchException)
 from StringIO import StringIO
@@ -79,10 +79,10 @@ class DatasetQuery():
         '''Return dataset list for provided reporters'''
         ds_li = list()
         conn = ES(settings.ES_HOST[0], timeout=10.0)
-        q_terms = TermsQuery('reporter', rep_li.strip(' ').split(','))
+        t_query = TermsQuery('reporter', rep_li.strip(' ').split(','))
         # *** No spaces between field names. Undocumented and important! ***
         res = conn.search(query=HasChildQuery(type='by_reporter',
-                                  query=q_terms), **{'fields': 'id,name'})
+                                  query=t_query), **{'fields': 'id,name'})
         try:
             [ds_li.append(ds['fields']) for ds in res['hits']['hits']]
         except KeyError:
@@ -91,15 +91,23 @@ class DatasetQuery():
         return ds_li
 
     @staticmethod
-    def get_ds_page(rep_li, page):
-        '''Return page of dataset results for provided reporters'''
-        q_terms = TermsQuery('reporter', rep_li.strip(' ').split(','))
-        # *** No spaces between field names. Undocumented and important! ***
+    def get_ds_page(reps, page, q_term=None):
+        '''Return page of dataset results for provided query type and terms'''
+        all_results = list()
         kwargs = {'doc_types': 'dataset', 'indices': 'biogps_dataset', 'fields': 'id,name'}
-        all_results = ESPages(HasChildQuery(type='by_reporter', query=q_terms), **kwargs)
+        # *** No spaces between field names. Undocumented and important! ***
+        t_query = TermsQuery('reporter', reps.strip(' ').split(','))
+        base_query = HasChildQuery(type='by_reporter', query=t_query)
+
+        if q_term:
+            # Filter standard search results with query string
+            q_filter = QueryFilter(query=StringQuery(query=q_term+'*'))
+            all_results = ESPages(FilteredQuery(base_query, q_filter), **kwargs)
+        else:
+            all_results = ESPages(base_query, **kwargs)
 
         # Now have total number of results, use Django paginator example at:
-        # https://docs.djangoproject.com/en/1.4/topics/pagination/#using-paginator-in-a-view
+        # https://docs.djangoproject.com/en/dev/topics/pagination/#using-paginator-in-a-view
         paginator = Paginator(all_results, 15)
         try:
             _datasets = paginator.page(int(page))
@@ -124,7 +132,7 @@ class DatasetQuery():
             for key in rep_dict.keys():
                 for val in rep_dict[key]:
                     rep_li.append(val)
-        return rep_li
+        return ','.join(rep_li)
      
     @staticmethod
     def get_ds_metadata(ds_id):
@@ -448,11 +456,13 @@ class DatasetSearchView(RestView):
 
        Given a gene ID, return the relevant datasets,
        dataset names, and reporters.
+
+       Given a query term, return the relevant datasets.
     '''
     def get(self, request):
         dbug = False
         json_response = None
-        reporters = list()
+        reps = None
         page = request.GET.get('page', 1)
         if request.GET.get('debug'):
             dbug = True
@@ -462,17 +472,18 @@ class DatasetSearchView(RestView):
             gene_id = request.GET['gene']
 
             # Get reporters from mygene.info
-            reporters = DatasetQuery.get_mygene_reps(gene_id)
-        else:
-            try:
-                reporters = request.GET.get('reporters')
-            except KeyError:
-                return HttpResponseNotFound("<b>No list of reporters provided.</b>"\
-                                            "<br>Please provide reporters in the"\
-                                            " form of 'reporter1, reporter2'")
-        # Get datasets corresponding to reporters
-        if reporters is not None:
-            json_response = DatasetQuery.get_ds_page(reporters, page)
+            reps = DatasetQuery.get_mygene_reps(gene_id)
+        elif request.GET.get('reporters'):
+            reps = request.GET['reporters']
+            if reps is not None:
+                # Get datasets corresponding to reporters
+                if request.GET.get('term'):
+                    # Query term search
+                    q_term = request.GET['term']
+                    # Get datasets matching term(s)
+                    json_response = DatasetQuery.get_ds_page(reps, page, q_term)
+                else:
+                    json_response = DatasetQuery.get_ds_page(reps, page)
 
         if dbug:
             search_end = time()
