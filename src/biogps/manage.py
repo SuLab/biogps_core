@@ -58,5 +58,5 @@ except ImportError:
 
 if __name__ == "__main__":
     if options.verbosity != '0':
-        print 'settings loaded from "%s"' % settings_mod
+        sys.stderr.write('settings loaded from "%s"\n' % settings_mod)
     execute_manager(settings)
