@@ -94,8 +94,8 @@ class DatasetQuery():
     def get_ds_page(reps, page, q_term=None):
         '''Return page of dataset results for provided query type and terms'''
         all_results = list()
-        kwargs = {'doc_types': 'dataset', 'indices': 'biogps_dataset', 'fields': 'id,name'}
         # *** No spaces between field names. Undocumented and important! ***
+        kwargs = {'doc_types': 'dataset', 'indices': 'biogps_dataset', 'fields': 'id,name'}
         t_query = TermsQuery('reporter', reps.strip(' ').split(','))
         base_query = HasChildQuery(type='by_reporter', query=t_query)
 
@@ -477,9 +477,9 @@ class DatasetSearchView(RestView):
             reps = request.GET['reporters']
             if reps is not None:
                 # Get datasets corresponding to reporters
-                if request.GET.get('term'):
+                if request.GET.get('q'):
                     # Query term search
-                    q_term = request.GET['term']
+                    q_term = request.GET['q']
                     # Get datasets matching term(s)
                     json_response = DatasetQuery.get_ds_page(reps, page, q_term)
                 else:
