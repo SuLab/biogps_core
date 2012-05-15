@@ -53,6 +53,7 @@
     .welcome-auth input {
         width: 56px;
         height: 18px;
+        font-size: 12px;
     }
 
     .welcome-auth #id_username {
@@ -653,7 +654,20 @@
     height: 35px;
 }
 
-
+#help_biogps {
+    width: 400px;
+    padding-top: 15px;
+    padding-bottom: 0px;
+    padding-left: 32px;
+    margin-left: auto ;
+    margin-right: auto ;
+    text-align: center;
+}
+#help_biogps a {
+    color: red;
+    font-weight: bold;
+    font-size: large;
+}
 
 
 /* Help Pages */
