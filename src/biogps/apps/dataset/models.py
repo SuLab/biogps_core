@@ -30,7 +30,7 @@ class BiogpsDataset(BioGPSModel):
     summary = models.CharField(blank=True, max_length=10000)
     ownerprofile = models.ForeignKey(UserProfile, to_field='sid')
     platform = models.ForeignKey('BiogpsDatasetPlatform', related_name='dataset_platform')
-    geo_id_plat = models.CharField(max_length=100, unique=True)
+    geo_id_plat = models.CharField(max_length=100)
     metadata = JSONField(blank=False, editable=True)
     lastmodified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -119,6 +119,34 @@ add_introspection_rules([
         {},         # Keyword argument
     ),
 ], ["^biogps\.apps\.dataset\.models\.BiogpsDatasetData"])
+
+
+class BiogpsDatasetReporters(models.Model):
+    '''Model definition for BiogpsDatasetReporters'''
+    dataset = models.ForeignKey(BiogpsDataset, related_name='dataset_reporters')
+    reporters = JSONField(blank=False, editable=True)
+
+    def object_cvt(self, mode='ajax'):
+        '''A helper function to convert a BiogpsDatasetReporters object to a simplified
+            python dictionary, with all values in python's primary types only.
+            Such a dictionary can be passed directly to fulltext indexer or
+            serializer for ajax return.
+
+          @param mode: can be one of ['ajax', 'es'], used to return slightly
+                                        different dictionary for each purpose.
+          @return: an python dictionary
+        '''
+        extra_attrs = {None: ['name', 'species', 'metadata']}
+        out = self._object_cvt(extra_attrs=extra_attrs, mode=mode)
+        return out
+
+add_introspection_rules([
+    (
+        [BiogpsDatasetReporters], # Class(es) these apply to
+        [],         # Positional arguments (not used)
+        {},         # Keyword argument
+    ),
+], ["^biogps\.apps\.dataset\.models\.BiogpsDatasetReporters"])
 
 
 class BiogpsDatasetMatrix(models.Model):

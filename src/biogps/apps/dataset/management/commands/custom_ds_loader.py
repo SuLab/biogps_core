@@ -20,6 +20,8 @@ from biogps.apps.dataset.models import BiogpsDataset, BiogpsDatasetData, BiogpsD
 
 class Command(NoArgsCommand):
     help = 'A utility that parses and loads custom datasets into the DB.'
+    # Turn off Django's DEBUG mode to limit memory usage
+    settings.DEBUG = False
 
     def handle_noargs(self, **options):
         target_DB = settings.DATABASES['default']['NAME']
@@ -52,95 +54,95 @@ class Command(NoArgsCommand):
             
             # Datasets to be loaded
             datasets = {'U133AGNF1B.gcrma.csv':
-            	       {'id': 1, 'dir': b, 'name': 'GeneAtlas U133A, gcrma',
+            	       {'default': True, 'id': 1, 'dir': b, 'name': 'GeneAtlas U133A, gcrma',
             		'delimiter': 'c', 'color': 'U133AGNF1B.gcrma.coloring.csv',
             		'owner': 'Andrew Su', 'summary': 'The tissue-specific pattern of mRNA expression can indicate important clues about gene function. High-density oligonucleotide arrays offer the opportunity to examine patterns of gene expression on a genome scale. Toward this end, we have designed custom arrays that interrogate the expression of the vast majority of protein-encoding human and mouse genes and have used them to profile a panel of 79 human and 61 mouse tissues. The resulting data set provides the expression patterns for thousands of predicted genes, as well as known and poorly characterized genes, from mice and humans. We have explored this data set for global trends in gene expression, evaluated commonly used lines of evidence in gene prediction methodologies, and investigated patterns indicative of chromosomal organization of transcription. We describe hundreds of regions of correlated transcription and show that some are subject to both tissue and parental allele-specific expression, suggesting a link between spatial expression and imprinting.', 'geo_gds_id': '',
             		'geo_gpl_id': 'GPL96', 'geo_gse_id': 'GSE1133',
             		'pubmed_id': '15075390', 'species': 'human'},
             
             	    'NCI60_U133A_20070815.raw.csv':
-            	       {'id': 2, 'dir': b, 'name': 'NCI60 on U133A, gcrma',
-            		'delimiter': 'c', 'color': '',
-            		'owner': '', 'summary': 'Human NCI60 Cell Lines',
-            		'geo_gds_id': '', 'geo_gpl_id': 'GPL96', 'geo_gse_id': '',
-            		'pubmed_id': '', 'species': 'human'},
+            	       {'default': True, 'id': 2, 'dir': b, 'name': 'NCI60 on U133A, gcrma',
+            	        'delimiter': 'c', 'color': '',
+            	        'owner': '', 'summary': 'Human NCI60 Cell Lines',
+            	        'geo_gds_id': '', 'geo_gpl_id': 'GPL96', 'geo_gse_id': '',
+            	        'pubmed_id': '', 'species': 'human'},
             
             	    'GNF1M_plus_macrophage_small.bioGPS.txt':
-            	       {'id': 3, 'dir': b, 'name': 'GeneAtlas GNF1M, gcrma',
-            		'delimiter': 't', 'color': 'GNF1M_plus_macrophage_small.bioGPS.coloring.csv',
-            		'owner': '', 'summary': '', 'geo_gds_id': '',
-            		'geo_gpl_id': 'GPL1073', 'geo_gse_id': '', 'pubmed_id': '',
-            		'species': 'mouse'},
+            	       {'default': True, 'id': 3, 'dir': b, 'name': 'GeneAtlas GNF1M, gcrma',
+            	        'delimiter': 't', 'color': 'GNF1M_plus_macrophage_small.bioGPS.coloring.csv',
+            	        'owner': '', 'summary': '', 'geo_gds_id': '',
+            	        'geo_gpl_id': 'GPL1073', 'geo_gse_id': '', 'pubmed_id': '',
+            	        'species': 'mouse'},
             
             	    'geneatlas_MOE430_20090327.raw.csv':
-            	       {'id': 4, 'dir': b, 'name': 'GeneAtlas MOE430, gcrma',
-            		'delimiter': 'c', 'color': 'geneatlas_MOE430_20090327.coloring.csv',
-            		'owner': '', 'summary': 'High-throughput gene expression profiling has become an important tool for investigating transcriptional activity in a variety of biological samples. To date, the vast majority of these experiments have focused on specific biological processes and perturbations. Here, we profiled gene expression from a diverse array of normal tissues, organs, and cell lines in mice.',
-            		'geo_gds_id': '', 'geo_gpl_id': 'GPL1261', 'geo_gse_id': 'GSE10246',
-            		'pubmed_id': '18442421', 'species': 'mouse'},
+            	       {'default': True, 'id': 4, 'dir': b, 'name': 'GeneAtlas MOE430, gcrma',
+            	        'delimiter': 'c', 'color': 'geneatlas_MOE430_20090327.coloring.csv',
+            	        'owner': '', 'summary': 'High-throughput gene expression profiling has become an important tool for investigating transcriptional activity in a variety of biological samples. To date, the vast majority of these experiments have focused on specific biological processes and perturbations. Here, we profiled gene expression from a diverse array of normal tissues, organs, and cell lines in mice.',
+            	        'geo_gds_id': '', 'geo_gpl_id': 'GPL1261', 'geo_gse_id': 'GSE10246',
+            	        'pubmed_id': '18442421', 'species': 'mouse'},
             
             	    'ratlas.gcRMA.txt':
-            	       {'id': 5, 'dir': b, 'name': 'GeneAtlas RGU34A, gcrma',
-            		'delimiter': 't', 'color': '', 'owner': '',
-            		'summary': 'Large scale transcriptome analysis of Wistar and Sprague Dawley rat tissues.',
-            		'geo_gds_id': '', 'geo_gpl_id': 'GPL85', 'geo_gse_id': 'GSE952',
-            		'pubmed_id': '15060018', 'species': 'rat'},
+            	       {'default': True, 'id': 5, 'dir': b, 'name': 'GeneAtlas RGU34A, gcrma',
+            	        'delimiter': 't', 'color': '', 'owner': '',
+            	        'summary': 'Large scale transcriptome analysis of Wistar and Sprague Dawley rat tissues.',
+            	        'geo_gds_id': '', 'geo_gpl_id': 'GPL85', 'geo_gse_id': 'GSE952',
+            	        'pubmed_id': '15060018', 'species': 'rat'},
             
             	    'GPL570_data.csv':
-            	       {'id': 6, 'dir': em, 'name': 'Barcode on normal tissues',
-            		'delimiter': 'c', 'color': 'GPL570_tissue_grouping_for_BioGPS.csv', 'owner': 'Michael Zilliox',
-            		'summary': 'This data set displays a survey across diverse normal human tissues from the U133plus2 Affymetrix microarray. The values shown are z-scores produced by the barcode function of the R package "frma" (http://www.bioconductor.org/packages/2.6/bioc/html/frma.html). A z-score >5 suggests that the gene is expressed in that tissue. The lines drawn at the median, 3X median and 10X median are defaults of the BioGPS presentation and are not central to this analysis. For more details, visit http://rafalab.jhsph.edu/barcode/ or http://nar.oxfordjournals.org/content/39/suppl_1/D1011.full.',
-            		'geo_gds_id': '', 'geo_gpl_id': 'GPL570', 'geo_gse_id': '',
-            		'pubmed_id': '', 'species': 'human'},
+            	       {'default': True, 'id': 6, 'dir': em, 'name': 'Barcode on normal tissues',
+            	        'delimiter': 'c', 'color': 'GPL570_tissue_grouping_for_BioGPS.csv', 'owner': 'Michael Zilliox',
+            	        'summary': 'This data set displays a survey across diverse normal human tissues from the U133plus2 Affymetrix microarray. The values shown are z-scores produced by the barcode function of the R package "frma" (http://www.bioconductor.org/packages/2.6/bioc/html/frma.html). A z-score >5 suggests that the gene is expressed in that tissue. The lines drawn at the median, 3X median and 10X median are defaults of the BioGPS presentation and are not central to this analysis. For more details, visit http://rafalab.jhsph.edu/barcode/ or http://nar.oxfordjournals.org/content/39/suppl_1/D1011.full.',
+            	        'geo_gds_id': '', 'geo_gpl_id': 'GPL570', 'geo_gse_id': '',
+            	        'pubmed_id': '', 'species': 'human'},
             
             	    'tumors_U95_20070810.raw.csv':
-            	       {'id': 7, 'dir': b, 'name': 'Primary Tumors (U95)',
-            		'delimiter': 'c', 'color': 'tumors_U95_20070810.coloring.csv',
-            		'owner': '', 'summary': '',
-            		'geo_gds_id': '', 'geo_gpl_id': 'GPL8300', 'geo_gse_id': '',
-            		'pubmed_id': '', 'species': 'human'},
+            	       {'default': True, 'id': 7, 'dir': b, 'name': 'Primary Tumors (U95)',
+            	        'delimiter': 'c', 'color': 'tumors_U95_20070810.coloring.csv',
+            	        'owner': '', 'summary': '',
+            	        'geo_gds_id': '', 'geo_gpl_id': 'GPL8300', 'geo_gse_id': '',
+            	        'pubmed_id': '', 'species': 'human'},
             
             	    'adipose_MOE430_20071005.raw.csv':
-            	       {'id': 8, 'dir': b, 'name': 'eQTL -- Adipose (MOE430 V2)',
-            		'delimiter': 'c', 'color': '', 'owner': '', 'summary': '',
-            		'geo_gds_id': '', 'geo_gpl_id': 'GPL1261', 'geo_gse_id': '',
-            		'pubmed_id': '', 'species': 'mouse'},
+            	       {'default': True, 'id': 8, 'dir': b, 'name': 'eQTL -- Adipose (MOE430 V2)',
+            	        'delimiter': 'c', 'color': '', 'owner': '', 'summary': '',
+            	        'geo_gds_id': '', 'geo_gpl_id': 'GPL1261', 'geo_gse_id': '',
+            	        'pubmed_id': '', 'species': 'mouse'},
             
             	    'fat_msk.GNF1M.csv':
-            	       {'id': 9, 'dir': eq, 'name': 'eQTL -- Fat (GNF1M)',
-            		'delimiter': 'c', 'color': '', 'owner': '', 'summary': '',
-            		'geo_gds_id': '', 'geo_gpl_id': 'GPL1073', 'geo_gse_id': '',
-            		'pubmed_id': '', 'species': 'mouse'},
+            	       {'default': True, 'id': 9, 'dir': eq, 'name': 'eQTL -- Fat (GNF1M)',
+            	        'delimiter': 'c', 'color': '', 'owner': '', 'summary': '',
+            	        'geo_gds_id': '', 'geo_gpl_id': 'GPL1073', 'geo_gse_id': '',
+            	        'pubmed_id': '', 'species': 'mouse'},
             
             	    'hypothalamus_msk.GNF1M.csv':
-            	       {'id': 10, 'dir': eq, 'name': 'eQTL -- Hypothalamus (GNF1M)',
-            		'delimiter': 'c', 'color': '', 'owner': '', 'summary': '',
-            		'geo_gds_id': '', 'geo_gpl_id': 'GPL1073', 'geo_gse_id': '',
-            		'pubmed_id': '', 'species': 'mouse'},
+            	       {'default': True, 'id': 10, 'dir': eq, 'name': 'eQTL -- Hypothalamus (GNF1M)',
+            	        'delimiter': 'c', 'color': '', 'owner': '', 'summary': '',
+            	        'geo_gds_id': '', 'geo_gpl_id': 'GPL1073', 'geo_gse_id': '',
+            	        'pubmed_id': '', 'species': 'mouse'},
             
             	    'hypothalamus_msk.MOE430v2.csv':
-            	       {'id': 11, 'dir': eq, 'name': 'eQTL -- Hypothalamus (MOE430 V2)',
-            		'delimiter': 'c', 'color': '', 'owner': '', 'summary': '',
-            		'geo_gds_id': '', 'geo_gpl_id': 'GPL1261', 'geo_gse_id': '',
-            		'pubmed_id': '', 'species': 'mouse'},
+            	       {'default': True, 'id': 11, 'dir': eq, 'name': 'eQTL -- Hypothalamus (MOE430 V2)',
+            	        'delimiter': 'c', 'color': '', 'owner': '', 'summary': '',
+            	        'geo_gds_id': '', 'geo_gpl_id': 'GPL1261', 'geo_gse_id': '',
+            	        'pubmed_id': '', 'species': 'mouse'},
             
             	    'liver_msk.GNF1M.csv':
-            	       {'id': 12, 'dir': eq, 'name': 'eQTL -- Liver (GNF1M)',
-            		'delimiter': 'c', 'color': '', 'owner': '', 'summary': '',
-            		'geo_gds_id': '', 'geo_gpl_id': 'GPL1073', 'geo_gse_id': '',
-            		'pubmed_id': '', 'species': 'mouse'},
+            	       {'default': True, 'id': 12, 'dir': eq, 'name': 'eQTL -- Liver (GNF1M)',
+            	        'delimiter': 'c', 'color': '', 'owner': '', 'summary': '',
+            	        'geo_gds_id': '', 'geo_gpl_id': 'GPL1073', 'geo_gse_id': '',
+            	        'pubmed_id': '', 'species': 'mouse'},
             
             	    'liver_msk.MOE430v2.csv':
-            	       {'id': 13, 'dir': eq, 'name': 'eQTL -- Liver (MOE430 V2)',
-            		'delimiter': 'c', 'color': '', 'owner': '', 'summary': '',
-            		'geo_gds_id': '', 'geo_gpl_id': 'GPL1261', 'geo_gse_id': '',
-            		'pubmed_id': '', 'species': 'mouse'},
+            	       {'default': True, 'id': 13, 'dir': eq, 'name': 'eQTL -- Liver (MOE430 V2)',
+            	        'delimiter': 'c', 'color': '', 'owner': '', 'summary': '',
+            	        'geo_gds_id': '', 'geo_gpl_id': 'GPL1261', 'geo_gse_id': '',
+            	        'pubmed_id': '', 'species': 'mouse'},
             
             	    'pancreas_msk.GNF1M.csv':
-            	       {'id': 14, 'dir': eq, 'name': 'eQTL -- Pancreas (GNF1M)',
-            		'delimiter': 'c', 'color': '', 'owner': '', 'summary': '',
-            		'geo_gds_id': '', 'geo_gpl_id': 'GPL1073', 'geo_gse_id': '',
-            		'pubmed_id': '', 'species': 'mouse'}
+            	       {'default': True, 'id': 14, 'dir': eq, 'name': 'eQTL -- Pancreas (GNF1M)',
+            	        'delimiter': 'c', 'color': '', 'owner': '', 'summary': '',
+            	        'geo_gds_id': '', 'geo_gpl_id': 'GPL1073', 'geo_gse_id': '',
+            	        'pubmed_id': '', 'species': 'mouse'}
             	   } 
             
             # Parse csv file
@@ -179,7 +181,7 @@ class Command(NoArgsCommand):
             	    self.stdout.write('DB Error - Dataset ID: %s, Platform: %s\n' % (dataset_id, platform))
                 species = ds_info['species']
                 self.stdout.write('Species: %s\n' % species)
-                current_dataset = BiogpsDataset(id=dataset_id, name=dataset_name, ownerprofile=UserProfile.objects.get(user__username='geo'), platform=db_platform, species=species)
+                current_dataset = BiogpsDataset(id=dataset_id, name=dataset_name, ownerprofile=UserProfile.objects.get(user__username='asu'), platform=db_platform, species=species)
             
                 with open('%s/%s' % (ds_info['dir'], ds), 'rb') as f:
             	    if ds_info['delimiter'] == 'c':
@@ -226,7 +228,7 @@ class Command(NoArgsCommand):
             	    	        except KeyError:
             	    	    	    # No color file
             	    	    	    factors_list.append({'%s.%s' % (val, repl_idx): {'title': val, 'order_idx': order_idx, 'color_idx': color_idx}})
-            	    	    metadata = {"id": dataset_id, "name": dataset_name, "owner": ds_info['owner'], "geo_gds_id": ds_info['geo_gds_id'], "geo_gpl_id": platform, "geo_gse_id": ds_info['geo_gse_id'], "species": species, "pubmed_id": ds_info['pubmed_id'], "summary": ds_info['summary'], "factors": factors_list, "display_params": display_dict}
+            	    	    metadata = {"default": ds_info['default'], "id": dataset_id, "name": dataset_name, "owner": ds_info['owner'], "geo_gds_id": ds_info['geo_gds_id'], "geo_gpl_id": platform, "geo_gse_id": ds_info['geo_gse_id'], "species": species, "pubmed_id": ds_info['pubmed_id'], "summary": ds_info['summary'], "factors": factors_list, "display_params": display_dict}
             	    	    # Metadata
             	    	    try:
             	    	        _now = datetime.now()
