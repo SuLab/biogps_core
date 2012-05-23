@@ -178,7 +178,7 @@ INSTALLED_APPS = (
     #our own biogps apps
     'biogps.www',
     'biogps.apps.auth2',
-    #'biogps.apps.dataset',
+    'biogps.apps.dataset',
     'biogps.apps.gene',
     'biogps.apps.plugin',
     'biogps.apps.layout',
