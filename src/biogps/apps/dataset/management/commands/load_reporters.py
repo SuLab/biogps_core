@@ -13,7 +13,7 @@ class Command(NoArgsCommand):
 
     def handle_noargs(self, **options):
         target_db = settings.DATABASES['default']['NAME']
-        ans = ask('Load reporters for all datasets into reporters table in database "%s"?' % target_db)
+        ans = ask('Load reporters for all datasets into reporters table in database "{}"?'.format(target_db))
         if ans == 'Y':
             self.stdout.write('\nPopulating reporters... this is going to take a while, go do something else. Seriously.')
             def reporter_generator(ds):

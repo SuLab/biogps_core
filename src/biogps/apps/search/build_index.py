@@ -368,7 +368,7 @@ class BiogpsGenelistESIndexer(BiogpsModelESIndexer):
         return m
 
 class BiogpsDatasetESIndexer(BiogpsModelESIndexer):
-    '''A class for indexing all BiogpsGeneList objects.'''
+    '''A class for indexing all BiogpsDataset objects.'''
     def __init__(self):
         from biogps.apps.dataset.models import BiogpsDataset
         self._model = BiogpsDataset

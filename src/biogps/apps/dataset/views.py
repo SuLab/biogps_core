@@ -75,20 +75,33 @@ class DatasetQuery():
             return ds_model.objects.get(**filters)
 
     @staticmethod
+    def get_default_ds():
+        '''Return default datasets'''
+        conn = ES(settings.ES_HOST[0], timeout=10.0)
+        t_query = TermsQuery('default', [True])
+        kwargs = {'doc_types': 'dataset', 'indices': 'biogps_dataset', 'fields': 'id,name'}
+        res = conn.search(query=t_query, size='100', **kwargs)
+        try:
+            # Sort results on ID
+            res_sorted = sorted(res['hits']['hits'], key=lambda k: k['fields']['id'])
+            return [ds['fields'] for ds in res_sorted]
+        except KeyError:
+            # Likely empty response
+            return list()
+
+    @staticmethod
     def get_ds_li(rep_li):
         '''Return dataset list for provided reporters'''
-        ds_li = list()
         conn = ES(settings.ES_HOST[0], timeout=10.0)
         t_query = TermsQuery('reporter', rep_li.strip(' ').split(','))
         # *** No spaces between field names. Undocumented and important! ***
         res = conn.search(query=HasChildQuery(type='by_reporter',
                                   query=t_query), **{'fields': 'id,name'})
         try:
-            [ds_li.append(ds['fields']) for ds in res['hits']['hits']]
+            return [ds['fields'] for ds in res['hits']['hits']]
         except KeyError:
             # Likely empty response
-            pass
-        return ds_li
+            return list()
 
     @staticmethod
     def get_ds_page(reps, page, q_term=None):
@@ -473,6 +486,8 @@ class DatasetSearchView(RestView):
 
             # Get reporters from mygene.info
             reps = DatasetQuery.get_mygene_reps(gene_id)
+        elif request.GET.get('defaultDS'):
+            json_response = DatasetQuery.get_default_ds()
         elif request.GET.get('reporters'):
             reps = request.GET['reporters']
             if reps is not None:
