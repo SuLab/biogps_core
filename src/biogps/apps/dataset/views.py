@@ -11,7 +11,7 @@ from biogps.utils.restview import RestView
 from json import loads
 from math import ceil, floor, sqrt
 from operator import itemgetter
-from pyes import ES, FilteredQuery, HasChildQuery, QueryFilter, StringQuery, TermsQuery
+from pyes import ES, ANDFilter, FilteredQuery, HasChildQuery, QueryFilter, StringQuery, TermFilter, TermsQuery
 from pyes.exceptions import (NotFoundException, IndexMissingException,
                              ElasticSearchException)
 from StringIO import StringIO
@@ -75,12 +75,20 @@ class DatasetQuery():
             return ds_model.objects.get(**filters)
 
     @staticmethod
-    def get_default_ds():
+    def get_default_ds(rep_li, q_term=None):
         '''Return default datasets'''
         conn = ES(settings.ES_HOST[0], timeout=10.0)
-        t_query = TermsQuery('default', [True])
         kwargs = {'doc_types': 'dataset', 'indices': 'biogps_dataset', 'fields': 'id,name'}
-        res = conn.search(query=t_query, size='100', **kwargs)
+        t_query = TermsQuery('reporter', rep_li.strip(' ').split(','))
+        base_query = HasChildQuery(type='by_reporter', query=t_query)
+        f_query = FilteredQuery(base_query, ANDFilter([TermFilter('default', [True])]))
+
+        if q_term is not None:
+            # Filter search results with query string
+            q_filter = QueryFilter(query=StringQuery(query=q_term+'*'))
+            res = conn.search(query=FilteredQuery(f_query, q_filter), size='100', **kwargs)
+        else:
+            res = conn.search(query=f_query, size='100', **kwargs)
         try:
             # Sort results on ID
             res_sorted = sorted(res['hits']['hits'], key=lambda k: k['fields']['id'])
@@ -104,16 +112,16 @@ class DatasetQuery():
             return list()
 
     @staticmethod
-    def get_ds_page(reps, page, q_term=None):
+    def get_ds_page(rep_li, page, q_term=None):
         '''Return page of dataset results for provided query type and terms'''
         all_results = list()
         # *** No spaces between field names. Undocumented and important! ***
         kwargs = {'doc_types': 'dataset', 'indices': 'biogps_dataset', 'fields': 'id,name'}
-        t_query = TermsQuery('reporter', reps.strip(' ').split(','))
+        t_query = TermsQuery('reporter', rep_li.strip(' ').split(','))
         base_query = HasChildQuery(type='by_reporter', query=t_query)
 
-        if q_term:
-            # Filter standard search results with query string
+        if q_term is not None:
+            # Filter search results with query string
             q_filter = QueryFilter(query=StringQuery(query=q_term+'*'))
             all_results = ESPages(FilteredQuery(base_query, q_filter), **kwargs)
         else:
@@ -475,8 +483,10 @@ class DatasetSearchView(RestView):
     def get(self, request):
         dbug = False
         json_response = None
-        reps = None
         page = request.GET.get('page', 1)
+        q_term = None
+        rep_li = None
+
         if request.GET.get('debug'):
             dbug = True
             search_start = time()
@@ -485,20 +495,20 @@ class DatasetSearchView(RestView):
             gene_id = request.GET['gene']
 
             # Get reporters from mygene.info
-            reps = DatasetQuery.get_mygene_reps(gene_id)
-        elif request.GET.get('defaultDS'):
-            json_response = DatasetQuery.get_default_ds()
+            rep_li = DatasetQuery.get_mygene_reps(gene_id)
         elif request.GET.get('reporters'):
-            reps = request.GET['reporters']
-            if reps is not None:
+            rep_li = request.GET['reporters']
+            if rep_li is not None:
                 # Get datasets corresponding to reporters
                 if request.GET.get('q'):
                     # Query term search
                     q_term = request.GET['q']
-                    # Get datasets matching term(s)
-                    json_response = DatasetQuery.get_ds_page(reps, page, q_term)
+                if request.GET.get('defaultDS'):
+                    # Get default datasets
+                    json_response = DatasetQuery.get_default_ds(rep_li, q_term)
                 else:
-                    json_response = DatasetQuery.get_ds_page(reps, page)
+                    # Get all datasets
+                    json_response = DatasetQuery.get_ds_page(rep_li, page, q_term)
 
         if dbug:
             search_end = time()
