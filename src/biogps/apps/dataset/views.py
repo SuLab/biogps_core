@@ -16,6 +16,7 @@ from pyes.exceptions import (NotFoundException, IndexMissingException,
                              ElasticSearchException)
 from StringIO import StringIO
 from time import time
+import csv
 import numpy as np
 import psycopg2
 import sys
@@ -164,20 +165,48 @@ class DatasetQuery():
             return None
      
     @staticmethod
-    def get_ds_data(ds_id, rep_li):
+    def get_ds_data(ds_id, rep_li, gene_id, _format):
         '''Return dataset data for provided ID and reporters'''
         ds_name = ''
         rep_dict = OrderedDict()
         try:
-            d = BiogpsDatasetData.objects.filter(dataset=ds_id, reporter__in=rep_li)
+            dsd = BiogpsDatasetData.objects.filter(dataset=ds_id, reporter__in=rep_li)
         except BiogpsDatasetData.DoesNotExist:
             return None
-        for i in d:
-            # Parse each reporter's results
-            ds_name = i.dataset.name
-            rep_dict[i.reporter] = i.data
-        probeset_list = [{i: {"values": rep_dict[i]}} for i in rep_dict]
-        return OrderedDict([('id', ds_id), ('name', ds_name), ('probeset_list', probeset_list)])
+        if _format is not None:
+            _format = _format.lower()
+            if _format == 'csv':
+                # CSV output
+                _res = HttpResponse(mimetype='text/csv')
+                if gene_id is not None:
+                    _res['Content-Disposition'] = 'attachment; filename=dataset_{}_gene_{}.csv'.format(ds_id, gene_id)
+                else:
+                    _res['Content-Disposition'] = 'attachment; filename=dataset_{}.csv'.format(ds_id)
+
+                # Write csv results
+                w = csv.writer(_res)
+
+                # Column titles
+                col_titles = ['Tissue'] + rep_li
+                w.writerow(col_titles)
+
+                _factors = BiogpsDataset.objects.get(id=ds_id).metadata['factors']
+                samp_names = [i.keys()[0] for i in _factors]
+                for idx, val in enumerate(samp_names):
+                    csv_row = list()
+                    csv_row.append(samp_names[idx].rsplit('.', 1)[0])
+                    for i in dsd:
+                        csv_row.append(i.data[idx])
+                    w.writerow(csv_row)
+
+                return _res
+        else:
+            # Default json output
+            for i in dsd:
+                ds_name = i.dataset.name
+                rep_dict[i.reporter] = i.data
+            probeset_list = [{i: {"values": rep_dict[i]}} for i in rep_dict]
+            return OrderedDict([('id', ds_id), ('name', ds_name), ('probeset_list', probeset_list)])
      
     @staticmethod
     def get_ds_chart(ds_id, rep_id):
@@ -519,11 +548,22 @@ class DatasetSearchView(RestView):
 @csrf_exempt
 class DatasetValuesView(RestView):
     '''This class defines views for REST URL:
-        /dataset/<datasetID>/values/?reporters=
+        /dataset/<datasetID>/values/?reporters=...(&gene=)(&format=)
     '''
     def get(self, request, datasetID):
-        get_reporters = [i for i in request.GET['reporters'].split(',')]
-        return JSONResponse(DatasetQuery.get_ds_data(datasetID, get_reporters))
+        try:
+            get_reporters = [i for i in request.GET['reporters'].split(',')]
+        except KeyError:
+            return HttpResponseNotFound('<b>No reporters provided.</b>'\
+                                        '<br />Please provide reporters '\
+                                        'in the form of ?reporters=rep1,rep2')
+        gene_id = request.GET.get('gene', None)
+        _format = request.GET.get('format', None)
+        res = DatasetQuery.get_ds_data(datasetID, get_reporters, gene_id, _format)
+        if _format is not None:
+            return res
+        else:
+            return JSONResponse(res)
 
 
 @csrf_exempt
@@ -555,6 +595,6 @@ class DatasetCorrelationView(RestView):
             min_corr = float(request.GET['co'])
         except KeyError:
             return HttpResponseNotFound("<b>No correlation value provided.</b>"\
-                                        "<br>Please provide a correlation cutoff"\
+                                        "<br />Please provide a correlation cutoff"\
                                         " value in the form of ?co=0.9, etc.")
         return JSONResponse(DatasetQuery.get_ds_corr(datasetID, reporterID, min_corr))
