@@ -1,6 +1,11 @@
 from django.conf.urls.defaults import *
 
-urlpatterns = patterns('biogps.apps.plugin.views',
+urlpatterns = patterns('biogps.apps.plugin.plugin',
+    url(r'^(?P<pluginid>\d+)/renderurl/$', 'render_plugin_url'),
+    url(r'^(?P<pluginid>\d+)/flag/$', 'flagplugin'),
+)
+
+urlpatterns += patterns('biogps.apps.plugin.views',
 
     url(r'^$', 'PluginLibraryView', name='plugin_home'),
     url(r'^new/$', 'PluginNewView', name='plugin_new'),
