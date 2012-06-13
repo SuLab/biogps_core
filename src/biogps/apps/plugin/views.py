@@ -406,4 +406,3 @@ def test_plugin_url(request):
             'geneid': geneid,
             'url': url}
     return JSONResponse(data)
-
