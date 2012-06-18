@@ -85,12 +85,12 @@ if getattr(settings, 'SERVE_ASSETS', False):
                            )
 
 urlpatterns += patterns('biogps.apps.plugin.plugin',
-                        (r'^plugin_v1/browse', 'pluginbrowser'),
-                        (r'^plugin_v1/$', 'plugin'),
+#                        (r'^plugin_v1/browse', 'pluginbrowser'),
+#                        (r'^plugin_v1/$', 'plugin'),
                         (r'^plugin_v1/(?P<pluginid>\d+)/renderurl/$', 'render_plugin_url'),
-                        (r'^plugin_v1/(?P<pluginid>\d+)/usage/$', 'plugin_usage'),
+#                        (r'^plugin_v1/(?P<pluginid>\d+)/usage/$', 'plugin_usage'),
                         (r'^plugin_v1/(?P<pluginid>\d+)/flag/$', 'flagplugin'),
-                        (r'^plugin_v1/(?P<query>.+)/', 'plugin'),
+#                        (r'^plugin_v1/(?P<query>.+)/', 'plugin'),
                         )
 
 urlpatterns += patterns('biogps.apps.layout.layout',
@@ -135,13 +135,17 @@ urlpatterns += patterns('django.views.generic.simple',
                         ('^genereport/(?P<geneid>[\w-]+)/$', 'redirect_to', {'url': '/gene/%(geneid)s/'}),
                        )
 
-#/robots.txt
+#/robots.txt /dtds /biositemap.rdf
 urlpatterns += patterns('django.views.generic.simple',
                        (r'^robots.txt$', 'direct_to_template',
                          {'template': 'seo/robots.txt',
                           'mimetype': 'text/plain'}),
                        (r'dtds', 'redirect_to', {'url': 'http://biogps.org'}),    #RSS DTDs 301 re-direct
+                       (r'^biositemap.rdf$', 'direct_to_template',
+                         {'template': 'seo/biositemap.rdf',
+                          'mimetype': 'text/plain'}),
                        )
+
 
 ##For Google webmaster tool verification
 # for biogps.org verification
