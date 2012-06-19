@@ -485,12 +485,6 @@ class DatasetView(RestView):
         '''
         meta = DatasetQuery.get_ds_metadata(datasetID)
         if meta: 
-            # If dataset has ordering information,
-            # sort according to it
-            try:
-                meta['factors'].sort(key=lambda x: x.values()[0]['order_idx'])
-            except KeyError:
-                pass
             return JSONResponse(meta)
         else:
             return HttpResponseNotFound("Dataset ID #{} does not exist.".format(datasetID));
