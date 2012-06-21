@@ -569,7 +569,7 @@ def render_plugin_url(request, pluginid):
     if not is_valid_geneid(geneid):
         return HttpResponseBadRequest('Invalid input parameters!')
 
-    available_plugins = get_my_plugins(request.user) | get_shared_plugins(request.user)
+    available_plugins = BiogpsPlugin.objects.get_available(request.user)
 
     try:
         plugin = available_plugins.get(id=pluginid)

@@ -43,7 +43,7 @@
         border-right: 2px solid #DDD;
         margin: 0 4px;
     }
-    
+
     .welcome-auth #login-form {
 /*        margin-bottom: 3px;*/
 /*        *margin-bottom: 0;*/
@@ -51,22 +51,24 @@
     }
 
     .welcome-auth input {
-        width: 66px;
+        width: 56px;
+        height: 18px;
+        font-size: 12px;
     }
-    
+
     .welcome-auth #id_username {
         margin-right: 4px;
     }
-    
+
     #welcome-loggedin {
         font-size: 14px;
     }
-    
+
     .login-type {
         color: #666;
         font-size: 10px;
     }
-    
+
     /* Used on the welcome page to hide the button, but still keep it visible
        to the IEs. This allows the Enter key to still submit. */
     #hidden-submit {
@@ -75,7 +77,7 @@
         left: -200px;
         z-index: -1;
     }
-    
+
 
 .welcome-header {
     clear: both;
@@ -85,7 +87,7 @@
     margin: 10px 0 0 0;
     border-color: #BBB;
     width: 938px;
-    
+
     background: #DEC07F;
     background: -moz-linear-gradient(center top -90deg, #FFF9CA, #DEC07F);
     background: -webkit-gradient(linear, center top, center bottom, color-stop(0, #FFF9CA), color-stop(1, #DEC07F));
@@ -113,20 +115,20 @@
         margin-right: 20px;
         margin-top: 20px;
     }
-    
+
     #welcome-link-library {
         display: block;
         position: absolute;
         bottom: -1px;
         left: -1px;
         padding: 6px 20px;
-        
+
         background: -moz-linear-gradient(center top -90deg, #FFF9CA, #DEC07F);
         background: -webkit-gradient(linear, center top, center bottom, color-stop(0, #FFF9CA), color-stop(1, #DEC07F));
         -webkit-background-origin: padding-box;
         -pie-background: linear-gradient(-90deg, #FFF9CA, #DEC07F);
         behavior: "url(/assets/less/flawless/core/production/framework/css3/PIE.txt.htc)";
-        
+
         border: 1px solid #DEC07F;
         -moz-border-radius: 0px 6px 0px 6px;
         -webkit-border-bottom-left-radius: 6px;
@@ -141,7 +143,7 @@
         #welcome-link-library:hover {
             text-decoration: none;
             border-color: #1E4176;
-            
+
             background: -moz-linear-gradient(center top 90deg, #FFF9CA, #DEC07F);
             background: -webkit-gradient(linear, center top, center bottom, color-stop(1, #FFF9CA), color-stop(0, #DEC07F));
             -webkit-background-origin: padding-box;
@@ -153,12 +155,12 @@
         font-size: 20px;
         margin-top: 35px;
     }
-    
+
     .welcome-circadian {
         margin-top: 15px;
         text-align: center;
     }
-    
+
     #js_required,
     #ie_unsupported {
         color: #900;
@@ -169,11 +171,11 @@
         padding: 5px;
         margin: 10px 200px;
     }
-    
+
     #ie_unsupported {
         display: none;
     }
-    
+
     .ie6 #ie_unsupported,
     .ie7 #ie_unsupported {
         display: block;
@@ -207,7 +209,7 @@
     width: 288px;
     margin: 15px 15px 15px 0;
 }
-.welcome-left .roundBox { 
+.welcome-left .roundBox {
     margin: 0;
 }
 
@@ -328,7 +330,7 @@
         color: #666;
         margin-right: 0.5em;
     }
-    
+
     .advanced_link:hover {
         text-decoration: none;
         background: #EBF0F7;
@@ -360,7 +362,7 @@
     color: #000;
     border: 1px solid #000;
     padding: 5px;
-    
+
     /* Box Shadowing */
     /* Right Bottom Blur Color */
     box-shadow: 0px 5px 20px #000;
@@ -473,9 +475,9 @@
 #infobox-slideshow {
     height: 200px;
     margin: 0px;
-    overflow: hidden; 
+    overflow: hidden;
     padding: 0px;
-    position: relative; 
+    position: relative;
     width: 265px;
 }
 
@@ -496,7 +498,7 @@
     text-align: center;
     margin-top: 15px;
 }
-    
+
     .featured img {
         border-size: 1px;
     }
@@ -617,7 +619,7 @@
         position: relative;
         width: 48px;
     }
-    
+
     #welcome-iphone .right {
         position: relative;
         width: 70px;
@@ -635,7 +637,7 @@
         font-size: 16px;
         font-weight: bold;
     }
-    
+
     .firstentry .author {
         color: #666;
     }
@@ -652,7 +654,20 @@
     height: 35px;
 }
 
-
+#help_biogps {
+    width: 400px;
+    padding-top: 15px;
+    padding-bottom: 0px;
+    padding-left: 32px;
+    margin-left: auto ;
+    margin-right: auto ;
+    text-align: center;
+}
+#help_biogps a {
+    color: red;
+    font-weight: bold;
+    font-size: large;
+}
 
 
 /* Help Pages */
@@ -801,7 +816,7 @@
  * FAQ page
  */
 .faq {
-    
+
 }
 
 .faq .roundBox { margin-bottom: 20px; }
