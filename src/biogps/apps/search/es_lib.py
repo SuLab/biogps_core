@@ -133,6 +133,7 @@ class ESQuery():
         # Run the actual search
         try:
             result = self.conn.search(query=q, doc_types=doc_types)
+            result._do_search()
         except (SearchPhaseExecutionException, InvalidQuery):
             exc_name = sys.exc_type.__name__
             err_msg =  sys.exc_value.args[0] if (sys.exc_value.args)>0 else ""
@@ -143,7 +144,7 @@ class ESQuery():
         self._q = q
         self._doc_types = doc_types
 
-        result = BiogpsSearchResult(result)
+        result = BiogpsSearchResult(result._results)
         #keep a reference of ESQuery object generates the result.
         result.query = self
         return result
