@@ -5,7 +5,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse, HttpResponseNotFound
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.encoding import smart_str
-from biogps.apps.search.es_lib import ESPages
+#from biogps.apps.search.es_lib import ESPages
 from biogps.utils.http import JSONResponse
 from biogps.utils.restview import RestView
 from json import loads
@@ -115,6 +115,7 @@ class DatasetQuery():
     @staticmethod
     def get_ds_page(rep_li, page, q_term=None):
         '''Return page of dataset results for provided query type and terms'''
+        conn = ES(settings.ES_HOST[0], timeout=10.0)
         all_results = list()
         # *** No spaces between field names. Undocumented and important! ***
         kwargs = {'doc_types': 'dataset', 'indices': 'biogps_dataset', 'fields': 'id,name'}
@@ -124,9 +125,11 @@ class DatasetQuery():
         if q_term is not None:
             # Filter search results with query string
             q_filter = QueryFilter(query=StringQuery(query=q_term+'*'))
-            all_results = ESPages(FilteredQuery(base_query, q_filter), **kwargs)
+            #all_results = ESPages(FilteredQuery(base_query, q_filter), **kwargs)
+            all_results = conn.search(query=FilteredQuery(base_query, q_filter), **kwargs)
         else:
-            all_results = ESPages(base_query, **kwargs)
+            #all_results = ESPages(base_query, **kwargs)
+            all_results = conn.search(base_query, **kwargs)
 
         # Now have total number of results, use Django paginator example at:
         # https://docs.djangoproject.com/en/dev/topics/pagination/#using-paginator-in-a-view

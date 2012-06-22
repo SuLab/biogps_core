@@ -28,7 +28,7 @@ def get_es_conn(ES_HOST=None):
 
 #    force_http = ES_HOST[0].endswith(':80') if isinstance(ES_HOST, list) else \
 #                 ES_HOST.endswith(':80')
-    conn = ES(ES_HOST, default_indexes=[settings.ES_INDEX_NAME],
+    conn = ES(ES_HOST, default_indices=[settings.ES_INDEX_NAME],
               timeout=10.0)
 #              force_http=force_http, timeout=10.0)
     return conn
