@@ -339,7 +339,9 @@ class ESQuery():
 
 
 class ESPages():
-    ''' For use with Django's paginator'''
+    ''' For use with Django's paginator. Currently not used after pyes
+        update implemented ResultSet, which provides the count,
+        __getitem__, and __len__ methods required for Django's paginator. '''
     def __init__(self, es_query, **kwargs):
         ''' Make initial ES query'''
         self.conn = ES(settings.ES_HOST[0], timeout=10.0)
