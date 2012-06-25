@@ -5,7 +5,6 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse, HttpResponseNotFound
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.encoding import smart_str
-#from biogps.apps.search.es_lib import ESPages
 from biogps.utils.http import JSONResponse
 from biogps.utils.restview import RestView
 from json import loads
@@ -92,7 +91,7 @@ class DatasetQuery():
             res = conn.search(query=f_query, size='100', **kwargs)
         try:
             # Sort results on ID
-            res_sorted = sorted(res['hits']['hits'], key=lambda k: k['fields']['id'])
+            res_sorted = sorted(res.hits, key=lambda k: k['fields']['id'])
             return [ds['fields'] for ds in res_sorted]
         except KeyError:
             # Likely empty response
@@ -125,10 +124,8 @@ class DatasetQuery():
         if q_term is not None:
             # Filter search results with query string
             q_filter = QueryFilter(query=StringQuery(query=q_term+'*'))
-            #all_results = ESPages(FilteredQuery(base_query, q_filter), **kwargs)
             all_results = conn.search(query=FilteredQuery(base_query, q_filter), **kwargs)
         else:
-            #all_results = ESPages(base_query, **kwargs)
             all_results = conn.search(base_query, **kwargs)
 
         # Now have total number of results, use Django paginator example at:
@@ -212,7 +209,7 @@ class DatasetQuery():
             return OrderedDict([('id', ds_id), ('name', ds_name), ('probeset_list', probeset_list)])
      
     @staticmethod
-    def get_ds_chart(ds_id, rep_id):
+    def get_ds_chart(ds_id, rep_id, sort_fac):
         '''Return dataset static chart URL for provided ID and reporter'''
         try:
             rep_data = BiogpsDatasetData.objects.get(dataset=ds_id, reporter=rep_id)
@@ -240,7 +237,11 @@ class DatasetQuery():
             # No aggregate display param
             _agg = None
         try:
-            _sort = ds_params['sort'][0]
+            if sort_fac is not None:
+                # URL-provided sort param overrides default
+                _sort = sort_fac
+            else:
+                _sort = ds_params['sort'][0]
         except IndexError:
             _sort = None
         try:
@@ -488,6 +489,13 @@ class DatasetView(RestView):
         '''
         meta = DatasetQuery.get_ds_metadata(datasetID)
         if meta: 
+            sort_fac = request.GET.get('sortFactor', None)
+            if sort_fac is not None:
+                # Sort metadata by provided factor
+                try:
+                    meta['factors'].sort(key=lambda x: x.values()[0][sort_fac])
+                except KeyError:
+                    pass
             return JSONResponse(meta)
         else:
             return HttpResponseNotFound("Dataset ID #{} does not exist.".format(datasetID));
@@ -572,7 +580,8 @@ class DatasetStaticChartView(RestView):
        return the static chart image.
     '''
     def get(self, request, datasetID, reporterID):
-        chart_img = DatasetQuery.get_ds_chart(datasetID, reporterID)
+        sort_fac = request.GET.get('sortFactor', None)
+        chart_img = DatasetQuery.get_ds_chart(datasetID, reporterID, sort_fac)
         try:
             return HttpResponse(chart_img.read(), mimetype=chart_img.info().type) 
         except AttributeError:
