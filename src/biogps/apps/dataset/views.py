@@ -3,6 +3,7 @@ from collections import OrderedDict
 from django.conf import settings
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse, HttpResponseNotFound
+from django.shortcuts import render_to_response
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.encoding import smart_str
 from biogps.utils.http import JSONResponse
@@ -21,7 +22,7 @@ import psycopg2
 import sys
 import urllib
 
-from biogps.apps.dataset.models import BiogpsDataset, BiogpsDatasetData, BiogpsDatasetMatrix
+from biogps.apps.dataset.models import BiogpsDataset, BiogpsDatasetData, BiogpsDatasetMatrix, BiogpsDatasetReporters
 
 
 def mean(values):
@@ -106,7 +107,7 @@ class DatasetQuery():
         res = conn.search(query=HasChildQuery(type='by_reporter',
                                   query=t_query), **{'fields': 'id,name'})
         try:
-            return [ds['fields'] for ds in res['hits']['hits']]
+            return [ds['fields'] for ds in res.hits]
         except KeyError:
             # Likely empty response
             return list()
@@ -209,7 +210,7 @@ class DatasetQuery():
             return OrderedDict([('id', ds_id), ('name', ds_name), ('probeset_list', probeset_list)])
      
     @staticmethod
-    def get_ds_chart(ds_id, rep_id, sort_fac):
+    def get_ds_chart(ds_id, rep_id, sort_fac=None):
         '''Return dataset static chart URL for provided ID and reporter'''
         try:
             rep_data = BiogpsDatasetData.objects.get(dataset=ds_id, reporter=rep_id)
@@ -548,6 +549,44 @@ class DatasetSearchView(RestView):
             search_end = time()
             json_response += ['DEBUG:', 'Search {} secs'.format(round(search_end-search_start, 3))]
         return JSONResponse(json_response)
+
+
+@csrf_exempt
+class DatasetBotView(RestView):
+    '''This class defines views for REST URL:
+        /dataset/bot/<geneID>/
+    '''
+    def get(self, request, geneID):
+        if not geneID:
+            return HttpResponseNotFound('<b>No gene ID provided.</b>'\
+                                        '<br />Please provide a gene ID '\
+                                        'in the form of /dataset/bot/geneID')
+        # Get reporters from mygene.info
+        rep_li = DatasetQuery.get_mygene_reps(geneID)
+        if not rep_li :
+            return HttpResponseNotFound('<b>No reporters for gene ID {} found'\
+                                        '</b><br />Please confirm a valid '\
+                                        'gene ID has been provided'.format(geneID))
+        else:
+            # Get default datasets corresponding to reporters
+            ds_li = DatasetQuery.get_default_ds(rep_li)
+
+            # Determine reporters in each dataset
+            ds_info = list() # [{'1': {'name': 'U133A...', 'reps': ['1007_s_at', '1053_at']}}, ...]
+            rep_li = rep_li.strip(' ').split(',')
+            for i in ds_li:
+                ds_id = i['id']
+                ds_reps = list()
+                reps = BiogpsDatasetReporters.objects.get(dataset=ds_id).reporters
+                for r in rep_li:
+                    if r in reps:
+                        ds_reps.append(r)
+
+                # Combine dataset names and reporters based on ID
+                _ds_dict = {ds_id: {'name': i['name'], 'reps': ds_reps}}
+                ds_info.append(_ds_dict)
+
+            return render_to_response('dataset/bot.html', {'gene_id': geneID, 'ds_info': ds_info})
 
 
 @csrf_exempt

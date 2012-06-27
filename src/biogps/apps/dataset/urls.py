@@ -1,6 +1,15 @@
 from django.conf.urls.defaults import *
+from django.conf import settings
 
-urlpatterns = patterns('biogps.apps.dataset.views',
+
+urlpatterns = list()
+if settings.RELEASE_MODE == 'dev':
+    urlpatterns.insert(0, ('biogps.apps.dataset.views',
+                            (r'^bot/(?P<geneid>.+)/$', 'DatasetBotView'),
+                          )
+    )
+
+urlpatterns += patterns('biogps.apps.dataset.views',
 
     #url(r'^$', 'DatasetLibraryView', name='dataset_home'),
     #url(r'^new/$', 'DatasetNewView', name='dataset_new'),
@@ -21,6 +30,10 @@ urlpatterns = patterns('biogps.apps.dataset.views',
     #url(r'^tag/(?P<tag>[\w\s-]+)/$', 'DatasetListView', name='dataset_list_for_tag'),
 
     #url(r'test/$', 'test_plugin_url', name='test_plugin_url'),
+
+
+    (r'^bot/(?P<geneID>.+)/$', 'DatasetBotView'),
+
 
     (r'search/$', 'DatasetSearchView'),
     (r'(?P<datasetID>\d+)/values/$', 'DatasetValuesView'),
