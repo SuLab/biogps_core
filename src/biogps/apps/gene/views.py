@@ -33,16 +33,19 @@ def genereport_for_bot(request, geneid):
     '''
     from biogps.apps.ext_plugins.views import grSymatlasTable
     from django.contrib.sites.models import Site
+    from biogps.apps.dataset.views import DatasetBotView
 
-    #retrieve the html content from DataChart plugin
-    datachart_url = 'http://plugins.biogps.org/data_chart/data_chart_bot.cgi'
+    # #retrieve the html content from DataChart plugin
+    # datachart_url = 'http://plugins.biogps.org/data_chart/data_chart_bot.cgi'
 
-    param = {'id': geneid}
-    try:
-        datachart_content = svc.callRemoteService(datachart_url, param, 'GET')
-    except svc.RemoteServiceError:
-        datachart_content = svc.RemoteServiceErrorResponse(request).content
+    # param = {'id': geneid}
+    # try:
+    #     datachart_content = svc.callRemoteService(datachart_url, param, 'GET')
+    # except svc.RemoteServiceError:
+    #     datachart_content = svc.RemoteServiceErrorResponse(request).content
 
+    #retrieve the html content from DatasetBotView
+    datachart_content = DatasetBotView().get(request, geneid).content
     #retrieve the html content from SymatlasTable (GeneIdentifiers) plugin
     symtab_data = grSymatlasTable(request, geneid, forbot=True)
 
