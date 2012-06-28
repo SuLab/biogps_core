@@ -4,8 +4,8 @@ steal(
 ).then(function( $ ) {
     /**
      * @tag controllers, home
-     * Enables plugin editing forms.  Lets the user 
-     * ["Biogps.Controllers.Pluginform.prototype.form submit" create], 
+     * Enables plugin editing forms.  Lets the user
+     * ["Biogps.Controllers.Pluginform.prototype.form submit" create],
      * ["Biogps.Controllers.Pluginform.prototype.&#46;edit click" edit],
      * or ["Biogps.Controllers.Pluginform.prototype.&#46;destroy click" destroy] plugins.
      */
@@ -19,14 +19,14 @@ steal(
             // Initialize URL Template autocompletion
             this.find('#id_url').urltemplate();
             this.find('#btn-test_url').button();
-            
+
             // Start counter for short_description length
             this.find('#id_short_description').NobleCount('#id_short_description_count');
-            
+
             // Initialize permissions display
             this.find('#id_rolepermission').buttonset();
             this.displayPermission( el.formParams()['rolepermission'] );
-            
+
             // Initialize species buttons
             this.find('#id_species label').addClass('btn_species');
             this.find('#id_species input')
@@ -42,7 +42,7 @@ steal(
                     }
                 })
                 .filter(':checked').button({ icons: { primary: 'ui-icon-check' } });
-            
+
             // Initialize Tag autocompletion
             var $id_tags = this.find('#id_tags'),
                 all_tags = $id_tags.data('complete');
@@ -77,7 +77,7 @@ steal(
                         return false;
                     }
                 });
-            
+
         },
         /**
          * Responds to the create form being submitted by creating a new Biogps.Models.Plugin.
@@ -132,7 +132,7 @@ steal(
                             }
                         });
                     }
-                    
+
                     // Check for form errors
                     if( response.hasOwnProperty('errors') ){
                         for( var e in response.errors ){
@@ -145,7 +145,7 @@ steal(
                     }
                 });
         },
-        
+
         /**
          * Responds to the "Test URL" button getting clicked.
          */
@@ -153,7 +153,7 @@ steal(
             var testUrl = this.find('#id_url').val(),
                 previewDiv = $('<div></div>'),
                 resultSpan = this.find('#result-test_url');
-            
+
             $.ajax({
                 type: 'GET',
                 url: '/plugin/test/',
@@ -179,7 +179,7 @@ steal(
                 }
             });
         },
-        
+
         /**
          * Handles clicking on a plugin's destroy link.
          */
@@ -187,7 +187,7 @@ steal(
             if(confirm("Are you sure you want to destroy this plugin?"))
                 this.plugin.destroy();
         },
-        
+
         /**
          * Handles clicking on the permission toggles.
          */
@@ -197,7 +197,7 @@ steal(
         displayPermission: function(perm){
             var summary = this.find('.object-summary');
             summary.removeClass('object-restricted object-private');
-            
+
             if( perm == 'myself' ){
                 summary.addClass('object-private');
             }
