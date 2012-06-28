@@ -654,6 +654,16 @@
     height: 35px;
 }
 
+#welcome_notice {
+    width: 400px;
+    padding-top: 15px;
+    padding-bottom: 0px;
+    padding-left: 32px;
+    margin-left: auto ;
+    margin-right: auto ;
+    text-align: center;
+}
+
 #help_biogps {
     width: 400px;
     padding-top: 15px;
