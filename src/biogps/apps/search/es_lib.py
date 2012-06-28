@@ -8,6 +8,7 @@ from pyes import (ES, TermQuery, TermsQuery, StringQuery,
                   FilteredQuery, BoolQuery, RangeQuery, MatchAllQuery)
 from pyes import ESRange
 from pyes.exceptions import (SearchPhaseExecutionException, InvalidQuery)
+from pyes.es import ESJsonEncoder
 from biogps.utils import json, dotdict
 from biogps.utils.models import get_role_shortnames
 from biogps.apps.search.results import BiogpsSearchResult
@@ -144,7 +145,10 @@ class ESQuery():
         self._q = q
         self._doc_types = doc_types
 
-        result = BiogpsSearchResult(result._results)
+        #get raw json output, get rid of pyes.es.DotDict in the result._results
+        result = json.loads(ESJsonEncoder().encode(result._results))
+
+        result = BiogpsSearchResult(result)
         #keep a reference of ESQuery object generates the result.
         result.query = self
         return result
