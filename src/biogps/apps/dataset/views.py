@@ -14,6 +14,7 @@ from operator import itemgetter
 from pyes import ES, ANDFilter, FilteredQuery, HasChildQuery, QueryFilter, StringQuery, TermFilter, TermsQuery
 from pyes.exceptions import (NotFoundException, IndexMissingException,
                              ElasticSearchException)
+from random import choice
 from StringIO import StringIO
 from time import time
 import csv
@@ -361,7 +362,8 @@ class DatasetQuery():
         # Format data for posting to Google Charts
         # Google Chart API documentation at
         # http://code.google.com/apis/chart/image/docs/making_charts.html
-        chart_url = 'https://chart.googleapis.com/chart'
+        chart_servers = range(0, 10)
+        chart_url = 'http://{}.chart.apis.google.com/chart'.format(choice(chart_servers))
         chart_size_w = '370'
         if len(ps_values) > 180:
             chart_size_h = '810'
@@ -622,6 +624,8 @@ class DatasetStaticChartView(RestView):
     def get(self, request, datasetID, reporterID):
         sort_fac = request.GET.get('sortFactor', None)
         chart_img = DatasetQuery.get_ds_chart(datasetID, reporterID, sort_fac)
+        if chart_img is None:
+            return HttpResponseNotFound("No data found for dataset ID #{} and reporter '{}'.".format(datasetID, reporterID));
         try:
             return HttpResponse(chart_img.read(), mimetype=chart_img.info().type) 
         except AttributeError:
