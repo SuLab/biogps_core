@@ -151,10 +151,11 @@ class DatasetQuery():
                                     'refseq.rna'.format(gene_id))
         if mygene_res.getcode() == 200:
             _results = loads(mygene_res.read())
-            rep_dict = _results['reporter']
-            for key in rep_dict.keys():
-                for val in rep_dict[key]:
-                    rep_li.append(val)
+            if 'reporter' in _results:
+                rep_dict = _results['reporter']
+                for key in rep_dict.keys():
+                    for val in rep_dict[key]:
+                        rep_li.append(val)
         return ','.join(rep_li)
      
     @staticmethod
