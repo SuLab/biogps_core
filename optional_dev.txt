@@ -1,0 +1,6 @@
+# Optional python modules for BioGPS app running in dev mode
+# To install all requirement for dev enviroment, run 
+#    pip install -r requirements.txt -r optional_dev.txt
+nose>=0.11.4
+docutils>=0.5
+Werkzeug>=0.5

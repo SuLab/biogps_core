@@ -1,0 +1,143 @@
+{% extends "base_site.html" %}
+
+{% load i18n %}
+{% load user_tags %}
+
+{% block title %}Friends | BioGPS{% endblock %}
+
+{% block extrahead %}
+    <link rel="stylesheet" href="/assets/css/friends.css" />
+{% endblock %}
+
+{% block bodyclass %}login{% endblock %}
+{% block breadcrumbs %}<div class="breadcrumbs"><a href="/">{% trans 'Home' %}</a> &rsaquo; Friends</div>{% endblock %}
+
+{% block content %}
+
+<div id="fixedWrapper" class="clearfix">
+
+    <div id="friends_box" class="roundBox clearfix">
+	    <h2>Friends on BioGPS</h2>
+	    {% if friends %}
+	    <table class="friends_list">
+	        {% for friend in friends %}
+	        <tr>
+	            <td>{% user_link friend.friend %}</td>
+	        </tr>
+	        {% endfor %}
+	    </table>
+	    {% else %}
+	    <div>You have not connected with your friends yet.</div>
+	    {% endif %}
+
+         <div class='profileControls'>
+             <a href="{% url invite_friend %}" rel="facebox" class="roundButton">{% trans "Invite someone new to join" %}</a>
+         </div>    </div>
+
+    <div id="invitations_box" class="roundBox clearfix">
+        <h2>{% trans "Invitations" %}</h2>
+
+        <ul>
+	    <li>{% trans "Friendship Requests Received" %}</li>
+
+	    {% if invites_received %}
+	        <table class="invitation_list gridtable">
+	            <tr><th width="130px">From</th><th>Message</th><th width="100px">When</th><th width="130px">Status/Action</th></tr>
+	            {% for invitation in invites_received %}
+	                {% ifequal invitation.status "2" %}
+	                    <tr>
+	                       <td>{% user_link invitation.from_user %}</td>
+	                       <td class="invitation_message">{{ invitation.message|default:"&lt;empty&gt;"|truncatewords:20 }}</td>
+	                       <td>{{ invitation.sent }} </td>
+                           <td><form method="post" action="">
+	                                <input type="hidden" name="invitation" value="{{ invitation.id }}"/>
+	                                <input type="hidden" name="action" value="accept"/>
+	                                <input type="submit" value="{% trans 'accept' %}" />
+	                            </form>
+	                            <form method="post" action="">
+	                                <input type="hidden" name="invitation" value="{{ invitation.id }}"/>
+	                                <input type="hidden" name="action" value="decline"/>
+	                                <input type="submit" value="{% trans 'decline' %}" />
+	                            </form>
+	                        </td>
+	                    </tr>
+	                {% else %}
+	                    <tr>
+                           <td>{% user_link invitation.from_user %}</td>
+                           <td class="invitation_message">{{ invitation.message|default:"&lt;empty&gt;"|truncatewords:20 }}</td>
+                           <td>{{ invitation.sent }} </td>
+                           <td class="invitation_{{ invitation.status }}">{{ invitation.get_status_display }}</td>
+	                    </tr>
+	                {% endifequal %}
+	            {% endfor %}
+	        </table>
+	    {% else %}
+	        <p>{% trans "No friendship requests received." %}</p>
+	    {% endif %}
+
+
+	    <li>{% trans "Friendship Requests Sent" %}</li>
+
+	    {% if invites_sent %}
+	        <table class="invitation_list gridtable">
+            <tr><th width="130px">To</th><th>Message</th><th width="100px">When</th><th width="130px">Status</th></tr>
+	            {% for invitation in invites_sent %}
+	                <tr>
+	                    <td>{% user_link invitation.to_user %}</td>
+	                    <td class="invitation_message">{{ invitation.message|default:"&lt;empty&gt;"|truncatewords:20 }}</td>
+	                    <td>{{ invitation.sent }}</td>
+	                    <td class="invitation_{{ invitation.status }}">{{ invitation.get_status_display }}</td>
+	                </tr>
+	            {% endfor %}
+	        </table>
+	    {% else %}
+	        <p>{% trans "No friendship requests sent." %}</p>
+	    {% endif %}
+
+
+	    <li>{% trans "Join Requests Sent" %}</li>
+        </ul>
+	    {% if joins_sent %}
+	        <table class="invitation_list gridtable">
+	        <tr><th width="130px">To</th><th>Message</th><th width="100px">When</th><th width="80px">Status</th><th width="130px">Joined as</th></tr>
+
+	            {% for invitation in joins_sent %}
+	                <tr>
+	                    <td>{{ invitation.contact.email }}</td>
+	                    <td class="invitation_message">{{ invitation.message|default:"&lt;empty&gt;"|truncatewords:20 }}</td>
+	                    <td>{{ invitation.sent }}</td>
+	                    <td class="invitation_{{ invitation.status }}">{{ invitation.get_status_display }}</td>
+	                    <td>
+	                        {% ifequal invitation.status "5" %}
+	                        {% for other_user in invitation.contact.users.all %}
+	                            {% user_link  other_user %}
+	                        {% endfor %}
+	                        {% endifequal %}
+	                    </td>
+	                </tr>
+	            {% endfor %}
+	        </table>
+	    {% else %}
+	        <p>{% trans "No join requests sent." %}</p>
+	    {% endif %}
+     </div>
+</div>
+
+{% endblock %}
+
+{% block extra_body %}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#join-invite').hide();
+            $('#join-invite-toggle').click(function() {
+                $('#join-invite').slideToggle();
+                $('#join-invite').autoscroll();
+                return false;
+            });
+            if ($('#join-invite ul.errorlist').length) {
+                $('#join-invite').show();
+                $('#join-invite ul.errorlist').autoscroll();
+            }
+        });
+    </script>
+{% endblock %}

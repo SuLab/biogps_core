@@ -1,0 +1,58 @@
+{% extends "NEW/base_site.html" %}
+{% load biogps_tags %}
+
+{% block title %}How it works{% endblock %}
+
+{% block bodyclass %}flatpage help_steps{% endblock %}
+{% block content %}
+<article>
+<div class="in">
+<div id="bigHow">
+	<div class="step">
+		<div class="stepNum"><a name="step1">1</a></div>
+		<div class="stepName">Search <span>for your gene of interest</span></div>
+
+		<div class="icon"><img src="/assets/img/kmag.png" /></div>
+		<p>BioGPS is designed so that you can learn everything you need to know about your mammalian gene or genes of interest.  The first step in the process is finding those genes in BioGPS.  To make it as easy as possible, we've indexed most of the major gene identifiers, including Entrez Gene, Ensembl, Refseq, Affymetrix, etc.  You can also search by gene symbol, though keep in mind that symbols and aliases are not unique in the databases so you may see multiple gene entities returned.  If you'd like to search for a gene list, just copy-and-paste the identifiers or search terms into the box, separated by tabs, commas, or carriage returns.  View the sample queries to see how you can execute wildcard searches.  Finally, you can also search by genome location by specifying a chromosomal position.  We think all these search options offer every user an easy way to find the genes that they're looking for.</p>
+		<div class="screencast">Watch the Screencast:
+		    <a target="_blank" href="http://plugins.biogps.org/screencasts/searching">Searching in BioGPS</a> (1:58)</div>
+		<div class="clear"></div>
+	</div>
+
+	<div class="step">
+		<div class="stepNum"><a name="step2">2</a></div>
+		<div class="stepName">View <span>the gene annotation report</span></div>
+
+		<div class="icon"><img src="/assets/img/fsview.png" /></div>
+		<p>After executing the search, click on the gene name to view the gene annotation report.  The default gene annotation report has two components.  First, on the right-hand side, you'll see a concise bar of critical gene annotation information.  For example, it will show you links to many key external databases, as well as associated Gene Ontology annotations and Interpro protein family identifiers.  On the left side of the page, you'll see the expression pattern of the gene in several reference expression data sets, including our popular "Gene Atlas" survey of diverse anatomic regions.  Finally, at the bottom of the page, you'll see links to the Gene Wiki, a community intelligence initiative which invites all scientists to directly contribute information you know about gene function.</p>
+        <div class="screencast">Watch the Screencast:
+            <a target="_blank" href="http://plugins.biogps.org/screencasts/default_layout_tour">View the standard gene report</a> (2:18)</div>
+		<div class="clear"></div>
+	</div>
+
+	<div class="step">
+		<div class="stepNum"><a name="step3">3</a></div>
+		<div class="stepName">Browse <span>the gene report layouts</span></div>
+
+		<div class="icon"><img src="/assets/img/kpager.png" /></div>
+		<p>The default gene report described above only provides a fraction of all that is known about gene function.  Therefore, we've provided several other gene report "layouts" that combine gene annotation information from many other sources.  You can view the other layouts by clicking the drop-down box in the upper-right corner of the gene report.  If, for example, you select the "Model Organism Databases" layout, you'll see the key annotation available (including knockout phenotypes) from the primary mouse and rat databases.   If you select "Literature", you'll see all the references relevant to the gene from Pubmed and Google Scholar.  If you select "Reagents", you'll see what antibodies, assays, siRNAs, and clones are available from several popular vendors.  Each layout is designed to display a different slice of the entire gene annotation picture, so browse around and see which are most relevant to you.</p>
+		<div class="screencast">Watch the Screencast:
+		    <a target="_blank" href="http://plugins.biogps.org/screencasts/default_layouts">Tour the default layouts</a> (2:44)</div>
+		<div class="clear"></div>
+	</div>
+
+	<div class="step">
+		<div class="stepNum"><a name="step4">4</a></div>
+		<div class="stepName">Build <span>your own gene report</span></div>
+
+		<div class="icon"><img src="/assets/img/kpaint.png" /></div>
+		<p>If the gene annotation reports aren't exactly what you need, then customize your own.  Since you'll will be personalizing BioGPS to exactly your needs, you'll first need to create an account and log in.  Next, click the "Plugin library" link at the top of the page.  Each plugin here represents an online resource that provides some gene annotation information.  You can search by keyword (for example, "splicing"), or you can browse the tag cloud to the right of the page.  Click on any plugin to see more details about what that plugin will show.  If you think it might be useful, click the "Add to layout" button to add it to a new layout or an existing one.  Once you've added all the plugins you're interested in, view a gene report using the protocol above, and switch to your newly-created layout.  Each plugin will be rendered in its own window, which can then be moved and resized however you see fit.  Once you're done arranging the plugins, select "Save" under the layout options menu.  Now, you can view this personalized layout which displays exactly the information you're looking for, and easily switch between the default and personalized layouts at the click of a button.</p>
+		<div class="screencast">Watch the Screencast:
+		    <a target="_blank" href="http://plugins.biogps.org/screencasts/customizing_layouts">Customizing gene report layouts</a> (3:24)</div>
+		<div class="clear"></div>
+	</div>
+	<div class="clear"></div>
+</div>
+</div>
+</article>
+{% endblock %}

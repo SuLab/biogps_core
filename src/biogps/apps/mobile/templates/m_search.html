@@ -1,0 +1,25 @@
+{% extends "m_base.html" %}
+{% load biogps_tags %}
+
+{% block title %}Search Results - BioGPS Mobile{% endblock %}
+
+{% block content %}
+
+<div id="welcome-search">
+	<div id="search_results">
+	    {% if results %}
+	        Found {{ results.totalCount }} results.
+            <ul>
+    		{% for gene in results.geneList %}
+    		    <li><a href="/m/gene/{{ gene.id }}/">{{ gene.symbol }}
+    		        {% if gene.name %} ({{ gene.name|truncatewords:5 }}){% endif %}
+    		    </a></li>
+    		{% endfor %}
+    		</ul>
+    	{% else %}
+    	    No results were found for your search.
+	    {% endif %}
+	</div>
+</div>
+
+{% endblock %}

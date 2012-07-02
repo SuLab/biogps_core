@@ -1,0 +1,1 @@
+This fold is used by BioGPS to store some runtime temp files.
