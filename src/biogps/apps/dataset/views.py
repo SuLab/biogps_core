@@ -199,8 +199,8 @@ class DatasetQuery():
                 for idx, val in enumerate(samp_names):
                     csv_row = list()
                     csv_row.append(val.rsplit('.', 1)[0])
-                    for i in dsd:
-                        csv_row.append(i.data[idx])
+                    for rep in dsd:
+                        csv_row.append(literal_eval(rep['data'])[idx])
                     w.writerow(csv_row)
 
                 return _res
