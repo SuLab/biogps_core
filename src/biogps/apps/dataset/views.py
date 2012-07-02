@@ -1,4 +1,5 @@
 from __future__ import division
+from ast import literal_eval
 from collections import OrderedDict
 from django.conf import settings
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -173,7 +174,7 @@ class DatasetQuery():
         ds_name = ''
         rep_dict = OrderedDict()
         try:
-            dsd = BiogpsDatasetData.objects.filter(dataset=ds_id, reporter__in=rep_li)
+            dsd = BiogpsDatasetData.objects.filter(dataset=ds_id, reporter__in=rep_li).values('reporter', 'data')
         except BiogpsDatasetData.DoesNotExist:
             return None
         if _format is not None:
@@ -205,9 +206,9 @@ class DatasetQuery():
                 return _res
         else:
             # Default json output
-            for i in dsd:
-                ds_name = i.dataset.name
-                rep_dict[i.reporter] = i.data
+            ds_name = BiogpsDataset.objects.get(id=ds_id).name
+            for rep in dsd:
+                rep_dict[rep['reporter']] = literal_eval(rep['data'])
             probeset_list = [{i: {"values": rep_dict[i]}} for i in rep_dict]
             return OrderedDict([('id', ds_id), ('name', ds_name), ('probeset_list', probeset_list)])
      
