@@ -91,7 +91,7 @@
 
 /* css for portlets */
 .portlet-body {
-    overflow: auto;
+    overflow: hidden;   /* to fix double scrollbars issue in plugin window */
     /*color: #DDD;*/
     /*font-family: Tahoma, Arial, sans-serif;
     font-size: 10px;*/
