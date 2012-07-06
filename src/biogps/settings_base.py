@@ -10,9 +10,12 @@ import os.path
 ROOT_PATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 ##Get the current version info
-import subprocess
+import subprocess, os
+cwd = os.getcwd()
+os.chdir(ROOT_PATH)
 hg_cmd = "hg log -r tip --template {latesttag}.{latesttagdistance}-{node|short}"
 BIOGPS_VERSION = subprocess.check_output(hg_cmd.split())
+os.chdir(cwd)
 
 try:
     import uwsgi
