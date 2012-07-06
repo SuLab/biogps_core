@@ -178,7 +178,6 @@ class DatasetQuery():
         except BiogpsDatasetData.DoesNotExist:
             return None
         if _format is not None:
-            _format = _format.lower()
             if _format == 'csv':
                 # CSV output
                 _res = HttpResponse(mimetype='text/csv')
@@ -605,8 +604,16 @@ class DatasetValuesView(RestView):
             return HttpResponseNotFound('<b>No reporters provided.</b>'\
                                         '<br />Please provide reporters '\
                                         'in the form of ?reporters=rep1,rep2')
+        alt_formats = ['csv']
         gene_id = request.GET.get('gene', None)
         _format = request.GET.get('format', None)
+        try:
+            _format = _format.lower()
+            if _format not in alt_formats:
+                _format = None
+        except AttributeError:
+            # None type
+            pass
         res = DatasetQuery.get_ds_data(datasetID, get_reporters, gene_id, _format)
         if _format is not None:
             return res
