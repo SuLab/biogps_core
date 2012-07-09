@@ -21,15 +21,16 @@ if settings.DEBUG:
         log_handler = logging.StreamHandler()
         log.addHandler(log_handler)
 
-def get_es_conn(ES_HOST=None):
+def get_es_conn(ES_HOST=None, default_idx=[settings.ES_INDEX_NAME]):
     ES_HOST = ES_HOST or settings.ES_HOST
     #This is a temp check to make sure external ES host bound to BIOGPSP only
-    if '50.18.46.129:80' in ES_HOST:
-        assert settings.DATABASE_NAME == 'BIOGPSP', "Use extenal ES host only with BIOGPSP DB."
+    # temp disable this check here, we should add more formal check later.
+#    if '50.18.46.129:80' in ES_HOST:
+#        assert settings.DATABASE_NAME == 'BIOGPSP', "Use extenal ES host only with BIOGPSP DB."
 
 #    force_http = ES_HOST[0].endswith(':80') if isinstance(ES_HOST, list) else \
 #                 ES_HOST.endswith(':80')
-    conn = ES(ES_HOST, default_indices=[settings.ES_INDEX_NAME],
+    conn = ES(ES_HOST, default_indices=default_idx,
               timeout=10.0)
 #              force_http=force_http, timeout=10.0)
     return conn

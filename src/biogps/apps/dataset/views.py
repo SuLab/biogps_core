@@ -25,6 +25,7 @@ import sys
 import urllib
 
 from biogps.apps.dataset.models import BiogpsDataset, BiogpsDatasetData, BiogpsDatasetMatrix, BiogpsDatasetReporters
+from biogps.apps.search.es_lib import get_es_conn
 
 
 def mean(values):
@@ -65,6 +66,7 @@ def std_err(values):
 
 class DatasetQuery():
     '''Generic class container for dataset query functions'''
+    conn = get_es_conn(default_idx='biogps_dataset')
     @staticmethod
     def get_obj(ds_model, *vals, **filters):
         '''**Currently unused/untested** Helper method for generic queries.
@@ -80,7 +82,7 @@ class DatasetQuery():
     @staticmethod
     def get_default_ds(rep_li, q_term=None):
         '''Return default datasets'''
-        conn = ES(settings.ES_HOST[0], timeout=10.0)
+        _conn = DatasetQuery.conn
         kwargs = {'doc_types': 'dataset', 'indices': 'biogps_dataset', 'fields': 'id,name'}
         t_query = TermsQuery('reporter', rep_li.strip(' ').split(','))
         base_query = HasChildQuery(type='by_reporter', query=t_query)
@@ -89,9 +91,9 @@ class DatasetQuery():
         if q_term is not None:
             # Filter search results with query string
             q_filter = QueryFilter(query=StringQuery(query=q_term+'*'))
-            res = conn.search(query=FilteredQuery(f_query, q_filter), size='100', **kwargs)
+            res = _conn.search(query=FilteredQuery(f_query, q_filter), size='100', **kwargs)
         else:
-            res = conn.search(query=f_query, size='100', **kwargs)
+            res = _conn.search(query=f_query, size='100', **kwargs)
         try:
             # Sort results on ID
             res_sorted = sorted(res.hits, key=lambda k: k['fields']['id'])
@@ -103,10 +105,10 @@ class DatasetQuery():
     @staticmethod
     def get_ds_li(rep_li):
         '''Return dataset list for provided reporters'''
-        conn = ES(settings.ES_HOST[0], timeout=10.0)
+        _conn = DatasetQuery.conn
         t_query = TermsQuery('reporter', rep_li.strip(' ').split(','))
         # *** No spaces between field names. Undocumented and important! ***
-        res = conn.search(query=HasChildQuery(type='by_reporter',
+        res = _conn.search(query=HasChildQuery(type='by_reporter',
                                   query=t_query), **{'fields': 'id,name'})
         try:
             return [ds['fields'] for ds in res.hits]
@@ -117,7 +119,7 @@ class DatasetQuery():
     @staticmethod
     def get_ds_page(rep_li, page, q_term=None):
         '''Return page of dataset results for provided query type and terms'''
-        conn = ES(settings.ES_HOST[0], timeout=10.0)
+        _conn = DatasetQuery.conn
         all_results = list()
         # *** No spaces between field names. Undocumented and important! ***
         kwargs = {'doc_types': 'dataset', 'indices': 'biogps_dataset', 'fields': 'id,name'}
@@ -127,9 +129,9 @@ class DatasetQuery():
         if q_term is not None:
             # Filter search results with query string
             q_filter = QueryFilter(query=StringQuery(query=q_term+'*'))
-            all_results = conn.search(query=FilteredQuery(base_query, q_filter), **kwargs)
+            all_results = _conn.search(query=FilteredQuery(base_query, q_filter), **kwargs)
         else:
-            all_results = conn.search(base_query, **kwargs)
+            all_results = _conn.search(base_query, **kwargs)
 
         # Now have total number of results, use Django paginator example at:
         # https://docs.djangoproject.com/en/dev/topics/pagination/#using-paginator-in-a-view
