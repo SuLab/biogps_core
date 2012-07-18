@@ -83,7 +83,7 @@ class DatasetQuery():
     def get_default_ds(rep_li, q_term=None):
         '''Return default datasets'''
         _conn = DatasetQuery.conn
-        kwargs = {'doc_types': 'dataset', 'indices': 'biogps_dataset', 'fields': 'id,name'}
+        kwargs = {'doc_types': 'dataset', 'indices': 'biogps_dataset', 'fields': 'id,name,factors'}
         t_query = TermsQuery('reporter', rep_li.strip(' ').split(','))
         base_query = HasChildQuery(type='by_reporter', query=t_query)
         f_query = FilteredQuery(base_query, ANDFilter([TermFilter('default', [True])]))
@@ -109,7 +109,7 @@ class DatasetQuery():
         t_query = TermsQuery('reporter', rep_li.strip(' ').split(','))
         # *** No spaces between field names. Undocumented and important! ***
         res = _conn.search(query=HasChildQuery(type='by_reporter',
-                                  query=t_query), **{'fields': 'id,name'})
+                                  query=t_query), **{'fields': 'id,name,factors'})
         try:
             return [ds['fields'] for ds in res.hits]
         except KeyError:
@@ -122,7 +122,7 @@ class DatasetQuery():
         _conn = DatasetQuery.conn
         all_results = list()
         # *** No spaces between field names. Undocumented and important! ***
-        kwargs = {'doc_types': 'dataset', 'indices': 'biogps_dataset', 'fields': 'id,name'}
+        kwargs = {'doc_types': 'dataset', 'indices': 'biogps_dataset', 'fields': 'id,name,factors'}
         t_query = TermsQuery('reporter', rep_li.strip(' ').split(','))
         base_query = HasChildQuery(type='by_reporter', query=t_query)
 
