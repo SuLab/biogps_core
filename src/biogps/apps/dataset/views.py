@@ -581,11 +581,7 @@ class DatasetBotView(RestView):
             rep_li = rep_li.strip(' ').split(',')
             for i in ds_li:
                 ds_id = i['id']
-                ds_reps = list()
-                reps = BiogpsDatasetReporters.objects.get(dataset=ds_id).reporters
-                for r in rep_li:
-                    if r in reps:
-                        ds_reps.append(r)
+                ds_reps = BiogpsDatasetData.objects.filter(dataset=ds_id, reporter__in=rep_li).values_list('reporter', flat=True)
 
                 # Combine dataset names and reporters based on ID
                 _ds_dict = {ds_id: {'name': i['name'], 'reps': ds_reps}}
