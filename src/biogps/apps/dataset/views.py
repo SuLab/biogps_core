@@ -69,11 +69,11 @@ class DatasetQuery():
     conn = get_es_conn(default_idx='biogps_dataset')
     @staticmethod
     def get_obj(ds_model, *vals, **filters):
-        '''**Currently unused/untested** Helper method for generic queries.
+        """**Currently unused/untested** Helper method for generic queries.
            If querying for values pass list of values. Filters including
            exact matches are passed as dict eg.
            {'dataset__exact': 100, 'reporter__in': ['1007_s_at', '1053_at']}
-        '''
+        """
         if vals:
             return ds_model.objects.get(**filters).values(*vals)
         else:
@@ -81,7 +81,7 @@ class DatasetQuery():
 
     @staticmethod
     def get_default_ds(rep_li, q_term=None):
-        '''Return default datasets'''
+        """Return default datasets"""
         _conn = DatasetQuery.conn
         kwargs = {'doc_types': 'dataset', 'indices': 'biogps_dataset', 'fields': 'id,name,factors'}
         t_query = TermsQuery('reporter', rep_li.strip(' ').split(','))
@@ -104,7 +104,7 @@ class DatasetQuery():
 
     @staticmethod
     def get_ds_li(rep_li):
-        '''Return dataset list for provided reporters'''
+        """Return dataset list for provided reporters"""
         _conn = DatasetQuery.conn
         t_query = TermsQuery('reporter', rep_li.strip(' ').split(','))
         # *** No spaces between field names. Undocumented and important! ***
@@ -118,7 +118,7 @@ class DatasetQuery():
 
     @staticmethod
     def get_ds_page(rep_li, page, q_term=None):
-        '''Return page of dataset results for provided query type and terms'''
+        """Return page of dataset results for provided query type and terms"""
         _conn = DatasetQuery.conn
         all_results = list()
         # *** No spaces between field names. Undocumented and important! ***
@@ -148,7 +148,7 @@ class DatasetQuery():
 
     @staticmethod
     def get_mygene_reps(gene_id):
-        '''Return reporter list for provided gene'''
+        """Return reporter list for provided gene"""
         rep_li = list()
         mygene_res = urllib.urlopen('http://mygene.info/gene/{}/'\
                                     '?filter=entrezgene,reporter,'\
@@ -172,8 +172,7 @@ class DatasetQuery():
      
     @staticmethod
     def get_ds_data(ds_id, rep_li, gene_id, _format):
-        '''Return dataset data for provided ID and reporters'''
-        ds_name = ''
+        """Return dataset data for provided ID and reporters"""
         rep_dict = OrderedDict()
         try:
             dsd = BiogpsDatasetData.objects.filter(dataset=ds_id, reporter__in=rep_li).values('reporter', 'data')
@@ -215,7 +214,7 @@ class DatasetQuery():
      
     @staticmethod
     def get_ds_chart(ds_id, rep_id, sort_fac=None):
-        '''Return dataset static chart URL for provided ID and reporter'''
+        """Return dataset static chart URL for provided ID and reporter"""
         try:
             rep_data = BiogpsDatasetData.objects.get(dataset=ds_id, reporter=rep_id)
         except BiogpsDatasetData.DoesNotExist:
@@ -223,7 +222,6 @@ class DatasetQuery():
 
         # Probset values sorted by order index
         ps_values = rep_data.data
-        ps_mean = mean(ps_values)
         ps_median_flt = median(ps_values)
         ps_median_int = int(ps_median_flt)
         ps_median_x10 = 0
@@ -416,7 +414,7 @@ class DatasetQuery():
         elif ps_median_x10:
             chart_median_label_positions = '4,%s,%s' % (ps_median_int, ps_median_x10)
         else:
-            chart_median_label_positions = '4,%s' % (ps_median_int)
+            chart_median_label_positions = '4,%s' % ps_median_int
 
         params = urllib.urlencode({'chs': chart_size,
                                    'cht': chart_type,
@@ -438,9 +436,9 @@ class DatasetQuery():
      
     @staticmethod
     def get_ds_corr(ds_id, rep_id, min_corr):
-        '''Return NumPy correlation matrix for provided ID, reporter,
+        """Return NumPy correlation matrix for provided ID, reporter,
            and correlation coefficient
-        '''
+        """
         def pearsonr(v, m):
             # Pearson correlation calculation taken from NumPy's implementation
             v_m = v.mean()
@@ -480,19 +478,19 @@ class DatasetQuery():
 
 @csrf_exempt
 class DatasetView(RestView):
-    '''This class defines views for REST URL:
+    """This class defines views for REST URL:
        /dataset/<datasetID>/?format=
 
        Return all metadata for a dataset.
        ** Note: eventually change this to behave
        ** more like the PluginView.
-    '''
+    """
     def get(self, request, datasetID, slug=None):
-        '''Get a specific plugin page/object via GET
+        """Get a specific plugin page/object via GET
            format = html (default)    display plugin details page
                     json              return a plugin object in json format
                     xml               return a plugin object in xml format
-        '''
+        """
         meta = DatasetQuery.get_ds_metadata(datasetID)
         if meta: 
             sort_fac = request.GET.get('sortFactor', None)
@@ -504,12 +502,12 @@ class DatasetView(RestView):
                     pass
             return JSONResponse(meta)
         else:
-            return HttpResponseNotFound("Dataset ID #{} does not exist.".format(datasetID));
+            return HttpResponseNotFound("Dataset ID #{} does not exist.".format(datasetID))
 
 
 @csrf_exempt
 class DatasetSearchView(RestView):
-    '''This class defines views for REST URL:
+    """This class defines views for REST URL:
         /dataset/search/
 
        Given a list of reporters, return the datasets
@@ -519,7 +517,7 @@ class DatasetSearchView(RestView):
        dataset names, and reporters.
 
        Given a query term, return the relevant datasets.
-    '''
+    """
     def get(self, request):
         dbug = False
         json_response = None
@@ -558,9 +556,9 @@ class DatasetSearchView(RestView):
 
 @csrf_exempt
 class DatasetBotView(RestView):
-    '''This class defines views for REST URL:
+    """This class defines views for REST URL:
         /dataset/bot/<geneID>/
-    '''
+    """
     def get(self, request, geneID):
         if not geneID:
             return HttpResponseNotFound('<b>No gene ID provided.</b>'\
@@ -592,9 +590,9 @@ class DatasetBotView(RestView):
 
 @csrf_exempt
 class DatasetValuesView(RestView):
-    '''This class defines views for REST URL:
+    """This class defines views for REST URL:
         /dataset/<datasetID>/values/?reporters=...(&gene=)(&format=)
-    '''
+    """
     def get(self, request, datasetID):
         try:
             get_reporters = [i for i in request.GET['reporters'].split(',')]
@@ -621,31 +619,31 @@ class DatasetValuesView(RestView):
 
 @csrf_exempt
 class DatasetStaticChartView(RestView):
-    '''This class defines views for REST URL:
+    """This class defines views for REST URL:
         /dataset/<datasetID>/chart/<reporterID>/
 
        Given a dataset ID and reporter,
        return the static chart image.
-    '''
+    """
     def get(self, request, datasetID, reporterID):
         sort_fac = request.GET.get('sortFactor', None)
         chart_img = DatasetQuery.get_ds_chart(datasetID, reporterID, sort_fac)
         if chart_img is None:
-            return HttpResponseNotFound("No data found for dataset ID #{} and reporter '{}'.".format(datasetID, reporterID));
+            return HttpResponseNotFound("No data found for dataset ID #{} and reporter '{}'.".format(datasetID, reporterID))
         try:
             return HttpResponse(chart_img.read(), mimetype=chart_img.info().type) 
         except AttributeError:
-            return HttpResponseNotFound("Dataset ID #{} does not exist.".format(datasetID));
+            return HttpResponseNotFound("Dataset ID #{} does not exist.".format(datasetID))
 
 
 @csrf_exempt
 class DatasetCorrelationView(RestView):
-    '''This class defines views for REST URL:
+    """This class defines views for REST URL:
         /dataset/<datasetID>/corr/<reporterID>?co=
 
        Run Pearson correlation for provided reporter
        against all reporters in dataset.
-    '''
+    """
     def get(self, request, datasetID, reporterID):
         try:
             min_corr = float(request.GET['co'])
