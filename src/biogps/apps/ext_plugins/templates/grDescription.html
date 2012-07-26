@@ -1,0 +1,39 @@
+{% load biogps_filters %}
+<style type="text/css">
+.genereport_head{
+	font: 12pt Arial, sans-serif;
+	font-weight: bold;
+	padding-bottom: 5px;
+}
+
+.genereport_subhead{
+	font: 12pt Arial, sans-serif;
+	font-weight: bold;
+	padding-bottom: 5px;
+	padding-top: 50px;
+}
+
+.genereport_name{
+	font: 10pt Arial, sans-serif;
+	font-weight: bold;
+	padding-left:3px;
+	padding-bottom:5px;
+	width: 120px;
+	vertical-align: top;
+}
+.genereport_text{
+	font: 10pt Arial, sans-serif;
+	font-weight: normal;
+	padding-left:10px;
+}
+</style>
+
+<table>
+    <tr><td class="genereport_head" colspan="2">{{ gene.symbol }} - {{ gene.name }}<br></td></tr>
+    <tr><td class="genereport_text" colspan="2">{{ gene.summary|default:"" }}</td></tr>
+    <tr><td class="genereport_name">Gene ID:</td><td class="genereport_text">{{ geneid_str }}</td></tr>
+    <tr><td class="genereport_name">Aliases:</td><td class="genereport_text">{{ gene.synonyms|smartjoin:", " }}</td></tr>
+    <tr><td class="genereport_name">Genomic Position:</td><td class="genereport_text">{{ gene.get_genomelocation_string }}</td></tr>
+    <tr><td class="genereport_name">Sanger GeneTrap:</td><td class="genereport_text">{{ gene.genetrap|smartjoin:", "|default:"NA" }}</td></tr>
+    <tr><td class="genereport_name">Quick links:</td><td class="genereport_text"><a href="http://www.ncbi.nlm.nih.gov/gene/{{ gene.entrezgene }}" target="_blank">NCBI</a>&nbsp;&nbsp;&nbsp;<a href="http://www.ensembl.org/Homo_sapiens/Gene/Summary?g={{ gene.get_ensemblgene }}" target="_blank">Ensembl</a>&nbsp;&nbsp;&nbsp;<a href="http://www.ncbi.nlm.nih.gov/sites/entrez?itool=gene_full_report&DbFrom=gene&Cmd=Link&LinkName=gene_pubmed&IdsFromResult={{ gene.entrezgene }}" target="_blank">Pubmed</a></td></tr>
+</table>

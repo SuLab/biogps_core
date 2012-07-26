@@ -1,0 +1,103 @@
+{% extends "NEW/base_auth.html" %}
+{% load i18n %}
+{% load compressed %}
+
+{% block title %} Log in {% endblock %}
+
+{% block nav-global %}{% endblock %}
+
+{% block bodyclass %}authpage login{% endblock %}
+{% block content_title %}{% endblock %}
+{% block userlinks %}{% endblock %}
+{% block breadcrumbs %}<div class="breadcrumbs"><a href="/">{% trans 'Home' %}</a> &rsaquo; Login</div>{% endblock %}
+
+{% block content %}
+{% if error_message %}
+<ul class="errorlist"><li>{{ error_message }}</li></ul>
+{% endif %}
+
+<div class="half-box-container">
+<section class="half-box">
+	<div class="in">
+
+    <div class="roundBox optionBox">
+        <h1>Option 1: BioGPS Account</h1>
+        <div class="loginBox roundBoxBlue">
+            <form action="{% url auth_login %}" method="post" id="login-form">
+                <table id="content-table">
+                <tr>
+                    <td align="right" valign="top"><label for="id_username">{% trans 'Username:' %}</label></td>
+                    <td><input type="text" name="username" id="id_username" /></td>
+                </tr>
+                <tr>
+                    <td align="right" valign="top"><label for="id_password">{% trans 'Password:' %}</label></td>
+                    <td><input type="password" name="password" id="id_password" /></td>
+                </tr>
+                <tr>
+                    <td align="right" valign="top"><input type="checkbox" name="remember" id="id_remember" /></td>
+                    <td><label for="id_remember" style="font-size: 10px;">{% trans 'Remember me on this computer.' %}</label></td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td><input type="submit" value="{% trans 'Log in' %}" /></td>
+                </tr>
+                </table>
+
+                <p class="smallNote">Did you forget your <a href="{% url auth_forget_username %}">username</a>
+                    or <a href="{% url auth_password_reset %}">password</a>?
+                </p>
+
+                {% if goto_url %}
+                    <input type="hidden" name="goto" value="{{ goto_url }}" />
+                {% endif %}
+            </form>
+        </div>
+
+   	    <div class="loginBox roundBox">
+       		<p><b>Don't have an account yet?</b><br />
+       		<a href="{% url auth_register %}">Create your free BioGPS account.</a></p>
+       		<p class="smallNote">Then you can save customized layouts<br /> and lots more!</p>
+       	</div>
+
+	</div>
+	</div>
+</section>
+
+
+<section class="half-box">
+	<div class="in">
+	<div class="roundBox optionBox">
+	    <h1>Option 2: OpenID</h1>
+    	<p>Don't want another username/password to remember?</p>
+    	<p>Log in with an
+	    <b><a href="/help_openid/">OpenID</a></b> from any
+        of the account providers below, or provide your own URL.</p>
+
+		<form id="openid_form" name="fopenid" action="{% url auth_login %}" method="post">
+		    {{ form2.next }}
+		    <input name="bsignin" type="hidden" />
+		    <input type="hidden" name="action" value="verify" />
+		    {% if goto_url %}
+                <input type="hidden" name="next" value="{{ goto_url }}" />
+            {% endif %}
+            <fieldset>
+			<div id="openid_choice">
+				<p>Please click your account provider:</p>
+				<div id="openid_btns"></div>
+			</div>
+		    <div id="openid_input_area" class="roundBoxBlue">
+				<input id="openid_url" name="openid_url" type="text" value="http://" />
+				<input id="openid_submit" type="submit" value="Log in"/>
+			</div>
+			<noscript>
+			<p>OpenID is service that allows you to log-on to many different websites using a single indentity.
+			Find out <a href="http://openid.net/what/">more about OpenID</a> and <a href="http://openid.net/get/">how to get an OpenID enabled account</a>.</p>
+			</noscript>
+			</fieldset>
+		</form>
+	</div>
+</div>
+</section>
+</div>
+{% endblock %}
+
