@@ -1,7 +1,7 @@
 from django.db.models import Q
 from django.core.serializers import serialize, get_serializer_formats
 from django.utils.encoding import smart_unicode, smart_str
-from django.http import HttpResponse, HttpResponseBadRequest, QueryDict
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.utils.html import escape
 
 from models import BiogpsGenereportLayout
@@ -351,13 +351,15 @@ def _layout_add(request):
 
 @loginrequired
 def _layout_update(request):
-    #authorid = request.user.sid
-    layout_id = request.POST['layout_id']
+
+    layout_id = request.POST.get('layout_id', None)
+    if not layout_id:
+        return HttpResponseBadRequest('Missing required parameter.')
+
     rolepermission = request.POST.get('rolepermission', None)
     params = request.POST
     updatable_fields = ['layout_name', 'layout_data', 'description']      # 'permission',
 
-    something_wrong = False
     try:
         layout = request.user.mylayouts.get(id=layout_id)
         for f in updatable_fields:
