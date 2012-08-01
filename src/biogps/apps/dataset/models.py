@@ -1,17 +1,11 @@
 import base64
-import os
-import sys
 import tagging
 from biogps.apps.auth2.models import UserProfile
-from biogps.apps.boc.boc_svc import callRemoteService
-from biogps.apps.search.build_index import set_on_the_fly_indexing
 from biogps.utils.models import BioGPSModel
 from biogps.utils.fields.jsonfield import JSONField
-from django.conf import settings
 from django.db import models
 from django_extensions.db.fields import AutoSlugField
 from django.template.defaultfilters import slugify
-from biogps.utils.models import Species
 from biogps.apps.plugin.fields import SpeciesField
 from south.modelsinspector import add_introspection_rules
 
@@ -29,7 +23,8 @@ class BiogpsDataset(BioGPSModel):
     name = models.CharField(max_length=500)
     summary = models.CharField(blank=True, max_length=10000)
     ownerprofile = models.ForeignKey(UserProfile, to_field='sid')
-    platform = models.ForeignKey('BiogpsDatasetPlatform', related_name='dataset_platform')
+    platform = models.ForeignKey('BiogpsDatasetPlatform',
+        related_name='dataset_platform')
     geo_id_plat = models.CharField(max_length=100)
     metadata = JSONField(blank=False, editable=True)
     lastmodified = models.DateTimeField(auto_now=True)
@@ -68,7 +63,8 @@ class BiogpsDataset(BioGPSModel):
                                         different dictionary for each purpose.
           @return: an python dictionary
         '''
-        extra_attrs = {None: ['geo_id_plat', 'metadata', 'name', 'platform', 'species']}
+        extra_attrs = {None: ['geo_id_plat', 'metadata', 'name', 'platform',
+            'species']}
         out = self._object_cvt(extra_attrs=extra_attrs, mode=mode)
         out['description'] = self.metadata['summary']
         return out
@@ -82,7 +78,7 @@ except tagging.AlreadyRegistered:
 
 add_introspection_rules([
     (
-        [BiogpsDataset], # Class(es) these apply to
+        [BiogpsDataset],  # Class(es) these apply to
         [],         # Positional arguments (not used)
         {           # Keyword argument
             "slug": ["slug", {}],
@@ -99,10 +95,10 @@ class BiogpsDatasetData(models.Model):
     data = JSONField(blank=False, editable=True)
 
     def object_cvt(self, mode='ajax'):
-        '''A helper function to convert a BiogpsDatasetData object to a simplified
-            python dictionary, with all values in python's primary types only.
-            Such a dictionary can be passed directly to fulltext indexer or
-            serializer for ajax return.
+        '''A helper function to convert a BiogpsDatasetData object to a
+            simplified python dictionary, with all values in python's primary
+            types only. Such a dictionary can be passed directly to fulltext
+            indexer or serializer for ajax return.
 
           @param mode: can be one of ['ajax', 'es'], used to return slightly
                                         different dictionary for each purpose.
@@ -114,7 +110,7 @@ class BiogpsDatasetData(models.Model):
 
 add_introspection_rules([
     (
-        [BiogpsDatasetData], # Class(es) these apply to
+        [BiogpsDatasetData],  # Class(es) these apply to
         [],         # Positional arguments (not used)
         {},         # Keyword argument
     ),
@@ -123,14 +119,15 @@ add_introspection_rules([
 
 class BiogpsDatasetReporters(models.Model):
     '''Model definition for BiogpsDatasetReporters'''
-    dataset = models.ForeignKey(BiogpsDataset, related_name='dataset_reporters')
+    dataset = models.ForeignKey(BiogpsDataset,
+        related_name='dataset_reporters')
     reporters = JSONField(blank=False, editable=True)
 
     def object_cvt(self, mode='ajax'):
-        '''A helper function to convert a BiogpsDatasetReporters object to a simplified
-            python dictionary, with all values in python's primary types only.
-            Such a dictionary can be passed directly to fulltext indexer or
-            serializer for ajax return.
+        '''A helper function to convert a BiogpsDatasetReporters object to a
+           simplified python dictionary, with all values in python's primary
+           types only. Such a dictionary can be passed directly to fulltext
+           indexer or serializer for ajax return.
 
           @param mode: can be one of ['ajax', 'es'], used to return slightly
                                         different dictionary for each purpose.
@@ -142,7 +139,7 @@ class BiogpsDatasetReporters(models.Model):
 
 add_introspection_rules([
     (
-        [BiogpsDatasetReporters], # Class(es) these apply to
+        [BiogpsDatasetReporters],  # Class(es) these apply to
         [],         # Positional arguments (not used)
         {},         # Keyword argument
     ),
@@ -151,7 +148,8 @@ add_introspection_rules([
 
 class BiogpsDatasetMatrix(models.Model):
     '''Model definition for BiogpsDatasetMatrix'''
-    dataset = models.OneToOneField(BiogpsDataset, related_name='dataset_matrix')
+    dataset = models.OneToOneField(BiogpsDataset,
+        related_name='dataset_matrix')
     reporters = JSONField(blank=False, editable=True)
     _matrix = models.TextField(db_column='matrix')
 
@@ -164,10 +162,10 @@ class BiogpsDatasetMatrix(models.Model):
     matrix = property(get_data, set_data)
 
     def object_cvt(self, mode='ajax'):
-        '''A helper function to convert a BiogpsDatasetMatrix object to a simplified
-            python dictionary, with all values in python's primary types only.
-            Such a dictionary can be passed directly to fulltext indexer or
-            serializer for ajax return.
+        '''A helper function to convert a BiogpsDatasetMatrix object to a
+           simplified python dictionary, with all values in python's primary
+           types only. Such a dictionary can be passed directly to fulltext
+           indexer or serializer for ajax return.
 
           @param mode: can be one of ['ajax', 'es'], used to return slightly
                                         different dictionary for each purpose.
@@ -180,7 +178,7 @@ class BiogpsDatasetMatrix(models.Model):
 
 add_introspection_rules([
     (
-        [BiogpsDatasetMatrix], # Class(es) these apply to
+        [BiogpsDatasetMatrix],  # Class(es) these apply to
         [],         # Positional arguments (not used)
         {},         # Keyword argument
     ),
@@ -193,10 +191,10 @@ class BiogpsDatasetPlatform(models.Model):
     reporters = JSONField(blank=False, editable=True)
 
     def object_cvt(self, mode='ajax'):
-        '''A helper function to convert a BiogpsDatasetMatrix object to a simplified
-            python dictionary, with all values in python's primary types only.
-            Such a dictionary can be passed directly to fulltext indexer or
-            serializer for ajax return.
+        '''A helper function to convert a BiogpsDatasetMatrix object to a
+           simplified python dictionary, with all values in python's primary
+           types only. Such a dictionary can be passed directly to fulltext
+           indexer or serializer for ajax return.
 
           @param mode: can be one of ['ajax', 'es'], used to return slightly
                                         different dictionary for each purpose.
@@ -209,7 +207,7 @@ class BiogpsDatasetPlatform(models.Model):
 
 add_introspection_rules([
     (
-        [BiogpsDatasetPlatform], # Class(es) these apply to
+        [BiogpsDatasetPlatform],  # Class(es) these apply to
         [],         # Positional arguments (not used)
         {},         # Keyword argument
     ),
@@ -224,7 +222,7 @@ class BiogpsDatasetGeoLoaded(models.Model):
 
 add_introspection_rules([
     (
-        [BiogpsDatasetGeoLoaded], # Class(es) these apply to
+        [BiogpsDatasetGeoLoaded],  # Class(es) these apply to
         [],         # Positional arguments (not used)
         {},         # Keyword argument
     ),
@@ -240,7 +238,7 @@ class BiogpsDatasetGeoFlagged(models.Model):
 
 add_introspection_rules([
     (
-        [BiogpsDatasetGeoFlagged], # Class(es) these apply to
+        [BiogpsDatasetGeoFlagged],  # Class(es) these apply to
         [],         # Positional arguments (not used)
         {},         # Keyword argument
     ),
@@ -255,7 +253,7 @@ class BiogpsDatasetProcessing(models.Model):
 
 add_introspection_rules([
     (
-        [BiogpsDatasetProcessing], # Class(es) these apply to
+        [BiogpsDatasetProcessing],  # Class(es) these apply to
         [],         # Positional arguments (not used)
         {},         # Keyword argument
     ),
