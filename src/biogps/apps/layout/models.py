@@ -82,8 +82,28 @@ class BiogpsGenereportLayout(BioGPSModel):
                          species=p.plugin.species,
                          options=p.plugin.options
                          )
-                    #for p in self.biogpslayoutplugin_set.order_by('id')]
-                    for p in self.biogpslayoutplugin_set.order_by('top', 'left')]
+                    #for p in self.biogpslayoutplugin_set.order_by('top', 'left')]
+                    #for p in self.biogpslayoutplugin_set.select_related().order_by('top', 'left')]
+                    for p in self.biogpslayoutplugin_set.order_by('top', 'left').select_related(
+                        "height",
+                        "width",
+                        "left",
+                        "top",
+                        "useroptions",
+
+                        "plugin__id",
+                        "plugin__url",
+                        "plugin__type",
+                        "plugin__description",
+                        "plugin__lastmodified",
+                        "plugin__species",
+                        "plugin__options",
+
+                        "plugin__ownerprofile__user",
+                        "plugin__ownerprofile",
+                       )]
+
+
         else:
             return [dict(id=p.plugin.id,
                          height=p.height,
@@ -91,8 +111,16 @@ class BiogpsGenereportLayout(BioGPSModel):
                          left=p.left,
                          top=p.top,
                          useroptions=p.useroptions)
-                    #for p in self.biogpslayoutplugin_set.order_by('id')]
-                    for p in self.biogpslayoutplugin_set.order_by('top', 'left')]
+                    #for p in self.biogpslayoutplugin_set.select_related().order_by('top', 'left')]
+                    for p in self.biogpslayoutplugin_set.order_by('top', 'left').select_related(
+                        "height",
+                        "width",
+                        "left",
+                        "top",
+                        "useroptions",
+
+                        "plugin__id",
+                        )]
 
     def save_layout_data(self, layout_data):
         """save layout_data (a list of dictionaries).
