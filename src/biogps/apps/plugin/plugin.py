@@ -474,6 +474,8 @@ def flagplugin(request, pluginid):
     reason = "Reason: " + request.POST.get("reason")
     comment = smart_unicode(reason + ".\nComment: " + request.POST.get("comment", ''))
 
+    user_agent = request.META.get('HTTP_USER_AGENT', '')
+
     #apply flag
     from flag.models import add_flag
     flaginstance = add_flag(request.user, content_type, plugin.id, plugin.owner, comment)
@@ -484,6 +486,7 @@ def flagplugin(request, pluginid):
                   message=render_to_string('plugin/plugin_flagged_notification.txt', {'flagger': request.user,
                                                                                 'plugin': plugin,
                                                                                 'flaginstance': flaginstance,
+                                                                                'user_agent': user_agent,
                                                                                 'site': site}),
                   fail_silently=True)
     #notify plugin owner
@@ -494,6 +497,7 @@ def flagplugin(request, pluginid):
                                                                         'plugin': plugin,
                                                                         'flaginstance': flaginstance,
                                                                         'site': site,
+                                                                        'user_agent': user_agent,
                                                                         'for_plugin_owner': True}),
                   settings.DEFAULT_FROM_EMAIL,
                   [plugin.owner.email])

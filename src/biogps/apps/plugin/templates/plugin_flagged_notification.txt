@@ -12,6 +12,9 @@ The plugin owner ({{plugin.author}}) has been notified by a separate email sent 
     {% else %}
 The plugin owner ({{plugin.author}}) has not been notified yet due to missing email.
     {% endif %}
+    {% if user_agent %}
+USER_AGENT: {{user_agent}}
+    {% endif%}
 {% endif %}
 
 ===================================
