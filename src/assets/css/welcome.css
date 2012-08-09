@@ -544,7 +544,7 @@
     }
 
     .infobox-quote p {
-        line-height: normal;
+        line-height: 1;
     }
 
 .infobox-quote-wrapper {

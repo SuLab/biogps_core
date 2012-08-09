@@ -343,10 +343,10 @@ def get_info_box():
         featured_margin = '-15%'
         if featured_quote_length >= 130 and featured_quote_length < 200:
             # Large quote
-            featured_margin = '-20%'
+            featured_margin = '-27%'
         elif featured_quote_length >= 200:
             # Really large quote
-            featured_margin = '-25%'
+            featured_margin = '-35%'
         infobox_items.append(['featured', '<h2>Featured In</h2>', '%s<br>' % (i.content), '%s' % (i.detail), featured_margin])
 
     # Statistics
@@ -365,17 +365,14 @@ def get_info_box():
     # User quotes
     for i in BiogpsInfobox.objects.filter(type="quote"):
         quote_content = i.content
-        quote_length = len(strip_tags(quote_content))
+        quote_content_length = len(strip_tags(quote_content))
+        quote_detail = i.detail
+        quote_detail_length = len(strip_tags(quote_content))
+        quote_total = quote_content_length + quote_detail_length
 
         # Check each quote's size and set its margin-top value
-        quote_margin = '-10%'
-        if quote_length >= 135 and quote_length < 150:
-            # Large quote
-            quote_margin = '-15%'
-        elif quote_length >= 150:
-            # Really large quote
-            quote_margin = '-22%'
-        infobox_items.append(['quote', '<h2>User Love</h2>', '%s' % (quote_content), '%s' % (i.detail), quote_margin])
+        quote_margin = '{}%'.format(quote_total * -0.08)
+        infobox_items.append(['quote', '<h2>User Love</h2>', '%s' % (quote_content), '%s' % (quote_detail), quote_margin])
 
     # Shuffle results
     random.shuffle(infobox_items)
