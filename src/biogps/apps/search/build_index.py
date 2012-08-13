@@ -367,22 +367,6 @@ class BiogpsGenelistESIndexer(BiogpsModelESIndexer):
 #        m['name']['boost'] = 2.0
         return m
 
-class BiogpsDatasetESIndexer(BiogpsModelESIndexer):
-    '''A class for indexing all BiogpsDataset objects.'''
-    def __init__(self):
-        from biogps.apps.dataset.models import BiogpsDataset
-        self._model = BiogpsDataset
-        self.ES_INDEX_TYPE = self._model.short_name
-        super(BiogpsModelESIndexer, self).__init__()
-
-    def get_field_mapping(self):
-        m = self._get_field_mapping(extra_attrs={1: ['platform', 'species', 'type'],
-                                                 2: ['name', 'description'],
-                                                 'disabled_string': ['permission_style'],
-                                                 'disabled_object': ['options', 'metadata'],
-                                                 })
-        return m
-
 
 def _rebuild_x(delete_old=False, update_mapping=False, indexer=None):
     '''A convenient function for re-building indexes.
