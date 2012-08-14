@@ -15,7 +15,7 @@ import os
 import numpy as np
 import psycopg2
 from biogps.apps.auth2.models import UserProfile
-from biogps.apps.dataset.models import BiogpsDataset, BiogpsDatasetData, BiogpsDatasetMatrix, BiogpsDatasetPlatform
+from biogps.apps.dataset.models import BiogpsDataset, BiogpsDatasetData, BiogpsDatasetMatrix, BiogpsDatasetPlatform, BiogpsDatasetReporters
 
 
 class Command(NoArgsCommand):
@@ -50,7 +50,8 @@ class Command(NoArgsCommand):
             # Data file directories
             b = 'BioGPS_Downloads'
             eq = 'eQTL_expression_files'
-            em = 'Emory_Data'
+            em = 'misc/emory'
+            pi = 'misc/pigatlas'
             
             # Datasets to be loaded
             datasets = {'U133AGNF1B.gcrma.csv':
@@ -143,6 +144,13 @@ class Command(NoArgsCommand):
             	        'delimiter': 'c', 'color': '', 'owner': '', 'summary': '',
             	        'geo_gds_id': '', 'geo_gpl_id': 'GPL1073', 'geo_gse_id': '',
             	        'pubmed_id': '', 'species': 'mouse'}
+
+            	    'Pig_atlas_RMA_normalised_data_updated.csv':
+            	       {'default': True, 'dir': pi, 'name': 'Pig Atlas',
+            	        'delimiter': 'c', 'color': 'Pig_atlas_new_sample_annotation_updated.csv', 'owner': 'Tom Freeman',
+                        'summary': 'This dataset displays a survey of gene expression across a wide range of tissues taken from the domestic pig (Sus scrofa) performed by researchers at The Roslin Institute, Edinburgh. The analysis was carried out using a new porcine Affymetrix expression array (Snowball) that has been designed to provide comprehensive coverage of the known pig transcriptome.  Data is given as RMA normalised expression values.',
+            	        'geo_gds_id': '', 'geo_gpl_id': 'snowball', 'geo_gse_id': '',
+            	        'pubmed_id': '', 'species': 'pig'}
             	   } 
             
             # Parse csv file
@@ -202,6 +210,8 @@ class Command(NoArgsCommand):
             	    	    color_file = ds_info['color']
             	    	    clr_file_vals = dict()
             	    	    if color_file:
+                                display_dict['color'] = ['color_idx']
+                                display_dict['sort'] = ['order_idx']
             	    	        with open('%s/%s' % (ds_info['dir'], color_file), 'rb') as c:
             	    	    	    clr_reader = csv.reader(c)
             	    	    	    for row in clr_reader:
@@ -286,6 +296,10 @@ class Command(NoArgsCommand):
             	    except psycopg2.DataError:
             	        self.stdout.write('DB Error - Dataset ID: %s, Reporter: %s\n' % (dataset_id, platform))
             
+                # Update reporters table
+                _reps = BiogpsDatasetReporters(dataset=current_dataset, reporters=ds_reps)
+                _reps.save()
+
                 # Data matrix
                 ds_matrix = np.array(data_list, np.float32)
                 try:

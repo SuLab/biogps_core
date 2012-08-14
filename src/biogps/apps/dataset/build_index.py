@@ -180,8 +180,6 @@ class BiogpsDatasetIndexer(BiogpsESIndexerBase):
                    'index':'no',
                    'include_in_all': False,
                    'type': 'string'},
-            'source': {'store':"no",
-                   'type': 'string'},
             'species': {'store':"no",
                    'type': 'string'},
             'summary': {'store':"no",
@@ -244,7 +242,6 @@ class BiogpsDatasetIndexer(BiogpsESIndexerBase):
                        'platform_id': ds.platform_id,
                        'pubmed_id': ds.metadata['pubmed_id'],
                        'slug': ds.slug,
-                       'source': ds.metadata['source'],
                        'species': ds.species,
                        'summary': ds.metadata['summary']
                       }
