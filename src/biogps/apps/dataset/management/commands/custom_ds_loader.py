@@ -216,10 +216,11 @@ class Command(NoArgsCommand):
             	    	    	    clr_reader = csv.reader(c)
             	    	    	    for row in clr_reader:
             	    	    	        try:
-            	    	    	            clr_file_vals[row[0]] = ((int(row[1]), int(row[2])))
+            	    	    	            clr_file_vals[cap_first(row[0])] = ((int(row[1]), int(row[2])))
             	    	    	        except ValueError:
             	    	    	    	    # Column headers
             	    	    	    	    continue
+
             	    	    for idx, val in enumerate(col_mask):
             	    	        if idx == 0:
             	    	    	    prev_col = val
@@ -235,9 +236,11 @@ class Command(NoArgsCommand):
             	    	    	        repl_idx += 1
             	    	        try:
             	    	    	    factors_list.append({'%s.%s' % (val, repl_idx): {'title': val, 'order_idx': clr_file_vals[val][0], 'color_idx': clr_file_vals[val][1]}})
-            	    	        except KeyError:
+            	    	        except KeyError as e:
             	    	    	    # No color file
+                                    print 'Key Error: {}!'.format(e)
             	    	    	    factors_list.append({'%s.%s' % (val, repl_idx): {'title': val, 'order_idx': order_idx, 'color_idx': color_idx}})
+
             	    	    metadata = {"default": ds_info['default'], "id": dataset_id, "name": dataset_name, "owner": ds_info['owner'], "geo_gds_id": ds_info['geo_gds_id'], "geo_gpl_id": platform, "geo_gse_id": ds_info['geo_gse_id'], "species": species, "pubmed_id": ds_info['pubmed_id'], "summary": ds_info['summary'], "factors": factors_list, "display_params": display_dict}
             	    	    # Metadata
             	    	    try:
