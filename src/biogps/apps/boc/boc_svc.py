@@ -344,6 +344,11 @@ class DataService:
         except RemoteServiceError:
             return False
 
+    def get_metadata(self):
+        url = self._absurl('/metadata')
+        con = callRemoteService(url, returnmode='content')
+        return json.loads(con)
+
     def getgene(self, geneid, **param):
         url = self._absurl('/gene/%s' % smart_str(geneid))
         res, con = callRemoteService(url, param=param, validstatuscode=[200, 404], returnmode='both')
@@ -365,6 +370,15 @@ class DataService:
         res, con = callRemoteService(url, validstatuscode=[200, 404], returnmode='both')
         if res.status == 200:
             return json.loads(con)
+
+    def getgenelist(self, id_list, filter='symbol,name,taxid'):
+        url = self._absurl('/gene')
+        param = {'ids': ','.join([str(x) for x in id_list])}
+        if filter: param['filter'] = filter
+        res, con = callRemoteService(url, param=param, method='POST', returnmode='both')
+        if res.status == 200:
+            _data = json.loads(con)
+            return [Gene(_d) for _d in _data]
 
     def querygene(self, **param):
         url = self._absurl('/boc')
