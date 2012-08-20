@@ -47,8 +47,11 @@ class BiogpsPlugin(BioGPSModel):
     @models.permalink
     def get_absolute_url(self):
         """ Returns the appropriate URL for this plugin. """
-        return ('plugin_show', [str(self.id), slugify(self.title)])
-        # return "/#goto=pluginlibrary&t=library-plugin&p=%s" % self.id
+        _slug = slugify(self.title)
+        if _slug:
+            return ('plugin_show', [str(self.id), _slug])
+        else:
+            return ('plugin_show', [str(self.id),])
 
     def object_cvt(self, mode='ajax'):
         '''A helper function to convert a BiogpsPlugin object to a simplified
@@ -85,7 +88,7 @@ class BiogpsPlugin(BioGPSModel):
         p = re.compile('.*\:\/\/')
         p2 = re.compile('\/.*')
         url = p2.sub('', p.sub('', self.url))
-        return 'biogps.gnf.org' if url == '' else url
+        return 'biogps.org' if url == '' else url
 
     def permissionClass(self):
         perm = self.get_role_permission(returnsorted=True,
@@ -259,4 +262,5 @@ class BiogpsPluginPopularity(models.Model):
     rank = models.PositiveIntegerField(default=0)
     users_count = models.PositiveIntegerField(default=0)
     related_plugins = JSONField(blank=True, editable=False, default='[]')
+
 
