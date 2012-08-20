@@ -17,7 +17,7 @@ if(os.name == 'mac' or os.name == 'posix'):
         TOOL_PATH = '/Volumes/BioGPS$/tools'
     else:
         # Linux path
-        TOOL_PATH = '/opt/tools'
+        TOOL_PATH = '/opt/tools' if os.path.exists('/opt/tools') else '~/opt/tools'
 elif(os.name == 'nt'):
     # Windows path
     TOOL_PATH = '\\\\projects\\BioGPS\\tools'
