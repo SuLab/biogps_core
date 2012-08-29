@@ -1,11 +1,12 @@
 from biogps.apps.dataset.models import BiogpsDatasetData
 from biogps.apps.dataset.utils import DatasetQuery
-from biogps.utils.http import JSONResponse
+from biogps.utils.http import JSONResponse, render_to_formatted_response
 from biogps.utils.restview import RestView
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render_to_response
 from django.views.decorators.csrf import csrf_exempt
 from time import time
+import types
 
 
 @csrf_exempt
@@ -23,8 +24,11 @@ class DatasetView(RestView):
                     json              return a plugin object in json format
                     xml               return a plugin object in xml format
         """
-        meta = DatasetQuery.get_ds_metadata(datasetID)
-        if meta:
+        if type(datasetID) in types.StringTypes:
+            datasetID = datasetID.upper()
+
+        if 'format' in request.GET:
+            meta = DatasetQuery.get_ds_metadata(datasetID)
             sort_fac = request.GET.get('sortFactor', None)
             if sort_fac is not None:
                 # Sort metadata by provided factor
@@ -32,10 +36,12 @@ class DatasetView(RestView):
                     meta['factors'].sort(key=lambda x: x.values()[0][sort_fac])
                 except KeyError:
                     pass
-            return JSONResponse(meta)
+
+            return render_to_formatted_response(request,
+                data=meta, allowed_formats=['json', 'xml'])
         else:
-            return HttpResponseNotFound("Dataset ID #{} does not exist.\
-                                        ".format(datasetID))
+            # Standard HTML request, blank response until DS Library in place
+            return HttpResponse()
 
 
 @csrf_exempt
