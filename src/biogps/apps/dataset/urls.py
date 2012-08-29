@@ -29,8 +29,8 @@ urlpatterns += patterns('biogps.apps.dataset.views',
     #url(r'test/$', 'test_plugin_url', name='test_plugin_url'),
 
     (r'search/$', 'DatasetSearchView'),
-    (r'(?P<datasetID>\d+)/values/$', 'DatasetValuesView'),
-    (r'(?P<datasetID>\d+)/chart/(?P<reporterID>\w+)/$', 'DatasetStaticChartView'),
-    (r'(?P<datasetID>\d+)/corr/(?P<reporterID>\w+)?', 'DatasetCorrelationView'),
-    (r'(?P<datasetID>\d+)(?:/(?P<slug>[\w-]+))?/$', 'DatasetView'),
+    (r'(?P<datasetID>.+)/values/$', 'DatasetValuesView'),
+    (r'(?P<datasetID>.+)/chart/(?P<reporterID>\w+)/$', 'DatasetStaticChartView'),
+    (r'(?P<datasetID>.+)/corr/(?P<reporterID>\w+)?', 'DatasetCorrelationView'),
+    (r'(?P<datasetID>.+)(?:/(?P<slug>[\w-]+))?/$', 'DatasetView'),
 )
