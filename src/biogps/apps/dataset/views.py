@@ -10,6 +10,10 @@ from django.http import (
 from django.shortcuts import render_to_response
 from django.views.decorators.csrf import csrf_exempt
 from time import time
+import logging
+
+
+log = logging.getLogger('biogps_prod')
 
 
 @csrf_exempt
@@ -28,6 +32,9 @@ class DatasetView(RestView):
                     xml               return a plugin object in xml format
         """
         datasetID = sanitize(datasetID)
+        log.info('username=%s clientip=%s action=dataset_metadata id=%s',
+            getattr(request.user, 'username', ''),
+            request.META.get('REMOTE_ADDR', ''), datasetID)
 
         if 'format' in request.GET:
             meta = DatasetQuery.get_ds_metadata(datasetID)
@@ -163,7 +170,7 @@ class DatasetValuesView(RestView):
             return _data
         else:
             return render_to_formatted_response(request, data=_data,
-                allowed_formats=['json','xml'])
+                allowed_formats=['json', 'xml'])
 
 
 @csrf_exempt
@@ -210,4 +217,4 @@ class DatasetCorrelationView(RestView):
         datasetID = sanitize(datasetID)
         return render_to_formatted_response(request,
             data=DatasetQuery.get_ds_corr(datasetID, reporterID, min_corr),
-            allowed_formats=['json','xml'])
+            allowed_formats=['json', 'xml'])

@@ -96,7 +96,7 @@ class BiogpsAltLayout(models.Model):
 # setup logger (logging to syslog)
 #==============================================================================
 import logging
-log = logging.getLogger('biogps')
+log = logging.getLogger('biogps_prod')
 if settings.DEBUG:
     log.setLevel(logging.DEBUG)
 else:
@@ -108,11 +108,11 @@ if len(log.handlers) == 0:   # only add handler once because this module could
     try:
         from logging.handlers import SysLogHandler
         import syslog
-        #Log to splunk.gnf.org directly
-        #log_handler = SysLogHandler(address=('172.25.11.39', 514),
-        #                            facility=syslog.LOG_LOCAL6)
-        log_handler = SysLogHandler(address='/dev/log',
+        # Log to EC2 central logging server directly
+        log_handler = SysLogHandler(address=(settings.LOG_SERVER, 514),
                                     facility=syslog.LOG_LOCAL6)
+        #log_handler = SysLogHandler(address='/dev/log',
+        #                            facility=syslog.LOG_LOCAL6)
         log_handler.setFormatter(log_formatter)
         log.addHandler(log_handler)
     except:
