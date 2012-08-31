@@ -204,9 +204,9 @@ class DatasetCorrelationView(RestView):
             return HttpResponseNotFound("<b>No correlation value provided.</b>"
                 "<br />Please provide a correlation cutoff value in the form"
                 " of ?co=0.9, etc.")
-        if min_corr < 0.5:
+        if min_corr < 0.5 or min_corr > 1:
             return HttpResponseForbidden(
-                "Correlation threshold value must be >= 0.5")
+                "Correlation threshold value must be between 0.5 and 1")
         datasetID = sanitize(datasetID)
         return render_to_formatted_response(request,
             data=DatasetQuery.get_ds_corr(datasetID, reporterID, min_corr),
