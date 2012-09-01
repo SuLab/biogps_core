@@ -16,7 +16,7 @@ from forms import BiogpsProfileForm
 from friends.models import friend_set_for
 
 import logging
-log = logging.getLogger('biogps')
+log = logging.getLogger('biogps_prod')
 
 @docenabled
 @loginrequired_or_redirect

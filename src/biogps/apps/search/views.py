@@ -8,7 +8,7 @@ from biogps.apps.search.navigations import BiogpsSearchNavigation
 from es_lib import ESQuery
 
 import logging
-log = logging.getLogger('biogps')
+log = logging.getLogger('biogps_prod')
 
 
 def status(request):

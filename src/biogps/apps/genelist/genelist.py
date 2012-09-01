@@ -13,7 +13,7 @@ from biogps.apps.genelist.models import BiogpsGeneList
 from biogps.apps.boc import boc_svc as svc
 
 import logging
-log = logging.getLogger('biogps')
+log = logging.getLogger('biogps_prod')
 
 
 class NameConflict(Exception):

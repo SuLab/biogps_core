@@ -19,7 +19,7 @@ from biogps.utils.helper import (mkErrorReport, json, dotdict,
 #from biogps.apps.service import biogps_svc as sl_svc
 
 import logging
-log = logging.getLogger('biogps')
+log = logging.getLogger('biogps_prod')
 
 
 def reverse_proxy(request, url, contentonly=False):

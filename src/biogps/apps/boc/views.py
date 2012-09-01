@@ -11,7 +11,7 @@ import httplib2
 import re
 
 import logging
-log = logging.getLogger('biogps')
+log = logging.getLogger('biogps_prod')
 
 
 def reverse_proxy(request, url, contentonly=False):
