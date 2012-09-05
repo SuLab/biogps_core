@@ -134,7 +134,7 @@ if not settings.DEBUG:
             exc_type, exc_value, exc_tb = sys.exc_info()
             exc_tb_stack = traceback.extract_tb(exc_tb)
             if exc_type and len(exc_tb_stack) > 0:
-                log.error('username=%s clientip=%s url=%s, exception=%s' + \
+                log.error('username=%s clientip=%s url=%s exception=%s' + \
                              ' filename=%s lineno=%s name=%s',
                            getattr(request.user, 'username', ''),
                            request.META.get('REMOTE_ADDR', ''),

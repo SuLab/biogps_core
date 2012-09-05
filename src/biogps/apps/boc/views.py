@@ -134,9 +134,9 @@ def log_query(request, mobile=False, iphone=False):
                  'keyword': 'keyword'}.get(qtype, None)
         if _query and qtype in ['id', 'keyword']:
             if qtype == 'id':
-                query = re.sub('[\s\r\n+|,]+', '\r\n', _query)
+                query = re.sub('[\s\r\n+|,]+', '\n', _query)
             elif qtype == 'keyword':
-                query = '\r\n'.join([x.strip() for x in _query.split('\n')])
+                query = '\n'.join([x.strip() for x in _query.split('\n')])
 
             #logging
             logmsg1 = 'username=%s clientip=%s action=search searchby=anno qtype=%s qlen=%d' % \
@@ -145,11 +145,11 @@ def log_query(request, mobile=False, iphone=False):
                         qtype,
                         len(query))
             #logging query stat
-            logmsg2 = 'action=query searchby=anno qtype=%s query=%s num_terms=%s, num_hits=%s' % \
+            logmsg2 = 'action=query searchby=anno qtype=%s query=%s num_terms=%s num_hits=%s' % \
                         (qtype,
                          #'|'.join(query.split('\r\n'))[:1000],    # this is normalized query
-                         _query[:1000],                            # this is raw query
-                         len(query.split('\r\n')),
+                         _query[:1000].replace(' ', '_'),                            # this is raw query
+                         len(query.split('\n')),
                          'NA')
             if mobile:
                 # add an additional field for mobile
