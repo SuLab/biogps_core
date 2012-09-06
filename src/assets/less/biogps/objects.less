@@ -1,0 +1,111 @@
+.object-summary {
+    background: @color_lightgreen_back;
+    border: 1px solid @color_lightgreen + #333;
+    
+    .css3_border_radius(3px);
+    padding: 10px;
+    margin: 0 0 15px 0;
+    .util_clearfix;
+    
+    h1 {
+        margin: 0 0 5px 0;
+    }
+    
+    p {
+		clear: both;
+        font-size: 120%;
+        margin: 1em 0;
+    }
+    /*
+    .author {
+        clear: both;
+        margin: 1em 0;
+    }
+	*/
+}
+
+.author {
+    .ui-icon {
+        .inline_block;
+    }
+}
+
+.object-public {
+	
+}
+
+.object-restricted {
+    background: @color_lightyellow + #181818;
+    border-color: @color_darkyellow;
+    
+    .restriction-text {
+        color: @color_darkyellow;
+    }
+}
+
+.object-private {
+    background: @color_highlight + #aaa;
+    border-color: @color_highlight;
+    
+    .restriction-text {
+        color: @color_highlight;
+    }
+}
+
+.restriction-text {
+    font-size: 131%; /* 17px */
+    font-weight: bold;
+}
+
+.object-summary-details {
+    .grid_span(6);
+    .grid_left;
+}
+
+.object-summary-use {
+    .grid_span(2);
+    .grid_right;
+    
+    .btn-use-object {
+        display: block;
+        margin-top: 15px;
+    }
+}
+
+.object-type {
+    color: @color_text;
+}
+
+.object-full-details {
+    margin: 0 10px;
+}
+
+
+.form-controls {
+    padding: 0 0 10px 0;
+    text-align: right;
+    
+    .btn-use-object {
+        margin-left: 10px;
+        vertical-align: middle;
+    }
+}
+
+#ratings-box {
+    float: left;
+    width: 100px;
+}
+
+/* Used in the list views */
+.ratings-bar {
+    .inline_block;
+    background:url('/assets/img2/sprite_sitewide.png') no-repeat -50px -334px;
+    height: 16px;
+    width: 90px;
+    overflow: hidden;
+    
+    div {
+        background:url('/assets/img2/sprite_sitewide.png') no-repeat -50px -350px;
+        height: 16px;
+    }
+}
