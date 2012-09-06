@@ -23,6 +23,10 @@ biogps.staticpage_data.addAll(
             id: 'downloads',
             content: '/downloads/'
         },{
+            title: 'API',
+            id: 'api',
+            content: '/api/'
+        },{
             title: 'Blog',
             id: 'blog',
             icon: '/assets/img/blogger_16.gif',

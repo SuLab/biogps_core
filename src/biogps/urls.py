@@ -49,6 +49,8 @@ urlpatterns = patterns('biogps.www.views',
                                       'breadcrumbs': [('Downloads', '/downloads/')]}, name='downloads'),
     url(r'^iphone/$', 'flatpage', {'template': 'flatpage/iphone.html',
                                   'breadcrumbs': [('iPhone', '/iphone/')]},name='iphone'),
+    url(r'^api/$', 'flatpage', {'template': 'flatpage/api.html',
+                                  'breadcrumbs': [('API', '/api/')]},name='api'),
 
     #rss feeds
     (r'^rss/', include('biogps.apps.rss.urls')),
