@@ -28,7 +28,7 @@ class FlatPageSitemap(Sitemap):
     lastmod = datetime.date(2009,1,1)
 
     def items(self):
-        return ['about', 'terms', 'help']
+        return ['about', 'terms', 'help', 'faq', 'downloads','api', 'iphone']
 
     def location(self, obj):
         return '/' + obj + '/'
