@@ -21,7 +21,7 @@ from models import BiogpsPlugin
 from forms import BiogpsPluginForm
 
 import logging
-log = logging.getLogger('biogps')
+log = logging.getLogger('biogps_prod')
 
 
 class PluginLibraryView(RestView):

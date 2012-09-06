@@ -13,7 +13,7 @@ from biogps.apps.plugin.plugin import PluginUrlRenderError
 from biogps.apps.boc import boc_svc as svc
 
 import logging
-log = logging.getLogger('biogps')
+log = logging.getLogger('biogps_prod')
 
 #TEMP
 #NEW_LAYOUT_MODE = True    #0: for old layou_data jsonfield; 1 for new manytomanyfield

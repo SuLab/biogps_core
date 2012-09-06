@@ -29,6 +29,7 @@ from random import choice
 from StringIO import StringIO
 import csv
 import numpy as np
+import types
 import urllib
 
 
@@ -58,8 +59,13 @@ def median(values):
     return mdn
 
 
+def sanitize(ds_id):
+    """Return sanitized (uppercase if applicable) dataset ID"""
+    return ds_id.upper() if type(ds_id) in types.StringTypes else ds_id
+
+
 def std_err(values):
-    # Return standard error of values
+    """Return standard error of values"""
     avg = mean(values)
     count = len(values)
     try:
@@ -71,7 +77,7 @@ def std_err(values):
 
 
 class DatasetQuery():
-    '''Generic class container for dataset query functions'''
+    """Generic class container for dataset query functions"""
 
     conn = get_es_conn(default_idx='biogps_dataset')
 
@@ -178,7 +184,7 @@ class DatasetQuery():
 
     @staticmethod
     def get_ds_metadata(ds_id):
-        '''Return dataset metadata for provided ID'''
+        """Return dataset metadata for provided ID"""
         try:
             return BiogpsDataset.objects.get(id=ds_id).metadata
         except BiogpsDataset.DoesNotExist:
@@ -188,8 +194,9 @@ class DatasetQuery():
     def get_ds_data(ds_id, rep_li, gene_id, _format):
         """Return dataset data for provided ID and reporters"""
         rep_dict = OrderedDict()
+        ds = BiogpsDataset.objects.get(id=ds_id)
         try:
-            dsd = BiogpsDatasetData.objects.filter(dataset=ds_id,
+            dsd = BiogpsDatasetData.objects.filter(dataset=ds,
                 reporter__in=rep_li).values('reporter', 'data')
         except BiogpsDatasetData.DoesNotExist:
             return None
@@ -223,19 +230,20 @@ class DatasetQuery():
 
                 return _res
         else:
-            # Default json output
+            # Default output
             ds_name = BiogpsDataset.objects.get(id=ds_id).name
             for rep in dsd:
                 rep_dict[rep['reporter']] = literal_eval(rep['data'])
             probeset_list = [{i: {"values": rep_dict[i]}} for i in rep_dict]
-            return OrderedDict([('id', ds_id), ('name', ds_name),
-                ('probeset_list', probeset_list)])
+            return {'id': ds_id, 'name': ds_name,
+                'probeset_list': probeset_list}
 
     @staticmethod
     def get_ds_chart(ds_id, rep_id, sort_fac=None):
         """Return dataset static chart URL for provided ID and reporter"""
+        ds = BiogpsDataset.objects.get(id=ds_id)
         try:
-            rep_data = BiogpsDatasetData.objects.get(dataset=ds_id,
+            rep_data = BiogpsDatasetData.objects.get(dataset=ds,
                 reporter=rep_id)
         except BiogpsDatasetData.DoesNotExist:
             return None
@@ -484,8 +492,9 @@ class DatasetQuery():
             return r
 
         # Reconstruct dataset matrix
+        ds = BiogpsDataset.objects.get(id=ds_id)
         try:
-            _matrix = BiogpsDatasetMatrix.objects.get(dataset=ds_id)
+            _matrix = BiogpsDatasetMatrix.objects.get(dataset=ds)
         except BiogpsDatasetMatrix.DoesNotExist:
             return None
         reporters = _matrix.reporters

@@ -24,7 +24,7 @@ from tagging.utils import calculate_cloud
 from biogps.apps.boc import boc_svc as svc
 
 import logging
-log = logging.getLogger('biogps')
+log = logging.getLogger('biogps_prod')
 
 
 #@loginrequired

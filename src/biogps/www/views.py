@@ -25,7 +25,7 @@ from biogps.www.models import BiogpsInfobox
 
 
 import logging
-log = logging.getLogger('biogps')
+log = logging.getLogger('biogps_prod')
 
 
 def index(request, **kwargs):

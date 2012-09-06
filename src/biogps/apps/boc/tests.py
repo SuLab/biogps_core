@@ -87,7 +87,7 @@ def test_unicode_query():
     import logging
     # turn off info logging because logging cannot handle unicode when logging is
     # sent to a console during a test
-    log = logging.getLogger('biogps')
+    log = logging.getLogger('biogps_prod')
     log.setLevel(logging.WARNING)  
     
     res = c.post(test_url, dict(query="基因"))
