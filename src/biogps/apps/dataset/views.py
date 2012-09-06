@@ -1,11 +1,19 @@
 from biogps.apps.dataset.models import BiogpsDatasetData
-from biogps.apps.dataset.utils import DatasetQuery
-from biogps.utils.http import JSONResponse
+from biogps.apps.dataset.utils import DatasetQuery, sanitize
+from biogps.utils.http import JSONResponse, render_to_formatted_response
 from biogps.utils.restview import RestView
-from django.http import HttpResponse, HttpResponseNotFound
+from django.http import (
+    HttpResponse,
+    HttpResponseForbidden,
+    HttpResponseNotFound
+    )
 from django.shortcuts import render_to_response
 from django.views.decorators.csrf import csrf_exempt
 from time import time
+import logging
+
+
+log = logging.getLogger('biogps_prod')
 
 
 @csrf_exempt
@@ -23,8 +31,13 @@ class DatasetView(RestView):
                     json              return a plugin object in json format
                     xml               return a plugin object in xml format
         """
-        meta = DatasetQuery.get_ds_metadata(datasetID)
-        if meta:
+        datasetID = sanitize(datasetID)
+        log.info('username=%s clientip=%s action=dataset_metadata id=%s',
+            getattr(request.user, 'username', ''),
+            request.META.get('REMOTE_ADDR', ''), datasetID)
+
+        if 'format' in request.GET:
+            meta = DatasetQuery.get_ds_metadata(datasetID)
             sort_fac = request.GET.get('sortFactor', None)
             if sort_fac is not None:
                 # Sort metadata by provided factor
@@ -32,10 +45,12 @@ class DatasetView(RestView):
                     meta['factors'].sort(key=lambda x: x.values()[0][sort_fac])
                 except KeyError:
                     pass
-            return JSONResponse(meta)
+
+            return render_to_formatted_response(request,
+                data=meta, allowed_formats=['json', 'xml'])
         else:
-            return HttpResponseNotFound("Dataset ID #{} does not exist.\
-                                        ".format(datasetID))
+            # Standard HTML request, blank response until DS Library in place
+            return HttpResponse()
 
 
 @csrf_exempt
@@ -137,6 +152,7 @@ class DatasetValuesView(RestView):
             return HttpResponseNotFound('<b>No reporters provided.</b>'
                                         '<br />Please provide reporters '
                                         'in the form of ?reporters=rep1,rep2')
+        datasetID = sanitize(datasetID)
         alt_formats = ['csv']
         gene_id = request.GET.get('gene', None)
         _format = request.GET.get('format', None)
@@ -147,12 +163,14 @@ class DatasetValuesView(RestView):
         except AttributeError:
             # None type
             pass
-        res = DatasetQuery.get_ds_data(datasetID, get_reporters, gene_id,
+        _data = DatasetQuery.get_ds_data(datasetID, get_reporters, gene_id,
             _format)
         if _format is not None:
-            return res
+            # Already formatted, simply return data
+            return _data
         else:
-            return JSONResponse(res)
+            return render_to_formatted_response(request, data=_data,
+                allowed_formats=['json', 'xml'])
 
 
 @csrf_exempt
@@ -164,6 +182,7 @@ class DatasetStaticChartView(RestView):
        return the static chart image.
     """
     def get(self, request, datasetID, reporterID):
+        datasetID = sanitize(datasetID)
         sort_fac = request.GET.get('sortFactor', None)
         chart_img = DatasetQuery.get_ds_chart(datasetID, reporterID, sort_fac)
         if chart_img is None:
@@ -192,5 +211,10 @@ class DatasetCorrelationView(RestView):
             return HttpResponseNotFound("<b>No correlation value provided.</b>"
                 "<br />Please provide a correlation cutoff value in the form"
                 " of ?co=0.9, etc.")
-        return JSONResponse(DatasetQuery.get_ds_corr(datasetID, reporterID,
-            min_corr))
+        if min_corr < 0.5 or min_corr > 1:
+            return HttpResponseForbidden(
+                "Correlation threshold value must be between 0.5 and 1")
+        datasetID = sanitize(datasetID)
+        return render_to_formatted_response(request,
+            data=DatasetQuery.get_ds_corr(datasetID, reporterID, min_corr),
+            allowed_formats=['json', 'xml'])
