@@ -1,0 +1,25 @@
+{% extends "NEW/base_site.html" %}
+{% load biogps_tags %}
+
+{% block title %}BioGPS API{% endblock %}
+
+{% block bodyclass %}flatpage api{% endblock %}
+{% block content %}
+<article>
+  <div class="in">
+
+    <div class="roundBox">
+        <p>For developers, BioGPS provides extensive REST (REpresentational State Transfer) based web service APIs for programmatic access of BioGPS resources. Click the links below for the detailed API documentation:</p>
+
+        <h2><a href="/api/biogps">BioGPS API</a></h2>
+    </div>
+    <div class="roundBox">
+        <p>Being abstracted from BioGPS now, <a href="http://mygene.info">MyGene.Info</a> provides simple-to-use REST web services to query/retrieve gene annotation data. It's designed with simplicity and performance emphasized. Check out <a href="http://mygene.info">MyGene.Info</a> website or click the links below for the detailed API documention:</p>
+        <h2><a href="/api/mygene">MyGene.info API</a></h2>
+    </div>
+
+  </div>
+</article>
+
+
+{% endblock %}
