@@ -1,0 +1,1 @@
+This folder stores JSON files used by IODocs (https://github.com/mashery/iodocs) to document REST APIs provided by BioGPS and MyGene.Info. You need to use symbolic links to map these *.json files into "public/data" folder under IODocs installation folder.

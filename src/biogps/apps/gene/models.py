@@ -53,3 +53,11 @@ class Gene(RemoteModel):
             if value:
                 out[attr] = value
         return out
+
+
+import tagging
+try:
+    tagging.register(Gene)
+except tagging.AlreadyRegistered:
+    pass
+        
