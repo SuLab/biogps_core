@@ -3,7 +3,6 @@
         {
             "name": "MyGene.Info gene query web services",
             "methods": [
-
                 {
                     "MethodName": "Gene query service",
                     "Synopsis": "Make gene query and return matching gene list. Support JSONP and CORS as well.",
@@ -90,8 +89,13 @@
                             "Description": "e.g., human, mouse, rat. see http://mygene.info/metadata for supported species."
                         }
                     ]
-                },
-                
+                }
+            ]
+        },
+
+        {
+            "name": "MyGene.Info gene annotation web services",
+            "methods": [
                 {
                     "MethodName": "Gene annotation service",
                     "Synopsis": "Retrieve gene annotation based on Entrez or Ensembl gene id, support JSONP and CORS as well.",
