@@ -63,6 +63,9 @@ def getgeneidentifiers(request, geneid=None):
     if not is_valid_geneid(geneid):
         raise Http404
 
+    log.info('username=%s clientip=%s action=gene_identifiers id=%s',
+             getattr(request.user, 'username', ''),
+             request.META.get('REMOTE_ADDR', ''), geneid)
     return reverse_proxy(request, settings.BOCSERVICE_URL+'/boc/bgps/gene/%s' % smart_str(geneid))
 
 @allowedrequestmethod('GET')
