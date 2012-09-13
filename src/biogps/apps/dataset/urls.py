@@ -30,7 +30,7 @@ urlpatterns += patterns('biogps.apps.dataset.views',
 
     (r'search/$', 'DatasetSearchView'),
     (r'(?P<datasetID>.+)/values/$', 'DatasetValuesView'),
-    (r'(?P<datasetID>.+)/chart/(?P<reporterID>\w+)/$', 'DatasetStaticChartView'),
-    (r'(?P<datasetID>.+)/corr/(?P<reporterID>\w+)?', 'DatasetCorrelationView'),
+    (r'(?P<datasetID>.+)/chart/(?P<reporterID>[\w-]+)/$', 'DatasetStaticChartView'),
+    (r'(?P<datasetID>.+)/corr/(?P<reporterID>[\w-]+)/$', 'DatasetCorrelationView'),
     (r'(?P<datasetID>.+)(?:/(?P<slug>[\w-]+))?/$', 'DatasetView'),
 )
