@@ -51,15 +51,16 @@ class Command(NoArgsCommand):
             b = 'BioGPS_Downloads'
             eq = 'eQTL_expression_files'
             em = 'misc/emory'
+            mi = 'misc/mirna'
             pi = 'misc/pigatlas'
             
             # Datasets to be loaded
             datasets = {'U133AGNF1B.gcrma.csv':
             	       {'default': True, 'id': 1, 'dir': b, 'name': 'GeneAtlas U133A, gcrma',
-            		'delimiter': 'c', 'color': 'U133AGNF1B.gcrma.coloring.csv',
-            		'owner': 'Andrew Su', 'summary': 'The tissue-specific pattern of mRNA expression can indicate important clues about gene function. High-density oligonucleotide arrays offer the opportunity to examine patterns of gene expression on a genome scale. Toward this end, we have designed custom arrays that interrogate the expression of the vast majority of protein-encoding human and mouse genes and have used them to profile a panel of 79 human and 61 mouse tissues. The resulting data set provides the expression patterns for thousands of predicted genes, as well as known and poorly characterized genes, from mice and humans. We have explored this data set for global trends in gene expression, evaluated commonly used lines of evidence in gene prediction methodologies, and investigated patterns indicative of chromosomal organization of transcription. We describe hundreds of regions of correlated transcription and show that some are subject to both tissue and parental allele-specific expression, suggesting a link between spatial expression and imprinting.', 'geo_gds_id': '',
-            		'geo_gpl_id': 'GPL96', 'geo_gse_id': 'GSE1133',
-            		'pubmed_id': '15075390', 'species': 'human'},
+            	        'delimiter': 'c', 'color': 'U133AGNF1B.gcrma.coloring.csv',
+            	        'owner': 'Andrew Su', 'summary': 'The tissue-specific pattern of mRNA expression can indicate important clues about gene function. High-density oligonucleotide arrays offer the opportunity to examine patterns of gene expression on a genome scale. Toward this end, we have designed custom arrays that interrogate the expression of the vast majority of protein-encoding human and mouse genes and have used them to profile a panel of 79 human and 61 mouse tissues. The resulting data set provides the expression patterns for thousands of predicted genes, as well as known and poorly characterized genes, from mice and humans. We have explored this data set for global trends in gene expression, evaluated commonly used lines of evidence in gene prediction methodologies, and investigated patterns indicative of chromosomal organization of transcription. We describe hundreds of regions of correlated transcription and show that some are subject to both tissue and parental allele-specific expression, suggesting a link between spatial expression and imprinting.', 'geo_gds_id': '',
+            	        'geo_gpl_id': 'GPL96', 'geo_gse_id': 'GSE1133',
+            	        'pubmed_id': '15075390', 'species': 'human'},
             
             	    'NCI60_U133A_20070815.raw.csv':
             	       {'default': True, 'id': 2, 'dir': b, 'name': 'NCI60 on U133A, gcrma',
@@ -143,14 +144,21 @@ class Command(NoArgsCommand):
             	       {'default': True, 'id': 14, 'dir': eq, 'name': 'eQTL -- Pancreas (GNF1M)',
             	        'delimiter': 'c', 'color': '', 'owner': '', 'summary': '',
             	        'geo_gds_id': '', 'geo_gpl_id': 'GPL1073', 'geo_gse_id': '',
-            	        'pubmed_id': '', 'species': 'mouse'}
+            	        'pubmed_id': '', 'species': 'mouse'},
 
             	    'Pig_atlas_RMA_normalised_data_updated.csv':
             	       {'default': True, 'dir': pi, 'name': 'Pig Atlas',
             	        'delimiter': 'c', 'color': 'Pig_atlas_new_sample_annotation_updated.csv', 'owner': 'Tom Freeman',
                         'summary': 'This dataset displays a survey of gene expression across a wide range of tissues taken from the domestic pig (Sus scrofa) performed by researchers at The Roslin Institute, Edinburgh. The analysis was carried out using a new porcine Affymetrix expression array (Snowball) that has been designed to provide comprehensive coverage of the known pig transcriptome.  Data is given as RMA normalised expression values.',
             	        'geo_gds_id': '', 'geo_gpl_id': 'snowball', 'geo_gse_id': '',
-            	        'pubmed_id': '', 'species': 'pig'}
+            	        'pubmed_id': '', 'species': 'pig'},
+
+            	    'miRNA_fluid_profile3.csv':
+            	       {'default': True, 'dir': mi, 'name': 'miRNA profiling in bodily fluids',
+            	        'delimiter': 'c', 'color': 'miRNA_fluid_profile3.coloring.csv', 'owner': 'Andrew Su',
+                        'summary': 'miRNAs profiling in 12 human body fluids and urine samples from women in different stages of pregnancy or patients with different urothelial cancers.',
+            	        'geo_gds_id': '', 'geo_gpl_id': 'RT-PCR', 'geo_gse_id': '',
+            	        'pubmed_id': '20847327', 'species': 'human'}
             	   } 
             
             # Parse csv file

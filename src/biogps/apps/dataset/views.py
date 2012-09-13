@@ -199,7 +199,7 @@ class DatasetStaticChartView(RestView):
 @csrf_exempt
 class DatasetCorrelationView(RestView):
     """This class defines views for REST URL:
-        /dataset/<datasetID>/corr/<reporterID>?co=
+        /dataset/<datasetID>/corr/<reporterID>/?co=
 
        Run Pearson correlation for provided reporter
        against all reporters in dataset.
