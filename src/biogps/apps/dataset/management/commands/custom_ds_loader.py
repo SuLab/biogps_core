@@ -69,9 +69,9 @@ class Command(NoArgsCommand):
             	        'geo_gds_id': '', 'geo_gpl_id': 'GPL96', 'geo_gse_id': '',
             	        'pubmed_id': '', 'species': 'human'},
             
-            	    'GNF1M_plus_macrophage_small.bioGPS.txt':
+            	    'GNF1M_plus_macrophage_small.bioGPS.csv':
             	       {'default': True, 'id': 3, 'dir': b, 'name': 'GeneAtlas GNF1M, gcrma',
-            	        'delimiter': 't', 'color': 'GNF1M_plus_macrophage_small.bioGPS.coloring.csv',
+            	        'delimiter': 'c', 'color': 'GNF1M_plus_macrophage_small.bioGPS.coloring.csv',
             	        'owner': '', 'summary': '', 'geo_gds_id': '',
             	        'geo_gpl_id': 'GPL1073', 'geo_gse_id': '', 'pubmed_id': '',
             	        'species': 'mouse'},
