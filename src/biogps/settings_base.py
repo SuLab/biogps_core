@@ -194,7 +194,7 @@ INSTALLED_APPS = (
     'biogps.apps.comment',
     'biogps.apps.rating',
     'biogps.apps.favorite',
-
+    'biogps.apps.stat',
 )
 
 # Sensitive settings get imported here.
