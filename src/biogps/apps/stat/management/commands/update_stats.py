@@ -15,19 +15,17 @@ from pymongo import Connection
 from time import time
 
 
-# Currently updating stats for datasets, genes, and layouts
+# Currently updating stats for datasets, genes, layouts
 stat_types = {BiogpsDataset: ['dataset_metadata'],
-    Gene: ['gene_identifiers'],
-    BiogpsGenereportLayout: ['layout_query']}
+              Gene: ['gene_identifiers'],
+              BiogpsGenereportLayout: ['layout_query']}
 
 # Stat results
 stats = dict()  # {BiogpsDataset: {'1': {'monthly': 100}}}
-for t in stat_types.keys():
-    stats[t] = {}
 
-# Time frames/intervals
-t_intervals = ['weekly', 'monthly', 'all_time']
+# Time frames
 now = datetime.now()
+time_frames = ['weekly', 'monthly', 'all_time']
 one_mo = now - relativedelta(months=1)
 prev_wk = now - relativedelta(weeks=1)
 
@@ -40,7 +38,6 @@ def rank_stats(sts, time_frame):
 def save_ranks(st_type, rnks, intrvl):
     """Iterate over ranked list of stats, save to db"""
     for idx, val in enumerate(rnks):
-        #print idx, val
         try:
             con_type = ContentType.objects.get_for_model(st_type)
             obj, created = BiogpsStat.objects.get_or_create(
@@ -110,49 +107,45 @@ class Command(BaseCommand):
         else:
             start = time()
             # Connect to MongoDB
-            _db = args[0]
-            _collection = args[1]
+            db = args[0]
+            collection = args[1]
             conn = Connection(settings.LOG_SERVER)
-            coll = conn[_db][_collection]
+            coll = conn[db][collection]
             print '\nTotal docs in collection: {}'.format(coll.count())
 
-            # Get/process stats from all docs
-            parsed_count = 0
-            parsed_docs = coll.find()
-            for i in parsed_docs:
-                try:
-                    msg_parsed = i['msg_parsed']
-                except KeyError:
-                    continue
+            # Get/process stats based on stat type, action
+            for s in stat_types.iteritems():
+                _type = s[0]
+                stats[_type] = {}
+                for action in s[1]:
+                    _docs = coll.find({'msg_parsed.action': action}, timeout=False)
 
-                # Only parse actions we've specifically logged
-                if msg_parsed and 'action' in msg_parsed.keys():
-                    parsed_count += 1
+                    for i in _docs:
+                        # Stat time frame
+                        t_frame = stat_time_frame(i['time'])
 
-                    for s in stat_types.iteritems():
-                        if msg_parsed['action'] in s[1]:
-                            # Update stats
-                            t_frame = stat_time_frame(i['time'])
+                        _id = i['msg_parsed']['id']
 
-                            _type = s[0]
-                            _id = msg_parsed['id']
+                        # Temporary clean-up of bad ds IDs
+                        if _type == BiogpsDataset and _id.find('/') != -1:
+                            _id = _id.split('/')[0]
 
-                            # Temporary clean-up of bad ds IDs
-                            if _type == BiogpsDataset and _id.find('/') != -1:
-                                _id = _id.split('/')[0]
+                        # Tally statistic
+                        update_stat(_type, _id, t_frame)
 
-                            # Tally statistic
-                            update_stat(_type, _id, t_frame)
+                # Rank all results, update BioGPS stats
+                for st in stats.keys():
+                    ranks = list()
+                    for k, v in stats[st].iteritems():
+                        # Add stat object id to dict
+                        v['id'] = k
+                        ranks.append(v)
+                    for t in time_frames:
+                        rank_stats(ranks, t)
+                        print '{} {}: {}\n\n'.format(st.short_name, t, ranks)
+                        save_ranks(st, ranks, t)
 
-            # Rank all results, update BioGPS stats
-            for st in stats.keys():
-                ranks = list()
-                for k, v in stats[st].iteritems():
-                    v['id'] = k
-                    ranks.append(v)
-                for ti in t_intervals:
-                    rank_stats(ranks, ti)
-                    save_ranks(st, ranks, ti)
+                # Done with stat type, clear before reuse
+                stats.clear()
 
-            print 'Successfully parsed {} docs'.format(parsed_count)
             print 'Took {} secs'.format(time() - start)
