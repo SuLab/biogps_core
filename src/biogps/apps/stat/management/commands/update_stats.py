@@ -30,27 +30,38 @@ one_mo = now - relativedelta(months=1)
 prev_wk = now - relativedelta(weeks=1)
 
 
-def rank_stats(sts, time_frame):
+def rank_by_time(sts, time_frame):
     """Rank stats array of dicts by time frame"""
     sts.sort(key=lambda x: x[time_frame], reverse=True)
 
 
-def save_ranks(st_type, rnks, intrvl):
+def save_ranks(st_type, rnks, st_tframe):
     """Iterate over ranked list of stats, save to db"""
+    prev_rank, prev_rank_val, rank = 0, 0, 0
     for idx, val in enumerate(rnks):
+        obj_total = val[st_tframe]
+        if obj_total != prev_rank_val:
+            # New rank
+            rank = idx + 1
+            prev_rank = rank
+            prev_rank_val = obj_total
+        else:
+            # Same total as previous, same rank
+            rank = prev_rank
         try:
+            obj_id = val['id']
             con_type = ContentType.objects.get_for_model(st_type)
             obj, created = BiogpsStat.objects.get_or_create(
-                content_type=con_type, object_id=val['id'],
-                interval=intrvl, defaults={'count': val[intrvl],
-                'rank': idx + 1})
+                content_type=con_type, object_id=obj_id,
+                interval=st_tframe, defaults={'count': obj_total,
+                'rank': rank})
         except IntegrityError:
             print 'IntegrityError: {} {} {} {}'.format(con_type,
-                val['id'], intrvl, val[intrvl])
+                obj_id, st_tframe, obj_total)
             return
         except ValueError:
-            print 'ValueError: {} {} {} {}'.format(con_type, val['id'],
-                intrvl, val[intrvl])
+            print 'ValueError: {} {} {} {}'.format(con_type, obj_id,
+                st_tframe, obj_total)
             return
 
 
@@ -84,6 +95,7 @@ def update_stat(stat_type, stat_id, stat_time_frame):
             stat_id)
         return
 
+    # Update stat for given time frame
     all_time_stat = True if stat_type == 'all_time' else False
     if stat_id not in stats[stat_type]:
         stats[stat_type][stat_id] = {'all_time': 0, 'monthly': 0, 'weekly': 0}
@@ -118,7 +130,8 @@ class Command(BaseCommand):
                 _type = s[0]
                 stats[_type] = {}
                 for action in s[1]:
-                    _docs = coll.find({'msg_parsed.action': action}, timeout=False)
+                    _docs = coll.find({'msg_parsed.action': action},
+                                      timeout=False)
 
                     for i in _docs:
                         # Stat time frame
@@ -141,7 +154,7 @@ class Command(BaseCommand):
                         v['id'] = k
                         ranks.append(v)
                     for t in time_frames:
-                        rank_stats(ranks, t)
+                        rank_by_time(ranks, t)
                         print '{} {}: {}\n\n'.format(st.short_name, t, ranks)
                         save_ranks(st, ranks, t)
 
