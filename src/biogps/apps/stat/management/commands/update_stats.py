@@ -4,8 +4,7 @@ from biogps.apps.dataset.models import BiogpsDataset
 from biogps.apps.gene.models import Gene
 from biogps.apps.layout.models import BiogpsGenereportLayout
 from biogps.apps.stat.models import BiogpsStat
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
+from datetime import datetime, timedelta
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
@@ -26,8 +25,8 @@ stats = dict()  # {BiogpsDataset: {'1': {'monthly': 100}}}
 # Time frames
 now = datetime.now()
 time_frames = ['weekly', 'monthly', 'all_time']
-one_mo = now - relativedelta(months=1)
-prev_wk = now - relativedelta(weeks=1)
+one_mo = now - timedelta(days=30)
+prev_wk = now - timedelta(weeks=1)
 
 
 def rank_by_time(sts, time_frame):
@@ -155,7 +154,7 @@ class Command(BaseCommand):
                         ranks.append(v)
                     for t in time_frames:
                         rank_by_time(ranks, t)
-                        print '{} {}: {}\n\n'.format(st.short_name, t, ranks)
+                        #print '{} {}: {}\n\n'.format(st.short_name, t, ranks)
                         save_ranks(st, ranks, t)
 
                 # Done with stat type, clear before reuse

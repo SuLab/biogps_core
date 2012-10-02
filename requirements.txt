@@ -1,8 +1,8 @@
-#Before install the following python module, install these package in ubuntu
+#Before installing the following python modules, install these packages in ubuntu:
 #    sudo apt-get install python-dev libpq-dev libxml2 python-libxml2 python-numpy
 
 # Required python modules for BioGPS app running in prod mode
-# To install all requirement, run
+# To install all requirements, run:
 #    pip install -r requirements.txt
 Django==1.3.3
 thrift==0.8.0
@@ -18,6 +18,7 @@ ipython==0.12.1
 nose==1.1.2
 psycopg2==2.4.5   #require libpq-dev
 pyes==0.19.1
+pymongo==2.3
 python-dateutil==2.1
 python-openid==2.2.5
 pytz==2012c
