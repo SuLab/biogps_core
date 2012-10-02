@@ -5,22 +5,25 @@ import random
 import re
 
 from django.conf import settings
+from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
+from django.core.urlresolvers import reverse
 from django.http import (Http404, HttpResponse,
                          HttpResponseBadRequest, HttpResponseRedirect)
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from django.utils.http import urlencode
 from django.utils.html import strip_tags
-from django.core.urlresolvers import reverse
-from django.contrib.auth.models import User
+from django.utils.http import urlencode
 
+from biogps.apps.gene.models import Gene
+from biogps.apps.layout.layout import getall, get_shared_layouts
+from biogps.apps.layout.models import BiogpsGenereportLayout
+from biogps.apps.plugin.models import BiogpsPlugin
+from biogps.apps.stat.models import BiogpsStat
 from biogps.utils.http import JSONResponse, render_to_formatted_response
+from biogps.utils.detect_mobile_browser import is_mobile_browser
 from biogps.utils.helper import (getCommonDataForMain,
                                  HttpResponseRedirectWithIEFix)
-from biogps.utils.detect_mobile_browser import is_mobile_browser
-from biogps.apps.plugin.models import BiogpsPlugin
-from biogps.apps.layout.models import BiogpsGenereportLayout
-from biogps.apps.layout.layout import getall, get_shared_layouts
 from biogps.www.models import BiogpsInfobox
 
 
@@ -343,24 +346,50 @@ def get_info_box():
         featured_margin = '-15%'
         if featured_quote_length >= 130 and featured_quote_length < 200:
             # Large quote
-            featured_margin = '-27%'
+            featured_margin = '-25%'
         elif featured_quote_length >= 200:
             # Really large quote
-            featured_margin = '-35%'
-        infobox_items.append(['featured', '<h2>Featured In</h2>', '%s<br>' % (i.content), '%s' % (i.detail), featured_margin])
+            featured_margin = '-30%'
+        infobox_items.append(['featured', '<div><h2>Featured In</h2></div>', '%s' % (i.content), '%s' % (i.detail), featured_margin])
 
     # Statistics
-    infobox_items.append(['stat', '<h2>Statistics</h2>', '<p><span><i>%s</i></span></p>' % (User.objects.count()), ' registered users'])
+    stats_header = '<div><h2>Statistics</h2></div>'
+    infobox_items.append(['stat', stats_header, '<p><span><i>%s</i></span></p>' % (User.objects.count()), ' registered users'])
     new_users = User.objects.filter(date_joined__gte=datetime.datetime.now()-datetime.timedelta(weeks=1)).count()
     if new_users == 0:
         # No new users, don't display!
         pass
     elif new_users == 1:
-        infobox_items.append(['stat', '<h2>Statistics</h2>', '<p><span><i>%s</i></span></p>' % (new_users), ' new user in the last week'])
+        infobox_items.append(['stat', stats_header, '<p><span><i>%s</i></span></p>' % (new_users), ' new user in the last week'])
     else:
-        infobox_items.append(['stat', '<h2>Statistics</h2>', '<p><span><i>%s</i></span></p>' % (new_users), ' new users in the last week'])
-    infobox_items.append(['stat', '<h2>Statistics</h2>', '<p><span><i>%s</i></span></p>' % (BiogpsPlugin.objects.count()), ' registered plugins'])
-    infobox_items.append(['stat', '<h2>Statistics</h2>', '<p><span><i>%s</i></span></p>' % (BiogpsGenereportLayout.objects.count()), ' custom layouts'])
+        infobox_items.append(['stat', stats_header, '<p><span><i>%s</i></span></p>' % (new_users), ' new users in the last week'])
+    infobox_items.append(['stat', stats_header, '<p><span><i>%s</i></span></p>' % (BiogpsPlugin.objects.count()), ' registered plugins'])
+    infobox_items.append(['stat', stats_header, '<p><span><i>%s</i></span></p>' % (BiogpsGenereportLayout.objects.count()), ' custom layouts'])
+
+    # Trends
+    trend_intervals = ['all_time', 'monthly', 'weekly']
+    trend_models = [Gene]
+    for mdl in trend_models:
+        for intvl in trend_intervals:
+            stats = BiogpsStat.objects.filter(content_type=
+                         ContentType.objects.get_for_model(mdl),
+                         interval=intvl).order_by('rank').filter(
+                         rank__lte=10)[:10]
+            if mdl == Gene:
+                content_title = '<div><u class="infobox-trend-title">Popular Genes ('
+                if intvl == 'all_time':
+                    content_title += 'all-time'
+                elif intvl == 'monthly':
+                    content_title += 'last month'
+                elif intvl == 'weekly':
+                    content_title += 'last week'
+                # Build rank table
+                content_title += ')</u></div>'
+                rank_table = '{}<table>{}</table>'
+                table_rows = ''
+                for idx, val in enumerate(stats[:5]):
+                    table_rows += '<tr><td>{}. <a href="http://biogps.org/gene/{}">{}</a></td><td>{}. <a href="http://biogps.org/gene/{}">{}</a></td></tr>'.format(idx + 1, val.content_object.id, val.content_object.symbol, idx + 6, stats[idx + 5].content_object.id, stats[idx + 5].content_object.symbol)
+                infobox_items.append(['trend', '<div><h2>Trends</h2></div>', rank_table.format(content_title, table_rows)])
 
     # User quotes
     for i in BiogpsInfobox.objects.filter(type="quote"):
@@ -371,8 +400,8 @@ def get_info_box():
         quote_total = quote_content_length + quote_detail_length
 
         # Check each quote's size and set its margin-top value
-        quote_margin = '{}%'.format(quote_total * -0.08)
-        infobox_items.append(['quote', '<h2>User Love</h2>', '%s' % (quote_content), '%s' % (quote_detail), quote_margin])
+        quote_margin = '{}%'.format(quote_total * -0.07)
+        infobox_items.append(['quote', '<div><h2>User Love</h2></div>', '%s' % (quote_content), '%s' % (quote_detail), quote_margin])
 
     # Shuffle results
     random.shuffle(infobox_items)
