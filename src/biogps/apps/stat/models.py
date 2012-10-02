@@ -12,6 +12,6 @@ class BiogpsStat(models.Model):
     rank = models.IntegerField()
 
     def __unicode__(self):
-        return u'Stat for {} ID {}: interval: {}, count: {}, rank: \
-            {}'.format(self.content_type, self.object_id, self.interval,
+        return u'Stat for {} ID {}: interval: {}, count: {}, rank: '\
+            '{}'.format(self.content_type, self.object_id, self.interval,
             self.count, self.rank)

@@ -599,6 +599,49 @@
     text-align: center;
 }
 
+.infobox-trend {
+    height: 205px;
+    margin: 0px;
+    padding: 0px;
+    width: 265px;
+}
+
+    .infobox-trend h2 {
+        background: url("/assets/img/icons/trend.png") no-repeat;
+        margin-bottom: 0px;
+        padding-bottom: 0px;
+        padding-left: 22px;
+    }
+
+    .infobox-trend-title {
+        font-size: 16px;
+    }
+
+.infobox-trend-wrapper {
+    margin-top: -25%;
+    padding: 0px;
+    position: absolute;
+    top: 50%;
+    width: 100%;
+}
+
+.infobox-trend-main {
+    font-weight: bold;
+    line-height: 100%;
+    margin: auto;
+    padding-left: 20px;
+    width: 90%;
+}
+
+    .infobox-trend-main td {
+        padding: 5px 20px 5px 20px;
+    }
+
+.infobox-trend-detail {
+    font-size: 20px;
+    text-align: center;
+}
+
 #welcome-news {
     height: 235px;
 }
