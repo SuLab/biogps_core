@@ -375,21 +375,22 @@ def get_info_box():
                          ContentType.objects.get_for_model(mdl),
                          interval=intvl).order_by('rank').filter(
                          rank__lte=10)[:10]
-            if mdl == Gene:
-                content_title = '<div><u class="infobox-trend-title">Popular Genes ('
-                if intvl == 'all_time':
-                    content_title += 'all-time'
-                elif intvl == 'monthly':
-                    content_title += 'last month'
-                elif intvl == 'weekly':
-                    content_title += 'last week'
-                # Build rank table
-                content_title += ')</u></div>'
-                rank_table = '{}<table>{}</table>'
-                table_rows = ''
-                for idx, val in enumerate(stats[:5]):
-                    table_rows += '<tr><td>{}. <a href="http://biogps.org/gene/{}">{}</a></td><td>{}. <a href="http://biogps.org/gene/{}">{}</a></td></tr>'.format(idx + 1, val.content_object.id, val.content_object.symbol, idx + 6, stats[idx + 5].content_object.id, stats[idx + 5].content_object.symbol)
-                infobox_items.append(['trend', '<div><h2>Trends</h2></div>', rank_table.format(content_title, table_rows)])
+            if len(stats) > 0:
+                if mdl == Gene:
+                    content_title = '<div><u class="infobox-trend-title">Popular Genes ('
+                    if intvl == 'all_time':
+                        content_title += 'all-time'
+                    elif intvl == 'monthly':
+                        content_title += 'last month'
+                    elif intvl == 'weekly':
+                        content_title += 'last week'
+                    # Build rank table
+                    content_title += ')</u></div>'
+                    rank_table = '{}<table>{}</table>'
+                    table_rows = ''
+                    for idx, val in enumerate(stats[:5]):
+                        table_rows += '<tr><td>{}. <a href="http://biogps.org/gene/{}">{}</a></td><td>{}. <a href="http://biogps.org/gene/{}">{}</a></td></tr>'.format(idx + 1, val.content_object.id, val.content_object.symbol, idx + 6, stats[idx + 5].content_object.id, stats[idx + 5].content_object.symbol)
+                    infobox_items.append(['trend', '<div><h2>Trends</h2></div>', rank_table.format(content_title, table_rows)])
 
     # User quotes
     for i in BiogpsInfobox.objects.filter(type="quote"):
