@@ -32,7 +32,12 @@ class BiogpsDatasetManager(models.Manager):
                 return super(BiogpsDatasetManager, self).get(geo_gse_id=_id)
         else:
             # Non-id kwargs passed; business as usual
-            return super(BiogpsDatasetManager, self).get(*args, **kwargs)
+            try:
+                return super(BiogpsDatasetManager, self).get(*args, **kwargs)
+            except (AttributeError, BiogpsDataset.DoesNotExist, TypeError,
+                    ValueError):
+                # Invalid dataset ID
+                return None
 
 
 class BiogpsDataset(BioGPSModel):
