@@ -187,14 +187,17 @@ class DatasetQuery():
         """Return dataset metadata for provided ID"""
         try:
             return BiogpsDataset.objects.get(id=ds_id).metadata
-        except BiogpsDataset.DoesNotExist:
+        except AttributeError, BiogpsDataset.DoesNotExist:
             return None
 
     @staticmethod
     def get_ds_data(ds_id, rep_li, gene_id, _format):
         """Return dataset data for provided ID and reporters"""
         rep_dict = OrderedDict()
-        ds = BiogpsDataset.objects.get(id=ds_id)
+        try:
+            ds = BiogpsDataset.objects.get(id=ds_id)
+        except BiogpsDataset.DoesNotExist:
+            return None
         try:
             dsd = BiogpsDatasetData.objects.filter(dataset=ds,
                 reporter__in=rep_li).values('reporter', 'data')
@@ -231,7 +234,10 @@ class DatasetQuery():
                 return _res
         else:
             # Default output
-            ds_name = BiogpsDataset.objects.get(id=ds_id).name
+            try:
+                ds_name = BiogpsDataset.objects.get(id=ds_id).name
+            except AttributeError, BiogpsDataset.DoesNotExist:
+                return None
             for rep in dsd:
                 rep_dict[rep['reporter']] = literal_eval(rep['data'])
             probeset_list = [{i: {"values": rep_dict[i]}} for i in rep_dict]
@@ -241,7 +247,10 @@ class DatasetQuery():
     @staticmethod
     def get_ds_chart(ds_id, rep_id, sort_fac=None):
         """Return dataset static chart URL for provided ID and reporter"""
-        ds = BiogpsDataset.objects.get(id=ds_id)
+        try:
+            ds = BiogpsDataset.objects.get(id=ds_id)
+        except BiogpsDataset.DoesNotExist:
+            return None
         try:
             rep_data = BiogpsDatasetData.objects.get(dataset=ds,
                 reporter=rep_id)
@@ -492,7 +501,10 @@ class DatasetQuery():
             return r
 
         # Reconstruct dataset matrix
-        ds = BiogpsDataset.objects.get(id=ds_id)
+        try:
+            ds = BiogpsDataset.objects.get(id=ds_id)
+        except BiogpsDataset.DoesNotExist:
+            return None
         try:
             _matrix = BiogpsDatasetMatrix.objects.get(dataset=ds)
         except BiogpsDatasetMatrix.DoesNotExist:
