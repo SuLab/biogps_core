@@ -1,0 +1,38 @@
+{% extends "m_base.html" %}
+{% load biogps_tags %}
+
+{% block title %}Gene {{ results.geneid }}: {{ results.layout_name }} - BioGPS Mobile{% endblock %}
+
+{% block content %}
+
+<div id="welcome-search">
+	<div>
+	<h3>Current Layout: {{results.layout_name}}</h3>
+	    {% if results.plugins %}
+            <ul>
+    		{% for p in results.plugins %}
+    		    {% if p.url %}
+    		        <li><a href="{{ p.url }}">{{ p.title }}</a></li>
+    		    {% else %}
+    		        <li>{{ p.title }}<br>(Not available for this gene)</li>
+    		    {% endif %}
+    		{% endfor %}
+    		</ul>
+    	{% else %}
+    	    No plugins were found in the given layout.
+	    {% endif %}
+	</div>
+	
+	<h3>Alternate Layouts</h3>
+	<div>
+	    {% if results.layouts %}
+            <ul>
+    		{% for l in results.layouts %}
+    		    <li><a href="/m/gene/{{ results.geneid }}/?layoutid={{ l.id }}">{{ l.title }}</a></li>
+    		{% endfor %}
+    		</ul>
+    	{% endif %}
+	</div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "base_site.html" %}
+{% load i18n %}
+{% load biogps_tags %}
+{% load compressed %}
+
+{% block bodyclass %}bgprofile{% endblock %}
+
+{% block branding %}
+User Profiles
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
+
+{% block footer_js %}
+    {% compressed_js 'jquery' %}
+    {% compressed_js 'bgprofile' %}
+{% endblock %}

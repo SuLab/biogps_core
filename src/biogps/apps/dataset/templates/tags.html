@@ -1,0 +1,40 @@
+{% extends "NEW/base_site.html" %}
+
+{% block title %}Dataset Tags{% endblock %}
+{% block bodyclass %}{% endblock %}
+
+{% block content %}
+<article class="shift-for-sidebar-left">
+    <div class="in">
+        <header id="page-header">
+            <h1 id="page-header-text">Plugin Tags</h1>
+        </header>
+        <p class="large-summary"><b>A tag is a keyword or label that
+            categorizes datasets with other, similar datasets.</b> Using the
+            right tags makes it easier for others to find and use datasets.
+        </p>
+
+        <section id="tag-list">
+            <ul>
+            {% for t in all_tags %}
+                <li>
+                    <a href="{% url dataset_list_for_tag t.name %}" rel="tag">
+                        <span class="ui-icon ui-icon-tag2"></span>
+                        {{ t }}
+                        {% if t.count %}
+                        <span class="count">({{ t.count }})</span>
+                        {% endif %}
+                    </a>
+                </li>
+            {% endfor %}
+            </ul>
+        </section>
+    </div>
+</article>
+
+<aside id="sidebar-left" class="browse-navigation">
+    <div class="in">
+        {% include "_navigation.html" %}
+    </div>
+</aside>
+{% endblock %}

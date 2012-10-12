@@ -1,0 +1,75 @@
+{% load i18n %}
+{% load biogps_tags %}
+{% load ga_mobile %}
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{% block title %}BioGPS - Mobile{% endblock %}</title>
+	{% block extrastyle %}{% endblock %}
+	{% block extrahead %}{% endblock %}
+	{% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE" />{% endblock %}
+</head>
+
+<body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}">
+
+<!-- Container -->
+<div id="container">
+
+    {% if not is_popup %}
+    <!-- Header -->
+    <div id="header">
+		<div class="biogps-title" id='biogps-logo'>
+		    <a href="/m/" title="BioGPS - Mobile">
+                <img src="/assets/img/biogps-logo_200x98.png" alt="BioGPS - The Gene Portal Hub" width="200px" height="98px" style="border:none" />
+            </a>
+		</div>
+    </div>
+    <!-- END Header -->
+
+    {% endif %}
+
+        {% if messages %}
+        <ul class="messagelist">{% for message in messages %}<li>{{ message|escape }}</li>{% endfor %}</ul>
+        {% endif %}
+
+    <!-- Content -->
+    <div id="content" class="{% block coltype %}colM{% endblock %} clearfix">
+        {% block pretitle %}{% endblock %}
+        {% block content_title %}{% if title %}<h1>{{ title|escape }}</h1>{% endif %}{% endblock %}
+        {% block content %}
+        {% block object-tools %}{% endblock %}
+        {{ content }}
+        {% endblock %}
+        {% block sidebar %}{% endblock %}
+
+        {% block searchbox %}
+        <div id="qsearch_box" class="roundBoxBlue">
+            <h3>Search genes by Symbol or Accession</h3>
+    		<form id="qsearch_form" action="/m/search/" method="POST">
+    			<input type="text" id="query" name="query" />&nbsp;
+    			<input type="submit" value="Search" />
+    			<br>
+    			<div>Example searches: 1017, CDK2, 117_at, IPR008351</div>
+    		</form>
+    	</div>
+    	{% endblock %}
+    </div>
+    <br><br>
+    <!-- END Content -->
+
+	{% block footer %}{% endblock %}
+</div>
+<!-- END Container -->
+
+<div id="base_footer">
+	<div id="copyright">
+		&#169; {% this_year %} <a href="http://www.scripps.edu" target="_blank">The Scripps Research Institute</a> ({% biogps_ver %})
+	</div>
+	<div id="footer-links">
+	    <a href="/?full">Full BioGPS website</a>
+	</div>
+</div>
+
+{% block ga %}{% ga_mobile request %}{% endblock %}
+</body>
+</html>

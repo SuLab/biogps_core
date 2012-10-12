@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<rdf:RDF
+    xmlns:protege="http://protege.stanford.edu/plugins/owl/protege#"
+    xmlns:activity="http://bioontology.org/ontologies/Activity.owl#"
+    xmlns:xsp="http://www.owl-ontologies.com/2005/08/07/xsp.owl#"
+    xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+    xmlns:area="http://bioontology.org/ontologies/ResearchArea.owl#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:p1="http://bioontology.org/ontologies/BiomedicalResources.owl#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns="http://www.owl-ontologies.com/Ontology1340037900.owl#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:BRO="http://bioontology.org/ontologies/BiomedicalResourceOntology.owl#"
+    xmlns:desc="http://bioontology.org/ontologies/biositemap.owl#"
+  xml:base="http://bioontology.org/ontologies/biositemap_7987.rdf">
+  <owl:Ontology rdf:about="http://bioontology.org/ontologies/7987">
+    <owl:imports rdf:resource="http://bioontology.org/ontologies/BiomedicalResources.owl"/>
+  </owl:Ontology>
+  <desc:Resource_Description rdf:about="http://www.owl-ontologies.com/Ontology1340037900.owl#BioGPS">
+    <desc:resource_type>
+      <BRO:Resource/>
+    </desc:resource_type>
+    <desc:resource_name rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >New Resource 1</desc:resource_name>
+  </desc:Resource_Description>
+</rdf:RDF>
+
+<!-- Created with Protege (with OWL Plugin 3.4.1, Build 536)  http://protege.stanford.edu -->

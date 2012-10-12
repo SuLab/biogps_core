@@ -1,0 +1,24 @@
+{% extends "NEW/base_site.html" %}
+{% load i18n %}
+{% load biogps_tags %}
+
+{% block title %}{% trans 'Page not found' %}{% endblock %}
+{% block breadcrumbs %}<div class="breadcrumbs"></div>{% endblock %}
+
+{% block content %}
+
+<h1>{% trans 'Page not found' %}</h1>
+
+<p>We're sorry, but the requested page could not be found.</p>
+
+{% if user.is_authenticated %}
+    <p>Either it doesn't exist or your account does not have access.</p>
+    <p>If you believe this is in error, please contact us directly: {% emailus %}</p>
+{% else %}
+    <p>Either it doesn't exist or you need to login.</p>
+    <a href="{% url auth_login %}" class="btn-use-object btn-large">Login</a>
+{% endif %}
+
+{% endblock %}
+
+{% block ga %}{% endblock %}
