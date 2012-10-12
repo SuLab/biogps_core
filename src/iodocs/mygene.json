@@ -1,7 +1,7 @@
 {
     "endpoints": [
         {
-            "name": "MyGene.Info gene query web services",
+            "name": "MyGene.info gene query web services",
             "methods": [
                 {
                     "MethodName": "Gene query service",
@@ -94,7 +94,7 @@
         },
 
         {
-            "name": "MyGene.Info gene annotation web services",
+            "name": "MyGene.info gene annotation web services",
             "methods": [
                 {
                     "MethodName": "Gene annotation service",
