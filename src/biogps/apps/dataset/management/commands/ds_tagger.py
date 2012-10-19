@@ -71,8 +71,7 @@ class Command(NoArgsCommand):
                       'cytoplasm', 'disease', 'genome', 'organ', 'syndrome']
 
         # Annotate datasets
-        ds = BiogpsDataset.objects.filter(id=15)
-        #ds = BiogpsDataset.objects.all()
+        ds = BiogpsDataset.objects.all()
         for d in ds:
             summary = d.metadata['summary'].encode('utf-8')
 
