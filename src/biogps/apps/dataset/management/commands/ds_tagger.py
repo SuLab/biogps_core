@@ -111,6 +111,9 @@ class Command(NoArgsCommand):
                 # Dataset unique annotations
                 ds_annos = []
 
+                # Dataset tags
+                ds_tags = set()
+
                 params = ['conceptId', 'fullId', 'localConceptId',
                           'localOntologyId', 'preferredName']
 
@@ -164,13 +167,25 @@ class Command(NoArgsCommand):
                         #        else:
                         #            all_ds_freqs[v] = 1
 
+                        # Format preferredName for tagging
+                        pref_name = pref_name.replace(' ', '-')
+                        annotations['preferredName'] = pref_name
+
+                        # Add dataset tag
+                        ds_tags.add(pref_name)
+
                         # Check current annotations against previous results
                         if not prev_annos:
                             prev_annos['preferredName'] = pref_name
                             ds_annos.append(annotations)
                         else:
                             update_ds_annos(annotations)
+
+                # Add dataset annotations to results
                 all_ds_annos[d.id] = ds_annos
+
+                # Update dataset tags
+                d.tags = ','.join(ds_tags)
 
         print 'Writing annotations to file...'
         with open('anno_results.txt', 'w') as f:
