@@ -21,18 +21,10 @@ if settings.DEBUG:
         log_handler = logging.StreamHandler()
         log.addHandler(log_handler)
 
-def get_es_conn(ES_HOST=None, default_idx=[settings.ES_INDEX_NAME]):
+def get_es_conn(ES_HOST=None, default_idx=[settings.ES_INDEX_NAME, settings.ES_INDEX_NAME_DATASET]):
     ES_HOST = ES_HOST or settings.ES_HOST
-    #This is a temp check to make sure external ES host bound to BIOGPSP only
-    # temp disable this check here, we should add more formal check later.
-#    if '50.18.46.129:80' in ES_HOST:
-#        assert settings.DATABASE_NAME == 'BIOGPSP', "Use extenal ES host only with BIOGPSP DB."
-
-#    force_http = ES_HOST[0].endswith(':80') if isinstance(ES_HOST, list) else \
-#                 ES_HOST.endswith(':80')
     conn = ES(ES_HOST, default_indices=default_idx,
               timeout=10.0)
-#              force_http=force_http, timeout=10.0)
     return conn
 
 _conn = get_es_conn()
@@ -71,8 +63,8 @@ def safe_genome_pos(s):
 
 
 class ESQuery():
-    ES_HOST = settings.ES_HOST
-    ES_INDEX_NAME = settings.ES_INDEX_NAME
+    # ES_HOST = settings.ES_HOST
+    # ES_INDEX_NAME = settings.ES_INDEX_NAME
     ES_AVAILABLE_TYPES = settings.ES_AVAILABLE_TYPES
     ES_MAX_QUERY_LENGTH = settings.ES_MAX_QUERY_LENGTH
 
@@ -100,6 +92,9 @@ class ESQuery():
         #always includes "_type:gene", so gene type will bypass the permission
         # filters below.
         filter.add_should(TermQuery('_type', 'gene'))
+        #allow 'dataset' type bypass the permission below for now,
+        #until permission for dataset is set.
+        filter.add_should(TermQuery('_type', 'dataset'))
 
         #filter by roles
         if not user or user.is_anonymous():
@@ -134,8 +129,9 @@ class ESQuery():
         doc_types = doc_types or self._doc_types
         # Run the actual search
         try:
-            result = self.conn.search(query=q, doc_types=doc_types)
-            result._do_search()
+            # result = self.conn.search(query=q, doc_types=doc_types)
+            # result._do_search()
+            result = self.conn.search_raw(query=q, doc_types=doc_types)
         except (SearchPhaseExecutionException, InvalidQuery):
             exc_name = sys.exc_type.__name__
             err_msg =  sys.exc_value.args[0] if (sys.exc_value.args)>0 else ""
@@ -147,7 +143,7 @@ class ESQuery():
         self._doc_types = doc_types
 
         #get raw json output, get rid of pyes.es.DotDict in the result._results
-        result = json.loads(ESJsonEncoder().encode(result._results))
+        # result = json.loads(ESJsonEncoder().encode(result._results))
 
         result = BiogpsSearchResult(result)
         #keep a reference of ESQuery object generates the result.
