@@ -7,3 +7,7 @@ Sitemap: /sitemap.xml
 
 User-Agent: MJ12bot
 Crawl-Delay: 20
+
+User-Agent: 360Spider
+Disallow: /
+
