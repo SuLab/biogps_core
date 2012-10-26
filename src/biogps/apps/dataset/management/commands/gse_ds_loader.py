@@ -1,9 +1,6 @@
-####################################################
-#  Parses and loads GEO GSE datasets into database #
-####################################################
+# -*- coding: utf-8 -*-
 
-
-from ast import literal_eval
+from biogps.utils.helper import json
 from datetime import datetime
 from django.core.management.base import NoArgsCommand
 from django.conf import settings
@@ -131,7 +128,7 @@ class Command(NoArgsCommand):
 	                                cur_id = 0
 	                                u = urllib2.urlopen("http://insilico.ulb.ac.be/Publicutilities/getcurations?gse=%s" % geo_id)
 	                                if u.getcode() == 200:
-	                                    cur_data = literal_eval(u.read())
+	                                    cur_data = json.loads(u.read())
 	    	                            for i in cur_data['curations']:
 	    	                                if i['curator'] == 'GEO':
 	    		                            cur_id = i['curid']
@@ -141,7 +138,7 @@ class Command(NoArgsCommand):
 		           	        if cur_id:
 		           	            u = urllib2.urlopen("http://insilico.ulb.ac.be/Publicutilities/getannotations?gse=%s&gpl=%s&id=%s" % (geo_id, platform, cur_id))
 		           	            if u.getcode() == 200:
-		           	                titles_data = literal_eval(u.read())
+		           	                titles_data = json.loads(u.read())
                                                 if titles_data and type(titles_data) is dict:
 		           	                    for k, v in titles_data.iteritems():
 		           	                        sample_titles[k] = v['title'].strip("'")
@@ -155,7 +152,7 @@ class Command(NoArgsCommand):
 		           	        if u.getcode() == 200:
                                             try:
                                                 _factors = u.read()
-		           	                factors_data = literal_eval(_factors)
+		           	                factors_data = json.loads(_factors)
                                             except ValueError:
                                                 log_file.write('**Value Error**\nFactors data: %s\n' % _factors)
                                                 factors_data = None
@@ -396,7 +393,7 @@ class Command(NoArgsCommand):
 	    log_file = open('%s/%s' % (local_path, 'geo_gse_log_%s.txt' % randint(0, 10000)), 'w')
             species_dict = {'homo sapiens': 'human', 'mus musculus': 'mouse', 'rattus norvegicus': 'rat'}
             insil_gse = urllib2.urlopen("http://insilico.ulb.ac.be/Publicutilities/oldgetserieslist")
-            gse_files = literal_eval(insil_gse.read())
+            gse_files = json.loads(insil_gse.read())
             #gse_files = ['GSE24759']
 
             start_file = 0
@@ -417,7 +414,7 @@ class Command(NoArgsCommand):
 	        if u.getcode() == 200:
                     res = ''
                     try:
-                        res = literal_eval(u.read())
+                        res = json.loads(u.read())
                     except ValueError as e:
                         log_file.write('Error reading Insilico response: {}\n'.format(e))
                         load_dataset(gse_file=gse_file, db_id=None)
@@ -426,7 +423,7 @@ class Command(NoArgsCommand):
                     res_type = type(res)
                     if res_type is list:
                         # Found entry in Insilico
-	    	        [platforms.append(i) for i in literal_eval(u.read())]
+	    	        [platforms.append(i) for i in json.loads(u.read())]
                     elif res_type is dict:
                         # Most likely no entry found
                         log_file.write(str(u.read()))

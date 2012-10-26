@@ -1,5 +1,4 @@
 from __future__ import division
-from ast import literal_eval
 from biogps.apps.dataset.models import (
     BiogpsDataset,
     BiogpsDatasetData,
@@ -14,6 +13,7 @@ from django.core.paginator import (
     )
 from django.http import HttpResponse
 from django.utils.encoding import smart_str
+from biogps.utils.helper import json
 from json import loads
 from math import ceil, floor, sqrt
 from pyes import (
@@ -228,7 +228,7 @@ class DatasetQuery():
                     csv_row = list()
                     csv_row.append(val.rsplit('.', 1)[0])
                     for rep in dsd:
-                        csv_row.append(literal_eval(rep['data'])[idx])
+                        csv_row.append(json.loads(rep['data'])[idx])
                     w.writerow(csv_row)
 
                 return _res
@@ -239,7 +239,7 @@ class DatasetQuery():
             except AttributeError, BiogpsDataset.DoesNotExist:
                 return None
             for rep in dsd:
-                rep_dict[rep['reporter']] = literal_eval(rep['data'])
+                rep_dict[rep['reporter']] = json.loads(rep['data'])
             probeset_list = [{i: {"values": rep_dict[i]}} for i in rep_dict]
             return {'id': ds_id, 'name': ds_name,
                 'probeset_list': probeset_list}
