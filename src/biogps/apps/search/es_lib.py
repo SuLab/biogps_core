@@ -21,7 +21,7 @@ if settings.DEBUG:
         log_handler = logging.StreamHandler()
         log.addHandler(log_handler)
 
-def get_es_conn(ES_HOST=None, default_idx=[settings.ES_INDEX_NAME, settings.ES_INDEX_NAME_DATASET]):
+def get_es_conn(ES_HOST=None, default_idx=settings.ES_INDEXS['default']):
     ES_HOST = ES_HOST or settings.ES_HOST
     conn = ES(ES_HOST, default_indices=default_idx,
               timeout=10.0)
@@ -63,13 +63,10 @@ def safe_genome_pos(s):
 
 
 class ESQuery():
-    # ES_HOST = settings.ES_HOST
-    # ES_INDEX_NAME = settings.ES_INDEX_NAME
     ES_AVAILABLE_TYPES = settings.ES_AVAILABLE_TYPES
     ES_MAX_QUERY_LENGTH = settings.ES_MAX_QUERY_LENGTH
 
     def __init__(self, user=None):
-#        self.conn = ES(self.ES_HOST, default_indexes=[self.ES_INDEX_NAME])
         self.conn = _conn
         self.user = user
 
@@ -123,10 +120,29 @@ class ESQuery():
             facets = list(facets)
         return facets
 
+    def _switch_index(self, doc_types=None):
+        '''switch index to perform ES queries based on doc_types:
+             if doc_types = "dataset" or ["dataset"], set to
+                 settings.ES_INDEXS['dataset']
+             if doc_types contains "dataset" and others, include
+                 settings.ES_INDEXS['dataset']
+             otherwise, set to settings.ES_INDEXS['default']
+        '''
+        if doc_types in ['dataset', ['dataset'], ('dataset',)]:
+            self.conn.default_indices = [settings.ES_INDEXS['dataset']]
+        elif type(doc_types) in (types.ListType, types.TupleType) and \
+             'dataset' in doc_types:
+            self.conn.default_indices = [settings.ES_INDEXS['default'],
+                                          settings.ES_INDEXS['dataset']]
+        else:
+            self.conn.default_indices = [settings.ES_INDEXS['default']]
+
+
     def _query(self, q=None, doc_types=None):
         '''Do the actual query.'''
         q = q or self._q
         doc_types = doc_types or self._doc_types
+        self._switch_index(doc_types)
         # Run the actual search
         try:
             # result = self.conn.search(query=q, doc_types=doc_types)
