@@ -15,11 +15,14 @@ from django.conf import settings
 from django.utils.http import urlquote
 from django.contrib.sites.models import Site
 #Load faster simplejson module if possible (/site-packages/simple-json)
-#otherwise, fall back to Django's slower version
+#otherwise, fall back Python's buildin json or Django's slower version
 try:
     import simplejson as json
 except:
-    from django.utils import simplejson as json
+    try:
+        import json
+    except:
+        from django.utils import simplejson as json
 
 from biogps.utils.decorators import not_authenticated
 
