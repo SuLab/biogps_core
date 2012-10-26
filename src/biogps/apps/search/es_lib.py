@@ -21,7 +21,7 @@ if settings.DEBUG:
         log_handler = logging.StreamHandler()
         log.addHandler(log_handler)
 
-def get_es_conn(ES_HOST=None, default_idx=settings.ES_INDEXS['default']):
+def get_es_conn(ES_HOST=None, default_idx=settings.ES_INDEXES['default']):
     ES_HOST = ES_HOST or settings.ES_HOST
     conn = ES(ES_HOST, default_indices=default_idx,
               timeout=10.0)
@@ -123,19 +123,19 @@ class ESQuery():
     def _switch_index(self, doc_types=None):
         '''switch index to perform ES queries based on doc_types:
              if doc_types = "dataset" or ["dataset"], set to
-                 settings.ES_INDEXS['dataset']
+                 settings.ES_INDEXES['dataset']
              if doc_types contains "dataset" and others, include
-                 settings.ES_INDEXS['dataset']
-             otherwise, set to settings.ES_INDEXS['default']
+                 settings.ES_INDEXES['dataset']
+             otherwise, set to settings.ES_INDEXES['default']
         '''
         if doc_types in ['dataset', ['dataset'], ('dataset',)]:
-            self.conn.default_indices = [settings.ES_INDEXS['dataset']]
+            self.conn.default_indices = [settings.ES_INDEXES['dataset']]
         elif type(doc_types) in (types.ListType, types.TupleType) and \
              'dataset' in doc_types:
-            self.conn.default_indices = [settings.ES_INDEXS['default'],
-                                          settings.ES_INDEXS['dataset']]
+            self.conn.default_indices = [settings.ES_INDEXES['default'],
+                                          settings.ES_INDEXES['dataset']]
         else:
-            self.conn.default_indices = [settings.ES_INDEXS['default']]
+            self.conn.default_indices = [settings.ES_INDEXES['default']]
 
 
     def _query(self, q=None, doc_types=None):
@@ -303,7 +303,7 @@ class ESQuery():
 
         if type == 'gene':
             # if type is gene, just grab it directly
-            d = self.conn.get(self.ES_INDEX_NAME, type, id, fields=fields)
+            d = self.conn.get(self.ES_INDEXES['gene'], type, id, fields=fields)
         else:
             # if type is any of biogps models, do a query with user_filter
             #result = self.filter("_id", id, only_in=[type])
