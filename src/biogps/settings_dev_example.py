@@ -20,7 +20,8 @@ USE_CACHES = False  # True to using Caching framework.
 ##ElasticSearch server settings
 ES_HOST = ['xx.xx.xx.xx:9500']
 ES_INDEX_NAME = 'biogps'
-ES_INDEX_NAME_DATASET = 'biogps_dataset'        #dataset data are indexed in a separate ES index.
+ES_INDEXS = {'default': 'biogps',
+             'dataset': 'biogps_dataset'}
 
 #######################################
 
