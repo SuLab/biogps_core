@@ -22,11 +22,12 @@ from functools import partial
 from django.conf import settings
 from django.db.models.signals import post_save, post_delete
 
-from pyes import ES
 from pyes.exceptions import (NotFoundException, IndexMissingException,
                              ElasticSearchException)
 
 from biogps.utils import ask
+from biogps.utils.models import queryset_iterator
+
 from es_lib import get_es_conn
 
 import logging
@@ -37,23 +38,13 @@ if settings.DEBUG:
         log_handler = logging.StreamHandler()
         log.addHandler(log_handler)
 
-##Leave this settings in this file in case that we want to index on a different
-## server from the one specified in settings_*.py
-ES_HOST = settings.ES_HOST
-_conn = get_es_conn(ES_HOST)
-
-def check():
-    '''Just print out current server settings for verification.'''
-    print "ES_HOST:", _conn.servers
-    print "DATABASE:", settings.DATABASES['default']['NAME']
 
 class BiogpsESIndexerBase(object):
-    ES_HOST = ES_HOST
-    ES_INDEX_NAME = settings.ES_INDEX_NAME
+    ES_HOST = settings.ES_HOST
+    ES_INDEX_NAME = settings.ES_INDEXES['default']
 
     def __init__(self):
-#        self.conn = ES(self.ES_HOST, default_indexes=[self.ES_INDEX_NAME])
-        self.conn = _conn
+        self.conn = get_es_conn(self.ES_HOST, default_idx=[self.ES_INDEX_NAME])
         self.step = 10000
 
     def create_index(self):
@@ -74,6 +65,46 @@ class BiogpsESIndexerBase(object):
         path = '/%s/%s' % (index_name, index_type)
         if ask('Confirm to delete all data under "%s":' % path) == 'Y':
             return self.conn.delete_mapping(index_name, index_type)
+
+    def verify_mapping(self, update_mapping=False):
+        '''Verify if index and mapping exist, update mapping if mapping does not exist,
+           or "update_mapping=True" explicitly
+        '''
+        conn = self.conn
+        index_name = self.ES_INDEX_NAME
+        index_type = self.ES_INDEX_TYPE
+
+        #Test if index exists
+        try:
+            print "Opening index...", conn.open_index(index_name)
+        except NotFoundException:
+            print 'Error: index "%s" does not exist. Create it first.' % index_name
+            return -1
+
+        try:
+            cur_mapping = conn.get_mapping(index_type, index_name)
+            empty_mapping = False
+        except ElasticSearchException:
+            #if no existing mapping available for index_type
+            #force update_mapping to True
+            empty_mapping = True
+            update_mapping = True
+
+#        empty_mapping = not cur_mapping[index_name].get(index_type, {})
+#        if empty_mapping:
+#            #if no existing mapping available for index_type
+#            #force update_mapping to True
+#            update_mapping = True
+
+        if update_mapping:
+            print "Updating mapping...",
+            if not empty_mapping:
+                print "\n\tRemoving existing mapping...",
+                print conn.delete_mapping(index_name, index_type)
+            _mapping = self.get_field_mapping()
+            print conn.put_mapping(index_type,
+                                   _mapping,
+                                   [index_name])
 
     def index(self, doc, index_type, id=None):
         '''add a doc to the index. If id is not None, the existing doc will be
@@ -141,39 +172,44 @@ class BiogpsModelESIndexer(BiogpsESIndexerBase):
         #field mapping templates
         #t0 is for store-only field
         t0 = {'store': "yes",
-             'index': 'no',
-             'type': 'string'}
+              'index': 'no',
+              'type': 'string'}
         #t1 is for general IDs
         t1 = {'store': "yes",
-             'index': 'not_analyzed',
-             'type': 'string',
-             'term_vector': 'with_positions_offsets'}
+              'index': 'not_analyzed',
+              'type': 'string',
+              'term_vector': 'with_positions_offsets'}
         #t2 is for free text
-        t2 = {'store': "yes",
-             'index': 'analyzed',
-             'type': 'string',
-             'term_vector': 'with_positions_offsets'}
+        t2 = {'store': "no",
+              'index': 'analyzed',
+              'type': 'string',
+              'term_vector': 'with_positions_offsets'}
         #t3 is for date
-        t3 = {'store': "yes",
-             'index': 'not_analyzed',
-             'type': 'date',
-             'format': 'YYYY-MM-dd HH:mm:ss'}
+        t3 = {'store': "no",
+              'index': 'not_analyzed',
+              'type': 'date',
+              'format': 'YYYY-MM-dd HH:mm:ss'}
         t_float = {'type': 'float'}
+        t_boolean = {'type': 'boolean'}
         t_disabled_object = {'type': 'object',
                              'enable': False}
         t_disabled_string = {'type': 'string',
                              'index': 'no'}
         t_disabled_double = {'type': 'double',
                              'index': 'no'}
+        t_disabled_integer = {'type': 'double',
+                             'index': 'no'}
 
-        td = {0: t0,
-              1: t1,
-              2: t2,
-              3: t3,
+        td = {'store_only': t0,
+              'id': t1,
+              'text': t2,
+              'date': t3,
               'float': t_float,
+              'boolean': t_boolean,
               'disabled_object': t_disabled_object,
               'disabled_string': t_disabled_string,
-              'disabled_double': t_disabled_double}
+              'disabled_double': t_disabled_double,
+              'disabled_integer': t_disabled_integer}
 
         properties = {'in': t1,
                       'id': t1,
@@ -260,51 +296,24 @@ class BiogpsModelESIndexer(BiogpsESIndexerBase):
     def get_field_mapping(self):
         raise NotImplementedError
 
-    def build_index(self, update_mapping=False, bulk=True):
-        pli = self._model.objects.all()
+    def build_index(self, update_mapping=False, bulk=True, verbose=False):
         conn = self.conn
         index_name = self.ES_INDEX_NAME
         index_type = self.ES_INDEX_TYPE
 
-        #Test if index exists
-        try:
-            print "Opening index...", conn.open_index(index_name)
-        except NotFoundException:
-            print 'Error: index "%s" does not exist. Create it first.' % index_name
-            return -1
+        self.verify_mapping()
 
-        try:
-            cur_mapping = conn.get_mapping(index_type, index_name)
-            empty_mapping = False
-        except ElasticSearchException:
-            #if no existing mapping available for index_type
-            #force update_mapping to True
-            empty_mapping = True
-            update_mapping = True
-
-#        empty_mapping = not cur_mapping[index_name].get(index_type, {})
-#        if empty_mapping:
-#            #if no existing mapping available for index_type
-#            #force update_mapping to True
-#            update_mapping = True
-
-        if update_mapping:
-            print "Updating mapping...",
-            if not empty_mapping:
-                print "\n\tRemoving existing mapping...",
-                print conn.delete_mapping(index_name, index_type)
-            _mapping = self.get_field_mapping()
-            print conn.put_mapping(index_type,
-                                   _mapping,
-                                   [index_name])
         print "Building index..."
-        for p in pli:
+        cnt = 0
+        for p in queryset_iterator(self._model):            
             doc = p.object_cvt(mode='es')
             conn.index(doc, index_name, index_type, doc['id'], bulk=bulk)
-#            if bulk:
-#                conn.force_bulk()
+            cnt += 1
+            if verbose:
+                print cnt, ':', doc['id']
         print conn.flush()
         print conn.refresh()
+        print 'Done! - {} docs indexed.'.format(cnt)
 
 
 class BiogpsPluginESIndexer(BiogpsModelESIndexer):
@@ -324,8 +333,8 @@ class BiogpsPluginESIndexer(BiogpsModelESIndexer):
                 "layouts": {"type": "short"},
             }
         }
-        m = self._get_field_mapping(extra_attrs={1: ['type', 'species'],
-                                                 2: ['name', 'description', 'short_description', 'url'],
+        m = self._get_field_mapping(extra_attrs={'id': ['type', 'species'],
+                                                 'text': ['name', 'description', 'short_description', 'url'],
                                                  "float": ['popularity'],
                                                  'disabled_object': ['options'],
                                                  'disabled_string': ['shortUrl', 'permission_style'],
@@ -343,7 +352,7 @@ class BiogpsLayoutESIndexer(BiogpsModelESIndexer):
         super(BiogpsModelESIndexer, self).__init__()
 
     def get_field_mapping(self):
-        m = self._get_field_mapping(extra_attrs={2: ['name', 'description'],
+        m = self._get_field_mapping(extra_attrs={'text': ['name', 'description'],
                                                  'disabled_string': ['permission_style'],
                                                  })
         #some special settings
@@ -360,7 +369,7 @@ class BiogpsGenelistESIndexer(BiogpsModelESIndexer):
         super(BiogpsModelESIndexer, self).__init__()
 
     def get_field_mapping(self):
-        m = self._get_field_mapping(extra_attrs={2: ['name', 'description'],
+        m = self._get_field_mapping(extra_attrs={'text': ['name', 'description'],
                                                  'disabled_string': ['permission_style'],
                                                  })
         #some special settings
