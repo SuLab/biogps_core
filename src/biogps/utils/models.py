@@ -18,6 +18,17 @@ from biogps.apps.favorite.models import Favorite
 from biogps.utils import dotdict
 
 
+def queryset_iterator(model, batch_size=100):
+    '''Performs batch query against DB for specified model, yields iterator'''
+    start = 0
+    total_cnt = model.objects.count()
+    print "Iterating %d rows..." % total_cnt
+    for start in range(start, total_cnt, batch_size):
+        end = min(start+batch_size, total_cnt)
+        for row in model.objects.order_by('pk')[start:end]:
+            yield row
+
+
 def get_role_shortnames(role_list):
     '''Convert a list of roles to a list of roles in "short_names"
        (defined in biogps.utils.const.ROLEPERMISSION_SHORTNAMES)
@@ -318,7 +329,7 @@ class BioGPSModel(ModelWithPermission):
           @param extra_attrs: a dictionary for extra attrs to add:
                         {'a1': 's1',    # out['a1'] = object.s1
                          'a2': fn1,     # out['a2'] = fn(object)
-                         None: ['s2', 's3'] # out['s1'] = object.s1, out['s2'] = object.s2
+                         'AS_IS': ['s2', 's3'] # out['s1'] = object.s1, out['s2'] = object.s2
           @param mode: can be one of ['ajax', 'es'], used to return slightly
                          different dictionary for each purpose.
           @return: an python dictionary
@@ -348,8 +359,8 @@ class BioGPSModel(ModelWithPermission):
             out['rating_data'] = self.rating_data
 
         for attr in extra_attrs:
-            if attr is None:
-                for k in extra_attrs[None]:
+            if attr == 'AS_IS':
+                for k in extra_attrs['AS_IS']:
                     out[k] = getattr(self, k)
             else:
                 val = extra_attrs[attr]

@@ -63,17 +63,12 @@ class BiogpsPlugin(BioGPSModel):
                          different dictionary for each purpose.
           @return: an python dictionary
         '''
-        out = self._object_cvt(mode=mode)
-        out['name'] = self.title
-        out['description'] = self.description
-        out['short_description'] = self.short_description
-        out['species'] = self.species
-        out['type'] = self.type
-        out['url'] = self.url
-        out['shortUrl'] = self.shortUrl()
-        out['usage_data'] = self.usage_data
+        extra_attrs = {'name': 'title',
+                       'AS_IS': ['description', 'short_description',
+                                 'species', 'type', 'url', 'shortUrl',
+                                 'usage_data', 'options']}
+        out = self._object_cvt(extra_attrs=extra_attrs, mode=mode)
         out['popularity'] = self.popularity.score
-        out['options'] = self.options
         return out
 
     #==========================================================================
