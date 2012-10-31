@@ -47,7 +47,7 @@ class BiogpsGeneList(BioGPSModel):
                          different dictionary for each purpose.
           @return: an python dictionary
         '''
-        return self._object_cvt(extra_attrs={None: ['name', 'description']},
+        return self._object_cvt(extra_attrs={'AS_IS': ['name', 'description']},
                                 mode=mode)
 
 try:
