@@ -90,10 +90,26 @@ class BiogpsDataset(BioGPSModel):
                                         different dictionary for each purpose.
           @return: an python dictionary
         """
-        extra_attrs = {None: ['geo_id_plat', 'metadata', 'name', 'platform',
-            'species']}
-        out = self._object_cvt(extra_attrs=extra_attrs, mode=mode)
-        out['description'] = self.metadata['summary']
+        if mode == 'ajax':
+            extra_attrs = {'AS_IS': ['geo_id_plat', 'metadata', 'name', 'platform',
+                'species']}
+            out = self._object_cvt(extra_attrs=extra_attrs, mode=mode)
+            out['description'] = self.metadata['summary']
+        elif mode == 'es':
+            ds = self
+            extra_attrs = {'AS_IS': ['name', 'platform_id', 'species']}
+            out = self._object_cvt(extra_attrs=extra_attrs, mode=mode)
+            out.update({'default': ds.metadata['default'],
+                        'display_params': ds.metadata['display_params'],
+                        'factors': ds.metadata['factors'],
+                        'geo_gds_id': ds.metadata['geo_gds_id'],
+                        'geo_gse_id': ds.metadata['geo_gse_id'],
+                        'geo_gpl_id': ds.metadata['geo_gpl_id'],
+                        'pubmed_id': ds.metadata['pubmed_id'],
+                        'summary': ds.metadata['summary']
+                       })
+        else:
+            raise ValueError('Unknown "mode" value.')
         return out
 
 try:
@@ -121,20 +137,6 @@ class BiogpsDatasetData(models.Model):
     reporter = models.CharField(max_length=200)
     data = JSONField(blank=False, editable=True)
 
-    def object_cvt(self, mode='ajax'):
-        """A helper function to convert a BiogpsDatasetData object to a
-            simplified python dictionary, with all values in python's primary
-            types only. Such a dictionary can be passed directly to fulltext
-            indexer or serializer for ajax return.
-
-          @param mode: can be one of ['ajax', 'es'], used to return slightly
-                                        different dictionary for each purpose.
-          @return: an python dictionary
-        """
-        extra_attrs = {None: ['name', 'species', 'metadata']}
-        out = self._object_cvt(extra_attrs=extra_attrs, mode=mode)
-        return out
-
 add_introspection_rules([
     (
         [BiogpsDatasetData],  # Class(es) these apply to
@@ -149,20 +151,6 @@ class BiogpsDatasetReporters(models.Model):
     dataset = models.ForeignKey(BiogpsDataset,
         related_name='dataset_reporters')
     reporters = JSONField(blank=False, editable=True)
-
-    def object_cvt(self, mode='ajax'):
-        """A helper function to convert a BiogpsDatasetReporters object to a
-           simplified python dictionary, with all values in python's primary
-           types only. Such a dictionary can be passed directly to fulltext
-           indexer or serializer for ajax return.
-
-          @param mode: can be one of ['ajax', 'es'], used to return slightly
-                                        different dictionary for each purpose.
-          @return: an python dictionary
-        """
-        extra_attrs = {None: ['name', 'species', 'metadata']}
-        out = self._object_cvt(extra_attrs=extra_attrs, mode=mode)
-        return out
 
 add_introspection_rules([
     (
@@ -188,21 +176,6 @@ class BiogpsDatasetMatrix(models.Model):
 
     matrix = property(get_data, set_data)
 
-    def object_cvt(self, mode='ajax'):
-        """A helper function to convert a BiogpsDatasetMatrix object to a
-           simplified python dictionary, with all values in python's primary
-           types only. Such a dictionary can be passed directly to fulltext
-           indexer or serializer for ajax return.
-
-          @param mode: can be one of ['ajax', 'es'], used to return slightly
-                                        different dictionary for each purpose.
-          @return: an python dictionary
-        """
-        extra_attrs = {None: ['name', 'description', 'short_description',
-                              'type', 'species', 'options', 'metadata']}
-        out = self._object_cvt(extra_attrs=extra_attrs, mode=mode)
-        return out
-
 add_introspection_rules([
     (
         [BiogpsDatasetMatrix],  # Class(es) these apply to
@@ -216,21 +189,6 @@ class BiogpsDatasetPlatform(models.Model):
     """Model definition for BiogpsDatasetPlatform"""
     platform = models.CharField(max_length=100)
     reporters = JSONField(blank=False, editable=True)
-
-    def object_cvt(self, mode='ajax'):
-        """A helper function to convert a BiogpsDatasetMatrix object to a
-           simplified python dictionary, with all values in python's primary
-           types only. Such a dictionary can be passed directly to fulltext
-           indexer or serializer for ajax return.
-
-          @param mode: can be one of ['ajax', 'es'], used to return slightly
-                                        different dictionary for each purpose.
-          @return: an python dictionary
-        """
-        extra_attrs = {None: ['name', 'description', 'short_description',
-                              'type', 'species', 'options', 'metadata']}
-        out = self._object_cvt(extra_attrs=extra_attrs, mode=mode)
-        return out
 
 add_introspection_rules([
     (
