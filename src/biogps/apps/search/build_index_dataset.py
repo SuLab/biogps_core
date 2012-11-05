@@ -4,7 +4,7 @@ from biogps.utils.models import queryset_iterator
 from django.conf import settings
 
 
-class BiogpsDatasetIndexer(BiogpsModelESIndexer):
+class BiogpsDatasetESIndexer(BiogpsModelESIndexer):
     '''A class for indexing all BiogpsDataset objects.'''
     def __init__(self):
         self._model = BiogpsDataset
@@ -25,7 +25,7 @@ class BiogpsDatasetIndexer(BiogpsModelESIndexer):
         return m
 
 
-class BiogpsDatasetReporterIndexer(BiogpsESIndexerBase):
+class BiogpsDatasetReporterESIndexer(BiogpsESIndexerBase):
     ES_INDEX_NAME = settings.ES_INDEXES['dataset']
     ES_INDEX_TYPE = 'by_reporter'
 
