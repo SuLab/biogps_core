@@ -42,10 +42,17 @@ if settings.DEBUG:
 class BiogpsESIndexerBase(object):
     ES_HOST = settings.ES_HOST
     ES_INDEX_NAME = settings.ES_INDEXES['default']
+    step = 100
 
     def __init__(self):
         self.conn = get_es_conn(self.ES_HOST, default_idx=[self.ES_INDEX_NAME])
-        self.step = 10000
+
+
+    def check(self):
+        '''print out ES server info for verification.'''
+        print "Servers:", self.conn.servers
+        print "Default indices:", self.conn.default_indices
+        print "ES_INDEX_TYPE:", self.ES_INDEX_TYPE
 
     def create_index(self):
         try:
@@ -167,56 +174,57 @@ class BiogpsModelESIndexer(BiogpsESIndexerBase):
     '''
     _model = None           # need to specify in each subclass
     ES_INDEX_TYPE = None    # need to specify in each subclass
+    step = 100              # how many objects to retrieve in one queryset query
 
     def _get_field_mapping(self, extra_attrs={}):
         #field mapping templates
-        #t0 is for store-only field
-        t0 = {'store': "yes",
-              'index': 'no',
-              'type': 'string'}
-        #t1 is for general IDs
-        t1 = {'store': "yes",
-              'index': 'not_analyzed',
-              'type': 'string',
-              'term_vector': 'with_positions_offsets'}
-        #t2 is for free text
-        t2 = {'store': "no",
+        id_type = {'store': "yes",
+                   'index': 'not_analyzed',
+                   'type': 'string',
+                   'term_vector': 'with_positions_offsets'}
+        text_type = {'store': "no",
               'index': 'analyzed',
               'type': 'string',
               'term_vector': 'with_positions_offsets'}
-        #t3 is for date
-        t3 = {'store': "no",
+        date_type = {'store': "no",
               'index': 'not_analyzed',
               'type': 'date',
               'format': 'YYYY-MM-dd HH:mm:ss'}
-        t_float = {'type': 'float'}
-        t_boolean = {'type': 'boolean'}
-        t_disabled_object = {'type': 'object',
-                             'enable': False}
-        t_disabled_string = {'type': 'string',
-                             'index': 'no'}
-        t_disabled_double = {'type': 'double',
-                             'index': 'no'}
-        t_disabled_integer = {'type': 'double',
+        integer_type = {'type': 'integer'}
+        float_type = {'type': 'float'}
+        boolean_type = {'type': 'boolean'}
+
+        store_only = {'store': "yes",
+                      'index': 'no',
+                      'type': 'string'}
+        disabled_object = {'type': 'object',
+                           'enabled': False}
+        disabled_string = {'type': 'string',
+                           'index': 'no'}
+        disabled_double = {'type': 'double',
+                           'index': 'no'}
+        disabled_integer = {'type': 'integer',
                              'index': 'no'}
 
-        td = {'store_only': t0,
-              'id': t1,
-              'text': t2,
-              'date': t3,
-              'float': t_float,
-              'boolean': t_boolean,
-              'disabled_object': t_disabled_object,
-              'disabled_string': t_disabled_string,
-              'disabled_double': t_disabled_double,
-              'disabled_integer': t_disabled_integer}
+        td = {'id_type': id_type,
+              'text_type': text_type,
+              'date_type': date_type,
+              'integer_type': integer_type,
+              'float_type': float_type,
+              'boolean_type': boolean_type,
 
-        properties = {'in': t1,
-                      'id': t1,
-                      'created': t3,
-                      'lastmodified': t3,
-                      'role_permission': t1,
-                      'tags': t1}
+              'store_only': store_only,
+              'disabled_object':  disabled_object,
+              'disabled_string':  disabled_string,
+              'disabled_double':  disabled_double,
+              'disabled_integer': disabled_integer}
+
+        properties = {'in': id_type,
+                      'id': id_type,
+                      'created': date_type,
+                      'lastmodified': date_type,
+                      'role_permission': id_type,
+                      'tags': id_type}
 
         for t_id in td.keys():
             for attr in extra_attrs.pop(t_id, []):
@@ -282,7 +290,7 @@ class BiogpsModelESIndexer(BiogpsESIndexerBase):
         }
 
         mapping = {'properties': properties}
-        #enable _source compression
+        # enable _source compression
         mapping["_source"] = {"enabled" : True,
                               "compress": True,
                               "compression_threshold": "1kb"}
@@ -301,11 +309,11 @@ class BiogpsModelESIndexer(BiogpsESIndexerBase):
         index_name = self.ES_INDEX_NAME
         index_type = self.ES_INDEX_TYPE
 
-        self.verify_mapping()
+        self.verify_mapping(update_mapping=update_mapping)
 
         print "Building index..."
         cnt = 0
-        for p in queryset_iterator(self._model):            
+        for p in queryset_iterator(self._model, batch_size=self.step):
             doc = p.object_cvt(mode='es')
             conn.index(doc, index_name, index_type, doc['id'], bulk=bulk)
             cnt += 1
@@ -333,9 +341,9 @@ class BiogpsPluginESIndexer(BiogpsModelESIndexer):
                 "layouts": {"type": "short"},
             }
         }
-        m = self._get_field_mapping(extra_attrs={'id': ['type', 'species'],
-                                                 'text': ['name', 'description', 'short_description', 'url'],
-                                                 "float": ['popularity'],
+        m = self._get_field_mapping(extra_attrs={'id_type': ['type', 'species'],
+                                                 'text_type': ['name', 'description', 'short_description', 'url'],
+                                                 "float_type": ['popularity'],
                                                  'disabled_object': ['options'],
                                                  'disabled_string': ['shortUrl', 'permission_style'],
                                                  'usage_data': m_usage_data
@@ -352,7 +360,7 @@ class BiogpsLayoutESIndexer(BiogpsModelESIndexer):
         super(BiogpsModelESIndexer, self).__init__()
 
     def get_field_mapping(self):
-        m = self._get_field_mapping(extra_attrs={'text': ['name', 'description'],
+        m = self._get_field_mapping(extra_attrs={'text_type': ['name', 'description'],
                                                  'disabled_string': ['permission_style'],
                                                  })
         #some special settings
@@ -369,7 +377,7 @@ class BiogpsGenelistESIndexer(BiogpsModelESIndexer):
         super(BiogpsModelESIndexer, self).__init__()
 
     def get_field_mapping(self):
-        m = self._get_field_mapping(extra_attrs={'text': ['name', 'description'],
+        m = self._get_field_mapping(extra_attrs={'text_type': ['name', 'description'],
                                                  'disabled_string': ['permission_style'],
                                                  })
         #some special settings
@@ -398,7 +406,7 @@ rebuild_genelist.__doc__ = 'A convenient function for re-building all genelists.
 
 def rebuild_all(delete_old=False):
     '''A convenient function for re-building all biogpsmodel objects,
-       not including genes.
+       not including genes and datasets.
     '''
     rebuild_plugin(delete_old)
     rebuild_layout(delete_old)
