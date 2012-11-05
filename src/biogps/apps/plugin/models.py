@@ -74,6 +74,7 @@ class BiogpsPlugin(BioGPSModel):
     #==========================================================================
     # methods specific for this model
     #==========================================================================
+    @property
     def shortUrl(self):
         '''Extracts only the domain from a URL.  Used when displaying the
           'small' plugin template.  It works by doing 2 RegEx substitutions to:
