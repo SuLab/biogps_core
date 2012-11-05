@@ -1,3 +1,8 @@
+'''
+THIS IS DEPRECATED NOW. IT'S LEFT FOR REFERENCE ONLY. USE
+biogps.apps.search.build_index_dataset MODULE INSTEAD.
+'''
+
 from apps.search.build_index import BiogpsESIndexerBase, ElasticSearchException
 from ast import literal_eval
 from biogps.apps.dataset.models import BiogpsDataset, BiogpsDatasetReporters, BiogpsDatasetPlatform
@@ -77,11 +82,11 @@ class BiogpsDatasetPlatformESIndexer(BiogpsESIndexerBase):
                           "index_name" : "reporter",
                           'index': 'not_analyzed'}
         }
-            
+
         mapping = {'properties': properties}
         return mapping
 
-    def build_index(self, update_mapping=False, bulk=False):        
+    def build_index(self, update_mapping=False, bulk=False):
         pltfm_li = self._model.objects.all()
         conn = self.conn
         index_name = self.ES_INDEX_NAME
@@ -189,7 +194,7 @@ class BiogpsDatasetIndexer(BiogpsESIndexerBase):
         mapping = {'properties': properties}
         return mapping
 
-    def build_index(self, iterator_type='queryset', datafile=None, update_mapping=False, bulk=False): 
+    def build_index(self, iterator_type='queryset', datafile=None, update_mapping=False, bulk=False):
         conn = self.conn
         index_name = self.ES_INDEX_NAME
         index_type = self.ES_INDEX_TYPE
@@ -246,6 +251,7 @@ class BiogpsDatasetIndexer(BiogpsESIndexerBase):
                        'summary': ds.metadata['summary']
                       }
                 conn.index(doc, index_name, index_type, doc['id'], bulk=bulk)
+                print results
         elif iterator_type == 'datafile':
             if not datafile:
                 print 'No datafile specified! Exiting...'
@@ -286,7 +292,7 @@ class BiogpsDatasetReporterIndexer(BiogpsESIndexerBase):
         mapping = {'_parent': {'type': 'dataset'}, 'properties': properties}
         return mapping
 
-    def build_index(self, update_mapping=False, bulk=False): 
+    def build_index(self, update_mapping=False, bulk=False):
         index_name = self.ES_INDEX_NAME
         index_type = self.ES_INDEX_TYPE
         conn = self.conn
@@ -355,7 +361,7 @@ def test():
 
 '''
 curl -XGET 'http://184.72.42.242:9200/biogps_dstest/dataset_platform/_search?fields=id,platform' -d '
-{"query": {"terms": {"reporter": ["1555682_at", "219369_s_at", "222878_s_at", "206646_at", "1555520_at", "208522_s_at", "209815_at", "209816_at"]}}}'    
+{"query": {"terms": {"reporter": ["1555682_at", "219369_s_at", "222878_s_at", "206646_at", "1555520_at", "208522_s_at", "209815_at", "209816_at"]}}}'
 '''
 
 '''
