@@ -23,7 +23,7 @@ from django.conf import settings
 from django.db.models.signals import post_save, post_delete
 
 from pyes.exceptions import (NotFoundException, IndexMissingException,
-                             ElasticSearchException)
+                             ElasticSearchException, TypeMissingException)
 
 from biogps.utils import ask
 from biogps.utils.models import queryset_iterator
@@ -65,8 +65,9 @@ class BiogpsESIndexerBase(object):
         '''Delete all indexes for a given index_type.'''
         index_name = self.ES_INDEX_NAME
         #Check if index_type exists
-        mapping = self.conn.get_mapping(index_type, index_name)
-        if index_name not in mapping or index_type not in mapping[index_name]:
+        try:
+            mapping = self.conn.get_mapping(index_type, index_name)
+        except TypeMissingException:
             print 'Error: index type "%s" does not exist in index "%s".' % (index_type, index_name)
             return
         path = '/%s/%s' % (index_name, index_type)
