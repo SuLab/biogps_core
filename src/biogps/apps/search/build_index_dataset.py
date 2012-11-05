@@ -1,5 +1,6 @@
 from build_index import BiogpsESIndexerBase, BiogpsModelESIndexer
 from biogps.apps.dataset.models import BiogpsDataset, BiogpsDatasetReporters
+from biogps.utils.models import queryset_iterator
 from django.conf import settings
 
 
@@ -54,12 +55,11 @@ class BiogpsDatasetReporterIndexer(BiogpsESIndexerBase):
         index_type = self.ES_INDEX_TYPE
         conn = self.conn
 
-        self.verify_mapping()
+        self.verify_mapping(update_mapping=update_mapping)
 
         print "Building index..."
         cnt = 0
-        for i in BiogpsDatasetReporters.objects.iterator():
-            print i.dataset_id
+        for i in queryset_iterator(BiogpsDatasetReporters, batch_size=self.step):
             ds_id = i.dataset_id
             doc = {'id': ds_id, 'reporter': i.reporters}
             conn.index(doc, index_name, index_type, ds_id, parent=str(ds_id), bulk=bulk)
