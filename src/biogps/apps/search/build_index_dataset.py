@@ -73,6 +73,7 @@ class BiogpsDatasetReporterESIndexer(BiogpsESIndexerBase):
 def rebuild_dataset(delete_old=False, update_mapping=False, verbose=True):
     '''A convenient function for re-building dataset objects'''
     for es_indexer in (BiogpsDatasetESIndexer, BiogpsDatasetReporterESIndexer):
+        es_indexer = es_indexer()
         if delete_old:
             es_indexer.delete_index_type(es_indexer.ES_INDEX_TYPE)
             update_mapping = True   # if delete_old is True, update_mapping should be True anyway
