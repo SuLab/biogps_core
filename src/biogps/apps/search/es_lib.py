@@ -24,7 +24,8 @@ if settings.DEBUG:
 def get_es_conn(ES_HOST=None, default_idx=settings.ES_INDEXES['default']):
     ES_HOST = ES_HOST or settings.ES_HOST
     conn = ES(ES_HOST, default_indices=default_idx,
-              timeout=10.0)
+              max_retries = 10, timeout=300)
+#              timeout=60.0)
     return conn
 
 _conn = get_es_conn()
