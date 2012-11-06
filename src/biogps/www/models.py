@@ -96,7 +96,10 @@ class BiogpsAltLayout(models.Model):
 # setup logger (logging to syslog)
 #==============================================================================
 import logging
-log = logging.getLogger('biogps_prod')
+if settings.RELEASE_MODE == 'prod':
+    log = logging.getLogger('biogps_prod')
+else:
+    log = logging.getLogger('biogps_dev')
 if settings.DEBUG:
     log.setLevel(logging.DEBUG)
 else:
