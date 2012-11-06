@@ -50,7 +50,7 @@ class BiogpsDatasetReporterESIndexer(BiogpsESIndexerBase):
         mapping = {'_parent': {'type': 'dataset'}, 'properties': properties}
         return mapping
 
-    def build_index(self, update_mapping=False, bulk=False, verbose=True):
+    def build_index(self, update_mapping=False, bulk=True, verbose=True):
         index_name = self.ES_INDEX_NAME
         index_type = self.ES_INDEX_TYPE
         conn = self.conn
