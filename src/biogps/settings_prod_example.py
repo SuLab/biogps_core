@@ -12,7 +12,6 @@ BOCSERVICE_URL= 'http://xx.xx.xx.xx'
 
 ##ElasticSearch server settings
 ES_HOST = ['xx.xx.xx.xx:9500']
-ES_INDEX_NAME = 'biogps'
 ES_INDEXES = {'default': 'biogps',
              'dataset': 'biogps_dataset'}
 
