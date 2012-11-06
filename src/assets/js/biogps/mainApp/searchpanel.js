@@ -427,17 +427,24 @@ biogps.doSearch = function(cfg){
          timeout:120,
          params: {searchby: searchby},
          success: function(form, action){
+             var result = action.result.data;
              Ext.MessageBox.hide();
-             if (action.result.data.geneList && action.result.data.geneList.length==0){
-                 Ext.MessageBox.show({ title: 'Not found',
-                                       msg: 'Your query does not return any record. Try again.',
-                                       buttons: Ext.Msg.OK,
-                                       fn: setFocus,
-                                       icon: Ext.MessageBox.WARNING});
+             if (result.geneList && result.geneList.length==0){
+                 //If the "symbolanno" type query returns nothing, try "keyword" query automatically.
+                 if (form.getValues().qtype == 'symbolanno'){
+                    form.setValues({qtype: 'keyword'});
+                    biogps.doSearch();
+                 }else{
+                     Ext.MessageBox.show({ title: 'Not found',
+                                           msg: 'Your query does not return any record. Try again.',
+                                           buttons: Ext.Msg.OK,
+                                           fn: setFocus,
+                                           icon: Ext.MessageBox.WARNING});
+                 }
              }
              else{
-                 biogps.genelist_panel.loadGeneList(action.result.data);
-                 biogps.renderSearchResult('resultpanel', 'center_panel', action.result.data)
+                 biogps.genelist_panel.loadGeneList(result);
+                 biogps.renderSearchResult('resultpanel', 'center_panel', result)
              }
          },
          failure: function(form, action){
