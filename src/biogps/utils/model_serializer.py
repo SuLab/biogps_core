@@ -79,18 +79,16 @@ class DataDumper:
 
         def _any(data):
             ret = None
-            if type(data) is types.ListType:
+            if _is_model(data):
+                ret = _model(data)
+            elif isinstance(data, types.ListType) or \
+                 isinstance(data, models.query.QuerySet):
                 ret = _list(data)
-            elif type(data) is types.DictType:
+            elif isinstance(data, dict):
                 ret = _dict(data)
             elif isinstance(data, Decimal):
                 # json.dumps() cant handle Decimal
                 ret = str(data)
-            elif isinstance(data, models.query.QuerySet):
-                # Actually its the same as a list ...
-                ret = _list(data)
-            elif _is_model(data):
-                ret = _model(data)
             else:
                 ret = data
             return ret
@@ -139,9 +137,10 @@ class DataDumper:
 
         ret = _any(data)
         if(format == 'xml'):
+            _ret = json.loads(json.dumps(ret, cls=DateTimeAwareJSONEncoder))
             try:
                 return pyxslt.serialize.toString(prettyPrintXml=False,
-                                                 data=ret,
+                                                 data=_ret,
                                                  rootTagName='biogps')
             except NameError:
                 raise XMLSerializeError('module "pyxslt" is required for XML serialization.')
