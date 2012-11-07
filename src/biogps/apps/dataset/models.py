@@ -26,10 +26,15 @@ class BiogpsDatasetManager(models.Manager):
             kwargs['id'][:3].upper() in ['GDS', 'GSE']:
             _id = kwargs['id']
             _id_prefix = _id[:3].upper()
-            if _id_prefix == 'GDS':
-                return super(BiogpsDatasetManager, self).get(geo_gds_id=_id)
-            elif _id_prefix == 'GSE':
-                return super(BiogpsDatasetManager, self).get(geo_gse_id=_id)
+            try:
+                if _id_prefix == 'GDS':
+                    return super(BiogpsDatasetManager, self).get(
+                        geo_gds_id=_id)
+                elif _id_prefix == 'GSE':
+                    return super(BiogpsDatasetManager, self).get(
+                        geo_gse_id=_id)
+            except (AttributeError, BiogpsDataset.DoesNotExist):
+                return None
         else:
             # Non-id kwargs passed; business as usual
             try:
@@ -91,8 +96,8 @@ class BiogpsDataset(BioGPSModel):
           @return: an python dictionary
         """
         if mode == 'ajax':
-            extra_attrs = {'AS_IS': ['geo_id_plat', 'metadata', 'name', 'platform',
-                'species']}
+            extra_attrs = {'AS_IS': ['geo_id_plat', 'metadata', 'name',
+                'platform', 'species']}
             out = self._object_cvt(extra_attrs=extra_attrs, mode=mode)
             out['description'] = self.metadata['summary']
         elif mode == 'es':
