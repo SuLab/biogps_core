@@ -14,7 +14,7 @@
                             "Name": "dataset_id",
                             "Required": "Y",
                             "Type": "string",
-                            "Description": "Dataset ID (GSE1133, 1)"
+                            "Description": "Dataset ID (GSE1133, 1, etc)"
                         },
                         {
                             "Name": "format",
@@ -38,7 +38,7 @@
                             "Name": "dataset_id",
                             "Required": "Y",
                             "Type": "string",
-                            "Description": "Dataset ID (GSE1133, 1)"
+                            "Description": "Dataset ID (GSE1133, 1, etc)"
                         },
                         {
                             "Name": "reporters",
@@ -67,7 +67,7 @@
                             "Name": "dataset_id",
                             "Required": "Y",
                             "Type": "string",
-                            "Description": "Dataset ID (GSE1133, 1)"
+                            "Description": "Dataset ID (GSE1133, 1, etc)"
                         },
                         {
                             "Name": "reporter_id",
@@ -89,7 +89,7 @@
                             "Name": "dataset_id",
                             "Required": "Y",
                             "Type": "string",
-                            "Description": "Dataset ID (GSE1133, 1)"
+                            "Description": "Dataset ID (GSE1133, 1, etc)"
                         },
                         {
                             "Name": "reporter_id",
