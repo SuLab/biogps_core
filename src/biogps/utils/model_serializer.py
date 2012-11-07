@@ -121,7 +121,7 @@ class DataDumper:
                     # if _value is a instance method, call this method and assign
                     # the returned value, otherwise, just use _value as it is.
                     ret[attr] = _value() if type(_value) is types.MethodType else _value
-            return ret
+            return _any(ret)
 
         def _list(data):
             ret = []
@@ -137,10 +137,9 @@ class DataDumper:
 
         ret = _any(data)
         if(format == 'xml'):
-            _ret = json.loads(json.dumps(ret, cls=DateTimeAwareJSONEncoder))
             try:
                 return pyxslt.serialize.toString(prettyPrintXml=False,
-                                                 data=_ret,
+                                                 data=ret,
                                                  rootTagName='biogps')
             except NameError:
                 raise XMLSerializeError('module "pyxslt" is required for XML serialization.')
