@@ -6,6 +6,7 @@ from biogps.www.models import BiogpsTip, BiogpsInfobox, BiogpsAltLayout
 from biogps.apps.plugin.models import BiogpsPlugin
 from biogps.apps.layout.models import BiogpsGenereportLayout, BiogpsLayoutPlugin
 from biogps.apps.genelist.models import BiogpsGeneList
+from biogps.apps.auth2.models import UserProfile
 
 #class BiogpsAnounceEmailListAdmin(admin.ModelAdmin):
 #    pass
@@ -20,6 +21,7 @@ class LayoutInline(admin.TabularInline):
     verbose_name = "Layout using this plugin"
     verbose_name_plural = "Layouts using this plugin"
     extra = 0
+    readonly_fields=('layout', 'top', 'left', 'width', 'height')
 
 def get_role_permission(obj):
     return '<br />'.join(obj.role_permission)
@@ -27,14 +29,17 @@ get_role_permission.short_description = 'Role Permission'
 get_role_permission.allow_tags = True
 
 def get_layout_cnt(obj):
-    return len(obj.usage.all())
+    return obj.usage.count()
 get_layout_cnt.short_description = 'no. of layouts using it'
 
 class BiogpsPluginAdmin(admin.ModelAdmin):
     list_display = ('title', 'author', 'type', get_layout_cnt, get_role_permission, 'options','lastmodified','created')
     list_filter = ('author',)
     search_fields = ['title', 'author', 'description']
+    readonly_fields = ('species',)
+    list_select_related = True
     inlines = [LayoutInline,]
+    raw_id_fields = ("ownerprofile",)
 admin.site.register(BiogpsPlugin, BiogpsPluginAdmin)
 
 class PluginsInline(admin.TabularInline):
@@ -44,7 +49,7 @@ class PluginsInline(admin.TabularInline):
     extra = 0
 
 def get_plugin_cnt(obj):
-    return len(obj.plugins.all())
+    return obj.plugins.count()
 get_plugin_cnt.short_description = 'no. of plugins'
 
 class BiogpsGenereportLayoutAdmin(admin.ModelAdmin):
@@ -84,3 +89,16 @@ class MyUserAdmin(user_admin.UserAdmin):
 #unregister default one and replace it by our own
 admin.site.unregister(User)
 admin.site.register(User, MyUserAdmin)
+
+
+def get_user_username(userprofile):
+    return userprofile.user.username
+get_user_username.short_description = "username"
+def get_user_full_name(userprofile):
+    return userprofile.user.get_full_name()
+get_user_full_name.short_description = "full name"
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = [get_user_username, get_user_full_name, 'roles', 'affiliation']
+    search_fields = ['user__username', 'user__first_name', 'user__last_name']
+    list_select_related = True
+admin.site.register(UserProfile, UserProfileAdmin)
