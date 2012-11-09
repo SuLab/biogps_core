@@ -1,0 +1,118 @@
+{
+    "endpoints": [
+        {
+            "name": "BioGPS dataset web services",
+            "methods": [
+                {
+                    "MethodName": "BioGPS Dataset",
+                    "Synopsis": "Get the metadata of a registered BioGPS dataset by its GEO (http://www.ncbi.nlm.nih.gov/geo/) or dataset ID",
+                    "HTTPMethod": "GET",
+                    "URI": "/dataset/:dataset_id/",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "dataset_id",
+                            "Required": "Y",
+                            "Type": "string",
+                            "Description": "Dataset ID (GSE1133, 1)"
+                        },
+                        {
+                            "Name": "format",
+                            "Required": "Y",
+                            "Default": "json",
+                            "Type": "enumerated",
+                            "EnumeratedList": ["json", "xml"],
+                            "Description": "json or xml"
+                        }
+                    ]
+                },
+
+                {
+                    "MethodName": "BioGPS Dataset Values",
+                    "Synopsis": "Get the data in a registered BioGPS dataset for the provided reporter IDs",
+                    "HTTPMethod": "GET",
+                    "URI": "/dataset/:dataset_id/values/",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "dataset_id",
+                            "Required": "Y",
+                            "Type": "string",
+                            "Description": "Dataset ID (GSE1133, 1)"
+                        },
+                        {
+                            "Name": "reporters",
+                            "Required": "Y",
+                            "Type": "string",
+                            "Description": "Comma-separated reporter names (1007_s_at,1053_at)"
+                        },
+                        {
+                            "Name": "format",
+                            "Required": "Y",
+                            "Type": "enumerated",
+                            "EnumeratedList": ["csv", "json", "xml"],
+                            "Description": "csv, json, or xml"
+                        }
+                    ]
+                },
+
+                {
+                    "MethodName": "BioGPS Dataset Static Chart",
+                    "Synopsis": "Get the static expression chart for a reporter in a registered BioGPS dataset",
+                    "HTTPMethod": "GET",
+                    "URI": "/dataset/:dataset_id/chart/:reporter_id/",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "dataset_id",
+                            "Required": "Y",
+                            "Type": "string",
+                            "Description": "Dataset ID (GSE1133, 1)"
+                        },
+                        {
+                            "Name": "reporter_id",
+                            "Required": "Y",
+                            "Type": "string",
+                            "Description": "Reporter ID (1007_s_at)"
+                        }
+                    ]
+                },
+
+                {
+                    "MethodName": "BioGPS Dataset Correlation",
+                    "Synopsis": "Get the correlation of a sample to all other samples in a registered BioGPS dataset",
+                    "HTTPMethod": "GET",
+                    "URI": "/dataset/:dataset_id/corr/:reporter_id/",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "dataset_id",
+                            "Required": "Y",
+                            "Type": "string",
+                            "Description": "Dataset ID (GSE1133, 1)"
+                        },
+                        {
+                            "Name": "reporter_id",
+                            "Required": "Y",
+                            "Type": "string",
+                            "Description": "Reporter ID (1007_s_at)"
+                        },
+                        {
+                            "Name": "co",
+                            "Required": "Y",
+                            "Type": "string",
+                            "Description": "Correlation threshold (0.5 - 1)"
+                        },
+                        {
+                            "Name": "format",
+                            "Required": "Y",
+                            "Type": "enumerated",
+                            "EnumeratedList": ["json", "xml"],
+                            "Description": "json or xml"
+                        }
+                    ]
+                }
+	        ]
+	    }
+    ]
+}

@@ -1,0 +1,2 @@
+{% load user_tags %}
+"{% user_display new_user %}" (view profile at http://{{current_site}}{{new_user.get_absolute_url}} ) has joined and is now a friend.

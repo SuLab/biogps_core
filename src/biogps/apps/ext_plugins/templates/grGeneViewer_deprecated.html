@@ -1,0 +1,19 @@
+<script>
+    add_plugin=function(pid){
+        //var grp = biogps.GeneReportMgr.getReport(0);
+        var grp = Ext.getCmp('grp_{{geneid}}');
+        if (grp)
+            grp.grlayout.quickAddPlugin_byID(pid);
+    }
+
+</script>
+{% if user.is_gnf_user %}
+<p>Sorry, &ldquo;GeneViewer&rdquo; plugin has been deprecated and replaced by new &ldquo;BioTrack&rdquo; plugin.</p>
+<br/>
+<p><a href="javascript: add_plugin(672);">Click here to add &ldquo;BioTrack&rdquo; to your layout.</a></p>
+{% else %}
+<p>Sorry, &ldquo;GeneViewer&rdquo; plugin has been deprecated and replaced by &ldquo;UCSC Genome Browser&rdquo; plugin.</p>
+<br/>
+<p><a href="javascript: add_plugin(424);">Click here to add &ldquo;UCSC Genome Browser&rdquo; to your layout.</a></p>
+
+{% endif %}
