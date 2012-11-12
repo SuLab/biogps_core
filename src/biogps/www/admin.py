@@ -36,7 +36,7 @@ class BiogpsPluginAdmin(admin.ModelAdmin):
     list_display = ('title', 'author', 'type', get_layout_cnt, get_role_permission, 'options','lastmodified','created')
     list_filter = ('author',)
     search_fields = ['title', 'author', 'description']
-    readonly_fields = ('species',)
+    readonly_fields = ('species', 'options')
     list_select_related = True
     inlines = [LayoutInline,]
     raw_id_fields = ("ownerprofile",)
