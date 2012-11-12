@@ -101,4 +101,6 @@ class UserProfileAdmin(admin.ModelAdmin):
     list_display = [get_user_username, get_user_full_name, 'roles', 'affiliation']
     search_fields = ['user__username', 'user__first_name', 'user__last_name']
     list_select_related = True
+    readonly_fields = ('uiprofile',)
+
 admin.site.register(UserProfile, UserProfileAdmin)
