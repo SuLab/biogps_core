@@ -2136,6 +2136,7 @@ Ext.extend(biogps.GeneReportPage, Ext.Panel, {
                 //Need to add datachart plugin to current layout
                 var p = new biogps.Plugin({id: DATACHART_PLUGIN_ID});
                 p.on('load', function(p){
+                    p.orig_url = p.url;
                     p.url += '&show_dataset='+dataset_id;
                     //setting default position/dimension
                     Ext.apply(p, {top: Math.round(Math.random()*225),
@@ -2151,10 +2152,10 @@ Ext.extend(biogps.GeneReportPage, Ext.Panel, {
                 p.load();
             }else{
                 //reload datachart plugin with given dataset_id passed.
-                var orig_url = datachart_portlet.orig_url;
+                var orig_url = datachart_portlet.plugin.orig_url;
                 if (!orig_url) {
                     orig_url = datachart_portlet.plugin.url;
-                    datachart_portlet.orig_url = orig_url;
+                    datachart_portlet.plugin.orig_url = orig_url;
                 }
                 datachart_portlet.plugin.url = orig_url + '&show_dataset='+dataset_id;
                 datachart_portlet.loadContent();
