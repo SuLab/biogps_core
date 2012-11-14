@@ -919,7 +919,7 @@ biogps.GeneReportMgr = Ext.apply(new Ext.util.MixedCollection(), {
                     var _all_rendered = true;
                     for (var i=0;i<this.length;i++){
                         var grp = this.getReport(i);
-                        if (!(grp && grp.rendered)){
+                        if (!(grp && grp.reportRendered)){
                             _all_rendered = false;
                             break;
                         }
@@ -944,6 +944,18 @@ biogps.GeneReportMgr = Ext.apply(new Ext.util.MixedCollection(), {
         this.each(function(grp){
             if (grp && grp.grlayout){
             	grp.grlayout.quickAddPlugin_byID(plugin_id);
+            }
+        });
+    },
+
+    /*
+     * display given dataset in datachart plugin, add this plugin to each
+     * layout page if not rendered yet.
+     */
+    showDataset: function(dataset_id){
+        this.each(function(grp){
+            if (grp){
+                grp.showDataset(dataset_id);
             }
         });
     }
@@ -1748,7 +1760,6 @@ Ext.extend(biogps.GeneReportPage, Ext.Panel, {
         //parameters:
         //cfg.saveEmptyLayout:   if true, save empty layout_data without confirmation.
         //cfg.quiet:             if true, no mask msg, no warning/error msg
-
         cfg = cfg || {};
 		if (!this.grlayout || biogps.require_user_logged_in() == false){
 			return;
@@ -2104,7 +2115,53 @@ Ext.extend(biogps.GeneReportPage, Ext.Panel, {
                 if (p.url) window.open(p.url);
             }
         }
+    },
+
+
+    /**
+     * Display specific dataset in datachart plugin, add the plugin to the current layout
+     * if it's not included.
+     */
+    showDataset: function(dataset_id){
+        if (dataset_id){
+            var DATACHART_PLUGIN_ID = 9;  // hard-coded datachart plugin id
+            //Check if datachart plugin is in this layout already.
+            var datachart_portlet = null;
+            this.portlets.forEach(function(portlet){
+                if (portlet.plugin.id == DATACHART_PLUGIN_ID) {
+                    datachart_portlet = portlet;
+                }
+            });
+            if (datachart_portlet == null){
+                //Need to add datachart plugin to current layout
+                var p = new biogps.Plugin({id: DATACHART_PLUGIN_ID});
+                p.on('load', function(p){
+                    p.url += '&show_dataset='+dataset_id;
+                    //setting default position/dimension
+                    Ext.apply(p, {top: Math.round(Math.random()*225),
+                                  left: Math.round(Math.random()*400),
+                                  width: 350*2,
+                                  height: 750});
+                    this.grlayout.layout_data.push(p);
+                    this.updatePage(true);
+                }, this);
+                p.on('loadfailed', function(pid){
+                    biogps.error(String.format('Failed to load plugin by id "{0}".', pid));
+                }, this);
+                p.load();
+            }else{
+                //reload datachart plugin with given dataset_id passed.
+                var orig_url = datachart_portlet.orig_url;
+                if (!orig_url) {
+                    orig_url = datachart_portlet.plugin.url;
+                    datachart_portlet.orig_url = orig_url;
+                }
+                datachart_portlet.plugin.url = orig_url + '&show_dataset='+dataset_id;
+                datachart_portlet.loadContent();
+            }
+        }
     }
+
 
 
 });

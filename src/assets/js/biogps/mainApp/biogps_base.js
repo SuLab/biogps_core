@@ -661,7 +661,9 @@ biogps.dispatcher_by_hash = function(hash){
 					_reuse_exist_tab('report_panel');
 				}
                 biogps.setTitle(cmd, geneid_list);
+
                 var add_plugin = params['add_plugin'];
+                //if "add_plugin" parameter is passed, add this plugin into the layout if not already.
                 if (add_plugin){
 	                if (biogps.GeneReportMgr && biogps.GeneReportMgr.rendered){
 	                	biogps.GeneReportMgr.quickAddPlugin_byID(add_plugin);
@@ -673,6 +675,21 @@ biogps.dispatcher_by_hash = function(hash){
 	                        biogps.clearListeners(biogps.Messenger, 'genereportrendered');
 	                    });
 	                }
+                }
+
+                var show_dataset = params['show_dataset'];
+                //if "show_dataset" parameter is passed, show this dataset in datachart plugin (add if not rendered)
+                if (show_dataset){
+                    if (biogps.GeneReportMgr && biogps.GeneReportMgr.rendered){
+                        biogps.GeneReportMgr.showDataset(show_dataset);
+                    }
+                    else {
+                        //wait till biogps.resultpage is rendered.
+                        biogps.Messenger.on('genereportrendered', function(){
+                            biogps.GeneReportMgr.showDataset(show_dataset);
+                            biogps.clearListeners(biogps.Messenger, 'genereportrendered');
+                        });
+                    }
                 }
 
 				break;
