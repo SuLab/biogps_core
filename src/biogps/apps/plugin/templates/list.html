@@ -65,7 +65,7 @@
                                     <div class="ratings-bar">
                                         <div style="width:{% rating_percentage i.rating_data.avg %}%"></div>
                                     </div>
-                                    {{ i.rating_data.total }} ratings |
+                                    {{ i.rating_data.total }} rating{{ i.rating_data.total|pluralize }} |
                                 {% endif %}
                                 {% for d,dv in i.usage_data.items %}
                                     {% if not forloop.first %}|{% endif %}

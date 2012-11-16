@@ -168,7 +168,7 @@ class Command(NoArgsCommand):
                         #            all_ds_freqs[v] = 1
 
                         # Format preferredName for tagging
-                        pref_name = pref_name.replace(' ', '-')
+                        pref_name = pref_name.replace(' ', '-').replace("'", "")
                         annotations['preferredName'] = pref_name
 
                         # Add dataset tag

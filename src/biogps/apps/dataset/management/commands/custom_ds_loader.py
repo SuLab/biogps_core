@@ -29,10 +29,6 @@ class Command(NoArgsCommand):
         if ans == 'Y':
             self.stdout.write('\nLoading datasets...\n')
 
-	    def cap_first(orig_str):
-		''' Return passed string with first letter capitalized'''
-		return orig_str[0].upper() + orig_str[1:]
-	    
 	    def gen_ds_id():
 		''' Get next dataset id from Postgres sequence
 		    and confirm it isn't a reserved ID'''
@@ -210,7 +206,7 @@ class Command(NoArgsCommand):
             	        row = [i.strip() for i in row]
             	        if line == 0:
             	    	    # Capitalize first letter of each column header
-            	    	    col_mask = ['%s' % cap_first(i) for i in row[1:]]
+            	    	    col_mask = ['%s' % i.capitalize() for i in row[1:]]
             	    	    prev_col = ''
             
             	    	    # Parse column ordering, coloring
@@ -224,7 +220,7 @@ class Command(NoArgsCommand):
             	    	    	    clr_reader = csv.reader(c)
             	    	    	    for row in clr_reader:
             	    	    	        try:
-            	    	    	            clr_file_vals[cap_first(row[0])] = ((int(row[1]), int(row[2])))
+            	    	    	            clr_file_vals[row[0].capitalize()] = ((int(row[1]), int(row[2])))
             	    	    	        except ValueError:
             	    	    	    	    # Column headers
             	    	    	    	    continue

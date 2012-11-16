@@ -15,7 +15,7 @@ import sys
 import urllib2
 
 sys.path.append('/home/imacleod/datachart_sl')
-from service_layer.dataset.ds_loading.dataset_loader import cap_first, gen_ds_id
+from service_layer.dataset.ds_loading.dataset_loader import gen_ds_id
 
 conn = psycopg2.connect("dbname=biogps_datasets_dev user=postgres\
              host=localhost port=5432")

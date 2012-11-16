@@ -47,7 +47,6 @@ class BiogpsESIndexerBase(object):
     def __init__(self):
         self.conn = get_es_conn(self.ES_HOST, default_idx=[self.ES_INDEX_NAME])
 
-
     def check(self):
         '''print out ES server info for verification.'''
         print "Servers:", self.conn.servers
@@ -193,6 +192,7 @@ class BiogpsModelESIndexer(BiogpsESIndexerBase):
               'format': 'YYYY-MM-dd HH:mm:ss'}
         integer_type = {'type': 'integer'}
         float_type = {'type': 'float'}
+        object_type = {'type': 'object'}
         boolean_type = {'type': 'boolean'}
 
         store_only = {'store': "yes",
@@ -213,6 +213,7 @@ class BiogpsModelESIndexer(BiogpsESIndexerBase):
               'integer_type': integer_type,
               'float_type': float_type,
               'boolean_type': boolean_type,
+              'object_type': object_type,
 
               'store_only': store_only,
               'disabled_object':  disabled_object,

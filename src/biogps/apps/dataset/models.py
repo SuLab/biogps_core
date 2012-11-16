@@ -4,9 +4,12 @@ import types
 from biogps.apps.auth2.models import UserProfile
 from biogps.utils.models import BioGPSModel
 from biogps.utils.fields.jsonfield import JSONField
+from biogps.utils.helper import wrap_str
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django_extensions.db.fields import AutoSlugField
 from django.template.defaultfilters import slugify
+from biogps.apps.stat.models import BiogpsStat
 from biogps.apps.plugin.fields import SpeciesField
 from south.modelsinspector import add_introspection_rules
 
@@ -61,6 +64,34 @@ class BiogpsDataset(BioGPSModel):
     slug = AutoSlugField(populate_from='name')
     species = SpeciesField(max_length=1000)
 
+    @property
+    def name_wrapped(self):
+        return wrap_str(self.name, 140)
+
+    @property
+    def name_wrapped_short(self):
+        return wrap_str(self.name, 60)
+
+    @property
+    def popularity(self):
+        _pop = {}
+        for i in ['weekly', 'monthly', 'all_time']:
+            try:
+                _pop[i] = BiogpsStat.objects.get(
+                    content_type=ContentType.objects.get_for_model(
+                    BiogpsDataset), object_id=self.id, interval=i).rank
+            except BiogpsStat.DoesNotExist:
+                continue
+        return _pop
+
+    @property
+    def sample_count(self):
+        return len(self.metadata['factors'])
+
+    @property
+    def summary_wrapped(self):
+        return wrap_str(self.summary, 140)
+
     # Custom manager
     objects = BiogpsDatasetManager()
 
@@ -83,7 +114,11 @@ class BiogpsDataset(BioGPSModel):
     @models.permalink
     def get_absolute_url(self):
         """ Return the appropriate URL for this dataset. """
-        return ('dataset_show', [str(self.id), slugify(self.name)])
+        _slug = slugify(self.name)
+        if _slug:
+            return ('dataset_show', [str(self.id), _slug])
+        else:
+            return ('dataset_show', [str(self.id), ])
 
     def object_cvt(self, mode='ajax'):
         """A helper function to convert a BiogpsDataset object to a simplified
@@ -95,23 +130,30 @@ class BiogpsDataset(BioGPSModel):
                                         different dictionary for each purpose.
           @return: an python dictionary
         """
+        ds = self
         if mode == 'ajax':
-            extra_attrs = {'AS_IS': ['geo_id_plat', 'metadata', 'name',
-                'platform', 'species']}
-            out = self._object_cvt(extra_attrs=extra_attrs, mode=mode)
-            out['description'] = self.metadata['summary']
-        elif mode == 'es':
-            ds = self
-            extra_attrs = {'AS_IS': ['name', 'platform_id', 'species']}
+            extra_attrs = {'AS_IS': ['geo_gse_id', 'name', 'name_wrapped',
+                'species']}
             out = self._object_cvt(extra_attrs=extra_attrs, mode=mode)
             out.update({'default': ds.metadata['default'],
                         'display_params': ds.metadata['display_params'],
                         'factors': ds.metadata['factors'],
-                        'geo_gds_id': ds.metadata['geo_gds_id'],
-                        'geo_gse_id': ds.metadata['geo_gse_id'],
                         'geo_gpl_id': ds.metadata['geo_gpl_id'],
+                        'owner': ds.metadata['owner'],
                         'pubmed_id': ds.metadata['pubmed_id'],
                         'summary': ds.metadata['summary']
+                       })
+        elif mode == 'es':
+            extra_attrs = {'AS_IS': ['geo_gds_id', 'geo_gse_id', 'name',
+                           'name_wrapped', 'name_wrapped_short', 'platform_id',
+                           'popularity', 'sample_count', 'slug', 'species',
+                           'summary', 'summary_wrapped']}
+            out = self._object_cvt(extra_attrs=extra_attrs, mode=mode)
+            out.update({'default': ds.metadata['default'],
+                        'display_params': ds.metadata['display_params'],
+                        'factors': ds.metadata['factors'],
+                        'geo_gpl_id': ds.metadata['geo_gpl_id'],
+                        'pubmed_id': ds.metadata['pubmed_id']
                        })
         else:
             raise ValueError('Unknown "mode" value.')

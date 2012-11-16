@@ -15,12 +15,12 @@ class BiogpsDatasetESIndexer(BiogpsModelESIndexer):
     def get_field_mapping(self):
         m = self._get_field_mapping(extra_attrs={'id_type': ['geo_gds_id', 'geo_gpl_id', 'geo_gse_id',
                                                              'platform_id', 'species'],
-                                                 'text_type': ['name', 'summary'],
-                                                 "float_type": ['popularity'],
+                                                 'text_type': ['name', 'name_wrapped', 'name_wrapped_short', 'summary', 'summary_wrapped'],
                                                  'boolean_type': ['default'],
+                                                 'object_type': ['popularity'],
                                                  'disabled_object': ['factors'],
                                                  'disabled_string': ['permission_style', 'display_params'],
-                                                 'disabled_integer': ['platform_id', 'pubmed_id']
+                                                 'disabled_integer': ['platform_id', 'pubmed_id', 'sample_count']
                                                  })
         return m
 
@@ -69,6 +69,7 @@ class BiogpsDatasetReporterESIndexer(BiogpsESIndexerBase):
         print conn.flush()
         print conn.refresh()
         print 'Done! - {} docs indexed.'.format(cnt)
+
 
 def rebuild_dataset(delete_old=False, update_mapping=False, verbose=True):
     '''A convenient function for re-building dataset objects'''
