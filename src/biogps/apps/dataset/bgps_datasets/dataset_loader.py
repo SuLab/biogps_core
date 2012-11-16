@@ -29,11 +29,6 @@ conn = psycopg2.connect("dbname=BioGPSP user=biogpsp_su\
 cur = conn.cursor()
 
 
-def cap_first(orig_str):
-    ''' Return passed string with first letter capitalized'''
-    return orig_str[0].upper() + orig_str[1:]
-
-
 def gen_ds_id():
     ''' Get next dataset id from Postgres sequence
         and confirm it isn't a reserved ID'''
@@ -195,7 +190,7 @@ def load_datasets():
                 row = [i.strip() for i in row]
                 if line == 0:
                     # Capitalize first letter of each column header
-                    col_mask = ['%s' % cap_first(i) for i in row[1:]]
+                    col_mask = ['%s' % i.capitalize() for i in row[1:]]
                     prev_col = ''
 
                     # Parse column ordering, coloring

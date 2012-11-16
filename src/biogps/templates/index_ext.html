@@ -140,9 +140,14 @@ coreDispatcher.dispatch();
                             <img src="/assets/img2/biogps_logo.png" alt="BioGPS - The Gene Portal Hub" width="280px" height="82px" />
                         </div>
 
-                        <a id="welcome-link-library" href="/plugin/" title="Check out the new Plugin Library!">
-            			    <div>Plugin Library &raquo;</div>
-            			</a>
+                        <div id="welcome-link-library">
+                            <a href="/plugin/" title="Check out the new Plugin Library!">
+            		    	    <span>Plugins &raquo;</span>
+            		    	</a>&nbsp;&nbsp;&nbsp;
+                            <a href="/dataset/" title="Check out the new Dataset Library!">
+            		    	    <span>Datasets &raquo;</span>
+            		    	</a>
+                        </div>
 
                         {% ifequal alt_defaultlayout 950 %}
                             <div class="welcome-circadian">

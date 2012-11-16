@@ -186,7 +186,7 @@ class DatasetQuery():
     def get_ds_metadata(ds_id):
         """Return dataset metadata for provided ID"""
         try:
-            return BiogpsDataset.objects.get(id=ds_id).metadata
+            return BiogpsDataset.objects.get(id=ds_id).object_cvt()
         except AttributeError, BiogpsDataset.DoesNotExist:
             return None
 

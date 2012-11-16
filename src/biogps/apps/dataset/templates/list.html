@@ -1,0 +1,106 @@
+{% extends "NEW/base_site.html" %}
+{% load biogps_tags %}
+{% load pagination_tags %}
+
+{% block title %}{{ navigation.title }}{% endblock %}
+{% block bodyclass %}{% endblock %}
+
+{% block content %}
+<article class="shift-for-sidebar-left">
+    <div class="in">
+        <header id="page-header">
+            <h1 id="page-header-text">{{ navigation.title }}</h1>
+            <div id="page-alt-nav" style="display:none">
+                [ Sorting Controls ]
+            </div>
+        </header>
+
+        <p class="large-summary"><b>Datasets are collections of data.</b>
+        BioGPS has thousands of datasets available for browsing and which
+        can be easily viewed in our <a href="/plugin/9">interactive data chart</a>.
+        <a href="/help_steps/">Learn more</a>.</p>
+
+        <section>
+            {% if items %}
+                {% autopaginate items 10 %}
+                <div class="browse-pagination">
+                    {% paginate %}
+                    {{ navigation.paging_footer }}
+                </div>
+
+                <ol id="search-results">
+                {% for i in items %}
+                    <li>
+                        <div class="object-summary-use">
+                            <a class="btn-use-object btn-priority-primary btn-show-dataset" href="/#goto=genereport&id=1017&show_dataset={{ i.id }}">
+                                <h6>View Dataset</h6>
+                            </a>
+                         </div>
+                            <div>
+                            <h3>
+                                {% if navigation.multiple_types %}{{ i.in|capfirst }}: {% endif %}
+                                <a href=
+                                    "{% url dataset_show i.id i.name|slugify %}">
+                                     {{ i.name_wrapped_short }}
+                                </a>
+                            </h3>
+
+                            <div class="extra-details">
+                                {% if i.rating_data.total > 0 %}
+                                    <div class="ratings-bar">
+                                        <div style="width:{% rating_percentage i.rating_data.avg %}%"></div>
+                                    </div>
+                                    {{ i.rating_data.total }} rating{{ i.rating_data.total|pluralize }}
+                                {% endif %}
+                            </div>
+
+                            <p>{{ i.summary_wrapped }}</p>
+
+                            <div class="extra-details">
+                                Species: {{ i.species|join:", " }}
+                            </div>
+                            <div class="extra-details">
+                                Samples: {{ i.sample_count }}
+                            </div>
+
+                            {% if i.tags %}
+                                <div class="extra-details">
+                                    Tags:
+                                    {% for t in i.tags %}
+                                        <a href=
+                                            "{% url dataset_list_for_tag t %}"
+                                            rel="tag">
+                                            <span class="ui-icon ui-icon-tag2"></span>
+                                            {{ t }}</a>{% if not forloop.last %},{% endif %}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </li>
+                {% endfor %}
+                </ol>
+
+                <div class="browse-pagination">
+                    {% paginate %}
+                    {{ navigation.paging_footer }}
+                </div>
+            {% else %}
+                <h2 style="margin-top: 3em;">
+                    {% if error %}
+                        There was an error processing your search. Please check your query syntax.
+                    {% else %}
+                        We couldn't find anything that matched your search.
+                    {% endif %}
+                </h2>
+                <p>If you believe this is in error, please contact us directly: {% emailus %}</p>
+            {% endif %}
+        </section>
+    </div>
+</article>
+
+<aside id="sidebar-left" class="browse-navigation">
+    <div class="in">
+        {% include "_navigation.html" %}
+    </div>
+</aside>
+{% endblock %}

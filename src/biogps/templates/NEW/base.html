@@ -55,7 +55,8 @@
                     <ul>
                         <li><a href="/">Home</a></li>
                         <li><a href="/help/">Help</a></li>
-                        <li><a class="active" href="/library/">Library</a></li>
+                        <li><a class="active" href="/plugin/">Plugins</a></li>
+                        <li><a class="active" href="/dataset/">Datasets</a></li>
                         {% if user.is_authenticated %}
                             <li><a href="{{ user.get_absolute_url }}">User: {{ user.display_name|escape }}</a></li>
                             <li><a href="{% url auth_logout %}?next={{ request.path|urlencode }}">Logout</a></li>
@@ -81,8 +82,8 @@
                         Examples:
                         <a href="#" data-query="CDK2, CDK3">Gene Symbol(s)</a>,
                         <a href="#" data-query="GO:0006275">Gene Ontology</a>,
-                        <a href="#" data-query="IPR008351">Interpro</a>,
-                        <a href="#" data-query="in:plugin splicing">Splicing plugins</a>
+                        <a href="#" data-query="in:plugin splicing">Splicing plugins</a>,
+                        <a href="#" data-query="in:dataset melanoma">Melanoma datasets</a>
                     </div>
                     <div id="header-search-help" style="display:none">
                         <a href="">advanced</a>

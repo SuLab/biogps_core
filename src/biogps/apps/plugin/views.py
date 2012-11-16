@@ -87,7 +87,7 @@ class PluginLibraryView(RestView):
         })
         # Sort the list by the number of plugins, which makes the final
         # rendering look nice at all resolutions.
-        list2.sort( key=lambda x:( len(x['items']), x['name'] ) )
+        list2.sort(key=lambda x: (len(x['items']), x['name']))
 
         # Set up the navigation controls
         # We use ES to give us the category facets
@@ -184,7 +184,7 @@ class PluginListView(RestView):
         prepare_breadcrumb(request)
         from biogps.apps.search.views import list as list_view
         kwargs.update(request.GET.items())
-        kwargs.update( {'in':'plugin'} )
+        kwargs.update({'in': 'plugin'})
         return list_view(request, *args, **kwargs)
 
 
@@ -200,7 +200,6 @@ class PluginView(RestView):
         kwargs['plugin'] = get_object_or_404(available_plugins,
                                              id=kwargs.pop('plugin_id'))
 
-
     def get(self, request, plugin, slug=None):
         '''Get a specific plugin page/object via GET
            format = html (default)    display plugin details page
@@ -210,9 +209,9 @@ class PluginView(RestView):
         if request.user.is_authenticated():
             plugin.prep_user_data(request.user)
 
-        nav = BiogpsSearchNavigation(request, params={'only_in':['plugin']})
+        nav = BiogpsSearchNavigation(request, params={'only_in': ['plugin']})
         prepare_breadcrumb(request)
-        request.breadcrumbs( plugin.title, plugin.get_absolute_url )
+        request.breadcrumbs(plugin.title, plugin.get_absolute_url)
         html_template = 'plugin/show.html'
         html_dictionary = {
             'current_obj': plugin,
@@ -286,10 +285,10 @@ class PluginEditView(RestView):
         '''
         form = BiogpsPluginForm(instance=plugin)
 
-        nav = BiogpsSearchNavigation(request, params={'only_in':['plugin']})
+        nav = BiogpsSearchNavigation(request, params={'only_in': ['plugin']})
         prepare_breadcrumb(request)
-        request.breadcrumbs( plugin.title, plugin.get_absolute_url )
-        request.breadcrumbs( 'Edit', request.path_info )
+        request.breadcrumbs(plugin.title, plugin.get_absolute_url)
+        request.breadcrumbs('Edit', request.path_info)
         html_template = 'plugin/edit.html'
         html_dictionary = {
             'plugin': plugin,
@@ -315,9 +314,9 @@ class PluginNewView(RestView):
            format = html (default)    display plugin creation page
         '''
         form = BiogpsPluginForm()
-        nav = BiogpsSearchNavigation(request, params={'only_in':['plugin']})
+        nav = BiogpsSearchNavigation(request, params={'only_in': ['plugin']})
         prepare_breadcrumb(request)
-        request.breadcrumbs( 'New Plugin', request.path_info )
+        request.breadcrumbs('New Plugin', request.path_info)
         html_template = 'plugin/new.html'
         html_dictionary = {
             'form': form,
@@ -332,14 +331,17 @@ class PluginNewView(RestView):
                                             html_dictionary=html_dictionary)
 
 
-
 class PluginTagView(RestView):
     '''This class defines views for REST URL:
-         /plugin/tag/
+         /plugin/tag/(?sort=)
     '''
     def get(self, request):
         _dbobjects = BiogpsPlugin.objects.get_available(request.user)
         tags = Tag.objects.usage_for_queryset(_dbobjects, counts=True, min_count=2)
+        _sort = request.GET.get('sort', None)
+        if _sort:
+            if _sort == 'popular':
+                tags = sorted(tags, key=lambda t: t.count, reverse=True)
 
         # Set up the navigation controls
         # We use ES to give us the category facets
@@ -349,7 +351,7 @@ class PluginTagView(RestView):
 
         # Do the basic page setup and rendering
         prepare_breadcrumb(request)
-        request.breadcrumbs( 'Tags', request.path_info )
+        request.breadcrumbs('Tags', request.path_info)
         html_template = 'plugin/tags.html'
         html_dictionary = {
             'all_tags': tags,
@@ -366,9 +368,9 @@ def prepare_breadcrumb(request):
     '''This function sets up the initial breadcrumb trail for all pages
        in the plugin library.
     '''
-    #request.breadcrumbs( 'Library', '/library/' )
-    #request.breadcrumbs( 'Plugins', '/plugin/' )
-    request.breadcrumbs( 'Plugin Library', '/plugin/' )
+    #request.breadcrumbs('Library', '/library/')
+    #request.breadcrumbs('Plugins', '/plugin/')
+    request.breadcrumbs('Plugin Library', '/plugin/')
 
 
 def test_plugin_url(request):

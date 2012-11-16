@@ -340,11 +340,6 @@ class Command(NoArgsCommand):
                     else:
                         log_file.write(e)
 
-
-	    def cap_first(orig_str):
-		''' Return passed string with first letter capitalized'''
-		return orig_str[0].upper() + orig_str[1:]
-	    
 	    def gen_ds_id():
 		''' Get next dataset id from Postgres sequence
 		    and confirm it isn't a reserved ID'''

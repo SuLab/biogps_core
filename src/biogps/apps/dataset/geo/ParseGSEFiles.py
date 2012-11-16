@@ -17,7 +17,7 @@ from urllib import urlretrieve
 import urllib2
 from biogps.apps.auth2.models import UserProfile
 from biogps.apps.dataset.models import BiogpsDataset, BiogpsDatasetData, BiogpsDatasetMatrix, BiogpsDatasetPlatform
-from biogps.apps.dataset.bgps_datasets.dataset_loader import cap_first, gen_ds_id
+from biogps.apps.dataset.bgps_datasets.dataset_loader import gen_ds_id
 
 conn = psycopg2.connect("dbname=BioGPSP user=biogpsp_su\
              host=184.72.51.54 port=5432")

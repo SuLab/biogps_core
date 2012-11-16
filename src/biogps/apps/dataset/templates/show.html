@@ -2,7 +2,7 @@
 {% load threadedcomments_tags %}
 {% load user_tags %}
 
-{% block title %}{{ current_obj.name|slice:":50" }}... Dataset{% endblock %}
+{% block title %}{{ current_obj.name_wrapped }} Dataset{% endblock %}
 {% block bodyclass %}current_obj{% endblock %}
 
 {% block content %}
@@ -25,9 +25,7 @@
                         <span id="object-ratings-total">
                             <meta itemprop="rating" content="{{ current_obj.rating_data.avg }}"/>
                             <span itemprop="count">{{ current_obj.rating_data.total }}</span> rating{{ current_obj.rating_data.total|pluralize }}
-                        </span> |
-                        {{ current_obj.popularity.users_count|default_if_none:0 }} user{{ current_obj.popularity.users_count|pluralize }} |
-                        {{ current_obj.popularity.score|floatformat:0 }} layout{{ current_obj.popularity.score|pluralize }}
+                        </span>
                         {# Commenting out favorites for now #}
                         {% comment %}
                         {% if user.is_authenticated %}
@@ -47,7 +45,7 @@
                         {% endcomment %}
                     </span><br>
 
-                    <p>{{ current_obj.name }}</p>
+                    <p>{{ current_obj.summary_wrapped }}</p>
 
                     {% if current_obj.certified_owner %}
                         <div class="author">
@@ -62,9 +60,8 @@
                     {% if current_obj.is_private %}<span class="restriction-text">Private Dataset</span>{% endif %}
                 </div>
                 <div class="object-summary-use">
-                    <a class="btn-use-object btn-priority-primary btn-add-dataset" href="/#goto=genereport&id=1017&add_dataset={{ current_obj.id }}">
-                        <h6>Add to Layout</h6>
-                        <span>View your gene of interest</span>
+                    <a class="btn-use-object btn-priority-primary btn-show-dataset" href="/#goto=genereport&id=1017&show_dataset={{ current_obj.id }}">
+                        <h6>View Dataset</h6>
                     </a>
                     {% if user.is_authenticated and user.id == current_obj.owner.id %}
                       <a class="btn-use-object btn-priority-primary" href="{% url dataset_edit current_obj.id %}">Edit</a>
@@ -74,17 +71,49 @@
         </div> <!-- object-summary -->
 
         <div class="object-full-details">
-            <p>{{ current_obj.description }}</p>
+            <p>{{ current_obj.summary }}</p>
 
             <dl>
-                <dt>Species:</dt><dd>{{ current_obj.species }}</dd><br>
-                <dt>NCBI GEO ID:</dt><dd><a href="{{ current_obj.metadata.GEO_url }}" target="_blank">{{ current_obj.metadata.GEO_id }}</a></dd><br>
+                <dt>Species:</dt><dd>{{ current_obj.species|join:", " }}</dd><br>
+                <dt>Samples:</dt><dd>{{ current_obj.sample_count }}</dd><br>
+                {% if current_obj.metadata.source %}
+                    <dt>Source:</dt><dd><a href="{{ current_obj.metadata.source }}" target="_blank">
+                    {% firstof current_obj.geo_gds_id current_obj.geo_gse_id current_obj.metadata.source %}
+                    </a></dd><br>
+                {% endif %}
                 {% if current_obj.mobile_url %}
                 <dt>Mobile URL:</dt><dd>{{ current_obj.mobile_url }}</dd><br>
                 {% endif %}
                 <dt>Updated:</dt><dd>{{ current_obj.lastmodified|date }}</dd><br>
-                <dt>Registered:</dt><dd>{{ current_obj.created|date }}</dd>
-            </dl>
+                <dt>Registered:</dt><dd>{{ current_obj.created|date }}</dd><br>
+                <br>
+                {% if obj_factors and current_obj.id >= 15 %}
+                    <dt>Factors:</dt><dd></dd>
+                    </dl>
+                    <table class="gridtable">
+                    <tr><th>Sample</th>
+                    {% for fac_dict in obj_factors %}
+                        {% if forloop.first %}
+                            {% for samp, facs in fac_dict.items %}
+                                {% for key, val in facs.items %}
+                                    <th>{{ key }}</th>
+                                {% endfor %}
+                            {% endfor %}
+                            </tr>
+                        {% endif %}
+                        {% for samp, facs in fac_dict.items %}
+                            <tr>
+                                <td>{{ samp }}</td>
+                                {% for key, val in facs.items %}
+                                    <td>{{ val }}</td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    {% endfor %}
+                    </table>
+                {% else %}
+                    </dl>
+                {% endif %}
 
         <hr>
         <div id="object-comments">
@@ -216,23 +245,6 @@
 
 <aside id="sidebar-right">
     <div class="in">
-        {% if current_obj.id == 9 %}
-        <div id="dataset-previews">
-            <div id="dataset-preview">
-                <div class="preview-label">Preview</div>
-                <img src="/assets/img2/dataset_preview.png">
-            </div>
-        </div>
-        {% endif %}
-        {% if current_obj.id == 10 %}
-        <div id="dataset-previews">
-            <div id="dataset-preview">
-                <div class="preview-label">Preview</div>
-                <img src="/assets/img2/dataset_preview-10.png">
-            </div>
-        </div>
-        {% endif %}
-
         <h2>Tags</h2>
         <ul class="tag-list">
         {% for t in current_obj.tags %}

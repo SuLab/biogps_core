@@ -1,6 +1,6 @@
 {% extends "NEW/base_site.html" %}
 
-{% block title %}Datset Library{% endblock %}
+{% block title %}Dataset Library{% endblock %}
 {% block bodyclass %}{% endblock %}
 
 {% block content %}
@@ -13,28 +13,24 @@
             </div>
         </header>
         <p class="large-summary"><b>Datasets are collections of data.</b>
+            BioGPS has thousands of datasets available for browsing and which
+            can be easily viewed in our <a href="/plugin/9">interactive data chart</a>.
             <a href="/help_steps/">Learn more</a>.</p>
 
         <div class="browse-tabs jq-tabs">
             <ul>
                 {% for l in list1 %}
-                <li><a href="#tabs-{{ forloop.counter }}">{{ l.name }}</a></li>
+                    <li><a href="#tabs-{{ forloop.counter }}">{{ l.name }}</a></li>
                 {% endfor %}
             </ul>
             {% for l in list1 %}
                 <div id="tabs-{{ forloop.counter }}" class="browse-tab-list">
                     <ul>
-                    {% for p in l.items %}
-                        <li><a href="{{ p.get_absolute_url }}"
-                            {% if p.short_description %}
-                                class="has-tooltip" title="{{ p.short_description }}"
-                            {% endif %}>
-                            {% if p.name|length > 73 %}
-                                {{ p.name|slice:":70" }}...
-                            {% else %}
-                                {{ p.name }}
-                            {% endif %}
-                            </a></li>
+                    {% for d in l.items %}
+                        <li><a href="/dataset/{{ d.id }}/{{ d.slug }}"
+                            {% if d.summary %}
+                                class="has-tooltip" title="{{ d.summary }}"
+                            {% endif %}>{{ d.name_wrapped }}</a></li>
                     {% endfor %}
                     {% if l.more %}
                         <li><a class="more-link" href="{{ l.more }}">more &rsaquo;</a></li>
@@ -46,14 +42,18 @@
 
         <section>
             {% for l in list2 %}
-                <div class="browse-category-highlights">
+                <div class="browse-category-highlights"
+                    {% if l.height %}
+                        {# First row of categories uses height for visual alignment #}
+                        style="height: {{ l.height }}px"
+                    {% endif %}
+                >
                     <h2><a href="{{ l.more }}">{{ l.name }}</a></h2>
                     <ul>
-                    {% for p in l.items %}
-                        <li><a href="{{ p.get_absolute_url }}"
-                            {% if p.short_description %}
-                                class="has-tooltip" title="{{ p.short_description }}"
-                            {% endif %}>{{ p.name }}</a></li>
+                    {% for d in l.items %}
+                        <li><a href="/dataset/{{ d.fields.id }}/{{ d.fields.slug }}">
+                            {{ d.fields.name_wrapped }}
+                            </a></li>
                     {% endfor %}
                         <li><a class="more-link" href="{{ l.more }}">more &rsaquo;</a></li>
                     </ul>

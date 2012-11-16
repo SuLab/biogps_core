@@ -1,8 +1,9 @@
-import os.path
-import tempfile
-import types
 import datetime
+import os.path
 import random
+import tempfile
+import textwrap
+import types
 from functools import wraps
 
 #from django.utils.encoding import smart_str, smart_unicode
@@ -560,3 +561,10 @@ if settings.DEBUG:
         from django.db import connection
         return connection.queries
 
+
+def wrap_str(_str, max_len):
+    """ Textwrap _str to provided max length """
+    len_str = len(_str)
+    if len_str > max_len and len_str > 3:
+        _str = textwrap.wrap(_str, max_len - 3)[0] + '...'
+    return _str

@@ -4,8 +4,9 @@ This file defines a BiogpsSearchNavigation class to hold navigation data used
 to render left-side navigation panel in search results/browse page.
 '''
 
-from django.utils.datastructures import SortedDict
 from biogps.utils.models import Species
+from django.utils.datastructures import SortedDict
+
 
 class BiogpsSearchNavigation(object):
     def __init__(self, request, type='', doc_types=[], es_results=None, params={}):
@@ -46,21 +47,19 @@ class BiogpsSearchNavigation(object):
             out = 'BioGPS Library'
         return out
 
-
     @property
     def query_string(self):
         out = ''
         if self.doc_types:
             out += 'in:' + ','.join(self.doc_types) + ' '
         if self._filters:
-            for f,fv in self._filters.items():
+            for f, fv in self._filters.items():
                 out += f + ':'
                 out += fv if isinstance(fv, basestring) else ','.join(fv)
                 out += ' '
         if self.query:
             out += self.query
         return out
-
 
     @property
     def paging_footer(self):
@@ -76,12 +75,11 @@ class BiogpsSearchNavigation(object):
         if self._es_results.hits.total > self._es_results.hits.hit_count:
             out += types
             hit_range = self._es_results.get_current_hit_range()
-            out += str(hit_range[0]+1) + ' - ' + str(hit_range[1]) + ' of '
+            out += str(hit_range[0] + 1) + ' - ' + str(hit_range[1]) + ' of '
             out += str(self._es_results.hits.total) + ' in total.'
         else:
             out += str(self._es_results.hits.total) + ' ' + types
         return out
-
 
     def _init_facets(self):
         facets = SortedDict()
@@ -121,7 +119,7 @@ class BiogpsSearchNavigation(object):
         # Add in category faceting from search results
         if self._es_results and self._es_results.facets.tag:
             active_set = False
-            facets['tag'] = { 'name': 'TAGS', 'terms': [] }
+            facets['tag'] = {'name': 'TAGS', 'terms': []}
             for c in self._es_results.facets.tag.terms:
                 _f = {
                     'term': c['term'],
@@ -153,13 +151,16 @@ class BiogpsSearchNavigation(object):
                     'css_class': 'more-link'
                 })
 
-
         # SPECIES NAVIGATION
         facets['species'] = {
             'name': 'SPECIES',
             'terms': []
         }
+
+        is_dataset = ['human', 'mouse', 'rat', 'pig'] if self.doc_type == 'dataset' else False
         for s in Species:
+            if is_dataset and s.name not in is_dataset:
+                continue
             facets['species']['terms'].append({
                 'term': s.name.capitalize(),
                 'title': s.short_genus,
@@ -179,11 +180,7 @@ class BiogpsSearchNavigation(object):
                     except (KeyError, TypeError):
                         pass
 
-
         self.facets = facets
-
-
-
 
     def add_facet_to_path(self, facet, term):
         if self.is_search():
@@ -195,15 +192,15 @@ class BiogpsSearchNavigation(object):
         path = '/search/?'
         terms = []
         if self.query:
-            terms.append( 'q=' + self.query )
+            terms.append('q=' + self.query)
         if self.doc_types:
-            terms.append( 'in=' + ','.join(self.doc_types) )
+            terms.append('in=' + ','.join(self.doc_types))
         if self._filters:
-            for f,fv in self._filters.items():
+            for f, fv in self._filters.items():
                 if f == facet: continue
-                terms.append( f + '=' + fv )
+                terms.append(f + '=' + fv)
 
-        terms.append( facet + '=' + term )
+        terms.append(facet + '=' + term)
 
         return path + '&'.join(terms)
 
@@ -235,8 +232,6 @@ class BiogpsSearchNavigation(object):
             path.append(end)
 
         return '/'.join(path)
-
-
 
     def is_search(self):
         return self.page_type == 'search'

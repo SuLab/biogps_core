@@ -43,7 +43,6 @@ def _handle_commom_params(params):
     if types is not None:
         types = [x.strip() for x in types.split(',')]
 
-
     # Handle tag and species filtering
     _filters = ['tag', 'species']
     filter_by = {}
@@ -72,21 +71,21 @@ def _handle_commom_params(params):
 
     # Sorting parameter translation. Defaults to popularity
     sort_param = params.get('sort', '')
-    #  handle some special sort cases
+    # Default BiogpsStat sorting
+    sort = [{'popularity.all_time': {'order': 'asc', 'missing': '_last'}}]
+    # Handle special sort cases
     if sort_param == 'popular':    # e.g. /plugin/all/?sort=popular
-        sort = [{'popularity':'desc'}]
+        if types[0] == 'plugin':
+            sort = [{'popularity': 'desc'}]
     elif sort_param == 'newest':   # e.g. /plugin/all/?sort=newest
-        sort = [{'created':'desc'}]
+        sort = [{'created': 'desc'}]
     else:
-    # other generic sort case
+        # Other generic sort case
         sort = [s.strip() for s in params.get('sort', '').split(',')]
-        sort = [{s[1:]: 'desc'} if s[0]=='-' else s for s in sort if s]
-    if not sort:
-        sort = [{'popularity':'desc'}]
+        sort = [{s[1:]: 'desc'} if s[0] == '-' else s for s in sort if s]
 
     # Fields to return for each object. Defaults to _source
     fields = [s.strip() for s in params.get('fields', '_source').split(',')]
-
 
     f = [x.strip() for x in params.get('f', '').split(',') if x.strip() != '']  # facets fields
     h = [x.strip() for x in params.get('h', '').split(',') if x.strip() != '']  # hl_fields
@@ -96,13 +95,15 @@ def _handle_commom_params(params):
 
 
 def list(request, *args, **kwargs):
+    _type = kwargs['in']
     common_params = _handle_commom_params(kwargs)
 
     # Add breadcrumbs based on the filters
-    for f,fv in common_params.get('filter_by').items():
-        request.breadcrumbs( f.capitalize() +': '+ fv.capitalize(), '/'.join(['','plugin',f,fv,'']) )
+    for f, fv in common_params.get('filter_by').items():
+        request.breadcrumbs(f.capitalize() + ': ' + fv.capitalize(), '/'.join(['', _type, f, fv, '']))
     if not common_params['filter_by']:
-        request.breadcrumbs( 'All Plugins', '/plugin/all/' )
+        _cap_type = _type[0].upper() + _type[1:]
+        request.breadcrumbs('All {}s'.format(_cap_type), '/{}/all/'.format(_type))
 
     es = ESQuery(request.user)
     res = es.query(**common_params)
@@ -111,7 +112,7 @@ def list(request, *args, **kwargs):
     nav = BiogpsSearchNavigation(request, type='list', es_results=res, params=common_params)
 
     # Do the basic page setup and rendering
-    html_template = 'plugin/list.html'
+    html_template = '{}/list.html'.format(_type)
     html_dictionary = {
         'items': res,
         'species': Species,
@@ -119,7 +120,7 @@ def list(request, *args, **kwargs):
     }
     return render_to_formatted_response(request,
                                         data=res,
-                                        allowed_formats=['html','json','xml'],
+                                        allowed_formats=['html', 'json', 'xml'],
                                         model_serializer='object_cvt',
                                         html_template=html_template,
                                         html_dictionary=html_dictionary)
@@ -179,9 +180,10 @@ def search(request, _type=None):
     nav = BiogpsSearchNavigation(request, type='search', es_results=res, params=common_params)
 
     # Do the basic page setup and rendering
-    request.breadcrumbs( 'Plugin Library', '/plugin/' )
-    request.breadcrumbs( 'Search Results', request.path_info )
-    html_template = 'plugin/list.html'
+    ctype = common_params['only_in'][0]
+    request.breadcrumbs('{} Library'.format(ctype.capitalize()), '/{}/'.format(ctype))
+    request.breadcrumbs('Search Results', request.path_info)
+    html_template = '{}/list.html'.format(ctype)
     html_dictionary = {
         'items': res,
         'species': Species,
@@ -192,7 +194,7 @@ def search(request, _type=None):
         html_dictionary['error'] = res.error
     return render_to_formatted_response(request,
                                         data=res,
-                                        allowed_formats=['html','json','xml'],
+                                        allowed_formats=['html', 'json', 'xml'],
                                         model_serializer='object_cvt',
                                         html_template=html_template,
                                         html_dictionary=html_dictionary)
@@ -217,6 +219,7 @@ def interval(request):
                                     taxid, species, assembly,
                                     **common_params)
     return JSONResponse(res.object_cvt())
+
 
 def get_mapping(request):
     es = ESQuery(request.user)
