@@ -73,7 +73,6 @@ class BiogpsDataset(BioGPSModel):
             formatted = set()
             facs = uf.replace(',', '').split(' ')
             for f in facs:
-                f = smart_unicode(f)
                 formatted.add(f)
             return formatted
 
