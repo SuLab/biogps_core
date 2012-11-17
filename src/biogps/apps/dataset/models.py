@@ -9,6 +9,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django_extensions.db.fields import AutoSlugField
 from django.template.defaultfilters import slugify
+from django.utils.encoding import smart_unicode
 from biogps.apps.stat.models import BiogpsStat
 from biogps.apps.plugin.fields import SpeciesField
 from south.modelsinspector import add_introspection_rules
@@ -61,8 +62,30 @@ class BiogpsDataset(BioGPSModel):
     metadata = JSONField(blank=False, editable=True)
     lastmodified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
-    slug = AutoSlugField(populate_from='name')
+    slug = AutoSlugField(max_length=50, populate_from='name')
     species = SpeciesField(max_length=1000)
+
+    @property
+    def factors_text(self):
+        def format_factor(factor):
+            """ Remove commas, split on spaces for indexing """
+            uf = smart_unicode(factor)
+            formatted = set()
+            facs = uf.replace(',', '').split(' ')
+            for f in facs:
+                f = smart_unicode(f)
+                formatted.add(f)
+            return formatted
+
+        _fac_txt = set()
+        for fac_dict in self.metadata['factors']:
+            for sample in fac_dict.values():
+                for key, val in sample.iteritems():
+                    for k in format_factor(key):
+                        _fac_txt.add(k)
+                    for v in format_factor(val):
+                        _fac_txt.add(v)
+        return ' '.join(_fac_txt)
 
     @property
     def name_wrapped(self):
@@ -87,6 +110,13 @@ class BiogpsDataset(BioGPSModel):
     @property
     def sample_count(self):
         return len(self.metadata['factors'])
+
+    @property
+    def sample_ids(self):
+        _samples = []
+        for f in self.metadata['factors']:
+            _samples.append(f.keys()[0])
+        return _samples
 
     @property
     def summary_wrapped(self):
@@ -144,10 +174,12 @@ class BiogpsDataset(BioGPSModel):
                         'summary': ds.metadata['summary']
                        })
         elif mode == 'es':
-            extra_attrs = {'AS_IS': ['geo_gds_id', 'geo_gse_id', 'name',
-                           'name_wrapped', 'name_wrapped_short', 'platform_id',
-                           'popularity', 'sample_count', 'slug', 'species',
-                           'summary', 'summary_wrapped']}
+            extra_attrs = {'AS_IS': ['factors_text', 'geo_gds_id',
+                           'geo_gse_id', 'name', 'name_wrapped',
+                           'name_wrapped_short', 'platform_id',
+                           'popularity', 'sample_count', 'sample_ids',
+                           'slug', 'species', 'summary',
+                           'summary_wrapped']}
             out = self._object_cvt(extra_attrs=extra_attrs, mode=mode)
             out.update({'default': ds.metadata['default'],
                         'display_params': ds.metadata['display_params'],
