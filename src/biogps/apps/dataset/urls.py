@@ -9,7 +9,7 @@ if settings.RELEASE_MODE == 'dev':
 
 urlpatterns += patterns('biogps.apps.dataset.views',
     url(r'^$', 'DatasetLibraryView', name='dataset_home'),
-    #url(r'^new/$', 'DatasetNewView', name='dataset_new'),
+    url(r'^new/$', 'DatasetNewView', name='dataset_new'),
     #url(r'^(?P<dataset_id>\d+)/edit/$', 'DatasetEditView', name='dataset_edit'),
     url(r'^d3/(?P<ds_id>.+)/(?P<rep_id>.+)/$', 'DatasetD3View'),
 
