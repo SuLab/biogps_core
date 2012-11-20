@@ -32,5 +32,5 @@ urlpatterns += patterns('biogps.apps.dataset.views',
     (r'(?P<datasetID>.+)/values/$', 'DatasetValuesView'),
     (r'(?P<datasetID>.+)/chart/(?P<reporterID>[\w-]+)/$', 'DatasetStaticChartView'),
     (r'(?P<datasetID>.+)/corr/(?P<reporterID>[\w-]+)/$', 'DatasetCorrelationView'),
-    url(r'^(?P<datasetID>(GSE|GDS|gse|gds)*\d+)(?:/(?P<slug>[\w-]+))?/$', 'DatasetView', name='dataset_show'),
+    url(r'^(?P<datasetID>[GSEDgsed]*\d+)(?:/(?P<slug>[\w-]+))?/$', 'DatasetView', name='dataset_show'),
 )
