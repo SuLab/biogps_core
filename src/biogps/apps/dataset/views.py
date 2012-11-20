@@ -275,9 +275,11 @@ class DatasetView(RestView):
        ** more like the PluginView.
     """
     def before(self, request, args, kwargs):
-        if request.method == 'GET':
-            kwargs['dataset'] = get_object_or_404(BiogpsDataset,
-                                                  id=kwargs.pop('datasetID'))
+        try:
+            ds_id = sanitize(kwargs.pop('datasetID'))
+            kwargs['dataset'] = BiogpsDataset.objects.get(id=ds_id)
+        except BiogpsDataset.DoesNotExist:
+            return HttpResponseNotFound()
 
     def get(self, request, dataset, slug=None):
         """Get a specific dataset page/object via GET
@@ -290,7 +292,7 @@ class DatasetView(RestView):
             request.META.get('REMOTE_ADDR', ''), dataset)
 
         if 'format' in request.GET:
-            meta = DatasetQuery.get_ds_metadata(sanitize(dataset.id))
+            meta = dataset.object_cvt()
             sort_fac = request.GET.get('sortFactor', None)
             if sort_fac is not None:
                 # Sort metadata by provided factor

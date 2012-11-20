@@ -15,13 +15,13 @@ class BiogpsDatasetESIndexer(BiogpsModelESIndexer):
     def get_field_mapping(self):
         m = self._get_field_mapping(extra_attrs={'id_type': ['geo_gds_id', 'geo_gpl_id', 'geo_gse_id',
                                                              'platform_id', 'sample_ids', 'species'],
-                                                 'text_type': ['factors_text', 'name', 'name_wrapped',
-                                                               'name_wrapped_short', 'summary',
-                                                               'summary_wrapped'],
+                                                 'text_type': ['factors_text', 'name', 'summary'],
                                                  'boolean_type': ['default'],
                                                  'object_type': ['popularity'],
                                                  'disabled_object': ['factors'],
-                                                 'disabled_string': ['permission_style', 'display_params'],
+                                                 'disabled_string': ['display_params', 'name_wrapped',
+                                                                     'name_wrapped_short', 'permission_style',
+                                                                     'slug', 'summary_wrapped'],
                                                  'disabled_integer': ['platform_id', 'pubmed_id', 'sample_count']
                                                  })
         # Set custom index names
