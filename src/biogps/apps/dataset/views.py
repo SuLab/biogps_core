@@ -225,6 +225,34 @@ class DatasetListView(RestView):
         return list_view(request, *args, **kwargs)
 
 
+class DatasetNewView(RestView):
+    '''This class defines views for REST URL:
+         /dataset/new/
+    '''
+    #@loginrequired
+    def get(self, request):
+        return HttpResponseNotFound()
+    #    '''Get a creation form for a new dataset object via GET
+    #       format = html (default)    display dataset creation page
+    #    '''
+    #    form = BiogpsPluginForm()
+    #    nav = BiogpsSearchNavigation(request, params={'only_in': ['dataset']})
+    #    prepare_breadcrumb(request)
+    #    request.breadcrumbs('New Dataset', request.path_info)
+    #    html_template = 'dataset/new.html'
+    #    html_dictionary = {
+    #        'form': form,
+    #        'species': Species,
+    #        'all_tags': Tag.objects.all(),
+    #        'navigation': nav
+    #    }
+    #    return render_to_formatted_response(request,
+    #                                        data=None,
+    #                                        allowed_formats=['html'],
+    #                                        html_template=html_template,
+    #                                        html_dictionary=html_dictionary)
+
+
 class DatasetTagView(RestView):
     '''This class defines views for REST URL:
          /dataset/tag/(?sort=)
