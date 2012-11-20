@@ -12,11 +12,7 @@
                     object-{{ current_obj.permission_style }}">
             <span itemscope itemtype="http://data-vocabulary.org/Review-aggregate">
                 <h1><span class="object-type">Dataset:</span> <span itemprop="itemreviewed">
-                {% if current_obj.name|length > 53 %}
-                    {{ current_obj.name|slice:":50" }}...
-                {% else %}
                     {{ current_obj.name }}
-                {% endif %}
                 </span></h1>
                 <div class="object-summary-details">
                     {% include 'rating/rating.html' %}
