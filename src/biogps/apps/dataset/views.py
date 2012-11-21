@@ -526,7 +526,8 @@ class DatasetD3View(RestView):
        /dataset/d3/<ds_id>/<rep_id>/
     """
     def get(self, request, ds_id, rep_id):
-        dsd = get_object_or_404(BiogpsDatasetData, dataset=ds_id, reporter=rep_id)
+        dsd = get_object_or_404(BiogpsDatasetData, dataset=ds_id,
+                                reporter=rep_id)
         ds_data = dsd.data
 
         ds = dsd.dataset
@@ -541,7 +542,13 @@ class DatasetD3View(RestView):
         res_meta['name'] = ds.name
         res_meta['species'] = ds.species
         res_meta['summary'] = ds_meta['summary']
-        res_meta['owner'] = ds_meta['owner']
+
+        # Owner
+        user = ds.ownerprofile.user
+        res_meta['owner'] = {'id': user.id,
+                             'name': user.get_full_name(),
+                             'profile': user.get_absolute_url(),
+                             'username': user.username}
 
         res_data = res['data']
         for idx, fact_dict in enumerate(ds_meta['factors']):
@@ -550,9 +557,19 @@ class DatasetD3View(RestView):
 
             # Add data value to response
             val_dict = fact_dict[samp_id]
-            val_dict['sample'] = samp_id
-            val_dict['value'] = samp_val
-            res_data.append(val_dict)
+            data_dict = {'factors': {}, 'sample': samp_id, 'value': samp_val}
+
+            # Make all keys lowercase, add factors to samples
+            skip_factors = ['color_idx', 'order_idx', 'sample',
+                            'title', 'value']
+            for key, val in val_dict.iteritems():
+                key = key.lower()
+                if key not in skip_factors:
+                    data_dict['factors'][key] = val
+                else:
+                    data_dict[key] = val
+
+            res_data.append(data_dict)
 
         return render_to_formatted_response(request, data=res,
             allowed_formats=['json', 'xml'])
