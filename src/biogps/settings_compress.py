@@ -71,6 +71,7 @@ COMPRESS_CSS = {
     # VERSION 2 LESS STYLING
     'common': {
         'source_filenames': [
+            'css/dataset.css',
             'less/reset/html5boilerplate.css',
             'less/reset/yui-base.css',
             'less/base.less',

@@ -82,11 +82,16 @@
                 {% endif %}
                 <dt>Updated:</dt><dd>{{ current_obj.lastmodified|date }}</dd><br>
                 <dt>Registered:</dt><dd>{{ current_obj.created|date }}</dd><br>
-                <br>
+                </dl>
+
                 {% if obj_factors and current_obj.id >= 15 %}
-                    <dt>Factors:</dt><dd></dd>
-                    </dl>
-                    <table class="gridtable">
+                    <br>
+                    <div id="dataset-factors">
+                    <span id="dataset-factors-title">Factors:</span>
+                        {% if current_obj.geo_gse_id and not current_obj.geo_gds_id %}
+                            (via <a href="https://insilicodb.org/app/" target="_blank">InsilicoDB</a>)
+                        {% endif %}    
+                    <table id="factors-table">
                     <tr><th>Sample</th>
                     {% for fac_dict in obj_factors %}
                         {% if forloop.first %}
@@ -98,7 +103,7 @@
                             </tr>
                         {% endif %}
                         {% for samp, facs in fac_dict.items %}
-                            <tr>
+                            <tr class="{% cycle 'odd-factor' 'even-factor' %}">
                                 <td>{{ samp }}</td>
                                 {% for key, val in facs.items %}
                                     <td>{{ val }}</td>
@@ -107,8 +112,7 @@
                         {% endfor %}
                     {% endfor %}
                     </table>
-                {% else %}
-                    </dl>
+                    </div>
                 {% endif %}
 
         <hr>
