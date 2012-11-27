@@ -182,7 +182,7 @@ def search(request, _type=None):
     # Do the basic page setup and rendering
     ctype = common_params['only_in'][0]
     request.breadcrumbs('{} Library'.format(ctype.capitalize()), '/{}/'.format(ctype))
-    request.breadcrumbs('Search Results', request.path_info)
+    request.breadcrumbs('Search: {}'.format(q.split(' ', 1)[1]), request.path_info + '?q={}'.format(q))
     html_template = '{}/list.html'.format(ctype)
     html_dictionary = {
         'items': res,
