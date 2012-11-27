@@ -10,6 +10,9 @@
     #factors-table th {
         background: #F0F5FA;
         border: 1px solid #C0C4C6;
+        color: #36C;
+        cursor: pointer;
+        font-weight: normal;
         padding: 0.2em 0.5em;
     }
 
