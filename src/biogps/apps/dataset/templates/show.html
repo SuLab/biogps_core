@@ -271,6 +271,17 @@
         {% endif %}
 
         {% include "_alternates.html" %}
+
+        <script src="/assets/js/min/ext_mainApp.js" charset="utf-8"></script>
+        <script src="/assets/js/min/biogps_mainApp.js" charset="utf-8"></script>
+        <script>
+        window.onload = function() {
+            if (document.getElementById("factors-table")) {
+                var tbl = Ext.get('factors-table');
+                sorttable.makeSortable(tbl.dom);
+            }
+        }
+        </script>
     </div>
 </aside>
 {% endblock %}
