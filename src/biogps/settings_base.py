@@ -26,6 +26,16 @@ except ImportError:
 # HTTPLIB2_CACHE = '.cache'            #the path for cached http request used by httplib2. Set to 0 or False to disable it.
 HTTPLIB2_CACHE = False
 
+
+# Caching with memcached
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.PyLibMCCache',
+        'LOCATION': '127.0.0.1:11211',
+    }
+}
+
+
 BOT_HTTP_USER_AGENT = ('Googlebot', 'msnbot', 'Yahoo! Slurp')    #The string appearing in HTTP_USER_AGENT header to indicate it is from a web crawler.
 
 # Used in middleware/maintenance.py
