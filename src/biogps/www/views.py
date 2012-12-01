@@ -14,6 +14,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.html import strip_tags
 from django.utils.http import urlencode
+from django.views.decorators.cache import cache_page
 
 from biogps.apps.gene.models import Gene
 from biogps.apps.layout.layout import getall, get_shared_layouts
@@ -31,6 +32,7 @@ import logging
 log = logging.getLogger('biogps_prod')
 
 
+@cache_page(60 * 1440)
 def index(request, **kwargs):
     '''view function for the main page.'''
     if request.method in ['GET', 'HEAD']:
