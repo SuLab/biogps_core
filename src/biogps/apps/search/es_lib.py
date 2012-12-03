@@ -113,13 +113,13 @@ class ESQuery():
         return filter
 
     def _get_default_facets(self, doc_types):
-        facets = None
+        facets = set()
         if len(doc_types) > 0:
-            facets = set(self.ES_AVAILABLE_TYPES[doc_types[0]]['facets'])
-            for type in doc_types[1:]:
-                facets &= set(self.ES_AVAILABLE_TYPES[type]['facets'])
+            for _type in doc_types:
+                if _type in self.ES_AVAILABLE_TYPES:
+                    facets |= set(self.ES_AVAILABLE_TYPES[_type]['facets'])
             facets = list(facets)
-        return facets
+        return facets or None
 
     def _switch_index(self, doc_types=None):
         '''switch index to perform ES queries based on doc_types:
@@ -199,12 +199,18 @@ class ESQuery():
 
         '''
         # Parse out the possible types to search across
-        doc_types = []
+        # doc_types = []
+        # if only_in:
+        #     if isinstance(only_in, basestring):
+        #         only_in = [only_in]
+        #     doc_types = list(set(only_in) & set(self.ES_AVAILABLE_TYPES))
+        # doc_types = doc_types or self.ES_AVAILABLE_TYPES.keys()
         if only_in:
             if isinstance(only_in, basestring):
                 only_in = [only_in]
-            doc_types = list(set(only_in) & set(self.ES_AVAILABLE_TYPES))
-        doc_types = doc_types or self.ES_AVAILABLE_TYPES.keys()
+            doc_types = only_in
+        else:
+            doc_types = self.ES_AVAILABLE_TYPES.keys()
 
         # Initialize q if it was not specified
         if not q:
