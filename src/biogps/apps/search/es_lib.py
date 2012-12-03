@@ -167,6 +167,16 @@ class ESQuery():
         result.query = self
         return result
 
+    def has_valid_doc_types(self):
+        '''Return True if "only_in" doc_types used in ES query are valid type
+           (specified in settings.ES_AVAILABLE_TYPES)
+        '''
+        if self._doc_types and type(self._doc_types) is types.ListType and \
+           len(set(self._doc_types) - set(self.ES_AVAILABLE_TYPES)) == 0:
+           return True
+        else:
+            return False
+
     def query(self, q=None, fields=None, start=0, size=10, sort=None, only_in=None,
               h=['_all'], facets=None, returnquery=False, explain=False,
               filter_by=None, custom_filter=None):
