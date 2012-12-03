@@ -180,18 +180,24 @@ def search(request, _type=None):
     nav = BiogpsSearchNavigation(request, type='search', es_results=res, params=common_params)
 
     # Do the basic page setup and rendering
-    ctype = common_params['only_in'][0]
-    request.breadcrumbs('{} Library'.format(ctype.capitalize()), '/{}/'.format(ctype))
-    try:
-        request.breadcrumbs('Search: {}'.format(q.split(' ', 1)[1]), request.path_info + '?q={}'.format(q))
-    except IndexError:
-        request.breadcrumbs('Search: {}'.format(q), request.path_info + '?q={}'.format(q))
-    html_template = '{}/list.html'.format(ctype)
-    html_dictionary = {
-        'items': res,
-        'species': Species,
-        'navigation': nav
-    }
+    if res.query.has_valid_doc_types():
+        # Successful search result
+        ctype = common_params['only_in'][0]
+        request.breadcrumbs('{} Library'.format(ctype.capitalize()), '/{}/'.format(ctype))
+        try:
+            request.breadcrumbs('Search: {}'.format(q.split(' ', 1)[1]), request.path_info + '?q={}'.format(q))
+        except IndexError:
+            request.breadcrumbs('Search: {}'.format(q), request.path_info + '?q={}'.format(q))
+        html_template = '{}/list.html'.format(ctype)
+        html_dictionary = {
+            'items': res,
+            'species': Species,
+            'navigation': nav
+        }
+    else:
+        html_template = 'search/no_results.html'
+        html_dictionary = {}
+
     if res.has_error():
         html_dictionary['items'] = None
         html_dictionary['error'] = res.error
