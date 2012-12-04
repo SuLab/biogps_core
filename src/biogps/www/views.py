@@ -7,6 +7,7 @@ import re
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
+from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.http import (Http404, HttpResponse,
                          HttpResponseBadRequest, HttpResponseRedirect)
@@ -14,7 +15,6 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.html import strip_tags
 from django.utils.http import urlencode
-from django.views.decorators.cache import cache_page
 
 from biogps.apps.gene.models import Gene
 from biogps.apps.layout.layout import getall, get_shared_layouts
@@ -27,12 +27,13 @@ from biogps.utils.helper import (getCommonDataForMain,
                                  HttpResponseRedirectWithIEFix)
 from biogps.www.models import BiogpsInfobox
 
-
 import logging
 log = logging.getLogger('biogps_prod')
 
+cache_day = settings.CACHE_DAY
+cache_week = settings.CACHE_WEEK
 
-@cache_page(60 * 1440)
+
 def index(request, **kwargs):
     '''view function for the main page.'''
     if request.method in ['GET', 'HEAD']:
@@ -342,7 +343,12 @@ def get_info_box():
     # List sequence is item type, title, content, detail (author, registered plugins, etc)
 
     # Featured
-    for i in BiogpsInfobox.objects.filter(type="featured"):
+    feat_cache = 'feat_info'
+    featured = cache.get(feat_cache)
+    if not featured:
+        featured = BiogpsInfobox.objects.filter(type="featured")
+        cache.set(feat_cache, featured, cache_week)
+    for i in featured:
         featured_quote_length = len(strip_tags(i.detail))
         # Check each quote's size and set its margin-top value
         featured_margin = '-15%'
@@ -357,7 +363,11 @@ def get_info_box():
     # Statistics
     stats_header = '<div><h2>Statistics</h2></div>'
     infobox_items.append(['stat', stats_header, '<p><span><i>%s</i></span></p>' % (User.objects.count()), ' registered users'])
-    new_users = User.objects.filter(date_joined__gte=datetime.datetime.now()-datetime.timedelta(weeks=1)).count()
+    user_cache = 'user_info'
+    new_users = cache.get(user_cache)
+    if not new_users:
+        new_users = User.objects.filter(date_joined__gte=datetime.datetime.now()-datetime.timedelta(weeks=1)).count()
+        cache.set(user_cache, new_users, cache_day)
     if new_users == 0:
         # No new users, don't display!
         pass
@@ -373,10 +383,14 @@ def get_info_box():
     trend_models = [Gene]
     for mdl in trend_models:
         for intvl in trend_intervals:
-            stats = BiogpsStat.objects.filter(content_type=
-                         ContentType.objects.get_for_model(mdl),
-                         interval=intvl).order_by('rank').filter(
-                         rank__lte=10)[:10]
+            mdl_cache = '{}_info'.format(mdl.short_name)
+            stats = cache.get(mdl_cache)
+            if not stats:
+                stats = BiogpsStat.objects.filter(content_type=
+                            ContentType.objects.get_for_model(mdl),
+                            interval=intvl).order_by('rank').filter(
+                            rank__lte=10)[:10]
+                cache.set(mdl_cache, stats, cache_week)
             if len(stats) > 0:
                 if mdl == Gene:
                     content_title = '<div><u class="infobox-trend-title">Popular Genes ('
@@ -395,7 +409,12 @@ def get_info_box():
                     infobox_items.append(['trend', '<div><h2>Trends</h2></div>', rank_table.format(content_title, table_rows)])
 
     # User quotes
-    for i in BiogpsInfobox.objects.filter(type="quote"):
+    quote_cache = 'quote_info'
+    quotes = cache.get(quote_cache)
+    if not quotes:
+        quotes = BiogpsInfobox.objects.filter(type="quote")
+        cache.set(quote_cache, quotes, cache_week)
+    for i in quotes:
         quote_content = i.content
         quote_content_length = len(strip_tags(quote_content))
         quote_detail = i.detail
