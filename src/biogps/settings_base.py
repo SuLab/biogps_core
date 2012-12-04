@@ -35,6 +35,10 @@ CACHES = {
     }
 }
 
+# Cache times in seconds
+CACHE_DAY = 86400
+CACHE_WEEK = 604800
+
 
 BOT_HTTP_USER_AGENT = ('Googlebot', 'msnbot', 'Yahoo! Slurp')    #The string appearing in HTTP_USER_AGENT header to indicate it is from a web crawler.
 
