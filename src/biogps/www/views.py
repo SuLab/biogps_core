@@ -30,9 +30,6 @@ from biogps.www.models import BiogpsInfobox
 import logging
 log = logging.getLogger('biogps_prod')
 
-cache_day = settings.CACHE_DAY
-cache_week = settings.CACHE_WEEK
-
 
 def index(request, **kwargs):
     '''view function for the main page.'''
@@ -337,94 +334,83 @@ def get_blog_feed(request):
 
 
 def get_info_box():
-    # Usage Stat reporting
-    # Load all Info box items to be passed to index page for display
-    infobox_items = list()
-    # List sequence is item type, title, content, detail (author, registered plugins, etc)
+    # Usage Stat reporting, check for cached results first
+    info_cache = 'infobox_items'
+    infobox_items = cache.get(info_cache)
+    if not infobox_items:
+        # Load all Info box items to be passed to index page for display
+        infobox_items = list()
+        # List sequence is item type, title, content, detail (author, registered plugins, etc)
 
-    # Featured
-    feat_cache = 'feat_info'
-    featured = cache.get(feat_cache)
-    if not featured:
+        # Featured
         featured = BiogpsInfobox.objects.filter(type="featured")
-        cache.set(feat_cache, featured, cache_week)
-    for i in featured:
-        featured_quote_length = len(strip_tags(i.detail))
-        # Check each quote's size and set its margin-top value
-        featured_margin = '-15%'
-        if featured_quote_length >= 130 and featured_quote_length < 200:
-            # Large quote
-            featured_margin = '-25%'
-        elif featured_quote_length >= 200:
-            # Really large quote
-            featured_margin = '-30%'
-        infobox_items.append(['featured', '<div><h2>Featured In</h2></div>', '%s' % (i.content), '%s' % (i.detail), featured_margin])
+        for i in featured:
+            featured_quote_length = len(strip_tags(i.detail))
+            # Check each quote's size and set its margin-top value
+            featured_margin = '-15%'
+            if featured_quote_length >= 130 and featured_quote_length < 200:
+                # Large quote
+                featured_margin = '-25%'
+            elif featured_quote_length >= 200:
+                # Really large quote
+                featured_margin = '-30%'
+            infobox_items.append(['featured', '<div><h2>Featured In</h2></div>', '%s' % (i.content), '%s' % (i.detail), featured_margin])
 
-    # Statistics
-    stats_header = '<div><h2>Statistics</h2></div>'
-    infobox_items.append(['stat', stats_header, '<p><span><i>%s</i></span></p>' % (User.objects.count()), ' registered users'])
-    user_cache = 'user_info'
-    new_users = cache.get(user_cache)
-    if not new_users:
+        # Statistics
+        stats_header = '<div><h2>Statistics</h2></div>'
+        infobox_items.append(['stat', stats_header, '<p><span><i>%s</i></span></p>' % (User.objects.count()), ' registered users'])
         new_users = User.objects.filter(date_joined__gte=datetime.datetime.now()-datetime.timedelta(weeks=1)).count()
-        cache.set(user_cache, new_users, cache_day)
-    if new_users == 0:
-        # No new users, don't display!
-        pass
-    elif new_users == 1:
-        infobox_items.append(['stat', stats_header, '<p><span><i>%s</i></span></p>' % (new_users), ' new user in the last week'])
-    else:
-        infobox_items.append(['stat', stats_header, '<p><span><i>%s</i></span></p>' % (new_users), ' new users in the last week'])
-    infobox_items.append(['stat', stats_header, '<p><span><i>%s</i></span></p>' % (BiogpsPlugin.objects.count()), ' registered plugins'])
-    infobox_items.append(['stat', stats_header, '<p><span><i>%s</i></span></p>' % (BiogpsGenereportLayout.objects.count()), ' custom layouts'])
+        if new_users == 0:
+            # No new users, don't display!
+            pass
+        elif new_users == 1:
+            infobox_items.append(['stat', stats_header, '<p><span><i>%s</i></span></p>' % (new_users), ' new user in the last week'])
+        else:
+            infobox_items.append(['stat', stats_header, '<p><span><i>%s</i></span></p>' % (new_users), ' new users in the last week'])
+        infobox_items.append(['stat', stats_header, '<p><span><i>%s</i></span></p>' % (BiogpsPlugin.objects.count()), ' registered plugins'])
+        infobox_items.append(['stat', stats_header, '<p><span><i>%s</i></span></p>' % (BiogpsGenereportLayout.objects.count()), ' custom layouts'])
 
-    # Trends
-    trend_intervals = ['all_time', 'monthly', 'weekly']
-    trend_models = [Gene]
-    for mdl in trend_models:
-        for intvl in trend_intervals:
-            mdl_cache = '{}_info'.format(mdl.short_name)
-            stats = cache.get(mdl_cache)
-            if not stats:
+        # Trends
+        trend_intervals = ['all_time', 'monthly', 'weekly']
+        trend_models = [Gene]
+        for mdl in trend_models:
+            for intvl in trend_intervals:
                 stats = BiogpsStat.objects.filter(content_type=
                             ContentType.objects.get_for_model(mdl),
                             interval=intvl).order_by('rank').filter(
                             rank__lte=10)[:10]
-                cache.set(mdl_cache, stats, cache_week)
-            if len(stats) > 0:
-                if mdl == Gene:
-                    content_title = '<div><u class="infobox-trend-title">Popular Genes ('
-                    if intvl == 'all_time':
-                        content_title += 'all-time'
-                    elif intvl == 'monthly':
-                        content_title += 'last month'
-                    elif intvl == 'weekly':
-                        content_title += 'last week'
-                    # Build rank table
-                    content_title += ')</u></div>'
-                    rank_table = '{}<table>{}</table>'
-                    table_rows = ''
-                    for idx, val in enumerate(stats[:5]):
-                        table_rows += '<tr><td>{}. <a href="http://biogps.org/gene/{}">{}</a></td><td>{}. <a href="http://biogps.org/gene/{}">{}</a></td></tr>'.format(idx + 1, val.content_object.id, val.content_object.symbol, idx + 6, stats[idx + 5].content_object.id, stats[idx + 5].content_object.symbol)
-                    infobox_items.append(['trend', '<div><h2>Trends</h2></div>', rank_table.format(content_title, table_rows)])
+                if len(stats) > 0:
+                    if mdl == Gene:
+                        content_title = '<div><u class="infobox-trend-title">Popular Genes ('
+                        if intvl == 'all_time':
+                            content_title += 'all-time'
+                        elif intvl == 'monthly':
+                            content_title += 'last month'
+                        elif intvl == 'weekly':
+                            content_title += 'last week'
+                        # Build rank table
+                        content_title += ')</u></div>'
+                        rank_table = '{}<table>{}</table>'
+                        table_rows = ''
+                        for idx, val in enumerate(stats[:5]):
+                            table_rows += '<tr><td>{}. <a href="http://biogps.org/gene/{}">{}</a></td><td>{}. <a href="http://biogps.org/gene/{}">{}</a></td></tr>'.format(idx + 1, val.content_object.id, val.content_object.symbol, idx + 6, stats[idx + 5].content_object.id, stats[idx + 5].content_object.symbol)
+                        infobox_items.append(['trend', '<div><h2>Trends</h2></div>', rank_table.format(content_title, table_rows)])
 
-    # User quotes
-    quote_cache = 'quote_info'
-    quotes = cache.get(quote_cache)
-    if not quotes:
+        # User quotes
         quotes = BiogpsInfobox.objects.filter(type="quote")
-        cache.set(quote_cache, quotes, cache_week)
-    for i in quotes:
-        quote_content = i.content
-        quote_content_length = len(strip_tags(quote_content))
-        quote_detail = i.detail
-        quote_detail_length = len(strip_tags(quote_content))
-        quote_total = quote_content_length + quote_detail_length
+        for i in quotes:
+            quote_content = i.content
+            quote_content_length = len(strip_tags(quote_content))
+            quote_detail = i.detail
+            quote_detail_length = len(strip_tags(quote_content))
+            quote_total = quote_content_length + quote_detail_length
 
-        # Check each quote's size and set its margin-top value
-        quote_margin = '{}%'.format(quote_total * -0.07)
-        infobox_items.append(['quote', '<div><h2>User Love</h2></div>', '%s' % (quote_content), '%s' % (quote_detail), quote_margin])
+            # Check each quote's size and set its margin-top value
+            quote_margin = '{}%'.format(quote_total * -0.07)
+            infobox_items.append(['quote', '<div><h2>User Love</h2></div>', '%s' % (quote_content), '%s' % (quote_detail), quote_margin])
 
-    # Shuffle results
-    random.shuffle(infobox_items)
+
+        # Shuffle, cache results
+        random.shuffle(infobox_items)
+        cache.set(info_cache, infobox_items, settings.CACHE_DAY)
     return infobox_items
