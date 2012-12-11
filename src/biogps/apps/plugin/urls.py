@@ -10,7 +10,7 @@ urlpatterns += patterns('biogps.apps.plugin.views',
     url(r'^$', 'PluginLibraryView', name='plugin_home'),
     url(r'^new/$', 'PluginNewView', name='plugin_new'),
     url(r'^(?P<plugin_id>\d+)/edit/$', 'PluginEditView', name='plugin_edit'),
-    url(r'^(?P<plugin_id>\d+)(?:/(?P<slug>[\w-]+))?/$', 'PluginView', name='plugin_show'),
+    url(r'^(?P<plugin_id>\d+)(?:/(?P<slug>[\w-]*))?/$', 'PluginView', name='plugin_show'),
 
     url(r'^all/$', 'PluginListView'),
     url(r'^tag/$', 'PluginTagView'),
