@@ -560,11 +560,13 @@ class DatasetD3View(RestView):
             data_dict = {'factors': {}, 'sample': samp_id, 'value': samp_val}
 
             # Make all keys lowercase, add factors to samples
-            skip_factors = ['color_idx', 'order_idx', 'sample',
-                            'title', 'value']
+            skip_factors = ['sample', 'value']
             for key, val in val_dict.iteritems():
                 key = key.lower()
-                if key not in skip_factors:
+                if key == 'title':
+                    data_dict[key] = val
+                    data_dict['factors']['tissue'] = val
+                elif key not in skip_factors:
                     data_dict['factors'][key] = val
                 else:
                     data_dict[key] = val
