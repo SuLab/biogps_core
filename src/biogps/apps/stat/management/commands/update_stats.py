@@ -10,6 +10,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand, CommandError
 from django.db.utils import IntegrityError
+from django.utils.encoding import smart_unicode
 from pymongo import Connection
 from time import time
 
@@ -37,6 +38,8 @@ def rank_by_time(sts, time_frame):
 def save_ranks(st_type, rnks, st_tframe):
     """Iterate over ranked list of stats, save to db"""
     prev_rank, prev_rank_val, rank = 0, 0, 0
+    print '\nSaving {} {} ranks for {} time-frame...'.format(len(rnks),
+        st_type.short_name, st_tframe)
     for idx, val in enumerate(rnks):
         obj_total = val[st_tframe]
         if obj_total != prev_rank_val:
@@ -82,7 +85,10 @@ def update_stat(stat_type, stat_id, stat_time_frame):
         try:
             int(stat_id)
         except ValueError:
-            print 'Can\'t convert {} to int!'.format(stat_id)
+            try:
+                print "Can't convert {} to int!".format(smart_unicode(stat_id))
+            except UnicodeEncodeError:
+                pass
             return
     try:
         stat_type.objects.get(id=stat_id)
