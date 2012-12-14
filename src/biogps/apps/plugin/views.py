@@ -151,7 +151,7 @@ class PluginLibraryView(RestView):
             data['success'] = True
             data['id'] = plugin.id
 
-            #logging plugin add
+            # Logging plugin add
             log.info('username=%s clientip=%s action=plugin_add id=%s',
                         getattr(request.user, 'username', ''),
                         request.META.get('REMOTE_ADDR', ''),
@@ -247,6 +247,12 @@ class PluginView(RestView):
 
             f.save()
             data['success'] = True
+
+            # Logging plugin modification
+            log.info('username=%s clientip=%s action=plugin_modify id=%s',
+                        getattr(request.user, 'username', ''),
+                        request.META.get('REMOTE_ADDR', ''),
+                        plugin.id)
         else:
             data['success'] = False
             data['errors'] = f.errors
@@ -258,7 +264,7 @@ class PluginView(RestView):
         plugin.delete()
         del plugin.permission
 
-        #logging plugin delete
+        # Logging plugin delete
         log.info('username=%s clientip=%s action=plugin_delete id=%s',
                     getattr(request.user, 'username', ''),
                     request.META.get('REMOTE_ADDR', ''),
