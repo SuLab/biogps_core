@@ -378,7 +378,7 @@ def get_info_box():
                 stats = BiogpsStat.objects.filter(content_type=
                             ContentType.objects.get_for_model(mdl),
                             interval=intvl).order_by('rank').filter(
-                            rank__lte=10)[:10]
+                            rank__gte=1, rank__lte=10)[:10]
                 if len(stats) > 0:
                     if mdl == Gene:
                         content_title = '<div><u class="infobox-trend-title">Popular Genes ('
