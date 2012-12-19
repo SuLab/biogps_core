@@ -118,7 +118,7 @@ coreDispatcher.dispatch();
                         		<div id="openid_btns">
                             	    <a class="google openid_large_btn" title="Google" href="#" onClick="coreDispatcher.openid('google');return false;"></a>
                             	    <a class="yahoo openid_large_btn" title="Yahoo" href="#" onClick="coreDispatcher.openid('yahoo');return false;"></a>
-                            	    <a class="openid_more_btn" title="More OpenID options" href="{% url auth_login %}{% if goto_url %}?next={{ goto_url }}{% endif %}"></a>
+                            	    <a class="openid_more_btn biogps-img" title="More OpenID options" href="{% url auth_login %}{% if goto_url %}?next={{ goto_url }}{% endif %}"></a>
                         		</div>
                         		<form id="openid_form" name="fopenid" action="{%if not dev_server %}https://{{site}}{%endif%}{% url auth_login %}" method="post">
                         		    <input name="bsignin" type="hidden" />
@@ -132,12 +132,10 @@ coreDispatcher.dispatch();
                 	</div>
 
                     <div class="welcome-header roundBox">
-                        <div class="chrome-preview">
-                            <img src="/assets/img/chrome_genereport.png" alt="BioGPS Gene Report" width="223px" height="185px" />
+                        <div class="chrome-preview biogps-img">
                         </div>
 
-                        <div class="welcome-logo">
-                            <img src="/assets/img2/biogps_logo.png" alt="BioGPS - The Gene Portal Hub" width="280px" height="82px" />
+                        <div class="welcome-logo biogpslogo_medium biogps-img">
                         </div>
 
                         <div id="welcome-link-library">
@@ -176,28 +174,28 @@ coreDispatcher.dispatch();
                 	        <h1>Simple to use</h1>
                 	        <a class="step" href="/help_steps/#step1">
                     			<div class="stepNum">1</div>
-                    			<div class="stepIcon"><img src="/assets/img/icons/search_button_green_32.png" width="32px" height="32px" /></div>
+                    			<div class="stepIcon stepSearchIcon biogps-img"></div>
                     			<div class="stepName">Search</div>
                     			<div class="stepText">for your gene of interest</div>
                     		</a>
 
                     		<a class="step" href="/help_steps/#step2">
                     			<div class="stepNum">2</div>
-                    			<div class="stepIcon"><img src="/assets/img/icons/activity_monitor_chart.png" width="32px" height="32px" /></div>
+                    			<div class="stepIcon stepViewIcon biogps-img"></div>
                     			<div class="stepName">View</div>
                     			<div class="stepText">the gene annotation report</div>
                     		</a>
 
                     		<a class="step" href="/help_steps/#step3">
                     			<div class="stepNum">3</div>
-                    			<div class="stepIcon"><img src="/assets/img/icons/web_layout_info_32.png" width="32px" height="32px" /></div>
+                    			<div class="stepIcon stepBrowseIcon biogps-img"></div>
                     			<div class="stepName">Browse</div>
                     			<div class="stepText">the gene report layouts</div>
                     		</a>
 
                     		<a class="step" href="/help_steps/#step4">
                     			<div class="stepNum">4</div>
-                    			<div class="stepIcon"><img src="/assets/img/icons/window_hammer_chart_32.png" width="32px" height="32px" /></div>
+                    			<div class="stepIcon stepBuildIcon biogps-img"></div>
                     			<div class="stepName">Build</div>
                     			<div class="stepText">your own gene report</div>
                     		</a>
@@ -273,7 +271,7 @@ coreDispatcher.dispatch();
                                 {% endfor %}
                             </div>
 
-                            <div id="welcome-left-nav"><a id="prev-item" href="#" onClick="pauseResumeSlideshow('pause');"><img src="/assets/img/icons/control_rewind_blue.gif"></a> &nbsp; <a id="pause-item" href="#" onClick="pauseResumeSlideshow();"><img id="pausePlay" src="/assets/img/icons/control_pause_blue.gif"></a> &nbsp; <a id="next-item" href="#" onClick="pauseResumeSlideshow('pause');"><img src="/assets/img/icons/control_fastforward_blue.gif"></a></div>
+                            <div id="welcome-left-nav"><a id="prev-item" class="slide-control biogps-img" href="#" onClick="pauseResumeSlideshow('pause');"></a> &nbsp; <a id="pause-item" class="slide-control biogps-img pause-img" href="#" onClick="pauseResumeSlideshow();"></a> &nbsp; <a id="next-item" class="slide-control biogps-img" href="#" onClick="pauseResumeSlideshow('pause');"></a></div>
                             {% endautoescape %}
 
                         </div>
@@ -301,8 +299,7 @@ coreDispatcher.dispatch();
                                 There was an error loading the BioGPS blog and the administrators have been notified. Refreshing this page may work now.
                     	    {% endif %}
                     	    <div class="welcome-blogicon">
-                    	        <a href="http://sulab.org/biogps/" target="_blank" title="Read more at the BioGPS Blog">
-                    	            <img src="/assets/img/icons/comment_user_rss_32.png" alt="Read more at the BioGPS Blog" width="32px" height="32px" />
+                    	        <a class="biogps-img" href="http://sulab.org/category/biogps/" target="_blank" title="Read more at the BioGPS Blog">
                     	        </a>
                     	    </div>
                         </div>
@@ -328,14 +325,14 @@ coreDispatcher.dispatch();
         	</div>
         	<div id="footer-links">
         	    <a href="/about/">About BioGPS</a>
-        	    <a href="/terms/">Terms of Use</a>
+        	    <a href="http://sulab.org/category/biogps/" target="_blank">Blog</a>
         	    <a href="/help/">Help</a>
         	    <a href="/faq/">FAQ</a>
         	    <a href="/downloads/">Downloads</a>
-                <a href="/api/">API</a>
-        	    <a href="http://sulab.org/biogps/" target="_blank">Blog</a>
+                    <a href="/api/">API</a>
         	    <a href="/iphone/">iPhone App</a>
         	    <a href="#" onclick="coreDispatcher.onGoogleGroupsSignup(event, this);return false;">Email updates</a>
+        	    <a href="/terms/">Terms of Use</a>
         	</div>
         </div>
     </div>
@@ -360,8 +357,7 @@ coreDispatcher.dispatch();
                 </tr>
             </table>
             <div class="biogps-title" id='biogps-logo'>
-                <a href="#goto=welcome" style="float:left;margin-right:10px;" title="Go back to welcome page">
-                    <img src="/assets/img/biogps-logo4.gif" style="width:84px;height:25px;" alt="biogps_logo" />
+                <a class="biogpslogo_small biogps-img" href="#goto=welcome" title="Go back to welcome page">
                 </a>
             </div>
         </div>
@@ -419,16 +415,18 @@ coreDispatcher.dispatch();
         });
     });
 
-    function pauseResumeSlideshow(showAction) {
-        var pauseButtonImage = document.getElementById('pausePlay');
-        if (showAction == 'pause') {
+    function pauseResumeSlideshow(slideAction) {
+        var pausePlayButton = document.getElementById('pause-item');
+        if (slideAction == 'pause') {
             // User clicked back/forward button, pause slideshow
             $('#infobox-slideshow').cycle('pause');
-            if (pauseButtonImage.src.search('pause') > -1) pauseButtonImage.setAttribute("src", '/assets/img/icons/control_play_blue.gif');
+            if ($(pausePlayButton).hasClass("pause-img")) {
+                $(pausePlayButton).removeClass("pause-img").addClass("play-img");
+            }
         } else {
             // User clicked pause/play button
             $('#infobox-slideshow').cycle('toggle');
-            (pauseButtonImage.src.search('pause') > -1) ? pauseButtonImage.setAttribute("src", '/assets/img/icons/control_play_blue.gif') : pauseButtonImage.setAttribute("src", '/assets/img/icons/control_pause_blue.gif');
+            $(pausePlayButton).toggleClass("pause-img play-img");
         }
     }
     </script>

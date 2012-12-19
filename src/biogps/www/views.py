@@ -339,8 +339,11 @@ def get_info_box():
     infobox_items = cache.get(info_cache)
     if not infobox_items:
         # Load all Info box items to be passed to index page for display
-        infobox_items = list()
         # List sequence is item type, title, content, detail (author, registered plugins, etc)
+        infobox_items = list()
+
+        # BioGPS sprite image class
+        sprite_class = 'biogps-img'
 
         # Featured
         featured = BiogpsInfobox.objects.filter(type="featured")
@@ -354,10 +357,10 @@ def get_info_box():
             elif featured_quote_length >= 200:
                 # Really large quote
                 featured_margin = '-30%'
-            infobox_items.append(['featured', '<div><h2>Featured In</h2></div>', '%s' % (i.content), '%s' % (i.detail), featured_margin])
+            infobox_items.append(['featured', '<div><span class="{} infobox-featured-img" style="display: inline-block"></span><span style="display: inline-block"><h2>Featured In</h2></span></div>'.format(sprite_class), '{}'.format(i.content), '{}'.format(i.detail), featured_margin])
 
         # Statistics
-        stats_header = '<div><h2>Statistics</h2></div>'
+        stats_header = '<div><span class="{} infobox-stat-img" style="display: inline-block"></span><span style="display: inline-block"><h2>Statistics</h2></span></div>'.format(sprite_class)
         infobox_items.append(['stat', stats_header, '<p><span><i>%s</i></span></p>' % (User.objects.count()), ' registered users'])
         new_users = User.objects.filter(date_joined__gte=datetime.datetime.now()-datetime.timedelta(weeks=1)).count()
         if new_users == 0:
@@ -394,7 +397,7 @@ def get_info_box():
                         table_rows = ''
                         for idx, val in enumerate(stats[:5]):
                             table_rows += '<tr><td>{}. <a href="http://biogps.org/gene/{}">{}</a></td><td>{}. <a href="http://biogps.org/gene/{}">{}</a></td></tr>'.format(idx + 1, val.content_object.id, val.content_object.symbol, idx + 6, stats[idx + 5].content_object.id, stats[idx + 5].content_object.symbol)
-                        infobox_items.append(['trend', '<div><h2>Trends</h2></div>', rank_table.format(content_title, table_rows)])
+                        infobox_items.append(['trend', '<div><span class="{} infobox-trend-img" style="display: inline-block"></span><span style="display: inline-block"><h2>Trends</h2></span></div>'.format(sprite_class), rank_table.format(content_title, table_rows)])
 
         # User quotes
         quotes = BiogpsInfobox.objects.filter(type="quote")
@@ -407,8 +410,7 @@ def get_info_box():
 
             # Check each quote's size and set its margin-top value
             quote_margin = '{}%'.format(quote_total * -0.07)
-            infobox_items.append(['quote', '<div><h2>User Love</h2></div>', '%s' % (quote_content), '%s' % (quote_detail), quote_margin])
-
+            infobox_items.append(['quote', '<div><span class="{} infobox-quote-img" style="display: inline-block"></span><span style="display: inline-block"><h2>User Love</h2></span></div>'.format(sprite_class), '{}'.format(quote_content), '{}'.format(quote_detail), quote_margin])
 
         # Shuffle, cache results
         random.shuffle(infobox_items)

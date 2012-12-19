@@ -7,9 +7,9 @@ biogps.staticpage_data.addAll(
             id: 'about',
             content: '/about/'
         },{
-            title: 'Terms of Use',
-            id: 'terms',
-            content: '/terms/'
+            title: 'Blog',
+            id: 'blog',
+            url: 'http://sulab.org/category/biogps/'
         },{
             title: 'Help',
             id: 'help',
@@ -27,15 +27,17 @@ biogps.staticpage_data.addAll(
             id: 'api',
             content: '/api/'
         },{
-            title: 'Blog',
-            id: 'blog',
-            icon: '/assets/img/blogger_16.gif',
-            url: 'http://biogps.blogspot.com/'
-        },{
             title: 'iPhone App',
-            icon: '/assets/img/icons/phone.gif',
             id: 'iphone',
             content: '/iphone/'
+        },{
+            title: 'Email updates',
+            id: 'email_updates',
+            content: 'javascript:void(null);'
+        },{
+            title: 'Terms of Use',
+            id: 'terms',
+            content: '/terms/'
         }]
 );
 
@@ -66,28 +68,23 @@ biogps.showInfoPage = function(pageid){
 };
 
 biogps.initInfobar = function(){
+    var container = Ext.get('info_bar');
 
-	var container = Ext.get('info_bar');
-
-    for (var i=0;i<biogps.staticpage_data.length;i++){
+    for (var i = 0; i < biogps.staticpage_data.length; i++) {
         var data = biogps.staticpage_data.get(i);
         var _html = data.title;
-        var _html = data.icon?data.title+String.format('&nbsp;<img src="{0}">', data.icon):data.title;
-        if (data.url){
+        if (data.url) {
             var child = container.createChild({tag:'a', id:'infobar_'+data.id, style: "padding-right:20px", href: data.url, target: '_blank', html: _html});
-        }
-        else{
+        } else {
             var child = container.createChild({tag:'a', id:'infobar_'+data.id, style: "padding-right:20px", href: data.content, html: _html});
-		}
-	};
-
-
-	//add biogps-annouce list sign-up
-	//var child = container.createChild({tag:'a', style: "padding-right:20px", href: 'javascript:void(null);', html:"Sign up for email update&nbsp;<img src='/assets/img/new.gif' alt='new' />"});
-    var child = container.createChild({tag:'a', style: "padding-right:20px", href: 'javascript:void(null);', html:"Email updates"});
-	child.on('click', function(evt, target) {
-		biogps.subscribeGoogleGroups(evt, Ext.get(target));
-	}, this);
+            if (data.id == 'email_updates') {
+                // Add biogps-annouce list sign-up
+	        child.on('click', function(evt, target) {
+	        	biogps.subscribeGoogleGroups(evt, Ext.get(target));
+	        }, this);
+            }
+    	}
+    };
 };
 
 

@@ -447,6 +447,25 @@ a.roundBoxBlue:hover {
     padding: 2px 10px 0 20px;
 }
 
+/* Main sprite image class */
+.biogps-img {
+    background: transparent url('/assets/img2/sprite_sitewide.png') no-repeat;
+}
+
+.biogpslogo_small {
+    background-position: -369px -7px;
+    float: left;
+    height: 25px;
+    margin-right: 10px;
+    width: 84px;
+}
+
+.biogpslogo_medium {
+    background-position: -5px -504px;
+    height: 82px;
+    width: 280px;
+}
+
 .gnflogo_top {
     position: absolute;
     top: 59px;
@@ -515,8 +534,6 @@ a.roundBoxBlue:hover {
         #base_footer #footer-links img {
             vertical-align: bottom;
         }
-
-
 
 /*
 #top_brow{
