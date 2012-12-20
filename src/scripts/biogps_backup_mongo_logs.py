@@ -23,25 +23,23 @@ def backup_logs():
     chdir('dump/logs')
     data_file = backup_datename + '.bson'
     meta_file = backup_datename + '.metadata.json'
-    mv_gzip_cmd = 'mv biogps_prod.bson {}; gzip {};'\
-        ' mv biogps_prod.metadata.json {}'.format(data_file, data_file,
-        meta_file)
+    tar_file = backup_datename + '.tar'
+    mv_gzip_cmd = 'mv biogps_prod.bson {0}; mv biogps_prod.metadata.json {1};'\
+        ' tar -cf {2} {0} {1}; gzip {2}'.format(data_file, meta_file, tar_file)
     subprocess.check_call(mv_gzip_cmd, shell=True, stderr=subprocess.STDOUT)
 
     # Send dump files to S3
-    data_gz = data_file + '.gz'
     conn = S3Connection('<AWS_KEY_ID>', '<AWS_SECRET_KEY>')
     bucket = conn.get_bucket('biogps')
     k = Key(bucket)
-    k.key = 'mongodb_log_backups/{}'.format(data_gz)
-    k.set_contents_from_filename(data_gz)
-
-    k.key = 'mongodb_log_backups/{}'.format(meta_file)
-    k.set_contents_from_filename(meta_file)
+    tar_gz = tar_file + '.gz'
+    k.key = 'mongodb_log_backups/{}'.format(tar_gz)
+    k.set_contents_from_filename(tar_gz)
 
     # Done, delete local files
-    remove(data_gz)
     remove(meta_file)
+    remove(data_file)
+    remove(tar_gz)
 
 
 if __name__ == '__main__':
