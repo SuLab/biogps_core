@@ -163,12 +163,12 @@ Ext.extend(biogps.UserManager, Ext.util.Observable, {
 			                         	var data = st.reader.jsonData;
 										if (data.success){
 											if (config.showmsg)
-												biogps.showmsg('', config.msg);
+												biogps.showmsg(config.msg, biogps.dismiss_msg_html, 5);
 											if (config.callback)
 												config.callback.call(config.scope || this);
 										}
 										else{
-											biogps.showmsg('','Your profile failed to save!');
+											biogps.showmsg('Your profile failed to save!', biogps.dismiss_msg_html, 5);
 										}
 			                         },
 			                       method: 'POST',
@@ -273,7 +273,7 @@ Ext.extend(biogps.UserManager, Ext.util.Observable, {
 			this.showLoginWin(login_link);
 		},this);*/
 	},
-	
+
 	setWelcomeLogout: function(){
 	    Ext.get('welcome-loggedin').update('<h4>Logged Out</h4><p>Your session has ended.<br><br><a href="/auth/login/">Login again</a></p>');
 	},
