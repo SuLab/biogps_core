@@ -572,12 +572,19 @@ a.roundBoxBlue:hover {
     position:absolute;
     left:35%;
     top:10px;
-    width:150px;
+    width:250px;
     z-index:10000;
+}
+
+.msg a {
+    padding-left: 10px;
+    padding-right: 10px;
+    color: #900000;
 }
 
 .msg .x-box-mc {
     font-size:14px;
+    text-align: center;
 }
 
 #msg-ct {
