@@ -327,20 +327,29 @@ biogps.setTitle = function(action){
 
 function createBox(t, s){
     return ['<div class="msg">',
-            '<div class="x-box-mc"><h3>', t, '</h3>', s, '</div>',
+            '<div class="x-box-mc"><h3>', t, '</h3><div>', s, '</div></div>',
             '</div>'].join('');
 }
-var msgCt;
-biogps.showmsg = function(title, msg){
 
-    if(!msgCt){
-        msgCt = Ext.DomHelper.insertFirst(document.body, {id:'msg-div'}, true);
+biogps.showmsg = function(title, msg, delay){
+    var delay = delay || 1;
+    if(!biogps.msgCt){
+        biogps.msgCt = Ext.DomHelper.insertFirst(document.body, {id:'msg-div'}, true);
     }
-    msgCt.alignTo(document, 't-t');
+    biogps.dismiss_msg();   //dismiss existing msg;
+    biogps.msgCt.alignTo(document, 't-t');
     var s = String.format.apply(String, Array.prototype.slice.call(arguments, 1));
-    var m = Ext.DomHelper.append(msgCt, {html:createBox(title, s)}, true);
-    m.slideIn('t').pause(1).ghost("t", {remove:true});
+    var m = Ext.DomHelper.append(biogps.msgCt, {html:createBox(title, s)}, true);
+    m.slideIn('t').pause(delay).ghost("t", {remove:true});
 };
+
+biogps.dismiss_msg = function(){
+    if (biogps.msgCt){
+        biogps.msgCt.dom.innerHTML = "";
+    }
+}
+biogps.dismiss_msg_html = '<a href="javascript:biogps.dismiss_msg();">Dismiss</a>';
+
 
 biogps.require_user_logged_in = function(){
 	if (biogps.usrMgr.is_anonymoususer){
