@@ -244,16 +244,62 @@ Ext.extend(biogps.Portlet, Ext.ux.ManagedIFrame.Window, {
             if (options.suspend_events) this.resumeEvents();
         }
         else {
-            var x = Ext.MessageBox.confirm('Remove Plugin?',
-                           String.format('Are you sure that you want to remove <br />this plugin "{0}" from your layout? <br /><br /> Remember to click "options-->Save" to make it PERMANENT.', this.title),
-                           function(btn){
-                                if (btn == 'yes'){
-                                    if (options && options.suspend_events) this.suspendEvents();
-                                    this.constructor.superclass.close.call(this);
-                                    if (options && options.suspend_events) this.resumeEvents();
-                                }
-                           },this);
+            // var x = Ext.MessageBox.confirm('Remove Plugin?',
+            //                String.format('Are you sure that you want to remove <br />this plugin "{0}" from your layout? <br /><br /> Remember to click "options-->Save" to make it PERMANENT.', this.title),
+            //                function(btn){
+            //                     if (btn == 'yes'){
+            //                         if (options && options.suspend_events) this.suspendEvents();
+            //                         this.constructor.superclass.close.call(this);
+            //                         if (options && options.suspend_events) this.resumeEvents();
+            //                     }
+            //                },this);
+
+            //show undo/save msg
+            biogps.last_portlet = this;
+            this.delayed_close()
+            var msg = '<a href="javascript:biogps.last_portlet.undo_close();">Undo</a><a href="javascript:biogps.last_portlet.save_layout();">Save</a>' + biogps.dismiss_msg_html;
+            biogps.showmsg('Layout changed.', msg, 15);
+
         }
+    },
+
+    delayed_close: function(){
+        this.hide();
+        this.removed = true;
+        this.genereportpage.syncLayout();
+        this.delayed_close_task = new Ext.util.DelayedTask();
+        this.delayed_close_task.delay(16*1000, function(){
+            this.constructor.superclass.close.call(this);
+            this.genereportpage.saveCurrentLayout({quiet: true});
+            delete this.removed;
+            delete biogps.last_portlet;
+        },this);
+    },
+
+    undo_close: function(){
+        if (this.delayed_close_task) {
+            this.delayed_close_task.cancel();
+            delete this.delayed_close_task;
+        }
+        biogps.dismiss_msg();
+        this.show();
+        delete this.removed;
+        delete biogps.last_portlet;
+        this.genereportpage.syncLayout();
+    },
+
+    save_layout: function(){
+        biogps.dismiss_msg();
+        if (this.delayed_close_task) {
+            this.delayed_close_task.cancel();
+            delete this.delayed_close_task;
+        }
+        //close portlet right the way.
+        this.constructor.superclass.close.call(this);
+        //now save layout.
+        this.genereportpage.saveCurrentLayout();
+        delete this.removed;
+        delete biogps.last_portlet;
     },
 
     //override original focus method to avoid extra scrollbar movement.
@@ -1408,7 +1454,8 @@ Ext.extend(biogps.GeneReportPage, Ext.Panel, {
                                       y: plugin.top,
                                       width: plugin.width,
                                       height: plugin.height,
-                                      renderTo: this.body.id});
+                                      renderTo: this.body.id,
+                                      genereportpage: this});
         portlet.show();
         portlet.on('resize', this.onPortletResize, this);
         portlet.on('move', this.onPortletMove, this);
@@ -1634,9 +1681,9 @@ Ext.extend(biogps.GeneReportPage, Ext.Panel, {
         if (!this.flag_bypassclosecallback){
             var idx = this.portlets.indexOf(portlet);
             this.portlets.remove(portlet);
-            if (this.grlayout.layout_data[idx].id == portlet.plugin.id){
-                this.grlayout.layout_data.remove(this.grlayout.layout_data[idx])
-            }
+            // if (this.grlayout.layout_data[idx].id == portlet.plugin.id){
+            //     this.grlayout.layout_data.remove(this.grlayout.layout_data[idx])
+            // }
             this.updateSize();
             this.syncLayout();
         }
