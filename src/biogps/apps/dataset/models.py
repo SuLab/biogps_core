@@ -281,7 +281,8 @@ class BiogpsDatasetGeoLoaded(models.Model):
     """Model definition for BiogpsDatasetGeoLoaded. This model tracks what
        GEO datasets have been loaded."""
     geo_type = models.CharField(max_length=10)
-    datasets = JSONField(blank=False, editable=True)
+    dataset = models.ForeignKey(BiogpsDataset, related_name='dataset_geo_loaded')
+    with_platform = models.CharField(max_length=100)
 
 add_introspection_rules([
     (
