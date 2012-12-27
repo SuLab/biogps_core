@@ -34,25 +34,25 @@ class Command(NoArgsCommand):
             def load_dataset(**kwargs):
                 ''' Download, parse, and save new dataset to database. '''
                 gse_file = kwargs['gse_file']
-                db_id = kwargs['db_id']
+                ds_with_plat = kwargs['ds_with_plat']
                 # Add dataset to processing table for multi-threaded support
                 processing = BiogpsDatasetProcessing.objects.get(id=1)
-                if not db_id:
+                if not ds_with_plat:
                     # Don't have platform yet, will get from file
                     processing.datasets.append(geo_id)
                 else:
-                    processing.datasets.append(db_id)
+                    processing.datasets.append(ds_with_plat)
                 processing.save()
 
                 try:
                     local_file = locate_ds_file(gse_file)
                     if not local_file:
                         # Can't find this file anywhere... move on
-                        if not db_id:
+                        if not ds_with_plat:
                             update_processing(gse_file)
                             return
                         else:
-                            update_processing(db_id)
+                            update_processing(ds_with_plat)
                             return
                     else:
                         dataset_id = gen_ds_id()
@@ -80,7 +80,7 @@ class Command(NoArgsCommand):
                             return
                         try:
                             # First find sample titles for non-Insilico datasets
-                            if not db_id:
+                            if not ds_with_plat:
 		                for line in gz:
                                     if line.startswith('!Sample_title'):
                                         # Remove newlines, quotes
@@ -104,29 +104,33 @@ class Command(NoArgsCommand):
 		                if line.startswith('!Series_sample_id'):
 		         	    sample_list = line.split('\t', 1)[1].strip().split(' ')
                                     # Non-Insilico files need to finalize sample_titles dict
-                                    for idx, val in enumerate(sample_list):
-                                        sample_titles[val] = sample_title_list[idx]
+                                    if sample_title_list:
+                                        for idx, val in enumerate(sample_list):
+                                            sample_titles[val] = sample_title_list[idx]
 		                if line.startswith('!Sample_organism_ch1'):
 		         	    species = line.split('\t')[1].strip().lower()
 		         	    self.stdout.write('Species: %s\n' % species)
 		                if line.startswith('!Series_platform_id'):
 		         	    platform = line.split('\t', 1)[1].lstrip()
-                                    if not db_id:
+                                    if not ds_with_plat:
                                         # Non-Insilico dataset
-                                        db_id = '%s_%s' % (geo_id, platform)
+                                        ds_with_plat = '%s_%s' % (geo_id, platform)
 
                                         # Now have platform, check if loaded
-                                        if db_id in BiogpsDatasetGeoLoaded.objects.get(geo_type='gse').datasets:
+                                        try:
+                                            BiogpsDatasetGeoLoaded.objects.get(geo_type='gse', with_platform=ds_with_plat)
                                             update_processing(gse_file)
-                                            self.stdout.write('{} already loaded in DB...\n'.format(db_id))
+                                            self.stdout.write('{} already loaded in DB...\n'.format(ds_with_plat))
                                             return
+                                        except BiogpsDatasetGeoLoaded.DoesNotExist:
+                                            pass
 
                                         # Parse dataset factors
                                         [factors_list.append({i: {'title': sample_titles[i]}}) for i in sample_list]
                                     else:
 	                                # Lookup GEO curation ID in order to get sample titles
 	                                cur_id = 0
-	                                u = urllib2.urlopen("http://insilico.ulb.ac.be/Publicutilities/getcurations?gse=%s" % geo_id)
+	                                u = urllib2.urlopen("http://insilico.ulb.ac.be/app/Publicutilities/getcurations?gse=%s" % geo_id)
 	                                if u.getcode() == 200:
 	                                    cur_data = json.loads(u.read())
 	    	                            for i in cur_data['curations']:
@@ -136,7 +140,7 @@ class Command(NoArgsCommand):
 	    	                            log_file.write('Error retrieving GEO curation ID from InSilicoDB for file %s!\n' % filename)
 
 		           	        if cur_id:
-		           	            u = urllib2.urlopen("http://insilico.ulb.ac.be/Publicutilities/getannotations?gse=%s&gpl=%s&id=%s" % (geo_id, platform, cur_id))
+		           	            u = urllib2.urlopen("http://insilico.ulb.ac.be/app/Publicutilities/getannotations?gse=%s&gpl=%s&id=%s" % (geo_id, platform, cur_id))
 		           	            if u.getcode() == 200:
 		           	                titles_data = json.loads(u.read())
                                                 if titles_data and type(titles_data) is dict:
@@ -148,7 +152,7 @@ class Command(NoArgsCommand):
 		           	            log_file.write('Error retrieving sample titles from InSilicoDB for file %s!\n' % filename)
 
 		           	        # Request factors metadata from InSilicoDB
-		           	        u = urllib2.urlopen("http://insilico.ulb.ac.be/Publicutilities/getpreferedannotation?gse=%s&gpl=%s" % (geo_id, platform))
+		           	        u = urllib2.urlopen("http://insilico.ulb.ac.be/app/Publicutilities/getpreferedannotation?gse=%s&gpl=%s" % (geo_id, platform))
 		           	        if u.getcode() == 200:
                                             try:
                                                 _factors = u.read()
@@ -164,7 +168,7 @@ class Command(NoArgsCommand):
 		           	                            factors_dict[i]['title'] = sample_titles[i]
                                                 except KeyError as e:
                                                     log_file.write('**Key Error**\nKey: %s\nFactors data: %s\n' % (e, factors_data))
-                                                    update_processing(db_id)
+                                                    update_processing(ds_with_plat)
                                                     return
 		           	                [factors_list.append({i: factors_dict[i]}) for i in sample_list]
 		           	        else:
@@ -187,17 +191,17 @@ class Command(NoArgsCommand):
 		           	    metadata = {"id": dataset_id, "name": dataset_name, "owner": "GEO", "geo_gds_id": "", "geo_gpl_id": platform, "geo_gse_id": geo_id, "pubmed_id": pubmed_id, "summary": summary, "factors": factors_list, "display_params": display_params}
 		           	    _now = datetime.now()
                                     try:
-		           	        m = BiogpsDataset(id=dataset_id, name=dataset_name, ownerprofile=UserProfile.objects.get(user__username='geo'), platform=db_platform, geo_id_plat=db_id, species=species_dict[species], metadata=metadata, created=_now, lastmodified=_now)
+		           	        m = BiogpsDataset(id=dataset_id, name=dataset_name, ownerprofile=UserProfile.objects.get(user__username='GEO Uploader'), platform=db_platform, geo_id_plat=ds_with_plat, species=species_dict[species], metadata=metadata, created=_now, lastmodified=_now)
                                     except KeyError as e:
                                         log_file.write('\n**Species Key Error**\nSpecies: "%s"\n' % species)
-                                        update_processing(db_id)
+                                        update_processing(ds_with_plat)
                                         return
                                     try:
 		           	        m.save()
                                     except IntegrityError as e:
 		                        log_file.write('DB integrity error: {}\n'.format(e))
                                         # Dataset already loaded, skip
-                                        update_processing(db_id)
+                                        update_processing(ds_with_plat)
                                         return
 		           	    current_dataset = m
 		           	    self.stdout.write('Metadata done.\n')
@@ -228,7 +232,7 @@ class Command(NoArgsCommand):
 
 		           	        if len(line) != valid_length:
 		           	            file_errors.add(str(filename))
-		           	            log_file.write(str(line))
+                                            log_file.write('Invalid data line length: {}\n'.format(line))
 		           	            if len(line) < valid_length:
 		           	                line_errors.append([filename, 'Line ' +\
 		           			                   str(current_line) +\
@@ -253,8 +257,8 @@ class Command(NoArgsCommand):
                                             _reason = 'Missing or invalid data at line %s.' % (current_line)
                                             BiogpsDatasetGeoFlagged.objects.create(geo_type='gse', dataset=current_dataset, reason=_reason)
                                             self.stdout.write('\n%s Logging and skipping...\n' % _reason)
-                                            update_loaded(db_id)
-                                            update_processing(db_id)
+                                            update_loaded(ds_with_plat)
+                                            update_processing(ds_with_plat)
                                             return
 		           	        data_list.append(data)
 
@@ -265,8 +269,8 @@ class Command(NoArgsCommand):
                         except struct.error:
                             self.stdout.write('Incomplete data file downloaded, logging and skipping...\n')
                             BiogpsDatasetGeoFlagged.objects.create(geo_type='gse', dataset=current_dataset, reason='Incomplete data file downloaded, parsing failed')
-                            update_loaded(db_id)
-                            update_processing(db_id)
+                            update_loaded(ds_with_plat)
+                            update_processing(ds_with_plat)
                             return
 
 		        # Data matrix
@@ -300,11 +304,11 @@ class Command(NoArgsCommand):
                             self.stdout.write('Success saving new platform %s with %s reporters\n' % (platform, ds_count))
 
                         # Add dataset to saved datasets
-                        update_loaded(db_id)
+                        update_loaded(current_dataset, ds_with_plat)
 
                         # Remove dataset from processing table
                         try:
-                            update_processing(db_id)
+                            update_processing(ds_with_plat)
                         except ValueError:
                             update_processing(geo_id)
 
@@ -333,7 +337,7 @@ class Command(NoArgsCommand):
 	                    log_file.write('None\n\n')
 
                 except OSError as e:
-                    update_processing(db_id)
+                    update_processing(ds_with_plat)
                     if e.errno == 12:
                         self.stdout.write('Cannot allocate memory...\n')
                         log_file.write('Cannot allocate memory...\n')
@@ -355,7 +359,7 @@ class Command(NoArgsCommand):
             def locate_ds_file(gse_file):
                 ''' Find or create local dataset file'''
 		data_file = '%s_series_matrix.txt.gz' % gse_file
-		local_file = '%s/%s' % (local_path, data_file)
+		local_file = '%s%s' % (local_path, data_file)
                 if path.isfile(local_file):
                     self.stdout.write('Local file {} found!\n'.format(local_file))
                 else:
@@ -369,16 +373,15 @@ class Command(NoArgsCommand):
 		        self.stdout.write('Download complete.\n')
                 return local_file
 	    
-            def update_loaded(db_id):
+            def update_loaded(ds, ds_with_plat):
                 ''' Add dataset_platform to saved datasets'''
-                db_obj = BiogpsDatasetGeoLoaded.objects.get(geo_type='gse')
-                db_obj.datasets.append(db_id)
-                db_obj.save()
+                loaded = BiogpsDatasetGeoLoaded(geo_type='gse', dataset=ds, with_platform=ds_with_plat)
+                loaded.save()
 
-            def update_processing(db_id):
+            def update_processing(ds_with_plat):
                 ''' Remove current dataset from Postgres processing table'''
                 processing = BiogpsDatasetProcessing.objects.get(id=1)
-                processing.datasets.remove(db_id)
+                processing.datasets.remove(ds_with_plat)
                 processing.save()
 
 
@@ -387,7 +390,7 @@ class Command(NoArgsCommand):
             local_path = settings.DATASET_DIR
 	    log_file = open('%s/%s' % (local_path, 'geo_gse_log_%s.txt' % randint(0, 10000)), 'w')
             species_dict = {'homo sapiens': 'human', 'mus musculus': 'mouse', 'rattus norvegicus': 'rat'}
-            insil_gse = urllib2.urlopen("http://insilico.ulb.ac.be/Publicutilities/oldgetserieslist")
+            insil_gse = urllib2.urlopen("http://insilico.ulb.ac.be/app/Publicutilities/oldgetserieslist")
             gse_files = json.loads(insil_gse.read())
             #gse_files = ['GSE24759']
 
@@ -405,24 +408,25 @@ class Command(NoArgsCommand):
 
                 # Get platforms for dataset
                 platforms = list()
-	        u = urllib2.urlopen("http://insilico.ulb.ac.be/Publicutilities/getplatforms?gse=%s" % geo_id)
+	        u = urllib2.urlopen("http://insilico.ulb.ac.be/app/Publicutilities/getplatforms?gse=%s" % geo_id.upper())
 	        if u.getcode() == 200:
                     res = ''
                     try:
                         res = json.loads(u.read())
                     except ValueError as e:
                         log_file.write('Error reading Insilico response: {}\n'.format(e))
-                        load_dataset(gse_file=gse_file, db_id=None)
+                        load_dataset(gse_file=gse_file, ds_with_plat=None)
                         current_file += 1
                         continue
                     res_type = type(res)
+
                     if res_type is list:
                         # Found entry in Insilico
-	    	        [platforms.append(i) for i in json.loads(u.read())]
+	    	        [platforms.append(i) for i in res]
                     elif res_type is dict:
                         # Most likely no entry found
-                        log_file.write(str(u.read()))
-                        load_dataset(gse_file=gse_file, db_id=None)
+                        log_file.write('Unexpected response from platforms service: {}\n'.format(res))
+                        load_dataset(gse_file=gse_file, ds_with_plat=None)
                         current_file += 1
                         continue
 	        else:
@@ -433,15 +437,18 @@ class Command(NoArgsCommand):
                 log_file.write('Current file: #%s\n' % current_file)
                 # Determine platforms not yet loaded
                 for p in platforms:
-                    db_id = '%s_%s' % (geo_id, p)
+                    ds_with_plat = '%s_%s' % (geo_id, p)
+
                     # Check datasets already loaded in DB
-                    if db_id in BiogpsDatasetGeoLoaded.objects.get(geo_type='gse').datasets:
-                        self.stdout.write('%s already loaded in DB...\n' % db_id)
-                    # Check datasets being processed
-                    elif db_id in BiogpsDatasetProcessing.objects.get(id=1).datasets:
-                        self.stdout.write('%s already being processed...\n' % db_id)
-                    else:
-                        load_dataset(gse_file=gse_file, db_id=db_id)
+                    try:
+                        BiogpsDatasetGeoLoaded.objects.get(geo_type='gse', with_platform=ds_with_plat)
+                        self.stdout.write('{} already loaded in DB...\n'.format(ds_with_plat))
+                    except BiogpsDatasetGeoLoaded.DoesNotExist:
+                        # Check datasets being processed
+                        if ds_with_plat in BiogpsDatasetProcessing.objects.get(id=1).datasets:
+                            self.stdout.write('%s already being processed...\n' % ds_with_plat)
+                        else:
+                            load_dataset(gse_file=gse_file, ds_with_plat=ds_with_plat)
                 current_file += 1
             log_file.close()
 
