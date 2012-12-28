@@ -572,20 +572,30 @@ a.roundBoxBlue:hover {
     position:absolute;
     left:35%;
     top:10px;
-    width:250px;
-    z-index:10000;
+    z-index: 8000;  /*set it behind welcome div*/
 }
 
 .msg a {
     padding-left: 10px;
     padding-right: 10px;
-    color: #900000;
 }
 
 .msg .x-box-mc {
     font-size:14px;
     text-align: center;
+    background: #F9EDBE;
+    border-color: #F0C36D;
+    color: #F0C36D;
+    border: 1px solid;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
 }
+
+.msg .x-box-mc div {
+    color: #900000;
+}
+
 
 #msg-ct {
 /*  position:absolute;

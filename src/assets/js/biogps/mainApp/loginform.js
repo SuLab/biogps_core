@@ -163,12 +163,12 @@ Ext.extend(biogps.UserManager, Ext.util.Observable, {
 			                         	var data = st.reader.jsonData;
 										if (data.success){
 											if (config.showmsg)
-												biogps.showmsg(config.msg, biogps.dismiss_msg_html, 5);
+												biogps.showmsg('', config.msg + biogps.dismiss_msg_html, 5);
 											if (config.callback)
 												config.callback.call(config.scope || this);
 										}
 										else{
-											biogps.showmsg('Your profile failed to save!', biogps.dismiss_msg_html, 5);
+											biogps.showmsg('', 'Your profile failed to save!' + biogps.dismiss_msg_html, 5);
 										}
 			                         },
 			                       method: 'POST',
