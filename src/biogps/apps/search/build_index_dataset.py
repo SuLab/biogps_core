@@ -31,6 +31,8 @@ class BiogpsDatasetESIndexer(BiogpsModelESIndexer):
 
 
 class BiogpsDatasetReporterESIndexer(BiogpsESIndexerBase):
+    """ THIS IS DEPRECATED NOW, WE NO LONGER INDEX DATASET REPORTERS.
+        IT'S LEFT FOR REFERENCE ONLY. """
     ES_INDEX_NAME = settings.ES_INDEXES['dataset']
     ES_INDEX_TYPE = 'by_reporter'
 
