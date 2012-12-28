@@ -46,8 +46,8 @@ class Command(NoArgsCommand):
 
                 try:
                     local_file = locate_ds_file(gse_file)
-                    if not local_file:
-                        # Can't find this file anywhere... move on
+                    if not local_file or path.getsize(local_file) == 0:
+                        # Can't find this file or it's empty... move on
                         if not ds_with_plat:
                             update_processing(gse_file)
                             return
@@ -130,7 +130,7 @@ class Command(NoArgsCommand):
                                     else:
 	                                # Lookup GEO curation ID in order to get sample titles
 	                                cur_id = 0
-	                                u = urllib2.urlopen("http://insilico.ulb.ac.be/app/Publicutilities/getcurations?gse=%s" % geo_id)
+	                                u = urllib2.urlopen("http://insilicodb.org/app/Publicutilities/getcurations?gse=%s" % geo_id)
 	                                if u.getcode() == 200:
 	                                    cur_data = json.loads(u.read())
 	    	                            for i in cur_data['curations']:
@@ -140,7 +140,7 @@ class Command(NoArgsCommand):
 	    	                            log_file.write('Error retrieving GEO curation ID from InSilicoDB for file %s!\n' % filename)
 
 		           	        if cur_id:
-		           	            u = urllib2.urlopen("http://insilico.ulb.ac.be/app/Publicutilities/getannotations?gse=%s&gpl=%s&id=%s" % (geo_id, platform, cur_id))
+		           	            u = urllib2.urlopen("http://insilicodb.org/app/Publicutilities/getannotations?gse=%s&gpl=%s&id=%s" % (geo_id, platform, cur_id))
 		           	            if u.getcode() == 200:
 		           	                titles_data = json.loads(u.read())
                                                 if titles_data and type(titles_data) is dict:
@@ -152,7 +152,7 @@ class Command(NoArgsCommand):
 		           	            log_file.write('Error retrieving sample titles from InSilicoDB for file %s!\n' % filename)
 
 		           	        # Request factors metadata from InSilicoDB
-		           	        u = urllib2.urlopen("http://insilico.ulb.ac.be/app/Publicutilities/getpreferedannotation?gse=%s&gpl=%s" % (geo_id, platform))
+		           	        u = urllib2.urlopen("http://insilicodb.org/app/Publicutilities/getpreferedannotation?gse=%s&gpl=%s" % (geo_id, platform))
 		           	        if u.getcode() == 200:
                                             try:
                                                 _factors = u.read()
@@ -257,7 +257,7 @@ class Command(NoArgsCommand):
                                             _reason = 'Missing or invalid data at line %s.' % (current_line)
                                             BiogpsDatasetGeoFlagged.objects.create(geo_type='gse', dataset=current_dataset, reason=_reason)
                                             self.stdout.write('\n%s Logging and skipping...\n' % _reason)
-                                            update_loaded(ds_with_plat)
+                                            update_loaded(current_dataset, ds_with_plat)
                                             update_processing(ds_with_plat)
                                             return
 		           	        data_list.append(data)
@@ -269,7 +269,7 @@ class Command(NoArgsCommand):
                         except struct.error:
                             self.stdout.write('Incomplete data file downloaded, logging and skipping...\n')
                             BiogpsDatasetGeoFlagged.objects.create(geo_type='gse', dataset=current_dataset, reason='Incomplete data file downloaded, parsing failed')
-                            update_loaded(ds_with_plat)
+                            update_loaded(current_dataset, ds_with_plat)
                             update_processing(ds_with_plat)
                             return
 
@@ -390,15 +390,17 @@ class Command(NoArgsCommand):
             local_path = settings.DATASET_DIR
 	    log_file = open('%s/%s' % (local_path, 'geo_gse_log_%s.txt' % randint(0, 10000)), 'w')
             species_dict = {'homo sapiens': 'human', 'mus musculus': 'mouse', 'rattus norvegicus': 'rat'}
-            insil_gse = urllib2.urlopen("http://insilico.ulb.ac.be/app/Publicutilities/oldgetserieslist")
+            insil_gse = urllib2.urlopen("http://insilicodb.org/app/Publicutilities/oldgetserieslist")
             gse_files = json.loads(insil_gse.read())
             #gse_files = ['GSE24759']
 
+            ''' Use start and end_file to control which datasets to parse.
+                Handy when restarting the script after errors, etc. '''
             start_file = 0
             end_file = 3000
             current_file = start_file
             
-            for gse_file in gse_files[start_file:end_file]:
+            for gse_file in gse_files[start_file: end_file]:
                 filename = path.splitext(path.basename(gse_file))[0]
 	        self.stdout.write('\n%s\n' % filename)
 	        log_file.write('\n%s\n' % filename)
@@ -408,7 +410,7 @@ class Command(NoArgsCommand):
 
                 # Get platforms for dataset
                 platforms = list()
-	        u = urllib2.urlopen("http://insilico.ulb.ac.be/app/Publicutilities/getplatforms?gse=%s" % geo_id.upper())
+	        u = urllib2.urlopen("http://insilicodb.org/app/Publicutilities/getplatforms?gse=%s" % geo_id.upper())
 	        if u.getcode() == 200:
                     res = ''
                     try:

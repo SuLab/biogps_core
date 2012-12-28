@@ -225,7 +225,8 @@ add_introspection_rules([
 
 
 class BiogpsDatasetReporters(models.Model):
-    """Model definition for BiogpsDatasetReporters"""
+    """ THIS IS DEPRECATED NOW, WE NO LONGER USE THE DATASET REPORTERS MODEL.
+        IT'S LEFT FOR REFERENCE ONLY. """
     dataset = models.ForeignKey(BiogpsDataset,
         related_name='dataset_reporters')
     reporters = JSONField(blank=False, editable=True)
@@ -281,7 +282,7 @@ class BiogpsDatasetGeoLoaded(models.Model):
     """Model definition for BiogpsDatasetGeoLoaded. This model tracks what
        GEO datasets have been loaded."""
     geo_type = models.CharField(max_length=10)
-    dataset = models.ForeignKey(BiogpsDataset, related_name='dataset_geo_loaded')
+    dataset = models.OneToOneField(BiogpsDataset, related_name='dataset_geo_loaded')
     with_platform = models.CharField(max_length=100)
 
 add_introspection_rules([
@@ -297,7 +298,7 @@ class BiogpsDatasetGeoFlagged(models.Model):
     """Model definition for BiogpsDatasetGeoFlagged. This model tracks what
        GEO datasets have been flagged, and the reason why."""
     geo_type = models.CharField(max_length=10)
-    dataset = models.ForeignKey(BiogpsDataset, related_name='dataset_flagged')
+    dataset = models.OneToOneField(BiogpsDataset, related_name='dataset_geo_flagged')
     reason = models.CharField(max_length=1000)
 
 add_introspection_rules([

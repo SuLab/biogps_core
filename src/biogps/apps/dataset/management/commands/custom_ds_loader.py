@@ -15,7 +15,7 @@ import os
 import numpy as np
 import psycopg2
 from biogps.apps.auth2.models import UserProfile
-from biogps.apps.dataset.models import BiogpsDataset, BiogpsDatasetData, BiogpsDatasetMatrix, BiogpsDatasetPlatform, BiogpsDatasetReporters
+from biogps.apps.dataset.models import BiogpsDataset, BiogpsDatasetData, BiogpsDatasetMatrix, BiogpsDatasetPlatform
 
 
 class Command(NoArgsCommand):
@@ -304,8 +304,10 @@ class Command(NoArgsCommand):
             	        self.stdout.write('DB Error - Dataset ID: %s, Reporter: %s\n' % (dataset_id, platform))
             
                 # Update reporters table
-                _reps = BiogpsDatasetReporters(dataset=current_dataset, reporters=ds_reps)
-                _reps.save()
+                """ THIS IS DEPRECATED NOW, WE NO LONGER USE THE DATASET REPORTERS MODEL.
+                    IT'S LEFT FOR REFERENCE ONLY. """
+                #_reps = BiogpsDatasetReporters(dataset=current_dataset, reporters=ds_reps)
+                #_reps.save()
 
                 # Data matrix
                 ds_matrix = np.array(data_list, np.float32)
