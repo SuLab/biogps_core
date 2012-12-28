@@ -257,8 +257,12 @@ Ext.extend(biogps.Portlet, Ext.ux.ManagedIFrame.Window, {
             //show undo/save msg
             biogps.last_portlet = this;
             this.delayed_close()
-            var msg = '<a href="javascript:biogps.last_portlet.undo_close();">Undo</a><a href="javascript:biogps.last_portlet.save_layout();">Save</a>' + biogps.dismiss_msg_html;
-            biogps.showmsg('Layout changed.', msg, 15);
+            var msg = 'Plugin removed from the current layout.<a href="javascript:biogps.last_portlet.undo_close();">Undo</a>';
+            if (!biogps.usrMgr.is_anonymoususer){
+                msg += '<a href="javascript:biogps.last_portlet.save_layout();">Save</a>';
+            }
+            msg += biogps.dismiss_msg_html;
+            biogps.showmsg('', msg, 15);
 
         }
     },
@@ -270,7 +274,9 @@ Ext.extend(biogps.Portlet, Ext.ux.ManagedIFrame.Window, {
         this.delayed_close_task = new Ext.util.DelayedTask();
         this.delayed_close_task.delay(16*1000, function(){
             this.constructor.superclass.close.call(this);
-            this.genereportpage.saveCurrentLayout({quiet: true});
+            if (!biogps.usrMgr.is_anonymoususer){
+                this.genereportpage.saveCurrentLayout({quiet: true});
+            }
             delete this.removed;
             delete biogps.last_portlet;
         },this);
@@ -1517,6 +1523,8 @@ Ext.extend(biogps.GeneReportPage, Ext.Panel, {
     },
 
 	renderPage: function(){
+        biogps.dismiss_msg();
+
 	    if (!this.gene.getEntryGene()){
 			var dt = new Ext.util.DelayedTask();
 			dt.delay(100, function(){
@@ -1552,6 +1560,7 @@ Ext.extend(biogps.GeneReportPage, Ext.Panel, {
         // if "fixexist" is true, do not move/resize existing portlets based on the new layout_data.
 
         //if (this.checkLayout() == false) return;
+
         this.reportRendered = false;
         this.flag_donotsynclayout = true;
 		var new_portlets = new Array(),
@@ -1807,6 +1816,7 @@ Ext.extend(biogps.GeneReportPage, Ext.Panel, {
         //parameters:
         //cfg.saveEmptyLayout:   if true, save empty layout_data without confirmation.
         //cfg.quiet:             if true, no mask msg, no warning/error msg
+
         cfg = cfg || {};
 		if (!this.grlayout || biogps.require_user_logged_in() == false){
 			return;
