@@ -165,6 +165,7 @@ def mytest(request):
                    #'DATABASE_NAME:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + settings.DATABASE_NAME +'<br>' + \
                    'DATABASE_NAME:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + settings.DATABASES['default']['NAME'] +'<br>' + \
                    'DATABASE_ENGINE:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + settings.DATABASES['default']['ENGINE'] +'<br>' + \
+                   'DATABASE_HOST:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + settings.DATABASES['default']['HOST'] +'<br>' + \
                    'DB version: ' + getattr(db.backend.Database, 'version', '') + '<br>' + \
                    'Django version: ' + django.get_version() + '<br>' + \
                    'mod_wsgi version: ' + '.'.join([str(x) for x in request.META.get('mod_wsgi.version',())]) + '<br>' + \
