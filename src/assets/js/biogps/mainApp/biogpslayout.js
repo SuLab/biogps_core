@@ -254,7 +254,8 @@ Ext.extend(biogps.LayoutMgr, Ext.util.Observable, {
 	    var st = new Ext.data.Store({
 	        proxy: new Ext.data.HttpProxy({
 				//url: '/layout/all/',
-				url: '/layoutlist/all/?userselected=1',
+				//url: '/layoutlist/all/?userselected=1',
+				url: '/layout/all/',
 	            method: 'GET'
 	        }),
 			autoload: true,
@@ -262,13 +263,17 @@ Ext.extend(biogps.LayoutMgr, Ext.util.Observable, {
 				id: 'pk',
 				root: 'items',   //needed for '/layoutlist/all'
 				fields: [{name: 'layout_name', mapping: 'fields.layout_name', type: "string"},
-						 {name: 'layout_data', mapping: 'fields.layout_data'},
-	                     {name: 'author', mapping: 'fields.author', type: "string"},
-	                     {name: 'author_url', mapping: 'fields.author_url', type: "string"},
-	                     {name: 'description', mapping: 'fields.description', type: "string"},
-	                     {name: 'is_shared', mapping: 'fields.is_shared', type: "boolean"},
-	                     {name: 'lastmodified', mapping: 'fields.lastmodified', type: "date", dateFormat: 'Y-m-d H:i:s'},
-	                     {name: 'created', mapping: 'fields.created', type: "date", dateFormat: 'Y-m-d H:i:s'}]
+                  		 {name: 'is_shared', mapping: 'fields.is_shared', type: "boolean"}
+				         ]
+
+				// fields: [{name: 'layout_name', mapping: 'fields.layout_name', type: "string"},
+				// 		 {name: 'layout_data', mapping: 'fields.layout_data'},
+	   //                   {name: 'author', mapping: 'fields.author', type: "string"},
+	   //                   {name: 'author_url', mapping: 'fields.author_url', type: "string"},
+	   //                   {name: 'description', mapping: 'fields.description', type: "string"},
+	   //                   {name: 'is_shared', mapping: 'fields.is_shared', type: "boolean"},
+	   //                   {name: 'lastmodified', mapping: 'fields.lastmodified', type: "date", dateFormat: 'Y-m-d H:i:s'},
+	   //                   {name: 'created', mapping: 'fields.created', type: "date", dateFormat: 'Y-m-d H:i:s'}]
 	        })
 	    });
 

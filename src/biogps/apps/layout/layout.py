@@ -162,6 +162,38 @@ def layout(request, query=None):
         return HttpResponseBadRequest('Unsupported request method "%s"' % request.method)
 
 
+@allowedrequestmethod('GET')
+def layoutlist_all(request):
+    """
+    A simplified and much faster handler for layoutlist/all/ service.
+    URL: /layoutlist/all/
+    """
+    user = request.user
+    layout_qs = BiogpsGenereportLayout.objects.get_available(user, excludemine=True)
+    layout_qs = layout_qs.order_by('-lastmodified')
+    layout_list = list(layout_qs.values('pk', 'layout_name'))
+    for i, layout in enumerate(layout_list):
+        layout = {'pk': layout['pk'],
+                  'fields': {'layout_name': layout['layout_name'],
+                             'is_shared': True}}
+        layout_list[i] = layout
+
+    if not user.is_anonymous():
+        my_layout_list = user.mylayouts.order_by('-lastmodified').values('pk', 'layout_name')
+        my_layout_list = list(my_layout_list)
+        for i, layout in enumerate(my_layout_list):
+            layout = {'pk': layout['pk'],
+                      'fields': {'layout_name': layout['layout_name'],
+                                 'is_shared': False}}
+            my_layout_list[i] = layout
+        layout_list += my_layout_list
+
+    layout_output = {"totalCount": len(layout_list),
+                     "items": layout_list}
+
+    return JSONResponse(layout_output)
+
+
 #@loginrequired
 @allowedrequestmethod('GET')
 def layoutlist(request, query=None):
