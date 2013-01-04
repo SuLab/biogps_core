@@ -100,6 +100,7 @@ urlpatterns += patterns('biogps.apps.layout.layout',
                         (r'^layout/(?P<layoutid>\d+)/renderurl/$', 'render_plugin_urls'),
                         (r'^layout/(?P<query>.+)/$', 'layout'),
                         (r'^layoutlist/$', 'layoutlist'),
+                        (r'^layoutlist/all/$', 'layoutlist_all'),
                         (r'^layoutlist/(?P<query>.+)/', 'layoutlist'),
                         (r'^layouttree/$', 'layout_tree'),
                         )
