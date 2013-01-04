@@ -255,7 +255,7 @@ Ext.extend(biogps.LayoutMgr, Ext.util.Observable, {
 	        proxy: new Ext.data.HttpProxy({
 				//url: '/layout/all/',
 				//url: '/layoutlist/all/?userselected=1',
-				url: '/layout/all/',
+				url: '/layoutlist/all/',
 	            method: 'GET'
 	        }),
 			autoload: true,
