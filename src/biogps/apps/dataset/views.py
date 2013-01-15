@@ -528,11 +528,11 @@ class DatasetD3View(RestView):
     def get(self, request, ds_id, rep_id):
         dsd = get_object_or_404(BiogpsDatasetData, dataset=ds_id,
                                 reporter=rep_id)
-        is_interval_ds = not dsd.geo_id_plat
         ds_data = dsd.data
 
         ds = dsd.dataset
         ds_meta = ds.metadata
+        is_interval_ds = not ds.geo_id_plat
 
         # Response object
         res = {'meta': {}, 'data': []}
