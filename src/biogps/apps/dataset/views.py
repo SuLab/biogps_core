@@ -532,7 +532,7 @@ class DatasetD3View(RestView):
 
         ds = dsd.dataset
         ds_meta = ds.metadata
-        is_interval_ds = not ds.geo_id_plat
+        is_internal_ds = not ds.geo_id_plat
 
         # Response object
         res = {'meta': {}, 'data': []}
@@ -564,8 +564,9 @@ class DatasetD3View(RestView):
             skip_factors = ['sample', 'value']
             for key, val in val_dict.iteritems():
                 key = key.lower()
-                if key == 'title' and is_interval_ds:
+                if key == 'title':
                     data_dict[key] = val
+                    if is_internal_ds:
                     data_dict['factors']['tissue'] = val
                 elif key not in skip_factors:
                     data_dict['factors'][key] = val
