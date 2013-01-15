@@ -567,7 +567,7 @@ class DatasetD3View(RestView):
                 if key == 'title':
                     data_dict[key] = val
                     if is_internal_ds:
-                    data_dict['factors']['tissue'] = val
+                        data_dict['factors']['tissue'] = val
                 elif key not in skip_factors:
                     data_dict['factors'][key] = val
                 else:
