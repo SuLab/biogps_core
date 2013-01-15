@@ -528,6 +528,7 @@ class DatasetD3View(RestView):
     def get(self, request, ds_id, rep_id):
         dsd = get_object_or_404(BiogpsDatasetData, dataset=ds_id,
                                 reporter=rep_id)
+        is_interval_ds = not dsd.geo_id_plat
         ds_data = dsd.data
 
         ds = dsd.dataset
@@ -563,7 +564,7 @@ class DatasetD3View(RestView):
             skip_factors = ['sample', 'value']
             for key, val in val_dict.iteritems():
                 key = key.lower()
-                if key == 'title':
+                if key == 'title' and is_interval_ds:
                     data_dict[key] = val
                     data_dict['factors']['tissue'] = val
                 elif key not in skip_factors:
