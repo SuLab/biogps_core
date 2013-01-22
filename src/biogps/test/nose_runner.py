@@ -130,8 +130,9 @@ def run_tests(test_labels, verbosity=1, interactive=True, extra_tests=[]):
 #        settings.DATABASE_NAME = test_db
 
     settings_str = "\nUnit test for BioGPS application\n"
-    for attr in ['DATABASE_ENGINE', 'DATABASE_NAME', 'DEBUG', 'RELEASE_MODE',
-                  "BOCSERVICE_URL"]:
+    for attr in ['ENGINE', 'NAME', 'HOST']:
+        settings_str += '  DATABASE_%s:  %s\n' % (attr, settings.DATABASES['default'][attr])
+    for attr in ['DEBUG', 'RELEASE_MODE', "BOCSERVICE_URL", "ES_HOST"]:
         settings_str += '  %s:  %s\n' % (attr, getattr(settings, attr))
     print settings_str
 
