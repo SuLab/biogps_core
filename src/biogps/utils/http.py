@@ -159,12 +159,19 @@ class FormattedResponse():
         if format not in self.allowed_formats:
             return HttpResponseNotAllowed(self.allowed_formats)
         elif format in ['json', 'xml']:
-            return HttpResponse(serialize(self._data,
+            response = HttpResponse(serialize(self._data,
                                           format=format,
                                           attrs=self.serialize_attrs,
                                           model_serializer=self.model_serializer,
                                           **self.model_serializer_kwargs),
                                 mimetype=MIMETYPE.get(format, None))
+            if format == 'json':
+                #handle jsonp callback case
+                jsonp_callback = self._request.GET.get('callback', '')
+                if jsonp_callback:
+                    response.content = '%s(%s)' % (jsonp_callback, response.content)
+            return response
+
         elif format == 'html':
             if self.html_skip_context:
                 context = None
