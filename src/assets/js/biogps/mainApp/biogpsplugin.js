@@ -314,7 +314,7 @@ Ext.extend(biogps.Plugin, Ext.util.Observable, {
     getKeywords: function(url){
         url = url || this.url;
         if (url){
-            var kwd_list = url.match(/(\{\{[\w|]+\}\})/g);
+            var kwd_list = url.match(/(\{\{[\w|:.]+\}\})/g);
             return kwd_list;
         }
         else {
@@ -345,6 +345,37 @@ Ext.extend(biogps.Plugin, Ext.util.Observable, {
 	getPreviewUrl: function() {
         return this.geturl(biogps.sample_gene);
 	},
+
+    _get_value: function(kwd, gene){
+        this.idx_filter_separator='.';       // e.g., {{MGI.1}}
+        this.value_field_separator=':';      // e.g., "MGI:104772"
+
+        var k = kwd.trim();
+        var _idx_filter = null;
+        if (k.split(this.idx_filter_separator).length == 2){
+            //support for something like "{{MGI:2}}"
+            //will take only "104772" part of "MGI:104772" value
+            var _k = k.split(this.idx_filter_separator);
+            k = _k[0];
+            _idx_filter = parseInt(_k[1]);
+        }
+        if (gene[k]){
+            var value = gene[k];
+            if (isArray(value)){
+                if (_idx_filter){
+                    for (var i=0;i<value.length;i++){
+                        value[i] = value[i].split(this.value_field_separator)[_idx_filter];
+                    }
+                }
+                value = value.join(this.separator);
+            }else{
+                if (_idx_filter){
+                    value = value.split(this.value_field_separator)[_idx_filter];
+                }
+            }
+            return value;
+        }
+    },
 
     geturl: function(gene) {
         //do keyword substitution with the given gene object
@@ -392,14 +423,11 @@ Ext.extend(biogps.Plugin, Ext.util.Observable, {
                             kwd = kwd_list[i];             //with {{ }}
                             _kwd = kwd.substring(2, kwd.length-2);    //without {{ }}
                             //_kwd can be in the form of 'kwd1|kwd2". If kwd1 is not available, use kwd2 instead
+                            self = this;
                             _kwd.split('|').each(function(k){
-                                    k = k.trim();
-                                    if (current_gene[k]){
-                                        var value = current_gene[k];
-                                        if (isArray(value))
-                                            value = value.join(this.separator);
-                                        _url = _url.replace(kwd, value);
-                                    }
+                                value = self._get_value(k, current_gene)
+                                if (value)
+                                    _url = _url.replace(kwd, value);
                             }, this);
                         }
                     }
