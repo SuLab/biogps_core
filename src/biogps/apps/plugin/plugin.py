@@ -511,6 +511,40 @@ class PluginUrlRenderError(Exception):
     pass
 
 
+def _get_value(kwd, gene,
+               idx_filter_separator='.',       # e.g., {{MGI.1}}
+               value_field_separator=':',      # e.g., "MGI:104772"
+               list_separator=','):            # if matching values are a list
+    k = kwd.strip()
+    _idx_filter = None
+    if len(k.split(idx_filter_separator)) == 2:
+        #support for something like "{{MGI:2}}"
+        #will take only "104772" part of "MGI:104772" value
+        k, _idx_filter = k.split(idx_filter_separator)
+        try:
+            _idx_filter = int(_idx_filter)     #_idx_filter starts from 0
+        except ValueError:
+            return None
+
+    value = gene.get(k, None)
+    if value:
+        if type(value) in [types.ListType, types.TupleType]:
+            if _idx_filter:
+                try:
+                    value = [v.split(value_field_separator)[_idx_filter] for v in value]
+                except IndexError:
+                    return None
+            value = list_separator.join(value)
+        else:
+            if _idx_filter:
+                try:
+                    value = value.split(value_field_separator)[_idx_filter]
+                except IndexError:
+                    return None
+
+        return str(value)
+
+
 def _plugin_geturl(plugin, gene, mobile=False):
     '''rendering plugin's actual url given input gene
        gene is a object returned by DataService.GetGeneIdentifiers
@@ -521,7 +555,7 @@ def _plugin_geturl(plugin, gene, mobile=False):
         _url = plugin.options['mobile_url']
     else:
         _url = plugin.url
-    separator = ','
+
     kwd_list = plugin.getKeywords()
     if len(kwd_list) > 0:
         if gene:
@@ -540,11 +574,8 @@ def _plugin_geturl(plugin, gene, mobile=False):
                         _kwd = kwd[2:-2]  # without {{ }}
                         #_kwd can be in the form of 'kwd1|kwd2". If kwd1 is not available, use kwd2 instead
                         for k in _kwd.split('|'):
-                            k = k.strip()
-                            value = current_gene.get(k, None)
+                            value = _get_value(k, current_gene)
                             if value:
-                                if type(value) in [types.ListType, types.TupleType]:
-                                    value = separator.join(value)
                                 _url = _url.replace(kwd, str(value))
                                 break
 
