@@ -148,7 +148,7 @@ class BiogpsPlugin(BioGPSModel):
     def getKeywords(self, url=None):
         url = url or self.url
         if url:
-            kwd_list = re.findall('(\{\{[\w|]+\}\})', url)
+            kwd_list = re.findall('(\{\{[\w|:.]+\}\})', url)
             return kwd_list
         else:
             return []
