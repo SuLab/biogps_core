@@ -143,7 +143,7 @@ li {
             {% endif %}
             <!-- MGI -->
             {% if gene.MGI %}
-                <a href="http://www.informatics.jax.org/searches/accession_report.cgi?id=MGI:{{gene.MGI}}">{{gene.MGI}}</a> (MGI) <br />
+                <a href="http://www.informatics.jax.org/searches/accession_report.cgi?id={{gene.MGI}}">{{gene.MGI}}</a> (MGI) <br />
             {% endif %}
             <!-- RGD -->
             {% if gene.RGD %}
