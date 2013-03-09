@@ -7,6 +7,7 @@ from biogps.apps.stat.models import BiogpsStat
 from biogps.utils.http import JSONResponse, render_to_formatted_response
 from biogps.utils.models import Species
 from biogps.utils.restview import RestView
+from biogps.utils import const
 from django.http import (
     HttpResponse,
     HttpResponseForbidden,
@@ -339,13 +340,18 @@ class DatasetView(RestView):
             request.breadcrumbs(dataset.name_wrapped_short,
                 dataset.get_absolute_url)
             html_template = 'dataset/show.html'
+            try:
+                sample_gene = const.sample_gene[dataset.species[0]]
+            except:
+                sample_gene = '1017'
             html_dictionary = {
                 'current_obj': dataset,
                 'obj_factors': dataset.metadata['factors'],
                 'rating_scale': Rating.rating_scale,
                 'rating_static': Rating.rating_static,
                 'canonical': dataset.get_absolute_url(),
-                'navigation': nav
+                'navigation': nav,
+                'sample_gene': sample_gene,
             }
             return render_to_formatted_response(request,
                 data=dataset, allowed_formats=['html', 'json', 'xml'],
