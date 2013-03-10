@@ -51,7 +51,8 @@ SPECIES_LIST = [ dict(name='human',
                       prefix='Ss',
                       assembly='susScr2',
                       genus='Sus scrofa',
-                      sample_gene=100127490),  # CDK2
+                      sample_gene=397593),     # AMBP (CDK2 does not have data in pigatlas dataset) 
+                      #sample_gene=100127490),  # CDK2
                 ]
 
 AVAILABLE_SPECIES = [s['name'] for s in SPECIES_LIST]
