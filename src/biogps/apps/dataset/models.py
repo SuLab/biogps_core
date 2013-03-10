@@ -5,6 +5,7 @@ from biogps.apps.auth2.models import UserProfile
 from biogps.utils.models import BioGPSModel
 from biogps.utils.fields.jsonfield import JSONField
 from biogps.utils.helper import wrap_str
+from biogps.utils import const
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django_extensions.db.fields import AutoSlugField
@@ -189,6 +190,15 @@ class BiogpsDataset(BioGPSModel):
         else:
             raise ValueError('Unknown "mode" value.')
         return out
+
+    def get_sample_geneid(self):
+        """return a proper sample gene id based on species setting."""
+        try:
+            sample_gene = const.sample_gene[self.species[0]]
+        except:
+            sample_gene = '1017'
+        return sample_gene
+
 
 try:
     tagging.register(BiogpsDataset)

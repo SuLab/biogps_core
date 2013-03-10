@@ -340,18 +340,13 @@ class DatasetView(RestView):
             request.breadcrumbs(dataset.name_wrapped_short,
                 dataset.get_absolute_url)
             html_template = 'dataset/show.html'
-            try:
-                sample_gene = const.sample_gene[dataset.species[0]]
-            except:
-                sample_gene = '1017'
             html_dictionary = {
                 'current_obj': dataset,
                 'obj_factors': dataset.metadata['factors'],
                 'rating_scale': Rating.rating_scale,
                 'rating_static': Rating.rating_static,
                 'canonical': dataset.get_absolute_url(),
-                'navigation': nav,
-                'sample_gene': sample_gene,
+                'navigation': nav
             }
             return render_to_formatted_response(request,
                 data=dataset, allowed_formats=['html', 'json', 'xml'],
