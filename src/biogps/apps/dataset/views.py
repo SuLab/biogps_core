@@ -466,7 +466,7 @@ class DatasetValuesView(RestView):
             pass
         _data = DatasetQuery.get_ds_data(datasetID, get_reporters, gene_id,
             _format)
-        if _format is not None:
+        if _data and _format is not None:
             # Already formatted, simply return data
             return _data
         else:
