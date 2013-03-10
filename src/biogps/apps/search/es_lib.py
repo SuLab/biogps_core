@@ -7,7 +7,9 @@ from django.conf import settings
 from pyes import (ES, TermQuery, TermsQuery, StringQuery,
                   FilteredQuery, BoolQuery, RangeQuery, MatchAllQuery)
 from pyes import ESRange
-from pyes.exceptions import (SearchPhaseExecutionException, InvalidQuery)
+from pyes.exceptions import (ElasticSearchException,
+                             SearchPhaseExecutionException, 
+                             InvalidQuery)
 from pyes.es import ESJsonEncoder
 from biogps.utils import json, dotdict
 from biogps.utils.models import get_role_shortnames
@@ -149,11 +151,11 @@ class ESQuery():
             # result = self.conn.search(query=q, doc_types=doc_types)
             # result._do_search()
             result = self.conn.search_raw(query=q, doc_types=doc_types)
-        except (SearchPhaseExecutionException, InvalidQuery):
+        except (ElasticSearchException, SearchPhaseExecutionException, InvalidQuery):
             exc_name = sys.exc_type.__name__
             err_msg =  sys.exc_value.args[0] if (sys.exc_value.args)>0 else ""
             err_msg = exc_name + ": " + err_msg
-            return BiogpsSearchResult({'error': err_msg})
+            result = {'error': err_msg}
 
         #record the last successful query and doc_types for later use:
         self._q = q

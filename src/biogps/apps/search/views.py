@@ -180,7 +180,7 @@ def search(request, _type=None):
     nav = BiogpsSearchNavigation(request, type='search', es_results=res, params=common_params)
 
     # Do the basic page setup and rendering
-    if res.query.has_valid_doc_types():
+    if res.query and res.query.has_valid_doc_types():
         # Successful search result
         ctype = common_params['only_in'][0]
         request.breadcrumbs('{} Library'.format(ctype.capitalize()), '/{}/'.format(ctype))
