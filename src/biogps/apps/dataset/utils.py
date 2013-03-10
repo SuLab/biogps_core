@@ -198,11 +198,17 @@ class DatasetQuery():
             ds = BiogpsDataset.objects.get(id=ds_id)
         except BiogpsDataset.DoesNotExist:
             return None
+        if ds is None:
+           return None
+
         try:
             dsd = BiogpsDatasetData.objects.filter(dataset=ds,
                 reporter__in=rep_li).values('reporter', 'data')
         except BiogpsDatasetData.DoesNotExist:
             return None
+        if dsd is None:
+            return None
+
         if _format is not None:
             if _format == 'csv':
                 # CSV output
