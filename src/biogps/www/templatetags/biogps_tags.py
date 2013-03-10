@@ -1,4 +1,5 @@
 import datetime
+import types
 from django.conf import settings
 from django.template import Library
 
@@ -152,3 +153,20 @@ def extdirect_api():
     from biogps.apps.extdirect.views import remote_provider
     js_code = '<script type="text/javascript">%s    </script>' % remote_provider.api2()
     return js_code
+
+
+@register.simple_tag
+def sample_geneid(species=None):
+    """return a proper sample gene id based on first species setting.
+       sepcies can be a string or a list (take the first one).
+    """
+    from biogps.utils import const
+    if species:
+        if type(species) is types.ListType and len(species) > 0:
+            _species = species[0]
+        else:
+            _species = species
+        sample_gene = const.sample_gene.get(_species, 1017)
+    else:
+        sample_gene = 1017
+    return sample_gene
