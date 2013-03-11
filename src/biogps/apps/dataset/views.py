@@ -402,7 +402,8 @@ class DatasetSearchView(RestView):
             search_end = time()
             json_response += ('DEBUG:', 'Search {}'
             ' secs'.format(round(search_end - search_start, 3)))
-        return JSONResponse(json_response)
+        jsonp = request.GET.get('callback', None)
+        return JSONResponse(json_response, jsonp=jsonp)
 
 
 @csrf_exempt
