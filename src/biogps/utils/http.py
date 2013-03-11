@@ -15,8 +15,13 @@ def JSONResponse(pyobj, do_not_encode=False, **kwargs):
     '''Return a JSON serialized HttpRespone.
        if do_not_encode is True, assuming pyobj is already a JSON string, and
         just return it as it is.
+       if "jsonp" is passed as a string, wrap json response in a jsonp callback.
     '''
-    return HttpResponse(json.dumps(pyobj) if not do_not_encode else pyobj,
+    _json = json.dumps(pyobj) if not do_not_encode else pyobj
+    jsonp = kwargs.pop('jsonp', None)
+    if jsonp:
+        _json = "{}({})".format(jsonp, _json)
+    return HttpResponse(_json,
                         content_type='application/json; charset=%s' % settings.DEFAULT_CHARSET, **kwargs)
 
 
