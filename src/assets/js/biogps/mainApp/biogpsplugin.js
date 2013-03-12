@@ -423,11 +423,19 @@ Ext.extend(biogps.Plugin, Ext.util.Observable, {
                             kwd = kwd_list[i];             //with {{ }}
                             _kwd = kwd.substring(2, kwd.length-2);    //without {{ }}
                             //_kwd can be in the form of 'kwd1|kwd2". If kwd1 is not available, use kwd2 instead
-                            _kwd.split('|').forEach(function(k){
-                                value = this._get_value(k, current_gene)
-                                if (value)
+                            var _kwd_list = _kwd.split('|')
+                            for (var j=0; j<_kwd_list.length; j++){
+                                value = this._get_value(_kwd_list[j], current_gene)
+                                if (value){
                                     _url = _url.replace(kwd, value);
-                            }, this);
+                                    break;
+                                }
+                            }
+                            // _kwd.split('|').forEach(function(k){
+                            //     value = this._get_value(k, current_gene)
+                            //     if (value)
+                            //         _url = _url.replace(kwd, value);
+                            // }, this);
                         }
                     }
 
