@@ -19,21 +19,22 @@ def status(request):
         return JSONResponse(status)
 
 
-def _handle_commom_params(params):
+def _handle_commom_params(params, types=None):
     '''handles common params from QueryDict <params> (e.g. request.GET).'''
     q = params.get('q', None)
 
     # Figure out the type(s) of objects we're looking for
-    # 1) Check the params hash directly (i.e. if it came from a URL param)
-    types = params.get('in', None)
+    if types is None:
+        # 1) Check the params hash directly (i.e. if it came from a URL param)
+        types = params.get('in', None)
 
-    # 2) Check the query string contents
-    if not types and q:
-        pattern = 'in:([\w,]+)'
-        _q = re.search(pattern, q)
-        if _q:
-            types = _q.group(1)
-            q = re.sub(pattern, '', q).strip()
+        # 2) Check the query string contents
+        if not types and q:
+            pattern = 'in:([\w,]+)'
+            _q = re.search(pattern, q)
+            if _q:
+                types = _q.group(1)
+                q = re.sub(pattern, '', q).strip()
 
     if not types:
         # No match, set to gene which will route to V1 search in search funtion
@@ -71,12 +72,17 @@ def _handle_commom_params(params):
 
     # Sorting parameter translation. Defaults to popularity
     sort_param = params.get('sort', '')
-    # Default BiogpsStat sorting
-    sort = [{'popularity.all_time': {'order': 'asc', 'missing': '_last'}}]
     # Handle special sort cases
-    if sort_param == 'popular':    # e.g. /plugin/all/?sort=popular
+    if not sort_param or sort_param == 'popular':    # e.g. /plugin/all/?sort=popular
+        #set default sorting on popularity for plugin and dataset
         if types[0] == 'plugin':
             sort = [{'popularity': 'desc'}]
+        elif types[0] == 'dataset':
+            # Default BiogpsStat sorting
+            sort = [{'popularity.all_time': {'order': 'desc', 'missing': '_last'}}]
+        else:
+            sort = None
+
     elif sort_param == 'newest':   # e.g. /plugin/all/?sort=newest
         sort = [{'created': 'desc'}]
     else:
@@ -143,13 +149,9 @@ def search(request, _type=None):
          passed, the search is against all types.
 
     '''
-    common_params = _handle_commom_params(request.GET)
+    common_params = _handle_commom_params(request.GET, types=_type)
     format = request.GET.get('format', 'html')
-
-    q = request.GET.get('q', '')
-
-    if _type:
-        common_params['only_in'] = [_type]
+    q = common_params.get('q', '')
 
     # For now V2 search does not support genes
     if format == 'html' and common_params['only_in'] == ['gene']:
@@ -221,7 +223,7 @@ def interval(request):
       (not taxid and not species and not assembly):
         return HttpResponseBadRequest("Missing required parameters.")
 
-    common_params = _handle_commom_params(request.GET)
+    common_params = _handle_commom_params(request.GET, types='gene')
 
     es = ESQuery(request.user)
     res = es.query_gene_by_interval(chr, gstart, gend,
