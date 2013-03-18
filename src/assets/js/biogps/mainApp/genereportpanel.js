@@ -274,7 +274,7 @@ Ext.extend(biogps.Portlet, Ext.ux.ManagedIFrame.Window, {
         this.delayed_close_task = new Ext.util.DelayedTask();
         this.delayed_close_task.delay(16*1000, function(){
             this.constructor.superclass.close.call(this);
-            if (!biogps.usrMgr.is_anonymoususer){
+            if (!biogps.usrMgr.is_anonymoususer && this.genereportpage.grlayout.isMyLayout()){
                 this.genereportpage.saveCurrentLayout({quiet: true});
             }
             delete this.removed;
