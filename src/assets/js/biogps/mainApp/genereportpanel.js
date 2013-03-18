@@ -258,7 +258,7 @@ Ext.extend(biogps.Portlet, Ext.ux.ManagedIFrame.Window, {
             biogps.last_portlet = this;
             this.delayed_close()
             var msg = 'Plugin removed from the current layout.<a href="javascript:biogps.last_portlet.undo_close();">Undo</a>';
-            if (!biogps.usrMgr.is_anonymoususer){
+            if (!biogps.usrMgr.is_anonymoususer && this.genereportpage.grlayout.isMyLayout()){
                 msg += '<a href="javascript:biogps.last_portlet.save_layout();">Save</a>';
             }
             msg += biogps.dismiss_msg_html;
