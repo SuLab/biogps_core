@@ -156,7 +156,7 @@ def search(request, _type=None):
     # For now V2 search does not support genes
     if format == 'html' and common_params['only_in'] == ['gene']:
         # Redirect the user to the V1 search engine
-        _url = '/?query=' + q
+        _url = ('/?query=' + q) if q else '/'
         return HttpResponseRedirectWithIEFix(request, _url)
 
     es = ESQuery(request.user)
