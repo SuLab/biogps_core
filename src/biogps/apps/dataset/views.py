@@ -294,7 +294,6 @@ def prepare_breadcrumb(request):
     request.breadcrumbs('Dataset Library', '/dataset/')
 
 
-@csrf_exempt
 class DatasetView(RestView):
     """This class defines views for REST URL:
        /dataset/<datasetID>/(?format=)

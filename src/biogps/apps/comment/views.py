@@ -61,7 +61,7 @@ class CommentSubmitView(RestView):
             #    parent_link += '#%s' % c.id
 
             # If missing request HTTP_REFERER re-direct to landing page
-            http_referer = 'http://biogps.gnf.org/%s/%s/' % (modelType, objectID)
+            http_referer = 'http://biogps.org/%s/%s/' % (modelType, objectID)
             try:
                 http_referer = request.META['HTTP_REFERER']
             except KeyError:
@@ -78,7 +78,7 @@ class CommentSubmitView(RestView):
                 #             request.user.get_valid_name(), parent_link),
                            settings.DEFAULT_FROM_EMAIL, [obj.owner.email],
                                           [i[1] for i in settings.ADMINS])
-                msg.content_subtype = "html" 
+                msg.content_subtype = "html"
  	        msg.send(fail_silently=False)
 
             # Re-direct to parent comment that user replied to.
