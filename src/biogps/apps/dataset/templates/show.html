@@ -59,9 +59,11 @@
                     <a class="btn-use-object btn-priority-primary btn-show-dataset" href="/#goto=genereport&id={{current_obj.get_sample_geneid}}&show_dataset={{ current_obj.id }}">
                         <h6>View Dataset</h6>
                     </a>
+                    {% comment %}
                     {% if user.is_authenticated and user.id == current_obj.owner.id %}
                       <a class="btn-use-object btn-priority-primary" href="{% url dataset_edit current_obj.id %}">Edit</a>
                     {% endif %}
+                    {% endcomment %}
                 </div>
             </span> <!-- itemscope -->
         </div> <!-- object-summary -->
