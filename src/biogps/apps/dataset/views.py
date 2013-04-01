@@ -15,6 +15,7 @@ from django.http import (
     )
 from django.shortcuts import get_object_or_404, render_to_response
 from django.views.decorators.csrf import csrf_exempt
+from django.http import Http404
 from tagging.models import Tag
 from time import time
 import logging
@@ -307,7 +308,7 @@ class DatasetView(RestView):
             ds_id = sanitize(kwargs.pop('datasetID'))
             kwargs['dataset'] = BiogpsDataset.objects.get(id=ds_id)
         except BiogpsDataset.DoesNotExist:
-            return HttpResponseNotFound()
+            kwargs['dataset'] = None
 
     def get(self, request, dataset, slug=None):
         """Get a specific dataset page/object via GET
@@ -315,9 +316,12 @@ class DatasetView(RestView):
                     json              return a dataset object in json format
                     xml               return a dataset object in xml format
         """
+        if not dataset:
+            raise Http404
+
         log.info('username=%s clientip=%s action=dataset_metadata id=%s',
             getattr(request.user, 'username', ''),
-            request.META.get('REMOTE_ADDR', ''), dataset)
+            request.META.get('REMOTE_ADDR', ''), dataset.id)
 
         if 'format' in request.GET:
             meta = dataset.object_cvt()
