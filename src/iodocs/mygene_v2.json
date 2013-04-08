@@ -1,0 +1,176 @@
+{
+    "endpoints": [
+        {
+            "name": "MyGene.info gene query API",
+            "methods": [
+                {
+                    "MethodName": "Gene query service",
+                    "Synopsis": "Make gene query and return matching gene list. Support JSONP and CORS as well.",
+                    "HTTPMethod": "GET",
+                    "URI": "/api/v2/query",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "q",
+                            "Type": "string",
+                            "Required": "Y",
+                            "Description": "query string. The detailed query syntax can be found at http://mygene.info/doc/query_service"
+                        },
+                        {
+                            "Name": "fields",
+                            "Type": "string",
+                            "Description": "the fields of returned gene objects (default is \"symbol,name,taxid,entrezgene,ensemblgene\". The supported field names can be found at http://dev.mygene.info/metadata"
+                        },
+                        {
+                            "Name": "species",
+                            "Type": "string",
+                            "Description": "filter the returned gene objects for given species, support taxonomy ids for now, e.g. species=9606, species=9606,10090,10116 (default)"
+                        },
+                        {
+                            "Name": "size",
+                            "Type": "integer",
+                            "Description": "the maximum number of results to return (with a cap of 1000 at the moment)"
+                        },
+                        {
+                            "Name": "from",
+                            "Type": "integer",
+                            "Description": "the number of results to return from. Combining with \"size\" parameter, this can be useful for paging"
+                        },
+                        {
+                            "Name": "sort",
+                            "Type": "string",
+                            "Description": "the comma-separated fields to sort on. Prefix with \"-\" for descending order (default as ascending)"
+                        },
+                        {
+                            "Name": "callback",
+                            "Type": "string",
+                            "Description": "you can pass a \"callback\" parameter to make a JSONP call."
+                        }
+                    ]
+                },
+
+                {
+                    "MethodName": "Gene query service via POST",
+                    "Synopsis": "Make gene queries in batch",
+                    "HTTPMethod": "POST",
+                    "URI": "/api/v2/query",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "q",
+                            "Type": "string",
+                            "Required": "Y",
+                            "Description": "multiple query terms seperated by comma (also support \"+\" or white space), but no wildchar, e.g., \"q=1017,1018\" or \"q=CDK2+BTK\" "
+                        },
+                        {
+                            "Name": "scopes",
+                            "Type": "string",
+                            "Description": "specify one or more fields (separated by comma) as the search \"scope\", e.g., \"scopes=entrezgene\", \"scopes=entrezgene,ensemblgene\" "
+                        },
+                        {
+                            "Name": "fields",
+                            "Type": "string",
+                            "Description": "the fields of returned gene objects (default is \"symbol,name,taxid,entrezgene,ensemblgene\". The supported field names can be found at http://dev.mygene.info/metadata"
+                        },
+                        {
+                            "Name": "species",
+                            "Type": "string",
+                            "Description": "filter the returned gene objects for given species, support taxonomy ids for now, e.g. species=9606, species=9606,10090,10116 (default)"
+                        }
+                    ]
+                },
+
+                {
+                    "MethodName": "Gene query service by genome interval",
+                    "Synopsis": "Make gene query by genome interval and return genes within that region. Support JSONP and CORS as well.",
+                    "HTTPMethod": "GET",
+                    "URI": "/api/v2/interval",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "q",
+                            "Type": "string",
+                            "Required": "Y",
+                            "Description": "genome interval in format of \"chr#:start-end\", e.g., chrX:151,073,054-151,383,976 (comma allowed)"
+                        },
+                        {
+                            "Name": "species",
+                            "Type": "integer",
+                            "Description": "specify the species by taxonomy id, e.g., 9606,10090,10116."
+                        },
+                        {
+                            "Name": "fields",
+                            "Type": "string",
+                            "Description": "the fields of returned gene objects (default is \"symbol,name,taxid,entrezgene,ensemblgene\". The supported field names can be found at http://dev.mygene.info/metadata"
+                        }
+                    ]
+                }
+            ]
+        },
+
+        {
+            "name": "MyGene.info gene annotation web services",
+            "methods": [
+                {
+                    "MethodName": "Gene annotation service",
+                    "Synopsis": "Retrieve gene annotation based on Entrez or Ensembl gene id, support JSONP and CORS as well.",
+                    "HTTPMethod": "GET",
+                    "URI": "api/v2/gene/:geneid",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "geneid",
+                            "Type": "string",
+                            "Required": "Y",
+                            "Description": "Entrez or Ensembl gene id, e,g., 1017, ENSG00000170248. A retired Entrez Gene id works too if it is replaced by a new one, e.g., 245794"
+                        },
+                        {
+                            "Name": "fields",
+                            "Type": "string",
+                            "Description": "return only the specified object attributes (support dot notation for \"sub-attributes\"), multiple attributes can be seperated by a comma, e.g., \"filter=name,symbol\", \"filter=name,symbol,refseq.rna\""
+                        },
+                        {
+                            "Name": "callback",
+                            "Type": "string",
+                            "Description": "you can pass a \"callback\" parameter to make a JSONP call."
+                        }
+                    ]
+                },
+
+                {
+                    "MethodName": "Gene annotation service via POST",
+                    "Synopsis": "Make gene queries in batch for a list of Entrez or Ensembl gene ids",
+                    "HTTPMethod": "POST",
+                    "URI": "api/v2/gene",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "ids",
+                            "Type": "string",
+                            "Required": "Y",
+                            "Description": "multiple geneids seperated by comma, e.g., \"ids=1017,1018\" or \"ids=695,ENSG00000123374\". Note that currently we only take the input ids up to 1000 maximum, the rest will be omitted."
+                        },
+                        {
+                            "Name": "scopes",
+                            "Type": "string",
+                            "Description": "specify one or more fields (separated by comma) as the search \"scope\", e.g., \"scopes=entrezgene\", \"scopes=entrezgene,ensemblgene\" "
+                        },
+                        {
+                            "Name": "fields",
+                            "Type": "string",
+                            "Description": "return only the specified object attributes, e.g., \"fields=name,symbol\", \"filter=name,symbol,refseq.rna\" (same as the GET request above)"
+                        },
+                        {
+                            "Name": "species",
+                            "Type": "string",
+                            "Description": "filter the returned gene objects for given species, support taxonomy ids for now, e.g. species=9606, species=9606,10090,10116 (default)"
+                        }
+                    ]
+                }
+
+            ]
+        }
+    ]
+}
+
+
