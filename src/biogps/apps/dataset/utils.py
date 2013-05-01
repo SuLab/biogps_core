@@ -28,7 +28,6 @@ from pyes import (
 from random import choice
 from StringIO import StringIO
 import csv
-import numpy as np
 import types
 import urllib
 
@@ -496,6 +495,8 @@ class DatasetQuery():
         """Return NumPy correlation matrix for provided ID, reporter,
            and correlation coefficient
         """
+        import numpy as np
+
         def pearsonr(v, m):
             # Pearson correlation calculation taken from NumPy's implementation
             v_m = v.mean()
