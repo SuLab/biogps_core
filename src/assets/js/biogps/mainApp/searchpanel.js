@@ -144,10 +144,10 @@ biogps.renderSearchForm = function(containerid){
                 	xtype: 'textfield',
                 	layout:'form',
                 	fieldLabel: "Enter a string",
-                	id: 'genomeinternal_string',
-                	name: 'genomeinternal_string',
+                	id: 'genomeinterval_string',
+                	name: 'genomeinterval_string',
                 	listeners: {render: function(obj){if (obj.container){
-                	                                     obj.container.createChild({tag:'p', html:'example: <a href="javascript:biogps.setSampleQuery({genomeassembly:\'mouse\', genomeinternal_string:\'chrX:151,073,054-151,383,976\'});">chrX:151,073,054-151,383,976</a>'});
+                	                                     obj.container.createChild({tag:'p', html:'example: <a href="javascript:biogps.setSampleQuery({genomeassembly:\'mouse\', genomeinterval_string:\'chrX:151,073,054-151,383,976\'});">chrX:151,073,054-151,383,976</a>'});
                 	                                   }
                 	                                  }},
                 	width: 300,
@@ -394,13 +394,6 @@ biogps.doSearch = function(cfg){
          });
     }
     else{
-        //var searchby = Ext.getCmp('searchformtab').getActiveTab().id;
-        //ignoring empty query
-//        if ((searchby == 'searchbyanno') && (fm.getForm().getValues().query.trim() =='')){
-//            fm.getForm().setValues({query: ''});
-//            return;
-//        }
-
         if (searchby == 'searchbyanno'){
             var query = fm.getForm().getValues().query.trim();
             if (query ==''){
@@ -420,7 +413,6 @@ biogps.doSearch = function(cfg){
         }
 
         fm.getForm().submit({
-//         url:'/',
          url:'/boc/',
          waitMsg:'Searching database...',
          method:'POST',

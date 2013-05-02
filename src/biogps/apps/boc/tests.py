@@ -33,7 +33,7 @@ def test_query_interval():
     #human
     res = c.post(test_url, dict(genomeassembly='human',
                                 searchby='searchbyinterval',
-                                genomeinternal_string="chrX:151,073,054-151,383,976",
+                                genomeinterval_string="chrX:151,073,054-151,383,976",
                                 genomeinterval_unit='Mb'))
     json_ok(res)
     #mouse
@@ -88,14 +88,14 @@ def test_unicode_query():
     # turn off info logging because logging cannot handle unicode when logging is
     # sent to a console during a test
     log = logging.getLogger('biogps_prod')
-    log.setLevel(logging.WARNING)  
-    
+    log.setLevel(logging.WARNING)
+
     res = c.post(test_url, dict(query="基因"))
     ext_ok(res)
-    
+
     res = c.get(test_url+'?query=基因')
     ext_ok(res)
-    
-    log.setLevel(logging.INFO)  
-    
-    
+
+    log.setLevel(logging.INFO)
+
+
