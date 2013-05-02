@@ -118,6 +118,7 @@ biogps.GeneResultPage = function(config) {
 };
 
 Ext.extend(biogps.GeneResultPage, Ext.Panel, {
+/*
 	renderGeneList: function(){
         var html, g;
 		if(this.rendered){
@@ -154,7 +155,7 @@ Ext.extend(biogps.GeneResultPage, Ext.Panel, {
 
 		}
 	},
-
+*/
     renderGeneList2: function(){
         var taxid_list = [9606, 10090, 10116, 7227, 6239, 7955, 3702, 8364, 9823];
         var prefix_d = {'9606':  'Hs',
@@ -197,7 +198,7 @@ Ext.extend(biogps.GeneResultPage, Ext.Panel, {
             '<table id="generesult_table" class="generesult_table" cellspacing="0">',
             '<thead><tr><th scope="col">no.</th><tpl if="!this.useInlineQuery"><th scope="col">query</th></tpl><th scope="col">symbol</th><th scope="col">id</th><th scope="col" style="max-width:450px;">name</th><th scope="col">homologene</th></tr></thead><tbody>',
             '<tpl for="geneList">',
-                 '<tr class="{[xindex % 2 === 0 ? "even" : "odd"]}"><th scope="row" onclick="biogps.renderGeneReport2(\'{id}\')">{#}</th><tpl if="!this.useInlineQuery"><td onclick="biogps.renderGeneReport2(\'{id}\')">{key}</td></tpl><td onclick="biogps.renderGeneReport2(\'{id}\')">{symbol}</td><td onclick="biogps.renderGeneReport2(\'{id}\')">{id}</td><td style="max-width:450px;" onclick="biogps.renderGeneReport2(\'{id}\')">{name}</td><td class="homologene_td">{[this.fmtHomologene(values)]}</td></tr>',
+                 '<tr class="{[xindex % 2 === 0 ? "even" : "odd"]}"><th scope="row" onclick="biogps.renderGeneReport2(\'{id}\')">{#}</th><tpl if="!this.useInlineQuery"><td onclick="biogps.renderGeneReport2(\'{id}\')">{query}</td></tpl><td onclick="biogps.renderGeneReport2(\'{id}\')">{symbol}</td><td onclick="biogps.renderGeneReport2(\'{id}\')">{id}</td><td style="max-width:450px;" onclick="biogps.renderGeneReport2(\'{id}\')">{name}</td><td class="homologene_td">{[this.fmtHomologene(values)]}</td></tr>',
             '</tpl>',
             '</tbody></table>',
             '<div id="temp_for_notfound"></div>',

@@ -78,10 +78,8 @@ biogps.Gene = function(config) {
 Ext.extend(biogps.Gene, Ext.util.Observable, {
     load: function(id){
         //load gene object from remote service
-        //https://biogps-dev.gnf.org/service/getgeneidentifiers/?geneid=106953&format=json
         biogps.callRemoteService({
-                                  //url: '/service/getgeneidentifiers/?format=json&geneid=' + (id || this.id),
-                                  url: '/boc/getgeneidentifiers/?format=json&geneid=' + (id || this.id),
+                                  url: '/boe/getgeneidentifiers/?format=json&geneid=' + (id || this.id),
                                   fn: function(st){
                                         Ext.apply(this, st.reader.jsonData);
                                         this.fireEvent('load', this);
@@ -111,7 +109,7 @@ Ext.extend(biogps.Gene, Ext.util.Observable, {
                 var gene_list = this[species_list[i]];
                 if (isArray(gene_list)){
                     for (var j=0; j<gene_list.length; j++) {
-                        if ((gene_list[j].EntrezGene == this.EntryGeneID) || (gene_list[j].EnsemblGene == this.EntryGeneID)){
+                        if ((gene_list[j].entrezgene == this.EntryGeneID) || (gene_list[j].ensemblgene == this.EntryGeneID)){
                             return gene_list[j];
                         }
                     }
@@ -304,7 +302,7 @@ Ext.extend(biogps.Plugin, Ext.util.Observable, {
         this.idx_filter_separator='.';       // e.g., {{MGI.1}}
         this.value_field_separator=':';      // e.g., "MGI:104772"
 
-        var k = kwd.trim();
+        var k = kwd.trim().toLowerCase();
         var _idx_filter = null;
         if (k.split(this.idx_filter_separator).length == 2){
             //support for something like "{{MGI:2}}"
