@@ -30,7 +30,7 @@ class MyGeneInfo():
         self.step = 10000
 
         self.default_species = ','.join([str(x) for x in taxid_d.values()])
-        self.defautl_fields = ','.join(['symbol','name','taxid','entrezgene', 'ensemblgene', 'homologene'])
+        self.default_fields = ','.join(['symbol','name','taxid','entrezgene', 'ensemblgene', 'homologene'])
         self.id_scopes = ','.join([
             "accession",
             "alias",
@@ -133,7 +133,7 @@ class MyGeneInfo():
             kwargs = {}
             kwargs['q'] = ','.join(_query)
             kwargs['scopes'] = self.id_scopes
-            kwargs['fields'] = self.defautl_fields
+            kwargs['fields'] = self.default_fields
             kwargs['size'] = 1000
             kwargs['species'] = self.default_species
             _res = self._post(_url, kwargs)
@@ -158,7 +158,7 @@ class MyGeneInfo():
         if query:
             kwargs = {}
             kwargs['q'] = query
-            kwargs['fields'] = self.defautl_fields
+            kwargs['fields'] = self.default_fields
             kwargs['species'] = self.default_species
             kwargs['size'] = 1000   #max 1000 hits returned
             _url = self.url + '/query'
@@ -178,7 +178,7 @@ class MyGeneInfo():
             kwargs = {}
             kwargs['q'] = query
             kwargs['species'] = species
-            kwargs['fields'] = self.defautl_fields
+            kwargs['fields'] = self.default_fields
             kwargs['size'] = 1000   #max 1000 hits returned
             _url = self.url + '/query'
             res = self._get(_url, kwargs)
@@ -378,13 +378,64 @@ def do_query(params):
 
     return res
 
+def _parse_interval_query(query):
+    '''Check if the input query string matches interval search regex,
+       if yes, return a dictionary with three key-value pairs:
+          chr
+          gstart
+          gend
+        , otherwise, return None.
+    '''
+    pattern = r'chr(?P<chr>\w+):(?P<gstart>[0-9,]+)-(?P<gend>[0-9,]+)'
+    interval_query = {}
+    if query:
+        mat = re.search(pattern, query, re.IGNORECASE)
+        if mat:
+            interval_query = mat.groupdict()
+            mat2 = re.search('species:(?P<species>\w+)', query, re.IGNORECASE)
+            if mat2:
+                species = mat2.groupdict().get('species', None)
+                if species in taxid_d:
+                    interval_query['species'] = species
+    return interval_query
+
+
+def do_query2(params):
+    _query = params.get('query', '').strip()
+    if _query:
+        res = {}
+        bs = MyGeneInfo()
+
+        interval_query_params = _parse_interval_query(_query)
+        if interval_query_params:
+            if 'species' not in interval_query_params:
+                res = {'success': False, 'error': 'Need to specify a valid "species" parameter, e.g., "species:human".'}
+            else:
+                query ='chr%(chr)s:%(gstart)s-%(gend)s' % interval_query_params
+                res = bs.query_by_interval(query, interval_query_params['species'])
+        else:
+            with_wildcard = _query.find('*') != -1 or _query.find('?') != -1
+            multi_terms = len(_query.split('\n')) > 1
+            if with_wildcard and multi_terms:
+                res = {'success': False, 'error': "Please do wildcard query one at a time."}
+            elif multi_terms:
+                #do id query
+                res = bs.query_by_id(_query)
+            else:
+                #do keyword query
+                res = bs.query_by_keyword(_query)
+    else:
+        res = {'success': False, 'error': 'Invalid input parameters!'}
+
+    return res
+
 
 @allowedrequestmethod('POST', 'GET')
 def query(request):
     if request.method == 'GET':
-        res = do_query(request.GET)
+        res = do_query2(request.GET)
     else:
-        res = do_query(request.POST)
+        res = do_query2(request.POST)
 
     return JSONResponse(res)
 
