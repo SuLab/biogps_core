@@ -648,6 +648,16 @@ biogps.dispatcher_by_hash = function(hash){
 	   			}
                 biogps.setTitle(cmd);
 				break;
+            case 'search':
+                _query = params['query'];
+                if (_query){
+                    var searchform = Ext.get('qsearch_form');
+                    searchform.dom.query.value = _query;
+                        biogps.doSearch({'query': _query,
+                                         'target': searchform.query.id});
+                }
+                biogps.setTitle(cmd);
+                break;
 			case 'searchresult':
                 if (biogps.resultpage){
 				    _reuse_exist_tab('result_panel');
