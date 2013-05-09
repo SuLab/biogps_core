@@ -413,7 +413,7 @@ biogps.doSearch = function(cfg){
         }
 
         fm.getForm().submit({
-         url:'/boc/',
+         url:'/boe/',
          waitMsg:'Searching database...',
          method:'POST',
          timeout:120,
@@ -446,6 +446,56 @@ biogps.doSearch = function(cfg){
     }
 };
 
+
+biogps.doSearch2 = function(cfg){
+    //do the actual search
+    var query = cfg.query;
+    //TODO: validate query here
+    if (query.length>biogps.MAX_QUERY_LENGTH) {
+        //failed for large query.
+         Ext.MessageBox.show({ title: 'Error',
+                               msg: String.format('Your query is too large (>{0}k characters). Modify your query and try again.', biogps.MAX_QUERY_LENGTH/1000),
+                               buttons: Ext.Msg.OK,
+                               fn: setFocus,
+                               icon: Ext.MessageBox.ERROR});
+         return;
+    }
+
+    var target = cfg.target;
+    setFocus = function(){
+        if (target){
+            var _target_el = Ext.get(target);
+            if (_target_el) _target_el.focus();
+        }
+    }
+
+    if (query){
+        Ext.MessageBox.wait('Searching database...', 'Please wait...');
+        biogps.callRemoteService({
+            url: '/boe/',
+            params: {query: query},
+            method: 'POST',
+            fn: function(st){
+                biogps.st = st;
+                var result =  st.reader.jsonData.data;
+                Ext.MessageBox.hide();
+                if (result.geneList && result.geneList.length==0){
+                    Ext.MessageBox.show({ title: 'Not found',
+                                          msg: 'Your query does not return any record. Try again.',
+                                          buttons: Ext.Msg.OK,
+                                          fn: setFocus,
+                                          icon: Ext.MessageBox.WARNING});
+                }
+                else{
+                    biogps.genelist_panel.loadGeneList(result);
+                    biogps.renderSearchResult('resultpanel', 'center_panel', result)
+                }
+            }
+        });
+    }
+}
+
+/*
 biogps.setSampleQuery = function(cfg){
 //	var fm = Ext.getCmp('searchform');
 //	if (fm){
@@ -555,3 +605,4 @@ biogps.renderFeedBox = function(container){
 	});
 	feedbox.render(feedbox_container);
 };
+*/

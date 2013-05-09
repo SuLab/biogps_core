@@ -209,6 +209,28 @@ coreDispatcher = {
         }
     },
 
+    doSearch2: function(form, evt){
+    //Submit quick search form
+        if (evt)
+            evt.cancelBubble=true;
+        var _query = form.query.value.trim();
+        if (_query != ''){
+            this.delayedExecute(function(){
+                biogps.Messenger.on('genelistrendered', function(){
+                    coreDispatcher.hideWelcome();
+                    biogps.clearListeners(biogps.Messenger, 'genelistrendered');
+                });
+                biogps.doSearch2({query: _query,
+                                  target: form.query.id
+                });
+            });
+        }
+        else{
+            form.query.value = '';
+            form.query.focus();
+        }
+    },
+
     gotoSearch: function(evt){
         //Goto advanced search form.
         if (evt)

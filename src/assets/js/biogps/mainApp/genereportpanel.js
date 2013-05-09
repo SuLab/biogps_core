@@ -1347,7 +1347,7 @@ biogps.GeneReportPage = function(config) {
 
 
     this.store = new Ext.data.JsonStore({
-        url: '/boc/getgeneidentifiers/?geneid='+this.geneid+'&format=json',
+        url: '/boe/getgeneidentifiers/?geneid='+this.geneid+'&format=json',
 		fields: [],
 		autoLoad: true
 	});

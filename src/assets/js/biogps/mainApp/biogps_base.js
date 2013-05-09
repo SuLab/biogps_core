@@ -611,7 +611,7 @@ biogps.dispatcher_by_hash = function(hash){
             case 'iphone':
 				biogps.showInfoPage(cmd);
                 break;
-			case 'search':
+			case 'search_disabled':
 				var _qtype;
 				var _query;
 	   			if (params['qtype'] =='keyword'){
@@ -649,8 +649,10 @@ biogps.dispatcher_by_hash = function(hash){
                 biogps.setTitle(cmd);
 				break;
 			case 'searchresult':
-				_reuse_exist_tab('result_panel');
-                biogps.setTitle(cmd);
+                if (biogps.resultpage){
+				    _reuse_exist_tab('result_panel');
+                    biogps.setTitle(cmd);
+                }
 				break;
 			case 'genereport':
 				var id = params['id'];

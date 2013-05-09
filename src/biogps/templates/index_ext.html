@@ -209,15 +209,18 @@ coreDispatcher.dispatch();
             			        <h4>Example Searches</h4>
             			        <div class="smallNote">(click to try these samples)</div>
             			        <ul>
+                                    <li><a href="#" onClick="coreDispatcher.useSampleSearch('BTK');return false;">Gene Symbol</a></li>
                 			        <li><a href="#" onClick="coreDispatcher.useSampleSearch('CDK2\nCDK3');return false;">Gene Symbol(s)</a></li>
                 			        <li><a href="#" onClick="coreDispatcher.useSampleSearch('CDK?');return false;">Wildcard queries</a></li>
                 			        <li><a href="#" onClick="coreDispatcher.useSampleSearch('GO:0006275');return false;">Gene Ontology</a></li>
                 			        <li><a href="#" onClick="coreDispatcher.useSampleSearch('1007_s_at\n1053_at\n117_at\n121_at\n1255_g_at\n1294_at\n1316_at\n1320_at\n1405_i_at\n1431_at');return false;">Affymetrix IDs</a></li>
                 			        <li><a href="#" onClick="coreDispatcher.useSampleSearch('IPR008351');return false;">Interpro</a></li>
+                                    <li><a href="#" onClick="coreDispatcher.useSampleSearch('chr1:151,073,054-151,383,976 and species:human');return false;">Genomic interval</a></li>
+
             			        </ul>
             			    </div>
                 			<div id="qsearch_box" class="roundBoxBlue">
-                				<form id="qsearch_form" action="javascript:void(null)" method="POST" onsubmit="coreDispatcher.doSearch(this,event);return false;">
+                				<form id="qsearch_form" action="javascript:void(null)" method="POST" onsubmit="coreDispatcher.doSearch2(this,event);return false;">
                 					<input type="hidden" name="qtype" value="symbolanno" />
                 					<textarea id="qsearch_query" name="query" class="x-form-textarea x-form-field x-form-focus"></textarea>
                 					<br />
@@ -228,10 +231,10 @@ coreDispatcher.dispatch();
                 				</form>
                 			</div>
                 		</div>
-                		<a class="advanced_link" href="#" onClick="coreDispatcher.gotoSearch();return false;" name="Goto Advanced Search">
+                		<!--<a class="advanced_link" href="#" onClick="coreDispatcher.gotoSearch();return false;" name="Goto Advanced Search">
             			    <div>Advanced Search &raquo;</div>
             			    <div class="smallNote">(keyword, interval, etc.)</div>
-            			</a>
+            			</a>-->
                 		<script>document.getElementById('qsearch_query').focus();</script>
                     	<div class="clear"></div>
                 	</div>
