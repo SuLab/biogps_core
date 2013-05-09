@@ -58,11 +58,11 @@ biogps.renderMainUI = function(){
                 activeTab:0,
                 defaults: {autoScroll:true},
                 items:[{
-                    contentEl:'searchpanel',
-                    id: 'search_panel',
-                    title: 'Search',
-                    autoScroll:true
-                },{
+                //     contentEl:'searchpanel',
+                //     id: 'search_panel',
+                //     title: 'Search',
+                //     autoScroll:true
+                // },{
                     contentEl:'resultpanel',
                     name: 'result_panel',
                     id: 'result_panel',
@@ -150,7 +150,7 @@ biogps.renderMainUI = function(){
 		}
     },this);
 
-    biogps.renderSearchForm('searchpanel');
+//    biogps.renderSearchForm('searchpanel');
 
 //    biogps.renderFeedBox(Ext.getCmp('col_info').body);
 //    biogps.renderTipBox(Ext.getCmp('col_info').body);
