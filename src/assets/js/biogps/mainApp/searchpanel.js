@@ -353,7 +353,7 @@ biogps.renderSearchForm = function(containerid){
 };
 
 
-biogps.doSearch = function(cfg){
+biogps.doSearch_v1 = function(cfg){
     //do the actual search
 
     //mark a new search is started, useful for selenium test.
@@ -447,7 +447,7 @@ biogps.doSearch = function(cfg){
 };
 
 
-biogps.doSearch2 = function(cfg){
+biogps.doSearch = function(cfg){
     //do the actual search
     var query = cfg.query;
     //TODO: validate query here

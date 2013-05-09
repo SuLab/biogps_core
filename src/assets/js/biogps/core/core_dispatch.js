@@ -181,7 +181,7 @@ coreDispatcher = {
         }
     },
 
-    doSearch: function(form, evt){
+    doSearch_v1: function(form, evt){
     //Submit quick search form
         if (evt)
             evt.cancelBubble=true;
@@ -209,7 +209,7 @@ coreDispatcher = {
         }
     },
 
-    doSearch2: function(form, evt){
+    doSearch: function(form, evt){
     //Submit quick search form
         if (evt)
             evt.cancelBubble=true;
@@ -220,7 +220,7 @@ coreDispatcher = {
                     coreDispatcher.hideWelcome();
                     biogps.clearListeners(biogps.Messenger, 'genelistrendered');
                 });
-                biogps.doSearch2({query: _query,
+                biogps.doSearch({query: _query,
                                   target: form.query.id
                 });
             });
