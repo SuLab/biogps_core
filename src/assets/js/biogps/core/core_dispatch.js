@@ -54,9 +54,13 @@ coreDispatcher = {
         if (!(cmd && cmd.toLowerCase)) return false;
 
         cmd = cmd.toLowerCase();
-        var validMainUICmd = ['search', 'searchresult', 'genereport',
-                                'mystuff', 'pluginlibrary',
-                                'about', 'help', 'faq', 'downloads', 'terms'];
+        // if (cmd=='search' || (cmd == 'searchresult' && !biogps.resultpage)){
+        //     return false;
+        // }
+        //var validMainUICmd = ['search', 'searchresult', 'genereport',
+        var validMainUICmd = ['genereport',
+                              'mystuff', 'pluginlibrary',
+                              'about', 'help', 'faq', 'downloads', 'terms'];
         for (var i=0; i<validMainUICmd.length; i++){
             if (cmd == validMainUICmd[i]) return true;
         }
