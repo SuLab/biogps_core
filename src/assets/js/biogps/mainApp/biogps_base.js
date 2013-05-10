@@ -663,6 +663,10 @@ biogps.dispatcher_by_hash = function(hash){
 				    _reuse_exist_tab('result_panel');
                     biogps.setTitle(cmd);
                 }
+                else{
+                    window.location = '/#goto=welcome';
+                }
+
 				break;
 			case 'genereport':
 				var id = params['id'];
