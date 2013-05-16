@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block blockbots %}{% endblock %}
+
+{% block title %}
+{{ title }} | BioGPS
+{% endblock %}
+
+{% block branding %}
+{{ title }}
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
+{% block header %}{% endblock %}
+{% block content_title %}{% endblock %}
+
+{% block breadcrumbs %}
+        <div class="breadcrumbs">
+            <a href="/">Home</a> &rsaquo;
+            {% if breadcrumb %}
+                <a href="/{{ breadcrumb }}">{{ breadcrumb|capfirst }}</a> &rsaquo;
+            {% endif %}
+            {{ title|escape }}
+        </div>
+{% endblock %}
+
+{% block content %}
+{{ content }}
+{% endblock %}

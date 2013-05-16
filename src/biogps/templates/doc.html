@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} BioGPS API Doc {% endblock %}
+
+{% block branding %}
+BioGPS API Doc
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
+
+{% block content %}
+
+<table>
+{% for d in doc_li %}
+	<tr><td style="vertical-align: top"><b>{{ d.obj }}</b></td> <td><pre>{{d.doc}}</pre></td></tr>
+{% endfor %}
+</table>
+{% endblock %}
