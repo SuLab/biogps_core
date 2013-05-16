@@ -316,11 +316,21 @@ Ext.extend(biogps.GeneResultPage, Ext.Panel, {
 
     toggle_species: function(cb, evt){
         $(cb).prev().attr('checked', !$(cb).prev().attr('checked'));
+        biogps.resultpage.updateSpecies();
+        return false;
+    },
+
+    updateSpecies: function(){
         var species_selected = [];
         $("input[name='generesult_species_list']:checked").each(function(){species_selected.push($(this).val());});
-        biogps.resultpage.show_species = species_selected;
+        this.show_species = species_selected;
         biogps.usrMgr.profile.defaultspecies = species_selected;
-        biogps.resultpage.renderGeneList3();
+        this.renderGeneList3();
+    },
+
+    selectAllSpecies: function(el, evt){
+        $("input[name='generesult_species_list']").attr('checked', true);
+        biogps.resultpage.updateSpecies();
         return false;
     },
 
@@ -385,10 +395,15 @@ Ext.extend(biogps.GeneResultPage, Ext.Panel, {
             '<tpl for="this.species_list">',
                 '<tr><td><input type="checkbox" {checked} name="generesult_species_list" value="{species}" onclick="javascript:biogps.resultpage.toggle_species(this, event);"><a href="javascript:void(null);" onclick="javascript:biogps.resultpage.toggle_species(this, event);">{species}</a>&nbsp;&nbsp;</td><td>({count})&nbsp;&nbsp;&nbsp;&nbsp;</td><tr>',
             '</tpl>',
+            '<tr><td>',
+                '<a href="javascript: void(null);" onclick="javascript:biogps.resultpage.selectAllSpecies(this, event);">Select all</a>',
+            '</td></tr>',
+            '<tr><td>',
+                '<a href="javascript: void(null);" onclick="javascript:biogps.resultpage.saveSpeciesSelection(this, event);">Remember current species selection</a>',
+            '</td></tr>',
             '<tbody>',
             '</form>',
             '</table>',
-            '<a href="javascript: void(null);" onclick="javascript:biogps.resultpage.saveSpeciesSelection(this, event);">Remember current species selection</a>',
             '</div>',
 
             '<table id="generesult_table" class="generesult_table" cellspacing="0">',
