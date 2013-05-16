@@ -41,7 +41,12 @@ biogps.GeneResultPage = function(config) {
 	this.start = this.resultPerPage*(this.currentPage-1) + 1;
 	this.end = Math.min(this.totalCount, this.start + this.resultPerPage -1);
 	this.totalPage = Math.ceil(this.totalCount/this.resultPerPage);
-    this.default_show_species = ['human', 'mouse', 'rat'];
+    if (biogps.usrMgr.profile && biogps.usrMgr.profile.defaultspecies){
+        this.show_species = biogps.usrMgr.profile.defaultspecies;
+    }
+    else{
+        this.show_species = ['human', 'mouse', 'rat'];
+    }
 
 	biogps.GeneResultPage.superclass.constructor.call(this, {
 		border: false
@@ -314,12 +319,13 @@ Ext.extend(biogps.GeneResultPage, Ext.Panel, {
         var species_selected = [];
         $("input[name='generesult_species_list']:checked").each(function(){species_selected.push($(this).val());});
         biogps.resultpage.show_species = species_selected;
+        biogps.usrMgr.profile.defaultspecies = species_selected;
         biogps.resultpage.renderGeneList3();
         return false;
     },
 
     renderGeneList3: function(){
-        this.show_species = this.show_species || this.default_show_species;
+        //this.show_species = this.show_species || this.default_show_species;
 
         var species_d = this.species_d;
         var species_menu_labels = this.species_menu_labels;
@@ -372,6 +378,7 @@ Ext.extend(biogps.GeneResultPage, Ext.Panel, {
             'returns {this.gene_count} record{this.plural}:</p>',
 
             '<div id="generesult_species_selector">',
+            '<p>Select species here:</p>',
             '<table class="generesult_species_selector" cellspacing="0">',
             '<form>',
             '<tbody>',
@@ -381,6 +388,7 @@ Ext.extend(biogps.GeneResultPage, Ext.Panel, {
             '<tbody>',
             '</form>',
             '</table>',
+            '<a href="javascript: void(null);" onclick="javascript:biogps.resultpage.saveSpeciesSelection(this, event);">Remember current species selection</a>',
             '</div>',
 
             '<table id="generesult_table" class="generesult_table" cellspacing="0">',
@@ -424,9 +432,11 @@ Ext.extend(biogps.GeneResultPage, Ext.Panel, {
             this.body.update(html, false, function(){
                 var parent_el = Ext.get('result_panel');
                 var tbl = Ext.get('generesult_table');
+                var species_selector = Ext.get('generesult_species_selector');
                 tbl.anchorTo(parent_el, 'tl', [25, 50]);
-                Ext.get('generesult_species_selector').anchorTo(parent_el, 'tl', [650, 50]);
+                species_selector.anchorTo(parent_el, 'tl', [900, 50]);
                 sorttable.makeSortable(tbl.dom);
+
                 biogps.Messenger.fireEvent('genelistrendered');
                 biogps.resultpage.genelistrendered = true;
                 //Goto genereport page directly if search result has just one gene
@@ -441,9 +451,14 @@ Ext.extend(biogps.GeneResultPage, Ext.Panel, {
 
 
         }
+    },
+
+    saveSpeciesSelection: function(el, evt){
+        //save current species selection to user's profile.
+        var species_selected = [];
+        $("input[name='generesult_species_list']:checked").each(function(){species_selected.push($(this).val());});
+        biogps.usrMgr.saveUserOptions({defaultspecies: species_selected});
     }
-
-
 
 
 });
