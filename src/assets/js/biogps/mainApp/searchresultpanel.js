@@ -385,8 +385,11 @@ Ext.extend(biogps.GeneResultPage, Ext.Panel, {
             '<tpl if="this.useInlineQuery">',
             '(<span class="generesult_query">"{query:ellipsis(50)}"</span>) ',
             '</tpl>',
-            'returns {this.gene_count} record{this.plural}:</p>',
-
+            'returns {totalCount} record{this.plural_total}',
+            '<tpl if="this.genelist_filtered">',
+                ', {this.gene_count} record{this.plural} displayed',
+            '</tpl>',
+            ':</p>',
             '<div id="generesult_species_selector">',
             '<p>Select species here:</p>',
             '<table class="generesult_species_selector" cellspacing="0">',
@@ -427,10 +430,12 @@ Ext.extend(biogps.GeneResultPage, Ext.Panel, {
                 compiled: true,
                 disableFormats: false,
                 useInlineQuery: (this.qtype=='keyword' || this.qtype=='interval'),
+                plural_total: this.totalCount > 1?'s':'',
                 plural: displayed_gene_cnt > 1?'s':'',
                 species_list: species_list,
                 gene_list: displayed_gene_list,
                 gene_count: displayed_gene_cnt,
+                genelist_filtered: this.totalCount>displayed_gene_cnt,
                 fmtSpecies: function(values){
                     var tid = values.taxid.toString();
                     var species = species_d[tid];
