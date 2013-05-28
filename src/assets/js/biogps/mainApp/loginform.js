@@ -192,6 +192,10 @@ Ext.extend(biogps.UserManager, Ext.util.Observable, {
         //             to server-side profile for logged in user
         //saving to localstorage requires jStorage.js (http://github.com/andris9/jStorage)
         //For older browser has no localstorage support, it will be quietly ignored.
+        //options.showmsg true/false: show message or not
+        var showmsg = options.showmsg == true;
+        delete options.showmsg;
+
         if (this.is_anonymoususer){
             //save to localstorage
             if ($ && $.jStorage && $.jStorage.storageAvailable()) {
@@ -199,7 +203,9 @@ Ext.extend(biogps.UserManager, Ext.util.Observable, {
                     this.profile[key] = options[key];
                     $.jStorage.set(key, options[key]);
                 }
-                biogps.showmsg('', 'Your options saved locally!' + biogps.dismiss_msg_html, 5);
+                if (showmsg) {
+                    biogps.showmsg('', 'Your options saved locally!' + biogps.dismiss_msg_html, 5);
+                }
             }
         }
         else {
@@ -207,11 +213,8 @@ Ext.extend(biogps.UserManager, Ext.util.Observable, {
             for (var key in options) {
                 this.profile[key] = options[key];
             }
-            this.saveUserProfile()
+            this.saveUserProfile({showmsg: showmsg});
         }
-
-
-
     },
 
 	addSharedLayout: function(layout_id){
