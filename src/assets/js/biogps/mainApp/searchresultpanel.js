@@ -455,18 +455,22 @@ Ext.extend(biogps.GeneResultPage, Ext.Panel, {
             }
         }
         for (species in species_menu_labels){
+            var species_checked;
+            if (isArray(this.show_species)){
+                species_checked = (this.show_species.indexOf(species) != -1)?"checked":"";
+            }
+            else {
+                species_checked = "checked";
+            }
+
             if (species_counts[species]){
-                if (isArray(this.show_species)){
-                    species_counts[species].checked = (this.show_species.indexOf(species) != -1)?"checked":"";
-                }
-                else {
-                    species_counts[species].checked = "checked";
-                }
+                species_counts[species].checked = species_checked;
                 species_list.push(species_counts[species]);
             }
             else{
                 species_list.push({species: species,
                                    label: species_menu_labels[species],
+                                   checked: species_checked,
                                    count: 0});
             }
         }
