@@ -329,6 +329,8 @@ Ext.extend(biogps.GeneResultPage, Ext.Panel, {
         tbl_container = Ext.get('generesult_table_container');
         tbl_container.update(tbl_html);
 
+        this.saveSpeciesSelection();
+
     },
 
     ToggleSelectAllSpecies: function(el, evt){
@@ -480,11 +482,11 @@ Ext.extend(biogps.GeneResultPage, Ext.Panel, {
                 '<tr><td><input type="checkbox" {checked} name="generesult_species_list" value="{species}" onclick="javascript:biogps.resultpage.toggle_species(this, event);"><a href="javascript:void(null);" onclick="javascript:biogps.resultpage.toggle_species(this, event);">{species}</a>&nbsp;&nbsp;</td><td>({count})&nbsp;&nbsp;&nbsp;&nbsp;</td><tr>',
             '</tpl>',
             '<tr><td>',
-                '<a id="xxx" href="javascript: void(null);" onclick="javascript:biogps.resultpage.ToggleSelectAllSpecies(this, event);">Select all</a>',
+                '<a href="javascript: void(null);" onclick="javascript:biogps.resultpage.ToggleSelectAllSpecies(this, event);">Select all</a>',
             '</td></tr>',
-            '<tr><td>',
-                '<a href="javascript: void(null);" onclick="javascript:biogps.resultpage.saveSpeciesSelection(this, event);">Remember current species selection</a>',
-            '</td></tr>',
+            // '<tr><td>',
+            //     '<a href="javascript: void(null);" onclick="javascript:biogps.resultpage.saveSpeciesSelection(this, event);">Remember current species selection</a>',
+            // '</td></tr>',
             '<tbody>',
             '</form>',
             '</table>',
