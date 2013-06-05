@@ -521,7 +521,7 @@ Ext.extend(biogps.GeneResultPage, Ext.Panel, {
             this.body.update(html, false, function(){
                 var parent_el = Ext.get('result_panel');
                 var tbl_container = Ext.get('generesult_table_container');
-                tbl_container.anchorTo(parent_el, 'tl', [25, 15]);
+                tbl_container.anchorTo(parent_el, 'tl', [25, 0]);
                 var tbl_html = biogps.resultpage.renderGeneTable();
                 tbl_container.update(tbl_html, false, function(){
                     var tbl = Ext.get('generesult_table');
