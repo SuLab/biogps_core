@@ -410,7 +410,7 @@ Ext.extend(biogps.Portlet, Ext.ux.ManagedIFrame.Window, {
             }
             else{
                 var _gene = this.gene.getEntryGene();
-                var err_msg = String.format('This plugin is not available for this gene: {0}({1}, {2})', _gene.Symbol,
+                var err_msg = String.format('This plugin is not available for this gene: {0}({1}, {2})', _gene.symbol,
                                                                                                               this.gene.EntrySpecies,
                                                                                                               this.gene.EntryGeneID);
                 this.showError(err_msg);
@@ -835,10 +835,9 @@ biogps.GeneReportMgr = Ext.apply(new Ext.util.MixedCollection(), {
             //if more than one genereport pages, use concatenated gene symbols
             var gene_list = [];
             this.each(function(item){
-//                gene_list.push(item.gene.getEntryGene().Symbol);
                 var g = item.gene.getEntryGene();
                 if (g)
-                    gene_list.push(g.Symbol);
+                    gene_list.push(g.symbol);
                 });
             title = gene_list.join(' , ');
         }
@@ -1358,18 +1357,14 @@ biogps.GeneReportPage = function(config) {
 		store.set('lastused-gene', this.gene);
 		this.addTabs();
 		if (biogps.GeneReportMgr.populateGeneListPanel){
-			//var _gene = this.gene[this.gene.EntrySpecies];
             var _gene = this.gene.getEntryGene();
 			if (_gene){
-				var g = {};
-				g.id = _gene.EntrezGene || _gene.EnsemblGene
-				if (g.id){
-				    g.name = _gene.Description || ''
-				    g.symbol = _gene.Symbol || ''
-				    biogps.genelist_panel.addGene({id: g.id,
-   						  						   symbol:g.symbol,
-   						                           name:g.name,
-        				                           text: g.symbol
+				var gid = _gene.entrezgene || _gene.ensemblgene
+				if (gid){
+				    biogps.genelist_panel.addGene({id: gid,
+   						  						   symbol:_gene.symbol,
+   						                           name:_gene.name,
+        				                           text: _gene.symbol
     					  						   }, true, true);
 				}
 			}
@@ -1405,8 +1400,8 @@ Ext.extend(biogps.GeneReportPage, Ext.Panel, {
             else{
     		    this.removeLoading();
     		    var _gene = this.gene.getEntryGene();
-    			var symbol = _gene.Symbol;
-    			var description = _gene.Description || 'no description';
+    			var symbol = _gene.symbol;
+    			var description = _gene.name || 'no description';
     			if (description.length > 100){
     				description = description.substring(0, 96) + '...'
     			}
