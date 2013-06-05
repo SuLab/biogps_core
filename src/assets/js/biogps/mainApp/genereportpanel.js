@@ -11,7 +11,9 @@ if (Ext.isChrome){
         return cnt;
     }
     biogps.portletGroup.showAll = function(){
-        this.each(function(win) {win.show()});
+        this.each(function(win) {
+            win.show();
+        });
     }
 }else{
     biogps.portletGroup.zseed = 1000;
@@ -155,7 +157,9 @@ biogps.Portlet = function(config) {
         'maximize': function(){biogps.utils.toggleScrollbar(biogps.centerTab.get('report_panel').body, true);},
         'restore': function(){biogps.utils.toggleScrollbar(biogps.centerTab.get('report_panel').body, false);},
         'show':  function(){
-            this.renderSpeciesSelector();
+            if (!this.species_button) {
+                this.renderSpeciesSelector();
+            }
             this.syncLocation();
             this.syncSize();
 

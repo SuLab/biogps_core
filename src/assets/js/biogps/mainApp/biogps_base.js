@@ -548,6 +548,15 @@ _reuse_exist_tab = function(tabid){
 	}
 
 	if (biogps.centerTab.getActiveTab().id == tabid){
+            if (Ext.isChrome && tabid=='report_panel') {
+                    //a workaround for Chrome bug #246755
+                    //https://code.google.com/p/chromium/issues/detail?id=246755
+                    if (biogps.portletGroup && biogps.portletGroup.getSize) {
+                        if (biogps.portletGroup.getSize()>0){
+                            biogps.portletGroup.showAll();
+                        }
+                    }
+            }
 		return true;
 	}
 	var tab = biogps.centerTab.getItem(tabid);
@@ -555,6 +564,15 @@ _reuse_exist_tab = function(tabid){
 		biogps.centerTab.suspendEvents();    //avoid to fire "tabchange" event again.
 		biogps.centerTab.setActiveTab(tabid);
 		biogps.centerTab.resumeEvents();
+            if (Ext.isChrome && tabid=='report_panel') {
+                    //a workaround for Chrome bug #246755
+                    //https://code.google.com/p/chromium/issues/detail?id=246755
+                    if (biogps.portletGroup && biogps.portletGroup.getSize) {
+                        if (biogps.portletGroup.getSize()>0){
+                            biogps.portletGroup.showAll();
+                        }
+                    }
+            }
 		return true;
 	}
 	return false;
