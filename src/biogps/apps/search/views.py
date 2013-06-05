@@ -21,7 +21,7 @@ def status(request):
 
 def _handle_commom_params(params, types=None):
     '''handles common params from QueryDict <params> (e.g. request.GET).'''
-    q = params.get('q', None)
+    q = params.get('q', "")
 
     # Figure out the type(s) of objects we're looking for
     if types is None:
@@ -43,8 +43,7 @@ def _handle_commom_params(params, types=None):
     # Ensure types finishes as an array
     if types is not None:
         types = [x.strip() for x in types.split(',')]
-
-    # Handle tag and species filtering
+ # Handle tag and species filtering
     _filters = ['tag', 'species']
     filter_by = {}
     for f in _filters:
