@@ -65,7 +65,9 @@ class Command(BaseCommand):
 
         def inner_run():
             msg = 'Running %s server on "%s:%s"...\n' % (CherryPyWSGIServer.version if not options['use_werkzeug'] else "Werkzeug", options['host'], options['port'])
-            for attr in ['DATABASE_ENGINE', 'DATABASE_NAME', 'DEBUG', 'RELEASE_MODE']:
+            for attr in ['ENGINE', 'NAME', "HOST"]:
+                msg += '  DB_%s:  %s\n' % (attr, settings.DATABASES['default'][attr])
+            for attr in ['DEBUG', 'RELEASE_MODE']:
                 msg += '  %s:  %s\n' % (attr, getattr(settings, attr))
             if not options['use_werkzeug']:
                 msg += '  # threads:  %s\n' % options['num_threads']
@@ -82,7 +84,7 @@ class Command(BaseCommand):
                     server.stop()
             else:
                 run_simple(options['host'], options['port'], app,
-                           use_reloader=True, use_debugger=True)
+                           threaded=True, use_reloader=True, use_debugger=True)
 
         if not options['use_werkzeug'] and options['use_reloader']:
             os.environ.get('WERKZEUG_RUN_MAIN') == 'true'
@@ -92,7 +94,7 @@ class Command(BaseCommand):
             test_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             test_socket.bind((options['host'], options['port']))
             test_socket.close()
-            run_with_reloader(inner_run, extra_files=[os.path.join(settings.ROOT_PATH, 'src/deploy/biogps.wsgi')], interval=0.1)
+            run_with_reloader(inner_run, extra_files=[os.path.join(settings.ROOT_PATH, 'src/deploy/biogps.wsgi')], interval=1)
         else:
             inner_run()
 
