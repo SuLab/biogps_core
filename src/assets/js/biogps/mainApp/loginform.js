@@ -70,7 +70,7 @@ Ext.extend(biogps.UserManager, Ext.util.Observable, {
 	},
 
     set_defaultspecies_for_anonymoususer: function(){
-        if ($ && $.jStorage && $.jStorage.storageAvailable()) {
+        if (window.$ && $.jStorage && $.jStorage.storageAvailable()) {
             var defaultspecies = $.jStorage.get('defaultspecies');
             if (defaultspecies){
                 this.profile.defaultspecies = defaultspecies;
