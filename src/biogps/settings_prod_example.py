@@ -8,7 +8,12 @@ RELEASE_MODE = 'prod'   #available values: dev, prod, maintenance
 #RELEASE_MODE = 'maintenance'   # uncomment this line to trigger maintenance mode
 
 ##URL for CouchDB backed Gene query service provider
+#Deprecated using BOESERVICE_URL instead
 BOCSERVICE_URL= 'http://xx.xx.xx.xx'
+
+##URL for ElastisSearch backed Gene query service provider
+BOESERVICE_URL= 'http://xx.xx.xx.xx'
+
 
 ##ElasticSearch server settings
 ES_HOST = ['xx.xx.xx.xx:9500']

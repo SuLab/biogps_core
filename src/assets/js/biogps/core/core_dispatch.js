@@ -54,9 +54,13 @@ coreDispatcher = {
         if (!(cmd && cmd.toLowerCase)) return false;
 
         cmd = cmd.toLowerCase();
-        var validMainUICmd = ['search', 'searchresult', 'genereport',
-                                'mystuff', 'pluginlibrary',
-                                'about', 'help', 'faq', 'downloads', 'terms'];
+        // if (cmd=='search' || (cmd == 'searchresult' && !biogps.resultpage)){
+        //     return false;
+        // }
+        //var validMainUICmd = ['search', 'searchresult', 'genereport',
+        var validMainUICmd = ['genereport',
+                              'mystuff', 'pluginlibrary',
+                              'about', 'help', 'faq', 'downloads', 'terms'];
         for (var i=0; i<validMainUICmd.length; i++){
             if (cmd == validMainUICmd[i]) return true;
         }
@@ -181,7 +185,7 @@ coreDispatcher = {
         }
     },
 
-    doSearch: function(form, evt){
+    doSearch_v1: function(form, evt){
     //Submit quick search form
         if (evt)
             evt.cancelBubble=true;
@@ -202,6 +206,28 @@ coreDispatcher = {
                                  target: form.query.id
                 });
 	        });
+        }
+        else{
+            form.query.value = '';
+            form.query.focus();
+        }
+    },
+
+    doSearch: function(form, evt){
+    //Submit quick search form
+        if (evt)
+            evt.cancelBubble=true;
+        var _query = form.query.value.trim();
+        if (_query != ''){
+            this.delayedExecute(function(){
+                biogps.Messenger.on('genelistrendered', function(){
+                    coreDispatcher.hideWelcome();
+                    biogps.clearListeners(biogps.Messenger, 'genelistrendered');
+                });
+                biogps.doSearch({query: _query,
+                                  target: form.query.id
+                });
+            });
         }
         else{
             form.query.value = '';

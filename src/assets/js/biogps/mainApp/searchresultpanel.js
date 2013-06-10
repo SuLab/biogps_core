@@ -41,6 +41,12 @@ biogps.GeneResultPage = function(config) {
 	this.start = this.resultPerPage*(this.currentPage-1) + 1;
 	this.end = Math.min(this.totalCount, this.start + this.resultPerPage -1);
 	this.totalPage = Math.ceil(this.totalCount/this.resultPerPage);
+    if (biogps.usrMgr.profile && biogps.usrMgr.profile.defaultspecies){
+        this.show_species = biogps.usrMgr.profile.defaultspecies;
+    }
+    else{
+        this.show_species = ['human', 'mouse', 'rat'];
+    }
 
 	biogps.GeneResultPage.superclass.constructor.call(this, {
 		border: false
@@ -112,12 +118,12 @@ biogps.GeneResultPage = function(config) {
 //				' '
 //			]
 	});
-//	this.on('render', this.renderGeneList, this);
-    this.on('render', this.renderGeneList2, this);
+    this.on('render', this.renderGeneList3, this);
 
 };
 
 Ext.extend(biogps.GeneResultPage, Ext.Panel, {
+/*
 	renderGeneList: function(){
         var html, g;
 		if(this.rendered){
@@ -154,7 +160,7 @@ Ext.extend(biogps.GeneResultPage, Ext.Panel, {
 
 		}
 	},
-
+*/
     renderGeneList2: function(){
         var taxid_list = [9606, 10090, 10116, 7227, 6239, 7955, 3702, 8364, 9823];
         var prefix_d = {'9606':  'Hs',
@@ -197,7 +203,7 @@ Ext.extend(biogps.GeneResultPage, Ext.Panel, {
             '<table id="generesult_table" class="generesult_table" cellspacing="0">',
             '<thead><tr><th scope="col">no.</th><tpl if="!this.useInlineQuery"><th scope="col">query</th></tpl><th scope="col">symbol</th><th scope="col">id</th><th scope="col" style="max-width:450px;">name</th><th scope="col">homologene</th></tr></thead><tbody>',
             '<tpl for="geneList">',
-                 '<tr class="{[xindex % 2 === 0 ? "even" : "odd"]}"><th scope="row" onclick="biogps.renderGeneReport2(\'{id}\')">{#}</th><tpl if="!this.useInlineQuery"><td onclick="biogps.renderGeneReport2(\'{id}\')">{key}</td></tpl><td onclick="biogps.renderGeneReport2(\'{id}\')">{symbol}</td><td onclick="biogps.renderGeneReport2(\'{id}\')">{id}</td><td style="max-width:450px;" onclick="biogps.renderGeneReport2(\'{id}\')">{name}</td><td class="homologene_td">{[this.fmtHomologene(values)]}</td></tr>',
+                 '<tr class="{[xindex % 2 === 0 ? "even" : "odd"]}"><th scope="row" onclick="biogps.renderGeneReport2(\'{id}\')">{#}</th><tpl if="!this.useInlineQuery"><td onclick="biogps.renderGeneReport2(\'{id}\')">{query}</td></tpl><td onclick="biogps.renderGeneReport2(\'{id}\')">{symbol}</td><td onclick="biogps.renderGeneReport2(\'{id}\')">{id}</td><td style="max-width:450px;" onclick="biogps.renderGeneReport2(\'{id}\')">{name}</td><td class="homologene_td">{[this.fmtHomologene(values)]}</td></tr>',
             '</tpl>',
             '</tbody></table>',
             '<div id="temp_for_notfound"></div>',
@@ -285,7 +291,266 @@ Ext.extend(biogps.GeneResultPage, Ext.Panel, {
 
 
         }
+    },
+
+    species_d:  {'9606':  'human',
+                 '10090': 'mouse',
+                 '10116': 'rat',
+                 '7227':  'fruitfly',
+                 '6239':  'nematode',
+                 '7955':  'zebrafish',
+                 '3702':  'thale-cress',
+                 '8364':  'frog',
+                 '9823':  'pig'
+                },
+    species_menu_labels:  { 'human': 'H. sapiens (human)',
+                            'mouse': 'M. musculus (mouse)',
+                            'rat': 'R. norvegicus (rat)',
+                            'fruitfly': 'D. melanogaster (fruitfly)',
+                            'nematode': 'C. elegans (nematode)',
+                            'zebrafish': 'D. rerio (zebrafish)',
+                            'thale-cress': 'A. thaliana (thale cress)',
+                            'frog': 'X. tropicalis (frog)',
+                            'pig': 'S. scrofa (pig)'
+                },
+
+    toggle_species: function(cb, evt){
+        $(cb).prev().attr('checked', !$(cb).prev().attr('checked'));
+        biogps.resultpage.updateSpecies();
+        return false;
+    },
+
+    updateSpecies: function(){
+        var species_selected = [];
+        $("input[name='generesult_species_list']:checked").each(function(){species_selected.push($(this).val());});
+        this.show_species = species_selected;
+        biogps.usrMgr.profile.defaultspecies = species_selected;
+        var tbl_html = this.renderGeneTable();
+        tbl_container = Ext.get('generesult_table_container');
+        tbl_container.update(tbl_html);
+
+        this.saveSpeciesSelection();
+
+    },
+
+    ToggleSelectAllSpecies: function(el, evt){
+        var cb_list = $("input[name='generesult_species_list']");
+        if (el.innerHTML=='Select all'){
+            cb_list.attr('checked', true);   //check all
+            el.innerHTML = 'Unselect all';
+        }
+        else{
+            cb_list.attr('checked', false);   //uncheck all
+            el.innerHTML = 'Select all';
+        }
+        biogps.resultpage.updateSpecies();
+        return false;
+    },
+
+    renderGeneTable: function(){
+        var species_d = this.species_d;
+        var species_menu_labels = this.species_menu_labels;
+
+        var displayed_gene_cnt = 0;
+        var displayed_gene_list = [];
+        for (var i=0; i<this.geneList.length; i++){
+            var gene = this.geneList[i];
+            var taxid = gene.taxid.toString();
+            var species = species_d[taxid];
+            this.geneList[i].hide = false;
+            if (isArray(this.show_species)){
+                if(this.show_species.indexOf(species) == -1){
+                    this.geneList[i].hide = true;
+                }
+            }
+            if (!this.geneList[i].hide) {
+                displayed_gene_cnt+=1;
+                displayed_gene_list.push(this.geneList[i]);
+            }
+        }
+
+        var tpl = new Ext.XTemplate(
+            '<p class="generesult_header"><a class="generesult_goback" href="/#goto=welcome" title="Go back to query"></a>Your query ',
+            '<tpl if="this.useInlineQuery">',
+            '(<span class="generesult_query">"{query:ellipsis(50)}"</span>) ',
+            '</tpl>',
+            'returns {totalCount} record{this.plural_total}',
+            '<tpl if="this.genelist_filtered">',
+                ', {this.gene_count} record{this.plural} displayed',
+            '</tpl>',
+            ':</p>',
+
+            '<table id="generesult_table" class="generesult_table" cellspacing="0">',
+            '<thead><tr><th scope="col">no.</th><tpl if="!this.useInlineQuery"><th scope="col">query</th></tpl><th scope="col">symbol</th><th scope="col">id</th><th scope="col" style="max-width:450px;">name</th><th scope="col">species</th></tr></thead><tbody>',
+            '<tpl for="this.gene_list">',
+                '<tpl if="!values.hide">',
+                    '<tr class="{[xindex % 2 === 0 ? "even" : "odd"]}">',
+                        '<th scope="row" onclick="biogps.renderGeneReport2(\'{id}\')">{#}</th>',
+                        '<tpl if="!this.useInlineQuery">',
+                            '<td onclick="biogps.renderGeneReport2(\'{id}\')">{query}</td>',
+                        '</tpl>',
+                        '<tpl if="values.symbol.length &gt; 10">',
+                            '<td style="font-size:10px" onclick="biogps.renderGeneReport2(\'{id}\')">{symbol}</td>',
+                        '</tpl>',
+                        '<tpl if="values.symbol.length &lt;= 10">',
+                            '<td onclick="biogps.renderGeneReport2(\'{id}\')">{symbol}</td>',
+                        '</tpl>',
+                        '<tpl if="values.id.length &gt; 10">',
+                            '<td style="font-size:10px" onclick="biogps.renderGeneReport2(\'{id}\')">{id}</td>',
+                        '</tpl>',
+                        '<tpl if="values.id.length &lt;= 10">',
+                            '<td onclick="biogps.renderGeneReport2(\'{id}\')">{id}</td>',
+                        '</tpl>',
+                        '<td style="max-width:350px;" onclick="biogps.renderGeneReport2(\'{id}\')">{name}</td>',
+                        '<td class="homologene_td" onclick="biogps.renderGeneReport2(\'{id}\')">{[this.fmtSpecies(values)]}</td>',
+                    '</tr>',
+                '</tpl>',
+            '</tpl>',
+            '</tbody></table>',
+            {
+                compiled: true,
+                disableFormats: false,
+                useInlineQuery: (this.qtype=='keyword' || this.qtype=='interval'),
+                plural_total: this.totalCount > 1?'s':'',
+                plural: displayed_gene_cnt > 1?'s':'',
+                gene_list: displayed_gene_list,
+                gene_count: displayed_gene_cnt,
+                genelist_filtered: this.totalCount>displayed_gene_cnt,
+                fmtSpecies: function(values){
+                    var tid = values.taxid.toString();
+                    var species = species_d[tid];
+                    out = String.format('<a title="{0}">{1}</a>', species_menu_labels[species], species);
+                    return out
+                }
+            });
+        var tbl_html = tpl.apply(this);
+        return tbl_html;
+
+
+    },
+
+    renderGeneList3: function(){
+        var species_d = this.species_d;
+        var species_menu_labels = this.species_menu_labels;
+
+        var species_list = [];
+        var species_counts = {}
+        for (var i=0; i<this.geneList.length; i++){
+            var gene = this.geneList[i];
+            var taxid = gene.taxid.toString();
+            var species = species_d[taxid];
+            if (species_counts[species]){
+                species_counts[species].count += 1;
+            }
+            else{
+                species_counts[species] = {species: species,
+                                           label: species_menu_labels[species],
+                                           count: 1};
+            }
+            this.geneList[i].hide = false;
+            if (isArray(this.show_species)){
+                if(this.show_species.indexOf(species) == -1){
+                    this.geneList[i].hide = true;
+                }
+            }
+        }
+        for (species in species_menu_labels){
+            var species_checked;
+            if (isArray(this.show_species)){
+                species_checked = (this.show_species.indexOf(species) != -1)?"checked":"";
+            }
+            else {
+                species_checked = "checked";
+            }
+
+            if (species_counts[species]){
+                species_counts[species].checked = species_checked;
+                species_list.push(species_counts[species]);
+            }
+            else{
+                species_list.push({species: species,
+                                   label: species_menu_labels[species],
+                                   checked: species_checked,
+                                   count: 0});
+            }
+        }
+
+        var tpl = new Ext.XTemplate(
+
+            '<div id="generesult_species_selector">',
+            '<p>Select species here:</p>',
+            '<table class="generesult_species_selector" cellspacing="0">',
+            '<form>',
+            '<tbody>',
+            '<tpl for="this.species_list">',
+                '<tr><td><input type="checkbox" {checked} name="generesult_species_list" value="{species}" onclick="javascript:biogps.resultpage.toggle_species(this, event);"><a href="javascript:void(null);" onclick="javascript:biogps.resultpage.toggle_species(this, event);">{species}</a>&nbsp;&nbsp;</td><td>({count})&nbsp;&nbsp;&nbsp;&nbsp;</td><tr>',
+            '</tpl>',
+            '<tr><td>',
+                '<a href="javascript: void(null);" onclick="javascript:biogps.resultpage.ToggleSelectAllSpecies(this, event);">Select all</a>',
+            '</td></tr>',
+            // '<tr><td>',
+            //     '<a href="javascript: void(null);" onclick="javascript:biogps.resultpage.saveSpeciesSelection(this, event);">Remember current species selection</a>',
+            // '</td></tr>',
+            '<tbody>',
+            '</form>',
+            '</table>',
+            '</div>',
+
+            '<div id="generesult_table_container" style="width: 650px;"></div>',
+
+            '<div id="temp_for_notfound"></div>',
+            '<tpl if="values.notfound">',
+                '<p class="notfound_footer">Found no matches for {[values.notfound.length]} query term{[values.notfound.length>1?"s":""]}:<br />',
+                '<span class="notfound_hint">(Try wildcard query?)</span><br />',
+                '<tpl for="notfound">',
+                '<div class="notfound_term">{.}</div>',
+                '</tpl>',
+                '</p>',
+            '</tpl>',
+            {
+                compiled: true,
+                disableFormats: false,
+                species_list: species_list
+            }
+        );
+
+        if(this.rendered){
+            var html = tpl.apply(this);
+
+            var geneList = this.geneList;
+            this.body.update(html, false, function(){
+                var parent_el = Ext.get('result_panel');
+                var tbl_container = Ext.get('generesult_table_container');
+                tbl_container.anchorTo(parent_el, 'tl', [25, 0]);
+                var tbl_html = biogps.resultpage.renderGeneTable();
+                tbl_container.update(tbl_html, false, function(){
+                    var tbl = Ext.get('generesult_table');
+                    sorttable.makeSortable(tbl.dom);
+                    var species_selector = Ext.get('generesult_species_selector');
+                    species_selector.anchorTo(tbl, 'tl', [700, 5]);
+
+                    biogps.Messenger.fireEvent('genelistrendered');
+                    biogps.resultpage.genelistrendered = true;
+
+                    //Goto genereport page directly if search result has just one gene
+                    if (geneList.length==1){
+                        biogps.renderGeneReport2(geneList[0].id);
+                    }
+                    else{
+                        if (Ext.isIE) Ext.History.add('goto=searchresult');  //A fix for IE, otherwise it will switch back to welcome page after resultpanel is rendered (when search was submitted from welcome page)
+                    }
+                }, this);
+            }, this);
+        }
+    },
+
+    saveSpeciesSelection: function(el, evt){
+        //save current species selection to user's profile.
+        var species_selected = [];
+        $("input[name='generesult_species_list']:checked").each(function(){species_selected.push($(this).val());});
+        biogps.usrMgr.saveUserOptions({defaultspecies: species_selected});
     }
+
 
 });
 
