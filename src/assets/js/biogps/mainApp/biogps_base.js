@@ -1003,7 +1003,7 @@ biogps.PLUGINKEYWORDS_other = [
 {key: "{{chr}}", text: "Chromosome"},
 {key: "{{gstart}}", text: "Genomic Start Position"},
 {key: "{{gend}}", text: "Genomic End Position"},
-{key: "{{aliase}}", text: "Aliase"},
+{key: "{{alias}}", text: "Alias"},
 {key: "{{HGNC}}", text: "HGNC", allowedSpecies: ['human'] },
 {key: "{{HPRD}}", text: "HPRD", allowedSpecies: ['human'] },
 //{key: "{{IMGT/GENE-DB}}", text: "IMGT/GENE-DB"},
