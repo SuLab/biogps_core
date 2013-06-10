@@ -2,6 +2,16 @@
 	TagBox table styles
 	written by TagBox http://www.tagbox.de
 */
+
+
+#generesult_table_container {
+    width: 650px;
+}
+
+#generesult_species_selector{
+    width: 150px;
+}
+
 .generesult_table {
     border-collapse: collapse;
     border: 1px solid #1e4176;

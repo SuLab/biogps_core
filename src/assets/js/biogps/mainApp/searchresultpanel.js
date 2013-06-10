@@ -496,16 +496,18 @@ Ext.extend(biogps.GeneResultPage, Ext.Panel, {
             '</table>',
             '</div>',
 
-            '<div id="generesult_table_container" style="width: 650px;"></div>',
+            '<div id="generesult_table_container"></div>',
 
-            '<div id="temp_for_notfound"></div>',
+            //'<div id="temp_for_notfound"></div>',
             '<tpl if="values.notfound">',
+                '<div id="generesult_footer">',
                 '<p class="notfound_footer">Found no matches for {[values.notfound.length]} query term{[values.notfound.length>1?"s":""]}:<br />',
                 '<span class="notfound_hint">(Try wildcard query?)</span><br />',
                 '<tpl for="notfound">',
                 '<div class="notfound_term">{.}</div>',
                 '</tpl>',
                 '</p>',
+                '</div>',
             '</tpl>',
             {
                 compiled: true,
@@ -528,6 +530,10 @@ Ext.extend(biogps.GeneResultPage, Ext.Panel, {
                     sorttable.makeSortable(tbl.dom);
                     var species_selector = Ext.get('generesult_species_selector');
                     species_selector.anchorTo(tbl, 'tl', [700, 5]);
+                    var footer = Ext.get('generesult_footer');
+                    if (footer) {
+                       footer.anchorTo(tbl_container, 'bl', [0, 5]);
+                    }
 
                     biogps.Messenger.fireEvent('genelistrendered');
                     biogps.resultpage.genelistrendered = true;
