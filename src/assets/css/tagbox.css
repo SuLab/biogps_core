@@ -10,7 +10,6 @@
     color: #363636;
     /*background: #92C428;*/
     background: #fff;
-    margin: 10 10 10 10;
     font-size: 12px;
 }
 .generesult_table caption {
@@ -43,7 +42,6 @@
     /*background: url(/assets/img/mso-hd.gif) repeat;*/
     background: #CAE8EA url(/assets/img/bg_header.jpg) no-repeat;
     color: #4f6b72;
-    /*padding-top:3px;*/
 }
 .generesult_table tbody td a {
     background: transparent;
@@ -91,8 +89,15 @@
     background:#E5F3FF;
 }
 
+.generesult_goback {
+    background: url(/assets/img2/go-back-icon.png) no-repeat;
+    padding-right: 5px;
+    padding-left: 50px;
+    padding-top: 5px;
+    padding-bottom: 20px;
+}
 .generesult_header {
-    padding: 5px 15px 0 15px;
+    padding: 15px 15px 15px 15px;
     font-size: 16px;
 }
 
@@ -101,7 +106,7 @@
 }
 
 .generesult_table .homologene_td {
-	cursor: default;
+	/*cursor: default;*/
 }
 
 .generesult_table .homologene_id {

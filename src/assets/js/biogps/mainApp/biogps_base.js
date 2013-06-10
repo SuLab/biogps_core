@@ -638,7 +638,7 @@ biogps.dispatcher_by_hash = function(hash){
             case 'iphone':
 				biogps.showInfoPage(cmd);
                 break;
-			case 'search':
+			case 'search_disabled':
 				var _qtype;
 				var _query;
 	   			if (params['qtype'] =='keyword'){
@@ -675,9 +675,25 @@ biogps.dispatcher_by_hash = function(hash){
 	   			}
                 biogps.setTitle(cmd);
 				break;
-			case 'searchresult':
-				_reuse_exist_tab('result_panel');
+            case 'search':
+                _query = params['query'];
+                if (_query){
+                    var searchform = Ext.get('qsearch_form');
+                    searchform.dom.query.value = _query;
+                        biogps.doSearch({'query': _query,
+                                         'target': searchform.query.id});
+                }
                 biogps.setTitle(cmd);
+                break;
+			case 'searchresult':
+                if (biogps.resultpage){
+				    _reuse_exist_tab('result_panel');
+                    biogps.setTitle(cmd);
+                }
+                else{
+                    window.location = '/#goto=welcome';
+                }
+
 				break;
 			case 'genereport':
 				var id = params['id'];
@@ -965,14 +981,14 @@ biogps.TAXONOMY_LIST = new Ext.data.SimpleStore({
 });
 
 biogps.PLUGINKEYWORDS_common = [
-{key: "{{EntrezGene}}", text: "Entrez GeneID"},
-{key: "{{Symbol}}", text: "Symbol"},
-{key: "{{EnsemblGene}}", text: "Ensembl GeneID"},
-{key: "{{Unigene}}", text: "UniGene ID"},
-{key: "{{Uniprot}}", text: "Uniprot ID"},
-{key: "{{Refseq_mRNA}}", text: "RefSeq Transcript"},
-{key: "{{Refseq_protein}}", text: "RefSeq Protein"},
-{key: "{{PDB}}", text: "PDB ID"}
+{key: "{{entrezgene}}", text: "Entrez GeneID"},
+{key: "{{symbol}}", text: "Symbol"},
+{key: "{{ensemblgene}}", text: "Ensembl GeneID"},
+{key: "{{unigene}}", text: "UniGene ID"},
+{key: "{{uniprot}}", text: "Uniprot ID"},
+{key: "{{refseqmrna}}", text: "RefSeq Transcript"},
+{key: "{{refseqprotein}}", text: "RefSeq Protein"},
+{key: "{{pdb}}", text: "PDB ID"}
 ];
 biogps.PLUGINKEYWORDS_other = [
 //{key: "{{ApiDB_CryptoDB}}", text: "ApiDB_CryptoDB"},
@@ -987,7 +1003,7 @@ biogps.PLUGINKEYWORDS_other = [
 {key: "{{chr}}", text: "Chromosome"},
 {key: "{{gstart}}", text: "Genomic Start Position"},
 {key: "{{gend}}", text: "Genomic End Position"},
-{key: "{{Aliases}}", text: "Aliases"},
+{key: "{{aliase}}", text: "Aliase"},
 {key: "{{HGNC}}", text: "HGNC", allowedSpecies: ['human'] },
 {key: "{{HPRD}}", text: "HPRD", allowedSpecies: ['human'] },
 //{key: "{{IMGT/GENE-DB}}", text: "IMGT/GENE-DB"},

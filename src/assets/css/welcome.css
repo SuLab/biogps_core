@@ -328,6 +328,11 @@
         font-size: 0.8em;
     }
 
+    #qsearch_form .searchbar input{
+        padding-left: 25px;
+        padding-right: 25px;
+    }
+
 #qsearch_query {
     height: 150px;
     width: 100%;

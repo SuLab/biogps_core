@@ -144,10 +144,10 @@ biogps.renderSearchForm = function(containerid){
                 	xtype: 'textfield',
                 	layout:'form',
                 	fieldLabel: "Enter a string",
-                	id: 'genomeinternal_string',
-                	name: 'genomeinternal_string',
+                	id: 'genomeinterval_string',
+                	name: 'genomeinterval_string',
                 	listeners: {render: function(obj){if (obj.container){
-                	                                     obj.container.createChild({tag:'p', html:'example: <a href="javascript:biogps.setSampleQuery({genomeassembly:\'mouse\', genomeinternal_string:\'chrX:151,073,054-151,383,976\'});">chrX:151,073,054-151,383,976</a>'});
+                	                                     obj.container.createChild({tag:'p', html:'example: <a href="javascript:biogps.setSampleQuery({genomeassembly:\'mouse\', genomeinterval_string:\'chrX:151,073,054-151,383,976\'});">chrX:151,073,054-151,383,976</a>'});
                 	                                   }
                 	                                  }},
                 	width: 300,
@@ -353,7 +353,7 @@ biogps.renderSearchForm = function(containerid){
 };
 
 
-biogps.doSearch = function(cfg){
+biogps.doSearch_v1 = function(cfg){
     //do the actual search
 
     //mark a new search is started, useful for selenium test.
@@ -394,13 +394,6 @@ biogps.doSearch = function(cfg){
          });
     }
     else{
-        //var searchby = Ext.getCmp('searchformtab').getActiveTab().id;
-        //ignoring empty query
-//        if ((searchby == 'searchbyanno') && (fm.getForm().getValues().query.trim() =='')){
-//            fm.getForm().setValues({query: ''});
-//            return;
-//        }
-
         if (searchby == 'searchbyanno'){
             var query = fm.getForm().getValues().query.trim();
             if (query ==''){
@@ -420,8 +413,7 @@ biogps.doSearch = function(cfg){
         }
 
         fm.getForm().submit({
-//         url:'/',
-         url:'/boc/',
+         url:'/boe/',
          waitMsg:'Searching database...',
          method:'POST',
          timeout:120,
@@ -454,6 +446,56 @@ biogps.doSearch = function(cfg){
     }
 };
 
+
+biogps.doSearch = function(cfg){
+    //do the actual search
+    var query = cfg.query;
+    //TODO: validate query here
+    if (query.length>biogps.MAX_QUERY_LENGTH) {
+        //failed for large query.
+         Ext.MessageBox.show({ title: 'Error',
+                               msg: String.format('Your query is too large (>{0}k characters). Modify your query and try again.', biogps.MAX_QUERY_LENGTH/1000),
+                               buttons: Ext.Msg.OK,
+                               fn: setFocus,
+                               icon: Ext.MessageBox.ERROR});
+         return;
+    }
+
+    var target = cfg.target;
+    setFocus = function(){
+        if (target){
+            var _target_el = Ext.get(target);
+            if (_target_el) _target_el.focus();
+        }
+    }
+
+    if (query){
+        Ext.MessageBox.wait('Searching database...', 'Please wait...');
+        biogps.callRemoteService({
+            url: '/boe/',
+            params: {query: query},
+            method: 'POST',
+            fn: function(st){
+                biogps.st = st;
+                var result =  st.reader.jsonData.data;
+                Ext.MessageBox.hide();
+                if (result.geneList && result.geneList.length==0){
+                    Ext.MessageBox.show({ title: 'Not found',
+                                          msg: 'Your query does not return any record. Try again.',
+                                          buttons: Ext.Msg.OK,
+                                          fn: setFocus,
+                                          icon: Ext.MessageBox.WARNING});
+                }
+                else{
+                    biogps.genelist_panel.loadGeneList(result);
+                    biogps.renderSearchResult('resultpanel', 'center_panel', result)
+                }
+            }
+        });
+    }
+}
+
+/*
 biogps.setSampleQuery = function(cfg){
 //	var fm = Ext.getCmp('searchform');
 //	if (fm){
@@ -563,3 +605,4 @@ biogps.renderFeedBox = function(container){
 	});
 	feedbox.render(feedbox_container);
 };
+*/

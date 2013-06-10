@@ -203,6 +203,7 @@ COMPRESS_JS = {
                             'js/jquery/plugins/jquery.metadata.js',
                             'js/jquery/plugins/jquery.cycle.all.latest.js',
                             'js/jquery/plugins/template.js',
+                            'js/jquery/plugins/jstorage.js',
                             ),
         'output_filename': 'js/min/jquery_custom.js'
     }

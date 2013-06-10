@@ -11,7 +11,12 @@ TEST_CASE = 1  # normal dev mode
 RELEASE_MODE = 'dev'   #or dev; prod; maintenance;
 
 ##URL for CouchDB backed Gene query service provider
+#Deprecated using BOESERVICE_URL instead
 #BOCSERVICE_URL = 'http://xx.xx.xx.xx'
+
+##URL for ElastisSearch backed Gene query service provider
+BOESERVICE_URL= 'http://xx.xx.xx.xx'
+
 
 WITH_HTTPS = False  # True if https is allowed, set to False if not, e.g., running from a dev_server
 

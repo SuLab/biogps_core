@@ -12,6 +12,7 @@ urlpatterns = patterns('biogps.www.views',
     url(r'^mystuff/$', 'mystuff', name='mystuff'),
 
     (r'^boc/', include('biogps.apps.boc.urls')),
+    (r'^boe/', include('biogps.apps.boe.urls')),
     (r'^gene/', include('biogps.apps.gene.urls')),
 
     (r'^auth/', include('biogps.apps.auth2.urls')),    #this is through https
