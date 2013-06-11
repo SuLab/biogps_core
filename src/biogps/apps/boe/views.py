@@ -134,14 +134,17 @@ class MyGeneInfo():
             kwargs['q'] = ','.join(_query)
             kwargs['scopes'] = self.id_scopes
             kwargs['fields'] = self.default_fields
-            kwargs['size'] = 1000
+            kwargs['size'] = 1000   #max 1000 hits returned
             kwargs['species'] = self.default_species
             _res = self._post(_url, kwargs)
             gene_list = []
             notfound_list = []
+            error_list = []
             for hit in _res:
                 if hit.get('notfound', False):
                     notfound_list.append(hit['query'])
+                elif hit.get('error', False):
+                    error_list.append(hit['error'])
                 else:
                     gene_list.append(hit)
             self._homologene_trimming(gene_list)
@@ -151,6 +154,8 @@ class MyGeneInfo():
                    "success": True}
             if len(notfound_list) > 0:
                 out["data"]["notfound"] = notfound_list
+            if len(error_list) > 0:
+                out["data"]["error"] = error_list
 
             return out
 
