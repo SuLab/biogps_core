@@ -327,7 +327,10 @@ Ext.extend(biogps.GeneResultPage, Ext.Panel, {
         biogps.usrMgr.profile.defaultspecies = species_selected;
         var tbl_html = this.renderGeneTable();
         tbl_container = Ext.get('generesult_table_container');
-        tbl_container.update(tbl_html);
+        tbl_container.update(tbl_html, false, function(){
+            var tbl = Ext.fly('generesult_table');
+            sorttable.makeSortable(tbl.dom);
+        });
 
         this.saveSpeciesSelection();
 
@@ -526,7 +529,7 @@ Ext.extend(biogps.GeneResultPage, Ext.Panel, {
                 tbl_container.anchorTo(parent_el, 'tl', [25, 0]);
                 var tbl_html = biogps.resultpage.renderGeneTable();
                 tbl_container.update(tbl_html, false, function(){
-                    var tbl = Ext.get('generesult_table');
+                    var tbl = Ext.fly('generesult_table');
                     sorttable.makeSortable(tbl.dom);
                     var species_selector = Ext.get('generesult_species_selector');
                     species_selector.anchorTo(tbl, 'tl', [700, 5]);
