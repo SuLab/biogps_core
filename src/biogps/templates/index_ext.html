@@ -286,7 +286,7 @@ coreDispatcher.dispatch();
                                 <div class="firstentry roundBoxBlue">
                                     <a class="title" href="{{ blog_entries.0.link }}" target="_blank">{{ blog_entries.0.title }}</a>
                                     <span class="author"> &nbsp; by {{ blog_entries.0.author }}</span><br>
-                                    {{ blog_entries.0.summary|striptags|truncatewords:40}}
+                                    {% autoescape off %}{{ blog_entries.0.summary|striptags|truncatewords:40}} {% endautoescape %}
                                     &nbsp;&nbsp;&nbsp;[<a href="{{ blog_entries.0.link }}" target="_blank"><b>view more</b></a>]
                                 </div>
 
