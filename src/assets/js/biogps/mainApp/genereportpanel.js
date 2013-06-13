@@ -73,9 +73,8 @@ biogps.Portlet = function(config) {
                     //loadMask    : {msg: 'Loading...'},
         renderTo: this.container,
 
-        defaultSrc    : '/assets/img/s.gif',   //need to set a dummy value so that the "documentloaded" event will be fired after the first time loading
-                                               //This is a bug in Ext.ux.ManagedIFrame.Window
-
+        defaultSrc    : '/assets/empty.html',   //need to set a dummy value so that the "documentloaded" event will be fired after the first time loading
+                                                //This is a bug in Ext.ux.ManagedIFrame.Window
         tools: [{
 /*            id: 'left',
             handler: function(evt, btn){this.showInfo(btn);},
