@@ -7,7 +7,6 @@ from biogps.utils.helper import (allowedrequestmethod, list_nondup,
                                  is_valid_geneid, assembly_d)
 
 import httplib2
-import urllib
 from urllib2 import urlparse
 import re
 import json
@@ -74,7 +73,7 @@ class MyGeneInfo():
         debug = params.pop('debug', False)
         return_raw = params.pop('return_raw', False)
         if params:
-            _url = url + '?' + urllib.urlencode(params)
+            _url = url + '?' + urlencode(params)
         else:
             _url = url
         res, con = self.h.request(_url)
@@ -91,7 +90,7 @@ class MyGeneInfo():
         debug = params.pop('debug', False)
         return_raw = params.pop('return_raw', False)
         headers = {'content-type': 'application/x-www-form-urlencoded'}
-        res, con = self.h.request(url, 'POST', body=urllib.urlencode(params), headers=headers)
+        res, con = self.h.request(url, 'POST', body=urlencode(params), headers=headers)
         if debug:
             return url, res, con
         if res.status == 404:
