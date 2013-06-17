@@ -1,8 +1,7 @@
 from django.conf import settings
-from django.http import Http404, HttpResponse
+from django.http import Http404
 from django.utils.http import urlencode
-from django.utils.encoding import smart_str
-from biogps.utils.helper import (allowedrequestmethod, list_nondup,
+from biogps.utils.helper import (allowedrequestmethod,
                                  JSONResponse, species_d, taxid_d,
                                  is_valid_geneid, assembly_d)
 
@@ -334,54 +333,6 @@ class MyGeneInfo():
             return out
 
 
-def do_query(params):
-    searchby = params.get('searchby', 'searchbyanno').lower()    # valid values: searchbyanno or searchbyinterval
-
-    if searchby == 'searchbyanno':
-        _query = params.get('query', '').strip()
-        qtype = params.get('qtype', 'symbolanno')
-        qtype = {'symbolanno': 'id',
-                 'keyword': 'keyword'}.get(qtype, None)
-        if not _query or not qtype:
-            res = {'success': False, 'error': 'Invalid input parameters!'}
-        else:
-            with_wildcard = _query.find('*') != -1 or _query.find('?') != -1
-            if with_wildcard and len(_query.split('\n')) > 1:
-                res = {'success': False, 'error': "Please do wildcard query one at a time."}
-            else:
-                bs = MyGeneInfo()
-                res = None
-                if qtype == 'id':
-                    res = bs.query_by_id(_query)
-                elif qtype == 'keyword':
-                    res = bs.query_by_keyword(_query)
-
-
-    elif searchby == 'searchbyinterval':
-        species = params.get('genomeassembly', None)
-        res = {}
-        try:
-            genomeinterval_string = params.get('genomeinterval_string', '')
-            if genomeinterval_string:
-                chr = genomeinterval_string[3:genomeinterval_string.find(':')].lower()
-                start, end = [int(pos.replace(',', '')) for pos in genomeinterval_string[genomeinterval_string.find(':') + 1:].split('-')]
-            else:
-                chr = params.get('genomeinterval_chr', '').strip().lower()
-                unit = params.get('genomeinterval_unit', '').strip()
-                factor = unit_d[unit]
-                start = int(params.get('genomeinterval_start', '').strip()) * factor
-                end = int(params.get('genomeinterval_end', '').strip()) * factor
-        except (ValueError, KeyError):
-            res = {'success': False, 'error': 'Invalid input parameters!'}
-        if not res:
-            bs = MyGeneInfo()
-            query ='chr%s:%s-%s' % (chr, start, end)
-            res = bs.query_by_interval(query, species)
-    else:
-        res = {'success': False, 'error': 'Invalid input parameters!'}
-
-    return res
-
 def _parse_interval_query(query):
     '''Check if the input query string matches interval search regex,
        if yes, return a dictionary with three key-value pairs:
@@ -404,7 +355,7 @@ def _parse_interval_query(query):
     return interval_query
 
 
-def do_query2(params):
+def do_query(params):
     _query = params.get('query', '').strip()
     if _query:
         res = {}
@@ -437,9 +388,9 @@ def do_query2(params):
 @allowedrequestmethod('POST', 'GET')
 def query(request):
     if request.method == 'GET':
-        res = do_query2(request.GET)
+        res = do_query(request.GET)
     else:
-        res = do_query2(request.POST)
+        res = do_query(request.POST)
 
     return JSONResponse(res)
 
