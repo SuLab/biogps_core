@@ -78,7 +78,10 @@ class MyGeneInfo():
         res, con = self.h.request(_url)
         if debug:
             return _url, res, con
-        assert res.status == 200, (_url, res, con)
+        if res.status == 404:
+            raise MyGeneInfo404
+        else:
+            assert res.status == 200, (_url, res, con)
         if return_raw:
             return con
         else:
