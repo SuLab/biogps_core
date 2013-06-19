@@ -568,3 +568,11 @@ def wrap_str(_str, max_len):
     if len_str > max_len and len_str > 3:
         _str = textwrap.wrap(_str, max_len - 3)[0] + '...'
     return _str
+
+
+def alwayslist(value):
+    """If input value if not a list/tuple type, return it as a single value list."""
+    if type(value) in (types.ListType, types.TupleType):
+        return value
+    else:
+        return [value]
