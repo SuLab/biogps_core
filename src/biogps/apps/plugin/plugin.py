@@ -21,7 +21,8 @@ from models import BiogpsPlugin, BiogpsPluginPopularity
 
 from tagging.models import Tag, TaggedItem
 from tagging.utils import calculate_cloud
-from biogps.apps.boc import boc_svc as svc
+#from biogps.apps.boc import boc_svc as svc
+from biogps.apps.boe.views import MyGeneInfo
 
 import logging
 log = logging.getLogger('biogps_prod')
@@ -515,7 +516,7 @@ def _get_value(kwd, gene,
                idx_filter_separator='.',       # e.g., {{MGI.1}}
                value_field_separator=':',      # e.g., "MGI:104772"
                list_separator=','):            # if matching values are a list
-    k = kwd.strip()
+    k = kwd.strip().lower()
     _idx_filter = None
     if len(k.split(idx_filter_separator)) == 2:
         #support for something like "{{MGI:2}}"
@@ -593,9 +594,9 @@ def _plugin_geturl(plugin, gene, mobile=False):
 
 def render_plugin_url(request, pluginid):
     '''
-    URL:  http://biogps-dev.gnf.org/plugin_v1/159/renderurl/?geneid=1017
-          http://biogps-dev.gnf.org/plugin_v1/159/renderurl/?geneid=1017&redirect    -    will re-direct to rendered url
-          http://biogps-dev.gnf.org/plugin_v1/159/renderurl/?geneid=1017&mobile=true    -    use optional mobile_url if provided by the owner
+    URL:  http://biogps.org/plugin/159/renderurl/?geneid=1017
+          http://biogps.org/plugin/159/renderurl/?geneid=1017&redirect    -    will re-direct to rendered url
+          http://biogps.org/plugin/159/renderurl/?geneid=1017&mobile=true    -    use optional mobile_url if provided by the owner
     '''
     geneid = request.GET.get('geneid', '').strip()
     flag_mobile = request.GET.get('mobile', '').lower() in ['1', 'true']
@@ -611,8 +612,11 @@ def render_plugin_url(request, pluginid):
     except BiogpsPlugin.DoesNotExist:
         return ExtError("Plugin does not exist or not belong to you.")
 
-    ds = svc.DataService()
-    g = ds.getgene2(geneid)
+    # ds = svc.DataService()
+    # g = ds.getgene2(geneid)
+    mg = MyGeneInfo()
+    g = mg.get_geneidentifiers(geneid)
+
 
     if not g or len(g['SpeciesList']) == 0:
         return ExtError('Unknown gene id.')

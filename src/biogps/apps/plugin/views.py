@@ -381,12 +381,13 @@ def prepare_breadcrumb(request):
 
 def test_plugin_url(request):
     '''This view is used to test a url template with a given gene.
-       http://biogps-dev.gnf.org/plugin/test?url=http://www.google.com/search?q={{Symbol}}&geneid=1017
-       http://biogps-dev.gnf.org/plugin/test?url=http://www.google.com/search?q={{MGI}}&species=mouse&geneid=1017
+       http://biogps.org/plugin/test?url=http://www.google.com/search?q={{Symbol}}&geneid=1017
+       http://biogps.org/plugin/test?url=http://www.google.com/search?q={{MGI}}&species=mouse&geneid=1017
 
        if species is not provided, all available species are assumed.
     '''
-    from biogps.apps.boc import boc_svc as svc
+    #from biogps.apps.boc import boc_svc as svc
+    from biogps.apps.boe.views import MyGeneInfo
     from biogps.apps.plugin.plugin import PluginUrlRenderError
     from biogps.utils.helper import is_valid_geneid
 
@@ -399,8 +400,11 @@ def test_plugin_url(request):
     if not is_valid_geneid(geneid):
         return json_error('Invalid input parameters!', status=400)
     plugin = BiogpsPlugin(url=url, species=species)
-    ds = svc.DataService()
-    g = ds.getgene2(geneid)
+
+    #ds = svc.DataService()
+    #g = ds.getgene2(geneid)
+    mg = MyGeneInfo()
+    g = mg.get_geneidentifiers(geneid)
 
     if not g or len(g['SpeciesList']) == 0:
         return json_error('Unknown gene id.', status=400)
