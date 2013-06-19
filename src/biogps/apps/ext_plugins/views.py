@@ -6,7 +6,7 @@ from django.template import RequestContext
 from django.template.loader import render_to_string
 from django.http import HttpResponse, HttpResponseBadRequest
 
-from biogps.utils.helper import (docenabled,
+from biogps.utils.helper import (docenabled, alwayslist,
                                is_valid_geneid,
                                GO_CATEGORY,
                                )
@@ -99,7 +99,7 @@ def grDescription(request, geneid=None):
             geneid_li.append(str(gene_obj['entrezgene']))
         ensemblgene = gene_obj.get_ensemblgene()
         if ensemblgene:
-            geneid_li.extend(svc.alwayslist(ensemblgene))
+            geneid_li.extend(alwayslist(ensemblgene))
         d = dict(gene=gene_obj,
                  geneid_str=', '.join(geneid_li))
 
@@ -131,7 +131,7 @@ def grFunction(request, geneid=None):
                 if (godata.get(k, None)):
                     html += '<h2>' + GO_CATEGORY[k] + '</h2>'
                     html += '<ul class="genereport_ul">'
-                    for f in svc.alwayslist(godata[k]):
+                    for f in alwayslist(godata[k]):
                         html += '<li>%s - %s</li>' % (f['id'], f['term'])
                     html += "</ul>"
         else:

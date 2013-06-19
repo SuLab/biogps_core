@@ -14,7 +14,7 @@ from django.template import RequestContext
 from django.utils.http import urlencode
 from django.utils.encoding import smart_str
 
-from biogps.utils.helper import (mkErrorReport, json, dotdict,
+from biogps.utils.helper import (mkErrorReport, json, dotdict, alwayslist,
                                  genus_d, species_d, assembly_d)
 #from biogps.apps.service import biogps_svc as sl_svc
 
@@ -185,14 +185,6 @@ def RemoteServiceErrorResponse(request, format='auto'):
         if settings.DEBUG:
             errmsg += 'click to view the <a href="/utils/errorreport/%s">error report</a>.' % errorreport_id
         return HttpResponseBadRequest(errmsg)
-
-
-def alwayslist(value):
-    """If input value if not a list/tuple type, return it as a single value list."""
-    if type(value) in (types.ListType, types.TupleType):
-        return value
-    else:
-        return [value]
 
 
 class Gene(dotdict):
