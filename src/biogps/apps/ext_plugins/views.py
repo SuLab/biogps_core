@@ -11,11 +11,13 @@ from biogps.utils.helper import (docenabled, alwayslist,
                                GO_CATEGORY,
                                )
 from biogps.apps.boc import boc_svc as svc
+from biogps.apps.boe.views import MyGeneInfo
+from biogps.apps.boc.boc_svc import Gene
 import httplib2
 import urllib
 
 
-def _get_gene(request, geneid):
+def _get_gene0(request, geneid):
     """A convienent function to get gene object."""
     if not is_valid_geneid(geneid):
         return HttpResponseBadRequest('Invalid input parameters!')
@@ -30,6 +32,19 @@ def _get_gene(request, geneid):
         return HttpResponseBadRequest('Invalid input parameters!')
 
     return geneobj
+
+def _get_gene(request, geneid):
+    """A convienent function to get gene object."""
+    if not is_valid_geneid(geneid):
+        return HttpResponseBadRequest('Invalid input parameters!')
+    geneid = str(geneid).strip()
+
+    mg = MyGeneInfo()
+    geneobj = mg.get_gene(geneid)
+    if not geneobj:
+        return HttpResponseBadRequest('Invalid input parameters!')
+
+    return Gene(geneobj)
 
 
 @docenabled

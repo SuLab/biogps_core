@@ -227,9 +227,10 @@ class Gene(dotdict):
         if 'homologene' in self:
             hgenes = []
             for hgene in self['homologene']['genes']:
-                hgenes.append({'species': self.get_species(hgene[0]),
-                                'taxid': hgene[0],
-                                'geneid': hgene[1]})
+                if hgene[0] in species_d:
+                    hgenes.append({'species': self.get_species(hgene[0]),
+                                    'taxid': hgene[0],
+                                    'geneid': hgene[1]})
             return {'id': self['homologene']['id'],
                     'genes': hgenes}
 
