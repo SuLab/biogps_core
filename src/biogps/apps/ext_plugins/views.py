@@ -10,28 +10,28 @@ from biogps.utils.helper import (docenabled, alwayslist,
                                is_valid_geneid,
                                GO_CATEGORY,
                                )
-from biogps.apps.boc import boc_svc as svc
+# from biogps.apps.boc import boc_svc as svc
 from biogps.apps.boe.views import MyGeneInfo
 from biogps.apps.boc.boc_svc import Gene
 import httplib2
 import urllib
 
 
-def _get_gene0(request, geneid):
-    """A convienent function to get gene object."""
-    if not is_valid_geneid(geneid):
-        return HttpResponseBadRequest('Invalid input parameters!')
-    geneid = str(geneid).strip()
+# def _get_gene(request, geneid):
+#     """A convienent function to get gene object."""
+#     if not is_valid_geneid(geneid):
+#         return HttpResponseBadRequest('Invalid input parameters!')
+#     geneid = str(geneid).strip()
 
-    ds = svc.DataService()
-    try:
-        geneobj = ds.getgene(geneid)
-    except svc.RemoteServiceError:
-        return svc.RemoteServiceErrorResponse(request)
-    if not geneobj:
-        return HttpResponseBadRequest('Invalid input parameters!')
+#     ds = svc.DataService()
+#     try:
+#         geneobj = ds.getgene(geneid)
+#     except svc.RemoteServiceError:
+#         return svc.RemoteServiceErrorResponse(request)
+#     if not geneobj:
+#         return HttpResponseBadRequest('Invalid input parameters!')
 
-    return geneobj
+#     return geneobj
 
 def _get_gene(request, geneid):
     """A convienent function to get gene object."""

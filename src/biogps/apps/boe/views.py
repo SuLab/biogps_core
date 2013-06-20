@@ -126,18 +126,35 @@ class MyGeneInfo():
                 gdoc_li[idx] = gdoc
         return gdoc_li
 
+    def _querymany(self, qterms, scopes=None, fields=None, size=1000, species=None):
+        _url = self.url + '/query'
+        kwargs = {}
+        kwargs['q'] = ','.join([unicode(x) for x in qterms])
+        kwargs['scopes'] = scopes or self.id_scopes
+        kwargs['fields'] = fields or self.default_fields
+        kwargs['size'] = size   #max 1000 hits returned
+        kwargs['species'] = species or self.default_species
+        _res = self._post(_url, kwargs)
+        return _res
+
+    def querygenelist(self, geneid_li):
+        '''return a list of gene objects for given gene ids (support entrez/ensembl/retired geneids).
+           e.g. used in apps.genelist.genelist module
+           notfound input geneids will be ignored.
+        '''
+        _res = self._querymany(geneid_li,
+                               scopes='entrezgene,ensemblgene,retired',
+                               fields='symbol,name,taxid')
+        gene_list = []
+        for hit in _res:
+            if not hit.get('notfound', False) and not hit.get('error', False):
+                gene_list.append(hit)
+        return gene_list
 
     def query_by_id(self, query):
         if query:
             _query = re.split('[\s\r\n+|,]+', query)
-            _url = self.url + '/query'
-            kwargs = {}
-            kwargs['q'] = ','.join(_query)
-            kwargs['scopes'] = self.id_scopes
-            kwargs['fields'] = self.default_fields
-            kwargs['size'] = 1000   #max 1000 hits returned
-            kwargs['species'] = self.default_species
-            _res = self._post(_url, kwargs)
+            _res = self._querymany(_query, self.id_scopes)
             gene_list = []
             notfound_list = []
             error_list = []
