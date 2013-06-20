@@ -10,7 +10,8 @@ from biogps.utils.helper import (ExtError, loginrequired, cvtPermission,
                                  formatDateTime, JSONResponse,
                                  setObjectPermission, json)
 from biogps.apps.genelist.models import BiogpsGeneList
-from biogps.apps.boc import boc_svc as svc
+# from biogps.apps.boc import boc_svc as svc
+from biogps.apps.boe.views import MyGeneInfo
 
 import logging
 log = logging.getLogger('biogps_prod')
@@ -29,8 +30,10 @@ def _get_gene_info(geneid_li, request=None):
     '''return a geneinfo object ready to be loaded in genelist_panel
        based on input geneid_li.
     '''
-    ds = svc.DataService()
-    genedata = ds.querygenelist(geneid_li)
+    # ds = svc.DataService()
+    # genedata = ds.querygenelist(geneid_li)
+    mg = MyGeneInfo()
+    genedata = mg.querygenelist(geneid_li)
     genedata = {'geneList': genedata}
     return genedata
 
