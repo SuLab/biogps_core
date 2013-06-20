@@ -540,6 +540,40 @@ parse_token=function(token){
 	return params;
 }*/
 
+
+biogps.is_buggy_chrome = function(){
+    //return true if it's a Google Chrome with bug #246755
+    //https://code.google.com/p/chromium/issues/detail?id=246755
+    if (Ext.isChrome){
+        var p = /Chrome\/([0-9.]+)/;
+        var matches = navigator.appVersion.match(p);
+        if (matches){
+            var chrome_ver = matches[1].split('.');
+            var ver_0 = parseInt(chrome_ver[0]);
+            var ver_3 = parseInt(chrome_ver[3]);
+            if ( ver_0 == 27) {
+            // if ( (ver_0 == 27 && ver_3 <= 110) ||
+            //      (ver_0 == 28 && ver_3 <= 29) ||
+            //      (ver_0 == 29 && ver_3 <= 3) ){
+                return true;
+            }
+        }
+    }
+    return false;
+}();
+
+biogps.chrome_bug_fix = function(){
+    if (biogps.is_buggy_chrome) {
+            //a workaround for Chrome bug #246755
+            //https://code.google.com/p/chromium/issues/detail?id=246755
+            if (biogps.portletGroup && biogps.portletGroup.getSize) {
+                if (biogps.portletGroup.getSize()>0){
+                    biogps.portletGroup.showAll();
+                }
+            }
+    }
+}
+
 _reuse_exist_tab = function(tabid){
 	//if it is hidden behide welcome div, bring it up.
 	var welcome_el = Ext.get('welcome');
@@ -548,14 +582,8 @@ _reuse_exist_tab = function(tabid){
 	}
 
 	if (biogps.centerTab.getActiveTab().id == tabid){
-            if (Ext.isChrome && tabid=='report_panel') {
-                    //a workaround for Chrome bug #246755
-                    //https://code.google.com/p/chromium/issues/detail?id=246755
-                    if (biogps.portletGroup && biogps.portletGroup.getSize) {
-                        if (biogps.portletGroup.getSize()>0){
-                            biogps.portletGroup.showAll();
-                        }
-                    }
+            if (biogps.is_buggy_chrome && tabid=='report_panel') {
+                biogps.chrome_bug_fix();
             }
 		return true;
 	}
@@ -564,14 +592,8 @@ _reuse_exist_tab = function(tabid){
 		biogps.centerTab.suspendEvents();    //avoid to fire "tabchange" event again.
 		biogps.centerTab.setActiveTab(tabid);
 		biogps.centerTab.resumeEvents();
-            if (Ext.isChrome && tabid=='report_panel') {
-                    //a workaround for Chrome bug #246755
-                    //https://code.google.com/p/chromium/issues/detail?id=246755
-                    if (biogps.portletGroup && biogps.portletGroup.getSize) {
-                        if (biogps.portletGroup.getSize()>0){
-                            biogps.portletGroup.showAll();
-                        }
-                    }
+            if (biogps.is_buggy_chrome && tabid=='report_panel') {
+                biogps.chrome_bug_fix();
             }
 		return true;
 	}
@@ -618,7 +640,7 @@ biogps.dispatcher_by_hash = function(hash){
 				var welcome_el = Ext.get('welcome');
 				if (welcome_el && !welcome_el.isVisible()){
 					welcome_el.show();
-                    if (Ext.isChrome) {
+                    if (biogps.is_buggy_chrome) {
                         //a workaround for Chrome bug #246755
                         //https://code.google.com/p/chromium/issues/detail?id=246755
                         if (biogps.portletGroup && biogps.portletGroup.getSize) {

@@ -2,7 +2,7 @@
 // standard Ext.WindowMgr.  The primary goal is to drop the z-index of the
 // portlets below the global 9000 seed.
 biogps.portletGroup = Ext.WindowGroup();
-if (Ext.isChrome){
+if (biogps.is_buggy_chrome){
     //a workaround for Chrome bug #246755
     //https://code.google.com/p/chromium/issues/detail?id=246755
     biogps.portletGroup.getSize = function(){
