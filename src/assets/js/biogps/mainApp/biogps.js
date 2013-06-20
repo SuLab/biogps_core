@@ -119,15 +119,7 @@ biogps.renderMainUI = function(){
 					Ext.History.add('goto=genereport&id=' + geneid_list.join(','));
 				}
                 biogps.GeneReportMgr.refreshMarked();
-                if (Ext.isChrome) {
-                        //a workaround for Chrome bug #246755
-                        //https://code.google.com/p/chromium/issues/detail?id=246755
-                        if (biogps.portletGroup && biogps.portletGroup.getSize) {
-                            if (biogps.portletGroup.getSize()>0){
-                                biogps.portletGroup.showAll();
-                            }
-                        }
-                }
+                biogps.chrome_bug_fix();
 				break;
 			case 'infotab_help':
 				Ext.History.add('goto=help');
