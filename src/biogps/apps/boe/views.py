@@ -270,7 +270,7 @@ class MyGeneInfo():
                    #('PharmGKB', 'pharmgkb', None),
 
                   ]
-        xref_attrs = ["entrezgene", "symbol", "alias", "pdb", "pharmgkb", "name",
+        xref_attrs = ["entrezgene", "symbol", "name", "alias", "unigene", "pdb", "pharmgkb",
                       "FLYBASE", "HGNC", "HPRD", "MGI", "MIM","RATMAP", "RGD",
                       "TAIR","WormBase", "ZFIN", "Xenbase"]
 
