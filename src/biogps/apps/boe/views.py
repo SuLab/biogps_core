@@ -120,7 +120,7 @@ class MyGeneInfo():
             if gdoc:
                 if '_id' in gdoc:
                     gdoc['id'] = gdoc['_id']
-                    del gdoc['_id']
+                    # del gdoc['_id']
                 hgene = gdoc.get('homologene', None)
                 if hgene:
                     _genes = hgene.get('genes', None)
@@ -228,6 +228,7 @@ class MyGeneInfo():
             params['fields'] = self._format_list(fields)
         try:
             gene = self._get(_url, params)
+            gene = self._homologene_trimming([gene])[0]
         except MyGeneInfo404:
             gene = None
         return gene
@@ -360,6 +361,11 @@ class MyGeneInfo():
             out['SpeciesList'] = species_list
             return out
 
+
+    @property
+    def metadata(self):
+        _url = self.url+'/metadata'
+        return self._get(_url)
 
 def _parse_interval_query(query):
     '''Check if the input query string matches interval search regex,
