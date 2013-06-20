@@ -12,7 +12,10 @@ if (biogps.is_buggy_chrome){
     }
     biogps.portletGroup.showAll = function(){
         this.each(function(win) {
-            win.show();
+            try {
+                win.show();
+            }
+            catch (err){}
         });
     }
 }else{
