@@ -155,6 +155,7 @@ class MyGeneInfo():
         for hit in _res:
             if not hit.get('notfound', False) and not hit.get('error', False):
                 gene_list.append(hit)
+        self._homologene_trimming(gene_list)
         return gene_list
 
     def query_by_id(self, query):
