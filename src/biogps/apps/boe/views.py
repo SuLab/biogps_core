@@ -68,6 +68,13 @@ class MyGeneInfo():
         scheme, netloc, url, query, fragment = urlparse.urlsplit(self.url)
         return urlparse.urlunsplit((scheme, netloc, '', '',''))
 
+    def _format_list(self, a_list, sep=','):
+        if type(a_list) in (types.ListType, types.TupleType):
+            _out = sep.join([str(x) for x in a_list])
+        else:
+            _out = a_list     # a_list is already a comma separated string
+        return _out
+
     def _get(self, url, params={}):
         debug = params.pop('debug', False)
         return_raw = params.pop('return_raw', False)
@@ -86,7 +93,6 @@ class MyGeneInfo():
             return con
         else:
             return json.loads(con)
-
 
     def _post(self, url, params):
         debug = params.pop('debug', False)
@@ -130,10 +136,10 @@ class MyGeneInfo():
         _url = self.url + '/query'
         kwargs = {}
         kwargs['q'] = ','.join([unicode(x) for x in qterms])
-        kwargs['scopes'] = scopes or self.id_scopes
-        kwargs['fields'] = fields or self.default_fields
+        kwargs['scopes'] = self._format_list(scopes or self.id_scopes)
+        kwargs['fields'] = self._format_list(fields or self.default_fields)
         kwargs['size'] = size   #max 1000 hits returned
-        kwargs['species'] = species or self.default_species
+        kwargs['species'] = self._format_list(species or self.default_species)
         _res = self._post(_url, kwargs)
         return _res
 
@@ -143,8 +149,8 @@ class MyGeneInfo():
            notfound input geneids will be ignored.
         '''
         _res = self._querymany(geneid_li,
-                               scopes='entrezgene,ensemblgene,retired',
-                               fields='symbol,name,taxid')
+                               scopes=['entrezgene', 'ensemblgene', 'retired'],
+                               fields=['symbol', 'name', 'taxid'])
         gene_list = []
         for hit in _res:
             if not hit.get('notfound', False) and not hit.get('error', False):
@@ -215,9 +221,11 @@ class MyGeneInfo():
                    'success': True}
             return out
 
-    def get_gene(self, geneid):
+    def get_gene(self, geneid, fields=None):
         _url = '{}/gene/{}'.format(self.url, geneid)
         params = {'species': self.default_species}
+        if fields:
+            params['fields'] = self._format_list(fields)
         try:
             gene = self._get(_url, params)
         except MyGeneInfo404:
