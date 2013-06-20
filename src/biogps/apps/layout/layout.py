@@ -10,7 +10,8 @@ from biogps.utils.helper import (MIMETYPE, STD_FORMAT, ANONYMOUS_USER_ERROR, Ext
                                  setObjectPermission, loginrequired, formatDateTime, cvtPermission,
                                  is_valid_geneid, allowedrequestmethod, json)
 from biogps.apps.plugin.plugin import PluginUrlRenderError
-from biogps.apps.boc import boc_svc as svc
+# from biogps.apps.boc import boc_svc as svc
+from biogps.apps.boe.views import MyGeneInfo
 
 import logging
 log = logging.getLogger('biogps_prod')
@@ -530,7 +531,7 @@ def layout_tree(request):
 
 def render_plugin_urls(request, layoutid):
     '''
-    URL:  http://biogps-dev.gnf.org/layout/159/renderurl/?gene=1017
+    URL:  http://biogps.org/layout/159/renderurl/?gene=1017
     '''
     geneid = request.GET.get('geneid', '').strip()
     flag_mobile = request.GET.get('mobile', '').lower() not in ['0', 'false']    #TEMP. set flag_mobile default to True, so that iphone app can get
@@ -566,8 +567,11 @@ def get_plugin_urls(request, layoutid, geneid, speciesid=None, mobile=False):
     except BiogpsGenereportLayout.DoesNotExist:
         return ExtError("Layout does not exist or not belong to you.")
 
-    ds = svc.DataService()
-    g = ds.getgene2(geneid)
+    # ds = svc.DataService()
+    # g = ds.getgene2(geneid)
+    mg = MyGeneInfo()
+    g = mg.get_geneidentifiers(geneid)
+
 
     if not g or len(g['SpeciesList']) == 0:
         return ExtError('Unknown gene id.')
