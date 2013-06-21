@@ -768,7 +768,7 @@ Ext.extend(biogps.Plugin, Ext.util.Observable, {
                 label.show();
                 label.setText('Submitting...');
                 flagform.form.submit({
-                    url:String.format('/plugin_v1/{0}/flag/', this.id),
+                    url:String.format('/plugin/{0}/flag/', this.id),
                     method:'POST',
                     timeout:60,
                     success: function(form, action){
