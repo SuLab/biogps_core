@@ -25,10 +25,10 @@ def genereport(request, geneid):
 
 def genereport_for_bot(request, geneid):
     '''The web-crawler (bot) version of gene report page:
-        http://biogps.gnf.org/gene/1017
+        http://biogps.org/gene/1017
 
        on dev server, the bot page can be accessed direct as:
-        http://biogps-dev.gnf.org/gene/bot/1017
+        http://localhost:8000/gene/bot/1017
 
     '''
     from biogps.apps.ext_plugins.views import grSymatlasTable
