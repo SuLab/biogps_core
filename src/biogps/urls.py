@@ -87,15 +87,6 @@ if getattr(settings, 'SERVE_ASSETS', False):
                            (r'^favicon.ico$', 'redirect_to', {'url': '/assets/img/favicon.ico'}),
                            )
 
-urlpatterns += patterns('biogps.apps.plugin.plugin',
-#                        (r'^plugin_v1/browse', 'pluginbrowser'),
-#                        (r'^plugin_v1/$', 'plugin'),
-                        (r'^plugin_v1/(?P<pluginid>\d+)/renderurl/$', 'render_plugin_url'),
-#                        (r'^plugin_v1/(?P<pluginid>\d+)/usage/$', 'plugin_usage'),
-                        (r'^plugin_v1/(?P<pluginid>\d+)/flag/$', 'flagplugin'),
-#                        (r'^plugin_v1/(?P<query>.+)/', 'plugin'),
-                        )
-
 urlpatterns += patterns('biogps.apps.layout.layout',
                         (r'^layout/$', 'layout'),
                         (r'^layout/(?P<layoutid>\d+)/renderurl/$', 'render_plugin_urls'),
@@ -222,10 +213,18 @@ urlpatterns += patterns('biogps.apps.rating.views',
 urlpatterns += patterns('', (r'^favorite/', include('biogps.apps.favorite.urls')),)
 
 
-#This legacy service is used by iPhone app v1
-urlpatterns += patterns('biogps.apps.boc.views',
-    (r'^service/search/$', 'query_gene_for_iphone'),
+#####legacy services are currently used by iPhone app
+urlpatterns += patterns('biogps.apps.boe.views',
+    (r'^service/search/$', 'query'),
 )
+# urlpatterns += patterns('biogps.apps.boc.views',
+#     (r'^service/search/$', 'query_gene_for_iphone'),
+# )
+
+urlpatterns += patterns('biogps.apps.plugin.plugin',
+    (r'^plugin_v1/(?P<pluginid>\d+)/renderurl/$', 'render_plugin_url'),
+)
+##### end legacy services #####
 
 
 # URL/layout routing - catch-all pattern, keep last!
