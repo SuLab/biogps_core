@@ -5,6 +5,9 @@ from biogps.apps.dataset.models import (
     BiogpsDatasetMatrix
     )
 from biogps.apps.search.es_lib import get_es_conn
+from biogps.apps.boe.views import MyGeneInfo
+from biogps.utils.helper import alwayslist
+
 from collections import OrderedDict
 from django.core.paginator import (
     Paginator,
@@ -168,17 +171,16 @@ class DatasetQuery():
     @staticmethod
     def get_mygene_reps(gene_id):
         """Return reporter list for provided gene"""
-        rep_li = list()
-        mygene_res = urllib.urlopen('http://mygene.info/gene/{}/'
-                                    '?filter=entrezgene,reporter,'
-                                    'refseq.rna'.format(gene_id))
-        if mygene_res.getcode() == 200:
-            _results = loads(mygene_res.read())
-            if 'reporter' in _results:
-                rep_dict = _results['reporter']
+        rep_li = []
+        mg = MyGeneInfo()
+        g = mg.get_gene(gene_id, fields='entrezgene,reporter,refseq.rna')
+        if g:
+            if 'reporter' in g:
+                rep_dict = g['reporter']
                 for key in rep_dict.keys():
-                    for val in rep_dict[key]:
+                    for val in alwayslist(rep_dict[key]):
                         rep_li.append(val)
+
         return ','.join(rep_li)
 
     @staticmethod
