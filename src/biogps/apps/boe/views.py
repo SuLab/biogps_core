@@ -229,9 +229,16 @@ class MyGeneInfo():
             params['fields'] = self._format_list(fields)
         try:
             gene = self._get(_url, params)
-            gene = self._homologene_trimming([gene])[0]
         except MyGeneInfo404:
             gene = None
+        if gene:
+            if type(gene) is types.ListType:
+                # in some cases of Ensembl genes matching two entrez gene ids, e.g. T26G10.8
+                _n = len(gene)
+                gene = gene[0]
+                gene[u'warning'] = u"Matching {} genes and only the first one is returned.".format(_n)
+            gene = self._homologene_trimming([gene])[0]
+
         return gene
 
     def _get_value(self, value, fn=None):
