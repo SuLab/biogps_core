@@ -223,6 +223,7 @@ urlpatterns += patterns('biogps.apps.boe.views',
 
 urlpatterns += patterns('biogps.apps.plugin.plugin',
     (r'^plugin_v1/(?P<pluginid>\d+)/renderurl/$', 'render_plugin_url'),
+    (r'^plugin_v1/(?P<pluginid>\d+)/flag/$', 'flagplugin'),   # remove this url after two weeks or so
 )
 ##### end legacy services #####
 
