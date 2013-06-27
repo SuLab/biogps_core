@@ -28,6 +28,7 @@ from pyes import (
     TermFilter,
     TermsQuery
     )
+from pyes.exceptions import ElasticSearchException
 from random import choice
 from StringIO import StringIO
 import csv
@@ -165,6 +166,9 @@ class DatasetQuery():
         except EmptyPage:
             # If page is out of range (e.g. 9999), deliver last page of results
             _datasets = paginator.page(paginator.num_pages)
+        except ElasticSearchException:
+            # If any invalid query, return empty results.
+            return (0, 1, [])
         return (all_results.count(), paginator.num_pages,
             _datasets.object_list)
 
