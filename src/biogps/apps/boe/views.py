@@ -412,7 +412,7 @@ def do_query(params):
                 res = bs.query_by_interval(query, interval_query_params['species'])
         else:
             with_wildcard = _query.find('*') != -1 or _query.find('?') != -1
-            multi_terms = len(_query.split('\n')) > 1
+            multi_terms = len(re.split(u'[\t\n\x0b\x0c\r]+', _query)) > 1    #split on whitespace but not on plain space.
             if with_wildcard and multi_terms:
                 res = {'success': False, 'error': "Please do wildcard query one at a time."}
             elif multi_terms:
