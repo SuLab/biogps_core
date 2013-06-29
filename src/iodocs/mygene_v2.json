@@ -106,15 +106,14 @@
                             "Description": "genome interval in format of \"chr#:start-end\", e.g., chr1:151,073,054-151,383,976 (comma allowed)"
                         },
                         {
+                            "Name": "species",
+                            "Type": "string",
+                            "Description": "Optional, do the genome interval query for the given species. You can use \"common names\" for nine common species (human, mouse, rat, fruitfly, nematode, zebrafish, thale-cress, frog and pig). Any other species, you can provide its taxonomy id. Default: human."
+                        },
+                        {
                             "Name": "fields",
                             "Type": "string",
                             "Description": "a comma-separated fields to limit the fields returned from the matching gene hits. The supported field names can be found from any gene object (e.g. http://mygene.info/v2/gene/1017). Note that it supports dot notation as well, e.g., you can pass \"refseq.rna\". If \"fields=all\", all available fields will be returned. Default: \"symbol,name,taxid,entrezgene,ensemblgene\"."
-                        },
-                        {
-                            "Name": "species",
-                            "Type": "string",
-                            "Description": "Optional, can be used to limit the gene hits from given species. You can use \"common names\" for nine common species (human, mouse, rat, fruitfly, nematode, zebrafish, thale-cress, frog and pig). All other species, you can provide their taxonomy ids. Multiple species can be passed using comma as a separator. Default: human,mouse,rat."
-
                         },
                         {
                             "Name": "size",
@@ -202,11 +201,6 @@
                             "Type": "string",
                             "Required": "Y",
                             "Description": "multiple geneids seperated by comma, e.g., \"ids=1017,1018\" or \"ids=695,ENSG00000123374\". Note that currently we only take the input ids up to 1000 maximum, the rest will be omitted."
-                        },
-                        {
-                            "Name": "scopes",
-                            "Type": "string",
-                            "Description": "specify one or more fields (separated by comma) as the search \"scopes\", e.g., \"scopes=entrezgene\", \"scopes=entrezgene,ensemblgene\" "
                         },
                         {
                             "Name": "fields",
