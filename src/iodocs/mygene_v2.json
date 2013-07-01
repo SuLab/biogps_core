@@ -81,8 +81,7 @@
                         {
                             "Name": "scopes",
                             "Type": "string",
-                            "Description": "specify one or more fields (separated by comma) as the search “scopes”, e.g., “scopes=entrezgene”, “scopes=entrezgene,ensemblgene”. The available “fields” can be passed to “scopes” parameter are listed here: http://mygene.info/doc/query_service.html#available-fields. Default: “scopes=entrezgene,ensemblgene,retired” (either Entrez or Ensembl gene ids).
-"
+                            "Description": "specify one or more fields (separated by comma) as the search \"scopes\", e.g., \"scopes=entrezgene\", \"scopes=entrezgene,ensemblgene\". The available \"fields\" can be passed to \"scopes\" parameter are listed here: http://mygene.info/doc/query_service.html#available-fields. Default: \"scopes=entrezgene,ensemblgene,retired\" (either Entrez or Ensembl gene ids)."
                         },
                         {
                             "Name": "fields",
