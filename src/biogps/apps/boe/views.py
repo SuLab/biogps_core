@@ -78,11 +78,12 @@ class MyGeneInfo():
     def _get(self, url, params={}):
         debug = params.pop('debug', False)
         return_raw = params.pop('return_raw', False)
+        headers = {'user-agent': "Python-httplib2_biogps/%s (gzip)" % httplib2.__version__}
         if params:
             _url = url + '?' + urlencode(params)
         else:
             _url = url
-        res, con = self.h.request(_url)
+        res, con = self.h.request(_url, headers=headers)
         if debug:
             return _url, res, con
         if res.status == 404:
@@ -97,7 +98,8 @@ class MyGeneInfo():
     def _post(self, url, params):
         debug = params.pop('debug', False)
         return_raw = params.pop('return_raw', False)
-        headers = {'content-type': 'application/x-www-form-urlencoded'}
+        headers = {'content-type': 'application/x-www-form-urlencoded',
+                   'user-agent': "Python-httplib2_biogps/%s (gzip)" % httplib2.__version__ }
         res, con = self.h.request(url, 'POST', body=urlencode(params), headers=headers)
         if debug:
             return url, res, con
