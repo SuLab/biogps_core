@@ -195,6 +195,9 @@ class MyGeneInfo():
             kwargs['size'] = 1000   #max 1000 hits returned
             _url = self.url + '/query'
             res = self._get(_url, kwargs)
+            if 'error' in res:
+                return res
+
             gene_list = self._homologene_trimming(res['hits'])
             out = {'data': {
                             'query': query,
