@@ -1547,8 +1547,10 @@ Ext.extend(biogps.GeneReportPage, Ext.Panel, {
         else{
     		this.cleanPage();
     		this.grlayout = biogps.LayoutMgr.currentLayout;
-            if (this.checkLayout() == false) return;
-
+            if (this.checkLayout() == false) {
+                this.reportRendered = true;
+                return;
+            }
     		this.globalPortletIndex = 0;  //reset it.
     		var plugin;
     		var portlet;
