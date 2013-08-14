@@ -166,6 +166,8 @@ biogps.Plugin = function(config) {
         //  securityAware: 'true'   //for some plugin need to be passed with sessionid for security validation
         //  mobile_url: <string>    //for alternative url template for mobile page
         //  certified_owner: true|false   //flag for certified owner (the owner who truely own the website of the plugin)
+        //  render_as_link: true|false  //if true, only show a link of this plugin to open in a new window.
+        //                              //  this is a workaround for those plugins preventing iframe embedding by setting "X-Frame-Options" to "same-origin"
     this.useroptions=null;
         //useroptions allow users customize the behavior of the plugin in their layouts if possible.
     this.runtimeoptions=null;

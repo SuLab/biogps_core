@@ -367,6 +367,12 @@ Ext.extend(biogps.Portlet, Ext.ux.ManagedIFrame.Window, {
     },
 
     _loadContent: function(){
+        if (this.plugin.options && this.plugin.options.render_as_link){
+            //A workaround for site blocking iframe rendering by setting "X-Frame-Options" to "same-origin"
+            this.html = '<p style="font-size: 1.5em">This plugin cannot be rendered in plugin window, <a href="'+this.url+'" target="_blank">click here</a> to view it in a new tab/window.</p>';
+            this.plugin.type = 'div';
+        }
+
             switch(this.plugin.type){
                 case 'div':
                         //var loader = this.frameEl.getUpdater();
@@ -381,7 +387,9 @@ Ext.extend(biogps.Portlet, Ext.ux.ManagedIFrame.Window, {
                         this.items.clear();
 
                         if (this.html){
-                            loader.update(this.html)
+                            //loader.update(this.html)
+                            this.body.update(this.html);
+                            this.fireEvent('contentload');
                         }
                         else if (this.url) {
                             var _url,
