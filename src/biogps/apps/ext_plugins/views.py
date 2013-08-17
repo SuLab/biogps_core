@@ -191,11 +191,16 @@ def grSymatlasTable(request, geneid=None, forbot=False):
         return render_to_response('grSymatlasBar.html', {'geneobj': geneobj,
                                                          'hide_species': hide_species},
                                    context_instance=RequestContext(request))
+
 def googleScholarTmpFix(request):
+    """
+    !! Deprecated now by implemented a "render_as_link" plugin option in #9541164.
+    """
     url = 'http://scholar.google.com/scholar?' + urllib.urlencode(request.GET)
     html = '<a href="%s" target="_blank">Click here to view Google Scholar page in a new window.</a>' % url
     return HttpResponse(html)
 
+"""
 def _fix_html(html):
     #adding base tag
     html = html.replace('<head>',
@@ -228,5 +233,4 @@ def googleScholarProxy(request):
         # fall-back
         html = '<a href="%s" target="_blank">Click here to view Google Scholar page in a new window.</a>' % url
     return HttpResponse(html)
-
-
+"""
