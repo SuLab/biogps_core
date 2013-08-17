@@ -27,6 +27,7 @@ biogps.PluginQuickAdd = function(config) {
                     // We use this way of doing it, because when using the
                     // pluginStore's baseParams, they are not changeable.
                     conf.params.format = 'json';
+                    conf.params.quickadd = '1';   //add a quickadd parameter to mark the query.
                 }
             }
         }
