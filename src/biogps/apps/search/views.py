@@ -164,19 +164,24 @@ def search(request, _type=None):
 
     #logging query stat
     if res.has_error():
-        logmsg = 'action=es_query in=%s query=%s qlen=%s, error=1, errormsg=%s' % \
+        logmsg = 'action=es_query in=%s query=%s qlen=%s error=1 errormsg=%s' % \
                  (','.join(common_params['only_in']),
                   q[:1000],   # truncated at length 1000
                   len(q),
                   res.error)
     else:
-        logmsg = 'action=es_query in=%s query=%s qlen=%s, num_hits=%s, total=%s' % \
+        logmsg = 'action=es_query in=%s query=%s qlen=%s num_hits=%s total=%s' % \
                  (','.join(common_params['only_in']),
                   q[:1000],   # truncated at length 1000
                   len(q),
                   res.hits.hit_count,
                   len(res))
     log.info(logmsg)
+
+    # log plugin_quick_add action
+    flag_plugin_quick_add = _type=='plugin' and request.GET.get('quickadd', None) is not None
+    if flag_plugin_quick_add:
+        log.info('action=plugin_quick_add')
 
     # Set up the navigation controls
     nav = BiogpsSearchNavigation(request, type='search', es_results=res, params=common_params)
