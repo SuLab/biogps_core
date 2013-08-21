@@ -221,6 +221,18 @@
                 }
 
             ]
+        },
+
+        {
+            "name": "MyGene.info metadata service",
+            "methods": [
+                {
+                    "MethodName": "Metadata service",
+                    "Synopsis": "Get metadata about the data available from MyGene.info.",
+                    "HTTPMethod": "GET",
+                    "URI": "/v2/metadata"
+                }
+            ]
         }
     ]
 }
