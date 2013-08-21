@@ -230,7 +230,14 @@
                     "MethodName": "Metadata service",
                     "Synopsis": "Get metadata about the data available from MyGene.info.",
                     "HTTPMethod": "GET",
-                    "URI": "/v2/metadata"
+                    "URI": "/v2/metadata",
+                    "parameters": [
+                        {
+                            "Name": "callback",
+                            "Type": "string",
+                            "Description": "you can pass a \"callback\" parameter to make a JSONP call."
+                        }
+                    ]
                 }
             ]
         }
