@@ -228,7 +228,7 @@ class MyGeneInfo():
             return out
 
     def get_gene(self, geneid, fields=None):
-        _url = '{}/gene/{}'.format(self.url, geneid)
+        _url = u'{}/gene/{}'.format(self.url, geneid)
         params = {'species': self.default_species}
         if fields:
             params['fields'] = self._format_list(fields)
@@ -448,9 +448,9 @@ def getgeneidentifiers(request, geneid=None):
     Retrieve all available gene identifiers for given geneid, e.g. ensemblid, refseqid, pdb id.
     URL:          http://biogps.org/boe/getgeneidentifiers
     Parameters:   geneid - Entrez GeneID
-    Examples:     http://biogps.gnf.org/boe/getgeneidentifiers/?geneid=695
+    Examples:     http://biogps.org/boe/getgeneidentifiers/?geneid=695
     """
-    geneid = geneid or request.GET.get('geneid', '')
+    geneid = geneid or request.GET.get('geneid', '').strip()
     if not is_valid_geneid(geneid):
         raise Http404
 
