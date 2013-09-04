@@ -4,6 +4,8 @@ import random
 import tempfile
 import textwrap
 import types
+import string
+import re
 from functools import wraps
 
 #from django.utils.encoding import smart_str, smart_unicode
@@ -390,8 +392,12 @@ def is_valid_geneid(value):
     #return (type(value) is not types.StringType) and (value.isdigit() or value.startswith('ENS') or value.startswith('FBgn')) and len(value)<30
 
     #Either an integer or a string shorter than 30 char
-    return (value != '') and ((type(value) is types.IntType) or (type(value) in types.StringTypes and len(value)<30))
+    #return (value != '') and ((type(value) is types.IntType) or (type(value) in types.StringTypes and len(value)<30))
 
+    #Either an integer or a string shorter than 30 char and within pre-defined char-set.
+    chr_set = string.ascii_letters + string.digits + '_.-'
+    pattern = re.compile('[{}]+$'.format(chr_set))
+    return (type(value) is types.IntType) or (type(value) in types.StringTypes and len(value)<30 and re.match(pattern, value))
 
 def is_valid_parameter(value, maxlen=30):
     #allow digit, letter and hypen, understore
