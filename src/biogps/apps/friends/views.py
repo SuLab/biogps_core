@@ -13,8 +13,8 @@ from friends.importer import import_yahoo, import_google
 from biogps.utils.helper import (allowedrequestmethod,
                                  loginrequired,
                                  loginrequired_or_redirect,
-                                 not_authenticated,
                                  JSONResponse)
+from biogps.utils.decorators import not_authenticated
 
 
 @loginrequired_or_redirect
