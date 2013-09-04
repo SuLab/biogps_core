@@ -1,6 +1,5 @@
 import datetime
 import os.path
-import random
 import tempfile
 import textwrap
 import types
@@ -11,9 +10,8 @@ from functools import wraps
 #from django.utils.encoding import smart_str, smart_unicode
 #from django.utils.html import escape, strip_tags
 from django.shortcuts import render_to_response
-from django.core.urlresolvers import reverse
 #from django.template.loader import render_to_string
-from django.http import Http404, HttpResponse, HttpResponseRedirect, HttpResponseBadRequest, HttpRequest
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest, HttpRequest
 from django.conf import settings
 from django.utils.http import urlquote
 from django.contrib.sites.models import Site
@@ -27,7 +25,6 @@ except:
     except:
         from django.utils import simplejson as json
 
-from biogps.utils.decorators import not_authenticated
 
 MAX_QUERY_LENGTH = 50*1000       #A rough upper limit for length of input gene query.
 
