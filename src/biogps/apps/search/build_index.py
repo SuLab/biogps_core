@@ -325,6 +325,11 @@ class BiogpsModelESIndexer(BiogpsESIndexerBase):
         print conn.refresh()
         print 'Done! - {} docs indexed.'.format(cnt)
 
+    def index_object(self, object_id):
+        obj = self._model.objects.get(id=object_id)
+        doc = obj.object_cvt(mode='es')
+        print self.index(doc, self.ES_INDEX_TYPE, id=doc['id'])
+
 
 class BiogpsPluginESIndexer(BiogpsModelESIndexer):
     '''A class for indexing all BiogpsPlugin objects.'''
