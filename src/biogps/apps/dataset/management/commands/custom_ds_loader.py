@@ -191,6 +191,14 @@ class Command(NoArgsCommand):
                             'summary': 'miRNAs profiling in 12 human body fluids and urine samples from women in different stages of pregnancy or patients with different urothelial cancers.',
                             'geo_gds_id': '', 'geo_gpl_id': 'RT-PCR', 'geo_gse_id': '',
                             'pubmed_id': '20847327', 'species': 'human'
+                        },
+                        {
+                            'ds': 'Primary_cell_atlas_GSE49910_RMA.csv',
+                            'default': True, 'dir': '/home/ubuntu/bgps_datasets/misc/primary_cell_atlas', 'name': 'Primary Cell Atlas',
+                            'delimiter': ',', 'color': 'GSE49910_RMA.coloring.csv', 'owner': 'Tom Freeman',
+                            'summary': 'A meta-analysis of a large number of publicly available microarray datasets (745 samples, from over 100 separate studies) derived from human primary cells.',
+                            'geo_gds_id': '', 'geo_gpl_id': 'GPL570', 'geo_gse_id': 'GSE49910',
+                            'pubmed_id': '', 'species': 'human'
                         }]
 
             # Parse csv file
