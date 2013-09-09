@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+'''
+This is Deprecated!
+'''
 
 from biogps.apps.dataset.models import BiogpsDataset
 from biogps.apps.gene.models import Gene
