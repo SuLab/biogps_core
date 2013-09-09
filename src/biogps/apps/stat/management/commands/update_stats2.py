@@ -6,9 +6,7 @@ from biogps.apps.stat.models import BiogpsStat
 from datetime import datetime, timedelta
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand, CommandError
-from django.db.utils import IntegrityError
 from pymongo import Connection
 from time import time
 
@@ -22,7 +20,7 @@ stat_types = {'dataset': {"model": BiogpsDataset,
                          "action": 'layout_query'}}
 
 # Time frames
-now = datetime.now()
+now = datetime.utcnow()  # using utc time as the LOG SERVER logs UTC time.
 time_frames = ['weekly', 'monthly', 'all_time']
 one_mo = now - timedelta(days=30)
 prev_wk = now - timedelta(weeks=1)
