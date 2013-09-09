@@ -334,10 +334,10 @@ def get_blog_feed(request):
         msg.send(fail_silently=False)
 
 
-def get_info_box():
+def get_info_box(usecache=True):
     # Usage Stat reporting, check for cached results first
     info_cache = 'infobox_items'
-    infobox_items = cache.get(info_cache)
+    infobox_items = cache.get(info_cache) if usecache else None
     if not infobox_items:
         # Load all Info box items to be passed to index page for display
         # List sequence is item type, title, content, detail (author, registered plugins, etc)
@@ -381,9 +381,8 @@ def get_info_box():
             for intvl in trend_intervals:
                 stats = BiogpsStat.objects.filter(content_type=
                             ContentType.objects.get_for_model(mdl),
-                            interval=intvl).order_by('rank').filter(
-                            rank__gte=1, rank__lte=10)[:10]
-                if len(stats) > 0:
+                            interval=intvl).order_by('rank')[:10]
+                if stats.count() > 0:
                     if mdl == Gene:
                         content_title = '<div><u class="infobox-trend-title">Popular Genes ('
                         if intvl == 'all_time':
