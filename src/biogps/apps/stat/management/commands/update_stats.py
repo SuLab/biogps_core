@@ -4,6 +4,8 @@ from biogps.apps.dataset.models import BiogpsDataset
 from biogps.apps.gene.models import Gene
 from biogps.apps.layout.models import BiogpsGenereportLayout
 from biogps.apps.stat.models import BiogpsStat
+from biogps.utils.helper import is_valid_geneid
+
 from datetime import datetime, timedelta
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
@@ -81,7 +83,11 @@ def stat_time_frame(st_time):
 def update_stat(stat_type, stat_id, stat_time_frame):
     """Update stat for object"""
     # Confirm stat is for valid object
-    if stat_id[:3].upper() not in ['GDS', 'GSE']:
+    if stat_type == Gene:
+        if not is_valid_geneid(stat_id):
+            return
+    else:
+        #either BiogpsDataset or BiogpsGenereportLayout
         try:
             int(stat_id)
         except ValueError:
@@ -90,15 +96,15 @@ def update_stat(stat_type, stat_id, stat_time_frame):
             except UnicodeEncodeError:
                 pass
             return
-    try:
-        stat_type.objects.get(id=stat_id)
-    except AttributeError:
-        print 'AttributeError: {} {}'.format(stat_type.short_name, stat_id)
-        return
-    except ObjectDoesNotExist:
-        print '{} object #{} does not exist'.format(stat_type.short_name,
-            stat_id)
-        return
+        try:
+            stat_type.objects.get(id=stat_id)
+        except AttributeError:
+            print 'AttributeError: {} {}'.format(stat_type.short_name, stat_id)
+            return
+        except ObjectDoesNotExist:
+            print '{} object #{} does not exist'.format(stat_type.short_name,
+                stat_id)
+            return
 
     # Update stat for given time frame
     all_time_stat = True if stat_type == 'all_time' else False
@@ -134,34 +140,35 @@ class Command(BaseCommand):
             for s in stat_types.iteritems():
                 _type = s[0]
                 stats[_type] = {}
+                print _type.short_name
+                t0 = time()
                 for action in s[1]:
                     _docs = coll.find({'msg_parsed.action': action},
                                       timeout=False)
 
-                    for i in _docs:
-                        # Stat time frame
-                        t_frame = stat_time_frame(i['time'])
-
-                        _id = i['msg_parsed']['id']
-
-                        # Temporary clean-up of bad ds IDs
-                        if _type == BiogpsDataset and _id.find('/') != -1:
-                            _id = _id.split('/')[0]
-
-                        # Tally statistic
-                        update_stat(_type, _id, t_frame)
+                    try:
+                        for i in _docs:
+                            # Stat time frame
+                            t_frame = stat_time_frame(i['time'])
+                            _id = i['msg_parsed']['id']
+                            # Tally statistic
+                            update_stat(_type, _id, t_frame)
+                    finally:
+                        #close cursor
+                        _docs.close()
+                print '\tupdating', time()-t0
 
                 # Rank all results, update BioGPS stats
-                for st in stats.keys():
-                    ranks = list()
-                    for k, v in stats[st].iteritems():
-                        # Add stat object id to dict
-                        v['id'] = k
-                        ranks.append(v)
-                    for t in time_frames:
-                        rank_by_time(ranks, t)
-                        #print '{} {}: {}\n\n'.format(st.short_name, t, ranks)
-                        save_ranks(st, ranks, t)
+                ranks = list()
+                for k, v in stats[_type].iteritems():
+                    # Add stat object id to dict
+                    v['id'] = k
+                    ranks.append(v)
+                for t in time_frames:
+                    rank_by_time(ranks, t)
+                    save_ranks(_type, ranks, t)
+
+                print '\tsaving', time()-t0
 
                 # Done with stat type, clear before reuse
                 stats.clear()
