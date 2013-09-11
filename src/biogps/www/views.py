@@ -381,7 +381,12 @@ def get_info_box(usecache=True):
             for intvl in trend_intervals:
                 stats = BiogpsStat.objects.filter(content_type=
                             ContentType.objects.get_for_model(mdl),
-                            interval=intvl).order_by('rank')[:10]
+                            interval=intvl).order_by('rank')
+                if mdl is Gene:
+                    #exclude our common test genes CDK2 and Cdk2
+                    stats = stats.exclude(object_id__in=[1017, 12566])
+                stats = stats[:10]  #take top 10
+
                 if stats.count() > 0:
                     if mdl == Gene:
                         content_title = '<div><u class="infobox-trend-title">Popular Genes ('
