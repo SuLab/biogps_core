@@ -17,8 +17,8 @@ from django.utils.html import strip_tags
 from django.utils.http import urlencode
 
 from biogps.apps.gene.models import Gene
-from biogps.apps.layout.layout import getall, get_shared_layouts
 from biogps.apps.layout.models import BiogpsGenereportLayout
+from biogps.apps.dataset.models import BiogpsDataset
 from biogps.apps.plugin.models import BiogpsPlugin
 from biogps.apps.stat.models import BiogpsStat
 from biogps.utils.http import JSONResponse, render_to_formatted_response
@@ -73,15 +73,23 @@ def index(request, **kwargs):
         alt_defaultlayout = request.GET.get('layout', None)
         if alt_defaultlayout:
             try:
-                if request.user.is_anonymous():
-                    query_result = get_shared_layouts(request.user);
-                else:
-                    query_result = getall(request.user, userselectedonly=False)
+                query_result = BiogpsGenereportLayout.objects.get_available(request.user)
                 alt_layout = query_result.get(id=alt_defaultlayout)
             except BiogpsGenereportLayout.DoesNotExist:
                 alt_layout = None
             if alt_layout:
                 d['alt_defaultlayout'] = alt_layout.id
+
+        # Default dataset changing
+        alt_defaultdataset = request.GET.get('dataset', None)
+        if alt_defaultdataset:
+            try:
+                query_result = BiogpsDataset.objects.get_available(request.user)
+                alt_dataset = query_result.get(id=alt_defaultdataset)
+            except BiogpsDataset.DoesNotExist:
+                alt_dataset = None
+            if alt_dataset:
+                d['alt_defaultdataset'] = alt_dataset.id
 
         # Helper functions to set up blog feed and info box
         d['blog_entries'] = get_blog_feed(request)
@@ -117,6 +125,14 @@ def alternate_layout(request, altlayout):
         get_dict['layout'] = BiogpsAltLayout.objects.get(layout_name__iexact=altlayout).layout_number
     except BiogpsAltLayout.DoesNotExist:
         raise Http404
+
+    #set custom default dataset
+    # hard-coded here for now, it should be moved to DB eventually
+    if altlayout == 'exrna':
+        get_dict['dataset'] = 2428
+    if altlayout == 'primarycellatlas':
+        get_dict['dataset'] = 2429
+
     request.GET = get_dict
     return index(request, orig_url=request.get_full_path())
 
