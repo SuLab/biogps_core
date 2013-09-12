@@ -2,7 +2,7 @@ import base64
 import tagging
 import types
 from biogps.apps.auth2.models import UserProfile
-from biogps.utils.models import BioGPSModel
+from biogps.utils.models import PermissionManager, BioGPSModel
 from biogps.utils.fields.jsonfield import JSONField
 from biogps.utils.helper import wrap_str
 from biogps.utils import const
@@ -24,7 +24,7 @@ Note:
 """
 
 
-class BiogpsDatasetManager(models.Manager):
+class BiogpsDatasetManager(PermissionManager):
     """Retrieve dataset via GEO or dataset ID"""
     def get(self, *args, **kwargs):
         if 'id' in kwargs and type(kwargs['id']) in types.StringTypes and\
