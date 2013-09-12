@@ -520,6 +520,10 @@ class DatasetCorrelationView(RestView):
             return HttpResponseForbidden(
                 "Correlation threshold value must be between 0.5 and 1")
         datasetID = sanitize(datasetID)
+        log.info('username=%s clientip=%s action=dataset_correlation id=%s',
+            getattr(request.user, 'username', ''),
+            request.META.get('REMOTE_ADDR', ''), datasetID)
+
         return render_to_formatted_response(request,
             data=DatasetQuery.get_ds_corr(datasetID, reporterID, min_corr),
             allowed_formats=['json', 'xml'])
