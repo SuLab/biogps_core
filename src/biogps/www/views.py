@@ -75,7 +75,7 @@ def index(request, **kwargs):
             try:
                 query_result = BiogpsGenereportLayout.objects.get_available(request.user)
                 alt_layout = query_result.get(id=alt_defaultlayout)
-            except BiogpsGenereportLayout.DoesNotExist:
+            except (BiogpsGenereportLayout.DoesNotExist, ValueError):
                 alt_layout = None
             if alt_layout:
                 d['alt_defaultlayout'] = alt_layout.id
@@ -86,7 +86,7 @@ def index(request, **kwargs):
             try:
                 query_result = BiogpsDataset.objects.get_available(request.user)
                 alt_dataset = query_result.get(id=alt_defaultdataset)
-            except BiogpsDataset.DoesNotExist:
+            except (BiogpsDataset.DoesNotExist, ValueError):
                 alt_dataset = None
             if alt_dataset:
                 d['alt_defaultdataset'] = alt_dataset.id
