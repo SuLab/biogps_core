@@ -376,7 +376,7 @@ Ext.extend(biogps.GeneResultPage, Ext.Panel, {
         biogps.genelist_panel.loadGeneList({"geneList": displayed_gene_list});
 
         var tpl = new Ext.XTemplate(
-            '<p class="generesult_header"><a class="generesult_goback" href="/#goto=welcome" title="Go back to query"></a>Your query ',
+            '<p class="generesult_header"><a class="generesult_goback" href="#goto=welcome" title="Go back to query"></a>Your query ',
             '<tpl if="this.useInlineQuery">',
             '(<span class="generesult_query">"{query:ellipsis(50)}"</span>) ',
             '</tpl>',

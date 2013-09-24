@@ -91,6 +91,11 @@ def index(request, **kwargs):
             if alt_dataset:
                 d['alt_defaultdataset'] = alt_dataset.id
 
+        #optional userfilter to add to mygene.info query
+        search_filter = request.GET.get('search_filter', None)
+        if search_filter:
+            d['search_filter'] = search_filter
+
         # Helper functions to set up blog feed and info box
         d['blog_entries'] = get_blog_feed(request)
         d['infobox_items'] = get_info_box()
@@ -129,7 +134,8 @@ def alternate_layout(request, altlayout):
     #set custom default dataset
     # hard-coded here for now, it should be moved to DB eventually
     if altlayout == 'exrna':
-        get_dict['dataset'] = 2428
+        get_dict['dataset'] = 2428              #set datachart default dataset to this one instead
+        get_dict['search_filter'] = 'exrna'     #add additional userfilter to the default mygene.info gene query
     if altlayout == 'primarycellatlas':
         get_dict['dataset'] = 2429
 

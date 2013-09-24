@@ -450,6 +450,7 @@ biogps.doSearch_v1 = function(cfg){
 biogps.doSearch = function(cfg){
     //do the actual search
     var query = cfg.query;
+    var userfilter = cfg.userfilter;
     //TODO: validate query here
     if (query.length>biogps.MAX_QUERY_LENGTH) {
         //failed for large query.
@@ -471,9 +472,13 @@ biogps.doSearch = function(cfg){
 
     if (query){
         Ext.MessageBox.wait('Searching database...', 'Please wait...');
+        var params = {query: query};
+        if (userfilter){
+            params.userfilter = userfilter;
+        }
         biogps.callRemoteService({
             url: '/boe/',
-            params: {query: query},
+            params: params,
             method: 'POST',
             fn: function(st){
                 biogps.st = st;

@@ -204,23 +204,40 @@ coreDispatcher.dispatch();
                 	    </div>
 
                 		<div id="welcome-search">
-                			<h1>Search genes here:</h1>
+                            {% if search_filter == 'exrna' %}
+                            <h1>Search non-protein coding genes here:</h1>
+                            {% else %}
+                            <h1>Search genes here:</h1>
+                            {% endif %}
+
                 			<div id="qsearch_examples">
             			        <h4>Example Searches</h4>
             			        <div class="smallNote">(click to try these samples)</div>
             			        <ul>
-                			        <li><a href="#" onClick="coreDispatcher.useSampleSearch('CDK2\nCDK3');return false;">Gene Symbol(s)</a></li>
+                                    {% if search_filter == 'exrna' %}
+                                    <li><a href="#" onClick="coreDispatcher.useSampleSearch('MIR100\nMIR503');return false;">Gene Symbol(s)</a></li>
+                                    <li><a href="#" onClick="coreDispatcher.useSampleSearch('mir*');return false;">Wildcard queries</a></li>
+                                    <li><a href="#" onClick="coreDispatcher.useSampleSearch('GO:0071391');return false;">Gene Ontology</a></li>
+                                    <li><a href="#" onClick="coreDispatcher.useSampleSearch('IPR001611');return false;">Interpro</a></li>
+                                    <li><a href="#" onClick="coreDispatcher.useSampleSearch('chrX:133,670,000-133,690,000 and species:human');return false;">Genomic interval</a></li>
+
+                                    {% else %}
+
+                                    <li><a href="#" onClick="coreDispatcher.useSampleSearch('CDK2\nCDK3');return false;">Gene Symbol(s)</a></li>
                 			        <li><a href="#" onClick="coreDispatcher.useSampleSearch('CDK?');return false;">Wildcard queries</a></li>
                 			        <li><a href="#" onClick="coreDispatcher.useSampleSearch('GO:0006275');return false;">Gene Ontology</a></li>
                 			        <li><a href="#" onClick="coreDispatcher.useSampleSearch('1007_s_at\n1053_at\n117_at\n121_at\n1255_g_at\n1294_at\n1316_at\n1320_at\n1405_i_at\n1431_at');return false;">Affymetrix IDs</a></li>
                 			        <li><a href="#" onClick="coreDispatcher.useSampleSearch('IPR008351');return false;">Interpro</a></li>
                                     <li><a href="#" onClick="coreDispatcher.useSampleSearch('chr1:151,073,054-151,383,976 and species:human');return false;">Genomic interval</a></li>
+                                    {% endif %}
 
             			        </ul>
             			    </div>
                 			<div id="qsearch_box" class="roundBoxBlue">
                 				<form id="qsearch_form" action="javascript:void(null)" method="POST" onsubmit="coreDispatcher.doSearch(this,event);return false;">
-                					<input type="hidden" name="qtype" value="symbolanno" />
+                                    {% if search_filter %}
+                                    <input type="hidden" name="userfilter" value="{{search_filter}}" />
+                                    {% endif %}
                 					<textarea id="qsearch_query" name="query" class="x-form-textarea x-form-field x-form-focus"></textarea>
                 					<br />
                 					<div class="searchbar">
