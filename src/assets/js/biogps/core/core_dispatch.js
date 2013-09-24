@@ -218,6 +218,7 @@ coreDispatcher = {
         if (evt)
             evt.cancelBubble=true;
         var _query = form.query.value.trim();
+        var _userfilter = form.userfilter?form.userfilter.value:null;
         if (_query != ''){
             this.delayedExecute(function(){
                 biogps.Messenger.on('genelistrendered', function(){
@@ -225,7 +226,8 @@ coreDispatcher = {
                     biogps.clearListeners(biogps.Messenger, 'genelistrendered');
                 });
                 biogps.doSearch({query: _query,
-                                  target: form.query.id
+                                 userfilter: _userfilter,
+                                 target: form.query.id
                 });
             });
         }

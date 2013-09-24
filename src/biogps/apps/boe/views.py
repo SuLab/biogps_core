@@ -26,6 +26,7 @@ class MyGeneInfo():
         self.h = httplib2.Http()
         self.max_query=10000
         self.step = 10000
+        self.userfilter=None   #optional predefined userfilter
 
         self.default_species = ','.join([str(x) for x in taxid_d.values()])
         self.default_fields = ','.join(['symbol','name','taxid','entrezgene', 'ensemblgene', 'homologene'])
@@ -142,6 +143,8 @@ class MyGeneInfo():
         kwargs['fields'] = self._format_list(fields or self.default_fields)
         kwargs['size'] = size   #max 1000 hits returned
         kwargs['species'] = self._format_list(species or self.default_species)
+        if self.userfilter:
+            kwargs['userfilter'] = self.userfilter
         _res = self._post(_url, kwargs)
         return _res
 
@@ -193,6 +196,8 @@ class MyGeneInfo():
             kwargs['fields'] = self.default_fields
             kwargs['species'] = self.default_species
             kwargs['size'] = 1000   #max 1000 hits returned
+            if self.userfilter:
+                kwargs['userfilter'] = self.userfilter
             _url = self.url + '/query'
             res = self._get(_url, kwargs)
             if 'error' in res:
@@ -215,6 +220,8 @@ class MyGeneInfo():
             kwargs['species'] = species
             kwargs['fields'] = self.default_fields
             kwargs['size'] = 1000   #max 1000 hits returned
+            if self.userfilter:
+                kwargs['userfilter'] = self.userfilter
             _url = self.url + '/query'
             res = self._get(_url, kwargs)
             gene_list = self._homologene_trimming(res['hits'])
@@ -404,9 +411,12 @@ def _parse_interval_query(query):
 
 def do_query(params):
     _query = params.get('query', '').strip()
+    _userfilter = params.get('userfilter', '').strip()
     if _query:
         res = {}
         bs = MyGeneInfo()
+        if _userfilter:
+            bs.userfilter = _userfilter
 
         interval_query_params = _parse_interval_query(_query)
         if interval_query_params:
