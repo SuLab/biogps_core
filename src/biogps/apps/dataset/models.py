@@ -193,6 +193,13 @@ class BiogpsDataset(BioGPSModel):
 
     def get_sample_geneid(self):
         """return a proper sample gene id based on species setting."""
+
+        #first check metadata to see if any dataset-specific sample_geneid available.
+        if self.metadata:
+            sample_gene = self.metadata.get('sample_geneid', None)
+            if sample_gene:
+                return sample_gene
+        #if not, check species specific sample_gene
         try:
             sample_gene = const.sample_gene[self.species[0]]
         except:
