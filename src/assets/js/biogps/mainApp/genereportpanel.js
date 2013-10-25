@@ -984,7 +984,7 @@ biogps.GeneReportMgr = Ext.apply(new Ext.util.MixedCollection(), {
             //do the actual rendering of genereport pages for input geneid_list
             this.removeAll();
             this.rendered = false;
-    	    if (biogps.genelist_panel.genelist_node && biogps.genelist_panel.genelist_node.childNodes.length==0)
+    	    if (biogps.genelist_panel && biogps.genelist_panel.genelist_node && biogps.genelist_panel.genelist_node.childNodes.length==0)
     	        this.populateGeneListPanel = true;
             Ext.fly(targetEl).dom.innerHTML = '';
     	    for (var i=0;i<geneid_list.length;i++){
