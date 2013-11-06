@@ -33,7 +33,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         # Confirm required log server is set up
-        if not settings.LOG_SERVER:
+        if not getattr(settings, 'LOG_SERVER', None):
             raise CommandError('A log server must be specified in settings '
                                'before using this command')
         else:
