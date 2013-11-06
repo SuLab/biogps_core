@@ -20,7 +20,7 @@ from django.core.management.base import NoArgsCommand
 from optparse import make_option
 
 from django.contrib.auth.models import User
-from biogps.www.models import BiogpsPlugin
+from biogps.apps.plugin.models import BiogpsPlugin
 
 
 class Command(NoArgsCommand):
@@ -30,47 +30,47 @@ class Command(NoArgsCommand):
             help='Actually send the emails out to each user.'),
         )
     args = ''
-    
+
     def handle_noargs(self, **options):
         self.args = options
-        
+
         if self.args.get("send", False):
             print "SENDING EMAIL!!"
         else:
             print "TEST RUN - No email will actually be sent"
-        
+
         # Retrieve the owner IDs of all registered plugins
         olist = BiogpsPlugin.objects.values_list('ownerprofile')
-        
+
         # Shrink the list to only unique IDs and flatten the array
         olist = [item for sublist in list(set(olist)) for item in sublist]
-        
+
         # Retrieve the user objects and send them email
         users = User.objects.filter(userprofile__sid__in=olist)
-        
+
         # Uncomment the below line to send a test email just to Marc.
         #users = [User.objects.get(id=364),]
         self.send_email_to_users(users)
-    
+
     def send_email_to_users(self, users):
         subject = 'Increase the visibility of your BioGPS plugin'
-        
+
         # Keep a list of email addresses we've already hit, to catch users that
         # have multiple accounts with the same address.
         already_sent = []
         send_counter = 0
-        
+
         for user in users:
             if (not user.email) or (user.email in already_sent): continue
             recipient = (user.email,)
             message = render_to_string('email/plugin_developer.html', {'user': user, 'subject': subject})
             self.mail_in_html(recipient, subject, message)
-            
+
             already_sent.append(user.email)
             send_counter+=1
-        
+
         print "Sent out %s emails. DONE." % send_counter
-    
+
     def mail_in_html(self, recipient, subject, message, fail_silently=False):
         """Sends a message to the managers, as defined by the MANAGERS setting.
            passed message is a html document.
@@ -80,4 +80,4 @@ class Command(NoArgsCommand):
         msg.content_subtype = "html"
         if self.args.get("send", False):
             msg.send(fail_silently=fail_silently)
-    
+
