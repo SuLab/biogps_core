@@ -116,7 +116,8 @@ def ga_header(usertype=None):
     '''
     trackercode = '''<script type="text/javascript">
         var _gaq = _gaq || [];
-        _gaq.push(['_setAccount', 'UA-672247-4']);'''
+        _gaq.push(['_setAccount', '%s']);'''
+    trackercode = trackercode % settings.GA_ACCOUNT
     if usertype:
         trackercode += "_gaq.push(['_setCustomVar', 1, 'UserType', '%s', 2]);" % usertype
     trackercode += '''_gaq.push(['_trackPageview']);
@@ -133,7 +134,7 @@ def ga():
           (function() {
             var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
             ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ga);
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
           })();
         </script>
         '''
