@@ -1,5 +1,6 @@
 {% extends "m_base.html" %}
 {% load biogps_tags %}
+{% load biogps_filters %}
 
 {% block title %}Search Results - BioGPS Mobile{% endblock %}
 
@@ -13,6 +14,7 @@
     		{% for gene in results.geneList %}
     		    <li><a href="/m/gene/{{ gene.id }}/">{{ gene.symbol }}
     		        {% if gene.name %} ({{ gene.name|truncatewords:5 }}){% endif %}
+                    {% if gene.taxid %} - {{ gene.taxid|as_species }}{% endif %}
     		    </a></li>
     		{% endfor %}
     		</ul>

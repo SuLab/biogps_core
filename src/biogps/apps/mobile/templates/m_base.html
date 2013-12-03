@@ -95,6 +95,8 @@
 	</div>
 </div>
 
+{% if not debug %}
 {% block ga %}{% ga_mobile request %}{% endblock %}
+{% endif %}
 </body>
 </html>
