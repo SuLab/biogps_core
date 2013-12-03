@@ -4,13 +4,17 @@ from django.template.defaultfilters import stringfilter
 from django.utils.encoding import force_unicode
 from django.utils.safestring import mark_safe
 
+from biogps.utils.const import species_d
+
 register = Library()
+
 
 @register.filter
 @stringfilter
 def html2text(value):
     import html2text
     return html2text.html2text(value)
+
 
 #######################################################
 #Taken from http://djangosnippets.org/snippets/1259/  #
@@ -61,7 +65,7 @@ def smartjoin(value, arg, autoescape=None):
             value = [conditional_escape(v) for v in value]
         try:
             data = arg.join(value)
-        except AttributeError: # fail silently but nicely
+        except AttributeError:   # fail silently but nicely
             return value
         return mark_safe(data)
     else:
@@ -69,6 +73,7 @@ def smartjoin(value, arg, autoescape=None):
 smartjoin.is_safe = True
 smartjoin.needs_autoescape = True
 register.filter(smartjoin)
+
 
 @register.filter
 def alwayslist(value):
@@ -78,3 +83,12 @@ def alwayslist(value):
         return value
     else:
         return [value]
+
+
+@register.filter
+def as_species(taxid):
+    '''Convert the given taxid into a friendly species name.
+       if can not convert, return the taxid itself.
+    '''
+    species = species_d.get(taxid, taxid)
+    return species
