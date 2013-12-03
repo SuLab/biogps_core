@@ -12,7 +12,8 @@ import json
 import types
 
 import logging
-log = logging.getLogger('biogps_prod')
+log = logging.getLogger('biogps_prod' if settings.RELEASE_MODE == 'prod' else 'biogps_dev')
+
 
 class MyGeneInfo404(Exception):
     pass
@@ -138,7 +139,10 @@ class MyGeneInfo():
     def _querymany(self, qterms, scopes=None, fields=None, size=1000, species=None):
         _url = self.url + '/query'
         kwargs = {}
-        kwargs['q'] = ','.join([unicode(x) for x in qterms])
+        if type(qterms) in (types.ListType, types.TupleType):
+            kwargs['q'] = '\n'.join([unicode(x) for x in qterms])
+        else:
+            kwargs['q'] = qterms
         kwargs['scopes'] = self._format_list(scopes or self.id_scopes)
         kwargs['fields'] = self._format_list(fields or self.default_fields)
         kwargs['size'] = size   #max 1000 hits returned
@@ -165,27 +169,33 @@ class MyGeneInfo():
 
     def query_by_id(self, query):
         if query:
-            _query = re.split('[\s\r\n+|,]+', query)
-            _res = self._querymany(_query, self.id_scopes)
-            gene_list = []
-            notfound_list = []
-            error_list = []
-            for hit in _res:
-                if hit.get('notfound', False):
-                    notfound_list.append(hit['query'])
-                elif hit.get('error', False):
-                    error_list.append(hit['error'])
-                else:
-                    gene_list.append(hit)
-            self._homologene_trimming(gene_list)
-            out = {"data": {"geneList": gene_list,
-                            "totalCount": len(gene_list),
-                            "qtype":"id"},
-                   "success": True}
-            if len(notfound_list) > 0:
-                out["data"]["notfound"] = notfound_list
-            if len(error_list) > 0:
-                out["data"]["error"] = error_list
+            #_query = re.split('[\s\r\n+|,]+', query)
+            _res = self._querymany(query, self.id_scopes)
+            if type(_res) is types.DictType and _res.get('error', False):
+                out = _res
+                if out['error'] == 'timeout':
+                    #give a nicer timeout error msg
+                    out['error'] = "Your query times out now. Consider modify it and try again."
+            else:
+                gene_list = []
+                notfound_list = []
+                error_list = []
+                for hit in _res:
+                    if hit.get('notfound', False):
+                        notfound_list.append(hit['query'])
+                    elif hit.get('error', False):
+                        error_list.append(hit['error'])
+                    else:
+                        gene_list.append(hit)
+                self._homologene_trimming(gene_list)
+                out = {"data": {"geneList": gene_list,
+                                "totalCount": len(gene_list),
+                                "qtype":"id"},
+                       "success": True}
+                if len(notfound_list) > 0:
+                    out["data"]["notfound"] = notfound_list
+                if len(error_list) > 0:
+                    out["data"]["error"] = error_list
 
             return out
 
@@ -425,17 +435,22 @@ def do_query(params):
             else:
                 query ='chr%(chr)s:%(gstart)s-%(gend)s' % interval_query_params
                 res = bs.query_by_interval(query, interval_query_params['species'])
+                res['_log'] = {'qtype': 'interval', 'species': interval_query_params['species']}
         else:
             with_wildcard = _query.find('*') != -1 or _query.find('?') != -1
-            multi_terms = len(re.split(u'[\t\n\x0b\x0c\r]+', _query)) > 1    #split on whitespace but not on plain space.
+            num_terms = len(re.split(u'[\t\n\x0b\x0c\r]+', _query))    # split on whitespace but not on plain space.
+            multi_terms = num_terms > 1
             if with_wildcard and multi_terms:
                 res = {'success': False, 'error': "Please do wildcard query one at a time."}
             elif multi_terms:
                 #do id query
                 res = bs.query_by_id(_query)
+                res['_log'] = {'qtype': 'id', 'qlen': len(_query), 'num_terms': num_terms}
+
             else:
                 #do keyword query
                 res = bs.query_by_keyword(_query)
+                res['_log'] = {'qtype': 'keyword', 'qlen': len(_query)}
     else:
         res = {'success': False, 'error': 'Invalid input parameters!'}
 
@@ -443,11 +458,27 @@ def do_query(params):
 
 
 @allowedrequestmethod('POST', 'GET')
-def query(request):
+def query(request, mobile=False, iphone=False):
     if request.method == 'GET':
         res = do_query(request.GET)
     else:
         res = do_query(request.POST)
+
+    # logging
+    _log = {"clientip": request.META.get('REMOTE_ADDR', ''),
+            "action": "search"}
+    _u = getattr(request.user, 'username', None)
+    if _u:
+        _log['username'] = _u
+    if mobile:
+        _log['mobile'] = 1
+    if iphone:
+        _log['iphone'] = 1
+
+    if '_log' in res:
+        _log.update(res['_log'])
+        del res['_log']
+        log.info(' '.join(['{}={}'.format(*x) for x in _log.items()]))
 
     return JSONResponse(res)
 
@@ -473,6 +504,3 @@ def getgeneidentifiers(request, geneid=None):
         return JSONResponse(gene)
     else:
         raise Http404
-
-
-
