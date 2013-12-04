@@ -40,9 +40,7 @@ from account.views import ChangePasswordForm
 from account import signals
 from django.shortcuts import redirect
 
-
-import logging
-log = logging.getLogger('biogps_prod')
+from biogps.utils import log
 
 
 def _send_email(email, subject_template, msg_template, msg_context):

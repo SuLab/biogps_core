@@ -4,19 +4,17 @@ from django.utils.http import urlencode
 from biogps.utils.helper import (allowedrequestmethod,
                                  JSONResponse, species_d, taxid_d,
                                  is_valid_geneid, assembly_d)
-
+from biogps.utils import log
 import httplib2
 from urllib2 import urlparse
 import re
 import json
 import types
 
-import logging
-log = logging.getLogger('biogps_prod' if settings.RELEASE_MODE == 'prod' else 'biogps_dev')
-
 
 class MyGeneInfo404(Exception):
     pass
+
 
 class MyGeneInfo():
     def __init__(self, url=settings.BOESERVICE_URL):
@@ -25,12 +23,12 @@ class MyGeneInfo():
             self.url = self.url[:-1]
         self.url_root = self._get_url_root(self.url)
         self.h = httplib2.Http()
-        self.max_query=10000
+        self.max_query = 10000
         self.step = 10000
-        self.userfilter=None   #optional predefined userfilter
+        self.userfilter = None   # optional predefined userfilter
 
         self.default_species = ','.join([str(x) for x in taxid_d.values()])
-        self.default_fields = ','.join(['symbol','name','taxid','entrezgene', 'ensemblgene', 'homologene'])
+        self.default_fields = ','.join(['symbol', 'name', 'taxid', 'entrezgene', 'ensemblgene', 'homologene'])
         self.id_scopes = ','.join([
             "accession",
             "alias",
@@ -68,7 +66,7 @@ class MyGeneInfo():
 
     def _get_url_root(self, url):
         scheme, netloc, url, query, fragment = urlparse.urlsplit(self.url)
-        return urlparse.urlunsplit((scheme, netloc, '', '',''))
+        return urlparse.urlunsplit((scheme, netloc, '', '', ''))
 
     def _format_list(self, a_list, sep=','):
         if type(a_list) in (types.ListType, types.TupleType):
@@ -101,7 +99,7 @@ class MyGeneInfo():
         debug = params.pop('debug', False)
         return_raw = params.pop('return_raw', False)
         headers = {'content-type': 'application/x-www-form-urlencoded',
-                   'user-agent': "Python-httplib2_biogps/%s (gzip)" % httplib2.__version__ }
+                   'user-agent': "Python-httplib2_biogps/%s (gzip)" % httplib2.__version__}
         res, con = self.h.request(url, 'POST', body=urlencode(params), headers=headers)
         if debug:
             return url, res, con
@@ -139,13 +137,13 @@ class MyGeneInfo():
     def _querymany(self, qterms, scopes=None, fields=None, size=1000, species=None):
         _url = self.url + '/query'
         kwargs = {}
-        if type(qterms) in (types.ListType, types.TupleType):
+        if isinstance(qterms, (list, tuple)):
             kwargs['q'] = '\n'.join([unicode(x) for x in qterms])
         else:
             kwargs['q'] = qterms
         kwargs['scopes'] = self._format_list(scopes or self.id_scopes)
         kwargs['fields'] = self._format_list(fields or self.default_fields)
-        kwargs['size'] = size   #max 1000 hits returned
+        kwargs['size'] = size   # max 1000 hits returned
         kwargs['species'] = self._format_list(species or self.default_species)
         if self.userfilter:
             kwargs['userfilter'] = self.userfilter
@@ -171,7 +169,7 @@ class MyGeneInfo():
         if query:
             #_query = re.split('[\s\r\n+|,]+', query)
             _res = self._querymany(query, self.id_scopes)
-            if type(_res) is types.DictType and _res.get('error', False):
+            if isinstance(_res, dict) and _res.get('error', False):
                 out = _res
                 if out['error'] == 'timeout':
                     #give a nicer timeout error msg
@@ -190,7 +188,7 @@ class MyGeneInfo():
                 self._homologene_trimming(gene_list)
                 out = {"data": {"geneList": gene_list,
                                 "totalCount": len(gene_list),
-                                "qtype":"id"},
+                                "qtype": "id"},
                        "success": True}
                 if len(notfound_list) > 0:
                     out["data"]["notfound"] = notfound_list
@@ -205,7 +203,7 @@ class MyGeneInfo():
             kwargs['q'] = query
             kwargs['fields'] = self.default_fields
             kwargs['species'] = self.default_species
-            kwargs['size'] = 1000   #max 1000 hits returned
+            kwargs['size'] = 1000   # max 1000 hits returned
             if self.userfilter:
                 kwargs['userfilter'] = self.userfilter
             _url = self.url + '/query'
@@ -214,12 +212,10 @@ class MyGeneInfo():
                 return res
 
             gene_list = self._homologene_trimming(res['hits'])
-            out = {'data': {
-                            'query': query,
+            out = {'data': {'query': query,
                             'geneList': gene_list,
                             'totalCount': len(gene_list),
-                            'qtype': 'keyword'
-                            },
+                            'qtype': 'keyword'},
                    'success': True}
             return out
 
@@ -229,18 +225,16 @@ class MyGeneInfo():
             kwargs['q'] = query
             kwargs['species'] = species
             kwargs['fields'] = self.default_fields
-            kwargs['size'] = 1000   #max 1000 hits returned
+            kwargs['size'] = 1000   # max 1000 hits returned
             if self.userfilter:
                 kwargs['userfilter'] = self.userfilter
             _url = self.url + '/query'
             res = self._get(_url, kwargs)
             gene_list = self._homologene_trimming(res['hits'])
-            out = {'data': {
-                            'query': query,
+            out = {'data': {'query': query,
                             'geneList': gene_list,
                             'totalCount': len(gene_list),
-                            'qtype': "interval"
-                            },
+                            'qtype': "interval"},
                    'success': True}
             return out
 
@@ -254,7 +248,7 @@ class MyGeneInfo():
         except MyGeneInfo404:
             gene = None
         if gene:
-            if type(gene) is types.ListType:
+            if isinstance(gene, list):
                 # in some cases of Ensembl genes matching two entrez gene ids, e.g. T26G10.8
                 _n = len(gene)
                 gene = gene[0]
@@ -265,7 +259,7 @@ class MyGeneInfo():
 
     def _get_value(self, value, fn=None):
         if value:
-            if type(value) is types.ListType:
+            if isinstance(value, list):
                 out = [fn(x) if fn else x for x in value]
             else:
                 out = fn(value) if fn else value
@@ -288,21 +282,11 @@ class MyGeneInfo():
         # except ValueError:
         #     pass
 
-        attr_li = [
-                   #('Symbol', 'symbol', None),
-                   #('Description', 'name', None),
-                   ('ensemblgene', 'ensembl', lambda x: x['gene']),
-
-                   #('Aliases', 'alias', None),
-                   #('Unigene', 'unigene', None),
-                   #('PDB', 'pdb', None),
-                   ('uniprot', 'uniprot', lambda x:x.get('Swiss-Prot', None)),
-                   #('PharmGKB', 'pharmgkb', None),
-
-                  ]
+        attr_li = [('ensemblgene', 'ensembl', lambda x: x['gene']),
+                   ('uniprot', 'uniprot', lambda x:x.get('Swiss-Prot', None))]
         xref_attrs = ["entrezgene", "symbol", "name", "alias", "unigene", "pdb", "pharmgkb",
-                      "FLYBASE", "HGNC", "HPRD", "MGI", "MIM","RATMAP", "RGD",
-                      "TAIR","WormBase", "ZFIN", "Xenbase"]
+                      "FLYBASE", "HGNC", "HPRD", "MGI", "MIM", "RATMAP", "RGD",
+                      "TAIR", "WormBase", "ZFIN", "Xenbase"]
 
         attr_li.extend([(attr.lower(), attr, None) for attr in xref_attrs])
         for attr_out, attr_src, fn in attr_li:
@@ -317,30 +301,30 @@ class MyGeneInfo():
         if refseq:
             rna = refseq.get('rna', None)
             if rna:
-                if type(rna) is types.StringType:
+                if isinstance(rna, types.StringTypes):
                     rna = [rna]
                 geneobj['refseqmrna'] = rna
             protein = refseq.get('protein', None)
             if protein:
-                if type(protein) is types.StringType:
+                if isinstance(protein, types.StringTypes):
                     protein = [protein]
                 geneobj['refseqprotein'] = protein
 
         #genomelocation
         gpos = _gene.get('genomic_pos', None)
         if gpos:
-            if type(gpos) is types.ListType:
-               gpos=gpos[0]
-            if gpos.has_key('chr'):
+            if isinstance(gpos, list):
+                gpos = gpos[0]
+            if 'chr' in gpos:
                 geneobj['chr'] = gpos['chr']
-            if gpos.has_key('start'):
+            if 'start' in gpos:
                 geneobj['gstart'] = gpos['start']
-            if gpos.has_key('end'):
+            if 'end' in gpos:
                 geneobj['gend'] = gpos['end']
 
-            genomelocation_str = 'chr%s:%s-%s' % ( gpos.get('chr', ''),
-                                                   gpos.get('start', ''),
-                                                   gpos.get('end', '') )
+            genomelocation_str = 'chr%s:%s-%s' % (gpos.get('chr', ''),
+                                                  gpos.get('start', ''),
+                                                  gpos.get('end', ''))
             if len(genomelocation_str) > 5:
                 geneobj['genomelocation'] = genomelocation_str
                 geneobj['assembly'] = assembly_d[species]
@@ -350,8 +334,8 @@ class MyGeneInfo():
     def get_geneidentifiers(self, geneid):
         gdoc = self.get_gene(geneid)
         if gdoc:
-            if type(gdoc) is types.ListType:     # in few cases, one id might returns multiple gdoc as a list
-                gdoc = gdoc[0]                   # in this case, we just take the first one
+            if isinstance(gdoc, list):     # in few cases, one id might returns multiple gdoc as a list
+                gdoc = gdoc[0]             # in this case, we just take the first one
 
             out = {}
             #base
@@ -363,9 +347,9 @@ class MyGeneInfo():
             hgene = gdoc.get('homologene', None)
             if hgene:
                 out['HomoloGene'] = hgene['id']
-                gene_li = hgene['genes']  #[(taxid, geneid),...]
+                gene_li = hgene['genes']  # [(taxid, geneid),...]
             else:
-                gene_li=[(taxid, gdoc['_id'])]
+                gene_li = [(taxid, gdoc['_id'])]
 
             #handle each gene in hgene
             species_list = []
@@ -386,16 +370,16 @@ class MyGeneInfo():
                     if species in out:
                         out[species].append(geneobj)
                     else:
-                        out[species] = [geneobj]   #temp to make it compatible with current sl
+                        out[species] = [geneobj]   # temp to make it compatible with current sl
                     species_list.append(species)
             out['SpeciesList'] = species_list
             return out
-
 
     @property
     def metadata(self):
         _url = self.url+'/metadata'
         return self._get(_url)
+
 
 def _parse_interval_query(query):
     '''Check if the input query string matches interval search regex,
@@ -433,7 +417,7 @@ def do_query(params):
             if 'species' not in interval_query_params:
                 res = {'success': False, 'error': 'Need to specify a valid "species" parameter, e.g., "species:human".'}
             else:
-                query ='chr%(chr)s:%(gstart)s-%(gend)s' % interval_query_params
+                query = 'chr%(chr)s:%(gstart)s-%(gend)s' % interval_query_params
                 res = bs.query_by_interval(query, interval_query_params['species'])
                 res['_log'] = {'qtype': 'interval', 'species': interval_query_params['species']}
         else:

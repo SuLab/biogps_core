@@ -5,18 +5,16 @@ from django.template import RequestContext
 from django.contrib.auth.models import User
 
 from biogps.utils.helper import (docenabled,
-                               loginrequired_or_redirect,
-                               JSONResponse,
-                               getCommonDataForMain,
-                               HttpResponseRedirectWithIEFix)
+                                 loginrequired_or_redirect,
+                                 JSONResponse,
+                                 getCommonDataForMain,
+                                 HttpResponseRedirectWithIEFix)
 from biogps.apps.auth2.models import clean_username
 from biogps.apps.plugin.models import BiogpsPlugin
 from models import BiogpsProfile
 from forms import BiogpsProfileForm
 from friends.models import friend_set_for
 
-import logging
-log = logging.getLogger('biogps_prod')
 
 @docenabled
 @loginrequired_or_redirect
@@ -29,7 +27,6 @@ def index(request, **kwargs):
     return HttpResponseRedirectWithIEFix(request, request.user.get_absolute_url())
 
 
-
 @docenabled
 @loginrequired_or_redirect
 def edit(request, via="POST"):
@@ -37,11 +34,11 @@ def edit(request, via="POST"):
     URL:          http://biogps.gnf.org/profile/edit/
     '''
 
-    profile = BiogpsProfile.objects.get_or_create(user = request.user)
-    profile = profile[0] # get_or_create returns a tuple, and we just want the first object
+    profile = BiogpsProfile.objects.get_or_create(user=request.user)
+    profile = profile[0]   # get_or_create returns a tuple, and we just want the first object
 
     if request.method == 'POST':
-        form = BiogpsProfileForm(request.POST, instance = profile)
+        form = BiogpsProfileForm(request.POST, instance=profile)
 
         if form.is_valid():
             form.save()
@@ -54,7 +51,6 @@ def edit(request, via="POST"):
         return HttpResponseRedirectWithIEFix(request, request.user.get_absolute_url())
 
 
-
 @docenabled
 def view(request, userid, junk=''):
     try:
@@ -63,14 +59,14 @@ def view(request, userid, junk=''):
         raise Http404
 
     # Confirm that the userid and username in the URL match
-    if not clean_username(vuser.username).lower() == junk.lower().replace('.html',''):
+    if not clean_username(vuser.username).lower() == junk.lower().replace('.html', ''):
         raise Http404
 
     d = getCommonDataForMain(request)
     d['vuser'] = vuser
 
     # get_or_create returns a tuple with the object we want as the first item.
-    profile_tuple = BiogpsProfile.objects.get_or_create(user = vuser)
+    profile_tuple = BiogpsProfile.objects.get_or_create(user=vuser)
     d['vprofile'] = profile_tuple[0].filter_for_user(request.user)
 
     d['vplugins'] = BiogpsPlugin.objects.get_available_from(vuser, request.user)

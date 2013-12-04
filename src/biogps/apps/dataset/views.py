@@ -7,7 +7,7 @@ from biogps.apps.stat.models import BiogpsStat
 from biogps.utils.http import JSONResponse, render_to_formatted_response
 from biogps.utils.models import Species
 from biogps.utils.restview import RestView
-from biogps.utils import const
+from biogps.utils import (const, log)
 from django.http import (
     HttpResponse,
     HttpResponseForbidden,
@@ -18,10 +18,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import Http404
 from tagging.models import Tag
 from time import time
-import logging
-
-
-log = logging.getLogger('biogps_prod')
 
 
 class DatasetLibraryView(RestView):
