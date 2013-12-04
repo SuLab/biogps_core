@@ -17,9 +17,7 @@ from django.utils.encoding import smart_str
 from biogps.utils.helper import (mkErrorReport, json, dotdict, alwayslist,
                                  genus_d, species_d, assembly_d)
 #from biogps.apps.service import biogps_svc as sl_svc
-
-import logging
-log = logging.getLogger('biogps_prod')
+from biogps.utils import log
 
 
 def reverse_proxy(request, url, contentonly=False):

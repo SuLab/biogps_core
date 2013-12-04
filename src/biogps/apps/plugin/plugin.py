@@ -17,15 +17,13 @@ from django.conf import settings
 from biogps.utils.helper import (MIMETYPE, STD_FORMAT, ExtError, AVAILABLE_SPECIES,
                                  allowedrequestmethod, loginrequired, is_valid_geneid,
                                  JSONResponse, setObjectPermission)
+from biogps.utils import log
 from models import BiogpsPlugin, BiogpsPluginPopularity
 
 from tagging.models import Tag, TaggedItem
 from tagging.utils import calculate_cloud
 #from biogps.apps.boc import boc_svc as svc
 from biogps.apps.boe.views import MyGeneInfo
-
-import logging
-log = logging.getLogger('biogps_prod')
 
 
 #@loginrequired

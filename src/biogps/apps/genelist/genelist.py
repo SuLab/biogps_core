@@ -9,12 +9,10 @@ from django_restapi.resource import Resource
 from biogps.utils.helper import (ExtError, loginrequired, cvtPermission,
                                  formatDateTime, JSONResponse,
                                  setObjectPermission, json)
+from biogps.utils import log
 from biogps.apps.genelist.models import BiogpsGeneList
 # from biogps.apps.boc import boc_svc as svc
 from biogps.apps.boe.views import MyGeneInfo
-
-import logging
-log = logging.getLogger('biogps_prod')
 
 
 class NameConflict(Exception):

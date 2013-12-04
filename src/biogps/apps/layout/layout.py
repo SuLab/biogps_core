@@ -9,12 +9,11 @@ from biogps.apps.plugin.models import BiogpsPlugin
 from biogps.utils.helper import (MIMETYPE, STD_FORMAT, ANONYMOUS_USER_ERROR, ExtError, JSONResponse,
                                  setObjectPermission, loginrequired, formatDateTime, cvtPermission,
                                  is_valid_geneid, allowedrequestmethod, json)
+from biogps.utils import log
 from biogps.apps.plugin.plugin import PluginUrlRenderError
 # from biogps.apps.boc import boc_svc as svc
 from biogps.apps.boe.views import MyGeneInfo
 
-import logging
-log = logging.getLogger('biogps_prod')
 
 #TEMP
 #NEW_LAYOUT_MODE = True    #0: for old layou_data jsonfield; 1 for new manytomanyfield

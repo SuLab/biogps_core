@@ -5,13 +5,11 @@ from django.utils.encoding import smart_str
 from biogps.utils.helper import (allowedrequestmethod,
                                  JSONResponse,
                                  is_valid_geneid, assembly_d)
+from biogps.utils import log
 import boc_svc as svc
 
 import httplib2
 import re
-
-import logging
-log = logging.getLogger('biogps_prod')
 
 
 def reverse_proxy(request, url, contentonly=False):

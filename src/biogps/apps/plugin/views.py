@@ -12,6 +12,7 @@ from biogps.utils.decorators import loginrequired
 from biogps.utils.http import (JSONResponse, render_to_formatted_response,
                                json_error)
 from biogps.utils.models import set_object_permission, Species
+from biogps.utils import log
 
 from tagging.models import Tag
 from biogps.apps.rating.models import Rating
@@ -19,9 +20,6 @@ from biogps.apps.search.navigations import BiogpsSearchNavigation
 from biogps.apps.search.es_lib import ESQuery
 from models import BiogpsPlugin
 from forms import BiogpsPluginForm
-
-import logging
-log = logging.getLogger('biogps_prod')
 
 
 class PluginLibraryView(RestView):

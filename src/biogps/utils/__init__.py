@@ -4,7 +4,12 @@ try:
     import simplejson as json
 except:
     from django.utils import simplejson as json
+from django.conf import settings
+
 import types
+import logging
+log = logging.getLogger('biogps_prod' if settings.RELEASE_MODE == 'prod' else 'biogps_dev')
+
 
 #Misc. utility functions
 def list2dict(list,keyitem,alwayslist=False):

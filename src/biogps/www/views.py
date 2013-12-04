@@ -22,13 +22,11 @@ from biogps.apps.dataset.models import BiogpsDataset
 from biogps.apps.plugin.models import BiogpsPlugin
 from biogps.apps.stat.models import BiogpsStat
 from biogps.utils.http import JSONResponse, render_to_formatted_response
+from biogps.utils import log
 from biogps.utils.detect_mobile_browser import is_mobile_browser
 from biogps.utils.helper import (getCommonDataForMain,
                                  HttpResponseRedirectWithIEFix)
 from biogps.www.models import BiogpsInfobox
-
-import logging
-log = logging.getLogger('biogps_prod')
 
 
 def index(request, **kwargs):
