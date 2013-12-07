@@ -10,6 +10,7 @@
 
 #generesult_species_selector{
     width: 150px;
+    z-index: 10;
 }
 
 .generesult_table {
