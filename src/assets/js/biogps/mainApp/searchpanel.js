@@ -480,6 +480,7 @@ biogps.doSearch = function(cfg){
             url: '/boe/',
             params: params,
             method: 'POST',
+            timeout: 300000,
             fn: function(st){
                 biogps.st = st;
                 var result =  st.reader.jsonData.data;
