@@ -7,6 +7,7 @@ from biogps.utils.helper import (allowedrequestmethod,
 from biogps.utils import log
 import httplib2
 from urllib2 import urlparse
+from shlex import shlex
 import re
 import json
 import types
@@ -69,7 +70,7 @@ class MyGeneInfo():
         return urlparse.urlunsplit((scheme, netloc, '', '', ''))
 
     def _format_list(self, a_list, sep=','):
-        if type(a_list) in (types.ListType, types.TupleType):
+        if isinstance(a_list, (list, tuple)):
             _out = sep.join([str(x) for x in a_list])
         else:
             _out = a_list     # a_list is already a comma separated string
@@ -138,7 +139,8 @@ class MyGeneInfo():
         _url = self.url + '/query'
         kwargs = {}
         if isinstance(qterms, (list, tuple)):
-            kwargs['q'] = '\n'.join([unicode(x) for x in qterms])
+            kwargs['q'] = json.dumps(qterms)
+            kwargs['jsoninput'] = 'true'
         else:
             kwargs['q'] = qterms
         kwargs['scopes'] = self._format_list(scopes or self.id_scopes)
@@ -403,6 +405,27 @@ def _parse_interval_query(query):
     return interval_query
 
 
+def split_queryterms(q):
+    '''split input query string into list of ids.
+       any of "\t\n\x0b\x0c\r|,+" as the separator,
+        but perserving a phrase if quoted
+        (either single or double quoted)
+        more detailed rules see:
+        http://docs.python.org/2/library/shlex.html#parsing-rules
+
+        e.g. split_ids('CDK2, CDK3') --> ['CDK2', 'CDK3']
+             split_ids('"CDK2, CDK3"\n CDk4')  --> ['CDK2, CDK3', 'CDK4']
+        note that plain space is not a separator.
+    '''
+    lex = shlex(q.encode('utf8'), posix=True)
+    lex.whitespace = '\t\n\x0b\x0c\r|,+'
+    lex.whitespace_split = True
+    lex.commenters = ''
+    terms = [x.decode('utf8').strip() for x in list(lex)]
+    terms = [x for x in terms if x]
+    return terms
+
+
 def do_query(params):
     _query = params.get('query', '').strip()
     _userfilter = params.get('userfilter', '').strip()
@@ -422,19 +445,25 @@ def do_query(params):
                 res['_log'] = {'qtype': 'interval', 'species': interval_query_params['species']}
         else:
             with_wildcard = _query.find('*') != -1 or _query.find('?') != -1
-            num_terms = len(re.split(u'[\t\n\x0b\x0c\r]+', _query))    # split on whitespace but not on plain space.
-            multi_terms = num_terms > 1
-            if with_wildcard and multi_terms:
-                res = {'success': False, 'error': "Please do wildcard query one at a time."}
-            elif multi_terms:
-                #do id query
-                res = bs.query_by_id(_query)
-                res['_log'] = {'qtype': 'id', 'qlen': len(_query), 'num_terms': num_terms}
+            # num_terms = len(re.split(u'[\t\n\x0b\x0c\r]+', _query))    # split on whitespace but not on plain space.
+            try:
+                terms = split_queryterms(_query)
+            except IOError as e:
+                res = {'success': False, 'error': 'Malformed input query: {}!'.format(e.message)}
+                terms = None
+            if terms:
+                multi_terms = len(terms) > 1
+                if with_wildcard and multi_terms:
+                    res = {'success': False, 'error': "Please do wildcard query one at a time."}
+                elif multi_terms:
+                    #do id query
+                    res = bs.query_by_id(terms)
+                    res['_log'] = {'qtype': 'id', 'qlen': len(_query), 'num_terms': len(terms)}
 
-            else:
-                #do keyword query
-                res = bs.query_by_keyword(_query)
-                res['_log'] = {'qtype': 'keyword', 'qlen': len(_query)}
+                else:
+                    #do keyword query
+                    res = bs.query_by_keyword(_query)
+                    res['_log'] = {'qtype': 'keyword', 'qlen': len(_query)}
     else:
         res = {'success': False, 'error': 'Invalid input parameters!'}
 
