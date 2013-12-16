@@ -449,7 +449,12 @@ def do_query(params):
             try:
                 terms = split_queryterms(_query)
             except ValueError as e:
-                res = {'success': False, 'error': 'Malformed input query: {}!'.format(e.message)}
+                _msg = e.message
+                if e.message.find('quotation') != -1:
+                    _msg += '! Or just remove the dangling quote.'
+                elif e.message.find('escaped') != -1:
+                    _msg += '! You probably want to remove the "\\" (backslash) from your query.'
+                res = {'success': False, 'error': 'Malformed input query: {}'.format(_msg)}
                 terms = None
             if terms:
                 multi_terms = len(terms) > 1
