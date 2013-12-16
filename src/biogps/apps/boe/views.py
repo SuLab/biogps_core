@@ -448,7 +448,7 @@ def do_query(params):
             # num_terms = len(re.split(u'[\t\n\x0b\x0c\r]+', _query))    # split on whitespace but not on plain space.
             try:
                 terms = split_queryterms(_query)
-            except IOError as e:
+            except ValueError as e:
                 res = {'success': False, 'error': 'Malformed input query: {}!'.format(e.message)}
                 terms = None
             if terms:
