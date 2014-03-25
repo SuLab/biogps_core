@@ -310,12 +310,20 @@ class MyGeneInfo():
         #ensembl
         ensembl = _gene.get('ensembl', None)
         if ensembl:
-            ensemblprotein = ensembl.get('protein', None)
-            if ensemblprotein:
-                geneobj['ensemblprotein'] = alwayslist(ensemblprotein)
-            ensembltranscript = ensembl.get('transcript', None)
-            if ensembltranscript:
-                geneobj['ensembltranscript'] = alwayslist(ensembltranscript)
+            _ensemblprotein = []
+            _ensembltranscript = []
+            for _ensembl in alwayslist(ensembl):
+                ensemblprotein = _ensembl.get('protein', None)
+                if ensemblprotein:
+                    _ensemblprotein.extend(alwayslist(ensemblprotein))
+                ensembltranscript = _ensembl.get('transcript', None)
+                if ensembltranscript:
+                    _ensembltranscript.extend(alwayslist(ensembltranscript))
+
+            if _ensemblprotein:
+                geneobj['ensemblprotein'] = _ensemblprotein
+            if _ensembltranscript:
+                geneobj['ensembltranscript'] = _ensembltranscript
 
         #genomelocation
         gpos = _gene.get('genomic_pos', None)
