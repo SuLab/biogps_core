@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.http import Http404
 from django.utils.http import urlencode
-from biogps.utils.helper import (allowedrequestmethod,
+from biogps.utils.helper import (allowedrequestmethod, alwayslist,
                                  JSONResponse, species_d, taxid_d,
                                  is_valid_geneid, assembly_d)
 from biogps.utils import log
@@ -10,7 +10,6 @@ from urllib2 import urlparse
 from shlex import shlex
 import re
 import json
-import types
 
 
 class MyGeneInfo404(Exception):
@@ -303,14 +302,20 @@ class MyGeneInfo():
         if refseq:
             rna = refseq.get('rna', None)
             if rna:
-                if isinstance(rna, types.StringTypes):
-                    rna = [rna]
-                geneobj['refseqmrna'] = rna
+                geneobj['refseqmrna'] = alwayslist(rna)
             protein = refseq.get('protein', None)
             if protein:
-                if isinstance(protein, types.StringTypes):
-                    protein = [protein]
-                geneobj['refseqprotein'] = protein
+                geneobj['refseqprotein'] = alwayslist(protein)
+
+        #ensembl
+        ensembl = _gene.get('ensembl', None)
+        if ensembl:
+            ensemblprotein = ensembl.get('protein', None)
+            if ensemblprotein:
+                geneobj['ensemblprotein'] = alwayslist(ensemblprotein)
+            ensembltranscript = ensembl.get('transcript', None)
+            if ensembltranscript:
+                geneobj['ensembltranscript'] = alwayslist(ensembltranscript)
 
         #genomelocation
         gpos = _gene.get('genomic_pos', None)
@@ -379,7 +384,7 @@ class MyGeneInfo():
 
     @property
     def metadata(self):
-        _url = self.url+'/metadata'
+        _url = self.url + '/metadata'
         return self._get(_url)
 
 

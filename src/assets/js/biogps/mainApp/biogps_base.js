@@ -1010,6 +1010,8 @@ biogps.PLUGINKEYWORDS_common = [
 {key: "{{uniprot}}", text: "Uniprot ID"},
 {key: "{{refseqmrna}}", text: "RefSeq Transcript"},
 {key: "{{refseqprotein}}", text: "RefSeq Protein"},
+{key: "{{ensembltranscript}}", text: "Ensembl Transcript"},
+{key: "{{ensemblprotein}}", text: "Ensembl Protein"},
 {key: "{{pdb}}", text: "PDB ID"}
 ];
 biogps.PLUGINKEYWORDS_other = [
