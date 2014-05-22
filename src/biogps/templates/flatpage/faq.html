@@ -130,7 +130,7 @@
     <h1>Gene Expression Charts</h1>
 
     <div class="roundBox">
-        <h3>7. What are the units of expression?</h3>
+        <h3><a name="units">7. What are the units of expression?</a></h3> 
         <p>Expression values from Affymetrix chips relate to fluorescence intensity.
             Since there are multiple probes for each transcript on the microarray,
             these intensity values are summarized using various data processing
@@ -138,7 +138,7 @@
     </div>
 
     <div class="roundBox">
-        <h3>8. Can I compare values across tissues? across probe sets?</h3>
+        <h3><a name="probe">8. Can I compare values across tissues? across probe sets?</a></h3> 
         <p>Since each probe and probe set has different background characteristics
             (depending of cross hybridization, secondary structure, etc.), comparing
             expression values across different probesets in a single sample is generally
@@ -146,6 +146,46 @@
             probesets across multiple samples.</p>
     </div>
 
-</div>
+    <div class="roundBox">
+        <h3>9. Help, I can't see the gene expression chart for my gene, or the text is too small.</h3>
+        <p>For known issues and solutions regarding the gene expression charts, please check out this thread: 
+        Please see here for known bugs and work arounds with regards to viewing the Gene Expression Chart:
+   <a href="https://groups.google.com/forum/#!topic/biogps/-sJuBXNmA6c">in the biogps google group</a>
+       <br>If you are still having problems, please post/send a screenshot and include the name of your Browser 
+       (with version #) and OS in the your help request so we can replicate the issue and solve the problem.</p>
+    </div>
+
+    <h1>Datasets</h1>
+    
+    <div class="roundBox">
+        <h3>10. Where did the datasets come from and how was the data obtained?</h3>
+        <p>There are multiple datasets used by BioGPS.  For more detailed information on how the data from each 
+        dataset was generated, you can view/download the associated peer-reviewed publication from the Publications 
+        and References section on the following page:  <a href="http://biogps.org/downloads/">http://biogps.org/downloads/</a></p>
+    </div>
+    
+    <div class="roundBox">
+        <h3>11. Where can I purchase or learn more about the exact cell/tissue/sample seen in your datasets?</h3>
+        <p>Good question.  Your best bet would be to find the publication associated with the dataset where your 
+        exact cell/tissue/sample is found, and inquire with the author of that publication</p>
+    </div>
+    
+   <div class="roundBox">
+        <h3>12. What is the difference between an "averaged" and "unaveraged" dataset files?  
+        Are the values from the "averaged" dataset files normalized?</h3>
+        <p>The averaged values are normalized, and different datasets may have been normalized differently.
+        See <a href="#unit">question #7</a> for more info.</p>
+    </div>    
+
+   <div class="roundBox">
+        <h3>13. I am only interested in gene expression from a specific cell/tissue/organ/system.  
+        How can I get all the gene expression data for only my cell/tissue/organ/system of interest?</h3>
+        <p>Since there is no exact criteria for specifying cell/tissue/organ/system, there is no official way 
+        to do this through bioGPS at this time.  Additionally, you should be careful when comparing expression data 
+        across different data sets <a href="#probe">since different probes may have been used</a>, or different 
+        methodologies applied. You can, however, search for datasets which better suit your purpose by searching 
+        for the appropriate <a href="http://biogps.org/dataset/tag/">dataset tag</a></p>
+    </div>
+</div>    
 </article>
 {% endblock %}
