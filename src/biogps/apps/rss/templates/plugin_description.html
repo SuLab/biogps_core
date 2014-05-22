@@ -1,0 +1,6 @@
+{% if obj.description %} 
+    {{ obj.description }} <br>
+{% endif %}
+<b>Registered by: </b><a href="http://biogps.gnf.org{{ obj.ownerprofile.user.get_absolute_url }}" target="_blank">{{ obj.author }}</a><br>
+<b>Domain: </b><a href="http://{{ obj.shortUrl }}" target="_blank">{{ obj.shortUrl }}</a><br>
+<a href="{{ obj.get_absolute_url }}" target="_blank">View this plugin in BioGPS</a>

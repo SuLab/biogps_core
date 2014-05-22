@@ -1,0 +1,137 @@
+<html>
+<body>
+
+<form id="form1" action="http://serv1bioinf-dev03.gnf.org/TabularData/uploadDataSet.aspx" method="POST" ENCTYPE="multipart/form-data"> 
+<table>
+<tr>
+		<td>Dataset Name:</td><td><input type=text id="dataSetName" name="dataSetName"></td>
+</tr>
+<tr>
+		<td>Viewing:</td><td><select name="privateDataSet"><option value="Y">Private Dataset</option><option value="N">Public Data Set</option></select></td>
+</tr>
+<tr>
+		<td>Notes:</td><td><input type=text id="tabDataSetDescription" name="tabDataSetDescription"></td>
+</tr>
+<tr> <td></td><td>
+<select name="sys_so_id">
+	<option value='162'>Accession Status</option>
+	<option value='102'>Alias</option>
+	<option value='156'>Allele Types</option>
+	<option value='167'>Assembly</option>
+	<option value='127'>BioGPS ID</option>
+	<option value='181'>BioGPS Sequence ID</option>
+	<option value='140'>CDS End</option>
+	<option value='139'>CDS Start</option>
+	<option value='120'>Chromosome</option>
+	<option value='160'>Chromosome End</option>
+	<option value='189'>Chromosome Pair Position</option>
+	<option value='188'>Chromosome Positions</option>
+	<option value='159'>Chromosome Start</option>
+	<option value='119'>Dbxref</option>
+	<option value='198'>Deltagen Knockout</option>
+	<option value='121'>Description</option>
+	<option value='151'>Discontinued Gene ID</option>
+	<option value='152'>Discontinued Gene Symbol</option>
+	<option value='180'>Distribution Reconstructed</option>
+	<option value='197'>EC Number</option>
+	<option value='109'>End Genome Location</option>
+	<option value='190'>Entrez Gene Summary</option>
+	<option value='136'>Exon Descriptor</option>
+	<option value='138'>Exon End</option>
+	<option value='137'>Exon Start</option>
+	<option value='184'>Expos</option>
+	<option value='200'>Fragment</option>
+	<option value='125'>Full Name from Nomenclature Authority</option>
+	<option value='100'>Gene Accession</option>
+	<option value='149'>Gene Ontology Function</option>
+	<option value='132'>Gene Ontology ID</option>
+	<option value='148'>Gene Ontology Term</option>
+	<option value='199'>Gene Trap Sanger</option>
+	<option value='161'>Gene Version</option>
+	<option value='203'>GeneRIF</option>
+	<option value='165'>Genomic Nucleotide Accession</option>
+	<option value='145'>Genomic Nucleotide Accession Version</option>
+	<option value='166'>Genomic Nucleotide GI</option>
+	<option value='158'>IMSR Strain</option>
+	<option value='174'>IPI</option>
+	<option value='169'>Interpro Id</option>
+	<option value='171'>Interpro Long Description</option>
+	<option value='170'>Interpro Short Description</option>
+	<option value='201'>Location</option>
+	<option value='117'>Locus Tag</option>
+	<option value='155'>MGI Gene ID</option>
+	<option value='153'>MIM Number</option>
+	<option value='154'>MIM Type</option>
+	<option value='122'>Map Location</option>
+	<option value='126'>Nomenclature Status</option>
+	<option value='129'>Orientation</option>
+	<option value='141'>Orthology ID</option>
+	<option value='194'>PDB ID</option>
+	<option value='195'>Probeset Description</option>
+	<option value='131'>Probeset Id</option>
+	<option value='103'>Protein Accession</option>
+	<option value='146'>Protein Accession Version</option>
+	<option value='104'>Protein Family</option>
+	<option value='164'>Protein GI</option>
+	<option value='107'>Publication</option>
+	<option value='187'>Publication List</option>
+	<option value='114'>RNA Nucleotide Accession</option>
+	<option value='144'>RNA Nucleotide Accession Version</option>
+	<option value='163'>RNA Nucleotide GI</option>
+	<option value='178'>Reagent Location</option>
+	<option value='179'>Reagent Type</option>
+	<option value='177'>Reagents</option>
+	<option value='193'>RefSeq Genomic</option>
+	<option value='192'>RefSeq Protein</option>
+	<option value='185'>RefSeq Status</option>
+	<option value='186'>RefSeq Version</option>
+	<option value='172'>RefSeq mRNA</option>
+	<option value='110'>Reporter Platform</option>
+	<option value='173'>Reporter Type</option>
+	<option value='202'>SNP ID</option>
+	<option value='182'>Screen Name</option>
+	<option value='105'>Seq Cluster</option>
+	<option value='108'>Start Genome Location</option>
+	<option value='116'>Symbol</option>
+	<option value='124'>Symbol from Nomen ordclature Authority</option>
+	<option value='118'>Synonym</option>
+	<option value='183'>Tabular Data</option>
+	<option value='106'>Taxonomy</option>
+	<option value='130'>Tissue Name</option>
+	<option value='112'>Transcript</option>
+	<option value='135'>Transcript End</option>
+	<option value='134'>Transcript Start</option>
+	<option value='123'>Type of Gene</option>
+	<option value='150'>UniSTS</option>
+	<option value='168'>Unigene</option>
+	<option value='176'>Uniprot Accession</option>
+	<option value='175'>Uniprot ID</option>
+	<option value='191'>mRNA Accession</option>
+	<option value='196'>siRNA Reagent</option>
+</select>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<select name="delimiter">
+          <option value="tabular">Tab Separated</option>
+          <option value="csv">Comma Separated Values</option>
+</select>
+</td>
+</tr>
+<tr>
+	<td>File:</td><td><input type=file name="file1" id="file1"></td>
+</tr>
+<tr>
+		<td></td>
+		<td><input type=submit value="Upload File"></td>
+</tr>
+</table>
+<input type=hidden name='sessionid' id="sessionid" value="12345">
+<!--<input type=hidden name='sessionid' id="sessionid" value="{{ sessionid }}">-->
+</form>
+
+
+</body>
+</html>

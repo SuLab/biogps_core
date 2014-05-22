@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<rdf:RDF
+    xmlns:protege="http://protege.stanford.edu/plugins/owl/protege#"
+    xmlns:activity="http://bioontology.org/ontologies/Activity.owl#"
+    xmlns:xsp="http://www.owl-ontologies.com/2005/08/07/xsp.owl#"
+    xmlns="http://www.owl-ontologies.com/Ontology1363050141.owl#"
+    xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+    xmlns:area="http://bioontology.org/ontologies/ResearchArea.owl#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:p1="http://bioontology.org/ontologies/BiomedicalResources.owl#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:BRO="http://bioontology.org/ontologies/BiomedicalResourceOntology.owl#"
+    xmlns:desc="http://bioontology.org/ontologies/biositemap.owl#"
+  xml:base="http://bioontology.org/ontologies/biositemap_3060.rdf">
+  <owl:Ontology rdf:about="http://bioontology.org/ontologies/3060">
+    <owl:imports rdf:resource="http://bioontology.org/ontologies/BiomedicalResources.owl"/>
+  </owl:Ontology>
+  <desc:Resource_Description rdf:about="http://www.owl-ontologies.com/Ontology1363050141.owl#BioGPS">
+    <desc:resource_type>
+      <BRO:Portal/>
+    </desc:resource_type>
+    <desc:related_areas_of_research>
+      <area:Bioinformatics/>
+    </desc:related_areas_of_research>
+    <desc:contact_person rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Andrew Su</desc:contact_person>
+    <desc:contact_person_email rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >asu@scripps.edu</desc:contact_person_email>
+    <desc:organization rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >The Su Lab</desc:organization>
+    <desc:technical_support rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Available</desc:technical_support>
+    <desc:documentation_available rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Yes</desc:documentation_available>
+    <desc:related_activities>
+      <activity:Software_Development/>
+    </desc:related_activities>
+    <desc:resource_sharable rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Yes</desc:resource_sharable>
+    <desc:description rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >BioGPS is a free extensible and customizable gene annotation portal, a complete resource for learning about gene and protein function</desc:description>
+    <desc:publication_identifier rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >19919682</desc:publication_identifier>
+    <desc:resource_type>
+      <BRO:Graph_Viewer/>
+    </desc:resource_type>
+    <desc:center rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >The Scripps Research Institute</desc:center>
+    <desc:related_activities>
+      <activity:Social_Networking/>
+    </desc:related_activities>
+    <desc:publication_identifier rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >23175613</desc:publication_identifier>
+    <desc:URL rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >http://biogps.org</desc:URL>
+    <desc:related_areas_of_research>
+      <area:Genomics/>
+    </desc:related_areas_of_research>
+    <desc:resource_type>
+      <BRO:Interactive_Web-Based_Tool/>
+    </desc:resource_type>
+    <desc:resource_name rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >BioGPS</desc:resource_name>
+    <desc:related_areas_of_research>
+      <area:Research_IT/>
+    </desc:related_areas_of_research>
+    <desc:biositemap_author rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Andrew Su</desc:biositemap_author>
+    <desc:related_areas_of_research>
+      <area:Computational_Biology/>
+    </desc:related_areas_of_research>
+  </desc:Resource_Description>
+</rdf:RDF>
+
+<!-- Created with Protege (with OWL Plugin 3.4.1, Build 536)  http://protege.stanford.edu -->

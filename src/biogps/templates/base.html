@@ -1,0 +1,126 @@
+{% load i18n %}
+{% load biogps_tags %}
+{% load compressed %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="{{ LANGUAGE_CODE }}" xml:lang="{{ LANGUAGE_CODE }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
+<head>
+	<title>{% block title %}{% endblock %}</title>
+	<meta http-equiv="X-UA-Compatible" content="chrome=1">
+	{% ga_header %}
+    {% compressed_js 'core' %}
+
+	{% block corestyle %}{% extcssfiles %}{% compressed_css 'mainApp' %}{% endblock %}
+	{% block extrastyle %}{% endblock %}
+	{% block extrahead %}{% endblock %}
+	{% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE" />{% endblock %}
+</head>
+
+<body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}">
+
+<!-- Mask layer for popup notices -->
+<div class="popup-mask" style="display:none"></div>
+
+<!-- Container -->
+<div id="container">
+
+    {% if not is_popup %}
+    <!-- Header -->
+    <div id="header">
+        <div class="topbarsearch">
+            <form class="topbarsearch_form" action="javascript:void(null)" method="POST" onsubmit="return coreDispatcher.doTopBarSearch(this,event);">
+                <input type="text" class="inactive" size="15" name="topquery"
+                       value="Quick gene search"
+                       onfocus="coreDispatcher.onInputFocus(this,event);"
+                       onblur="coreDispatcher.onInputBlur(this,event);" />
+            </form>
+        </div>
+		<div class="login-div header-bar" id="login-bar" style="">
+			{% if user.is_authenticated %}
+		        {% trans 'Hello' %} <a href="{{ user.get_absolute_url }}"><b>{{ user.display_name|escape }}</b></a>
+		        {% block userlinks %}
+		        / <a href="{% url auth_logout %}">Logout</a>
+				{% endblock %}
+			{% else %}
+			    <a href="{% url auth_register %}">Sign Up</a> or
+    	        <a href="{% url auth_login %}">Login</a>
+	        {% endif %}
+		</div>
+		<div class="biogps-title" id='biogps-logo'>
+			<a class="biogpslogo_small biogps-img" href="/#goto=welcome" title="Go back to welcome page">
+			</a>
+			<h1 id="site-name">{% block branding %}Account Management{% endblock %}</h1>
+		</div>
+    </div>
+    <!-- END Header -->
+
+    {% comment %}
+    <!-- Site-wide Announcement -->
+    {% if site_wide_announcements %}
+        <div id="site_wide_announcements">
+            <ul>
+                {% for announcement in site_wide_announcements %}
+                <li>
+                    <p class="title">{{announcement.title}}:</p>
+                    <div class="close_btn"><a href="javascript: biogps.hide_announcement({{announcement.pk}})">[X]</a></div>
+                    <div class="message"> {{ announcement.content }}</div>
+                    <p class="footer-left">{{announcement.creation_date|timesince}} ago</p>
+                    <p class="footer-right"><a href="javascript: biogps.hide_announcement({{announcement.pk}})">[X] I got it. Don't show it any more</a><p>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+    <!-- END Site-wide Announcement -->
+    {% endcomment %}
+
+    {% block breadcrumbs %}<div class="breadcrumbs"><a href="/">Home</a>{% if title %} &rsaquo; {{ title|escape }}{% endif %}</div>{% endblock %}
+
+    {% endif %}
+
+        {% block messages %}
+        {% if messages %}
+        <ul class="messagelist">{% for message in messages %}<li>{{ message|escape }}</li>{% endfor %}</ul>
+        {% endif %}
+        {% endblock %}
+
+    <!-- Content -->
+    <div id="content" class="{% block coltype %}colM{% endblock %} clearfix">
+        {% block pretitle %}{% endblock %}
+        {% block content_title %}{% if title %}<h1>{{ title|escape }}</h1>{% endif %}{% endblock %}
+        {% block content %}
+        {% block object-tools %}{% endblock %}
+        {{ content }}
+        {% endblock %}
+        {% block sidebar %}{% endblock %}
+    </div>
+    <!-- END Content -->
+
+	{% block footer %}{% endblock %}
+
+    <div id="push"></div>
+</div>
+<!-- END Container -->
+
+<div id="base_footer">
+    <div class="shadow_up"></div>
+	<div id="footer-top"></div>
+	<div id="copyright">
+		&#169; {% this_year %} <a href="http://www.scripps.edu" target="_blank">The Scripps Research Institute</a> ({% biogps_ver %})
+	</div>
+	<div id="footer-links">
+	    <a href="/about/">About BioGPS</a>
+	    <a href="http://sulab.org/category/biogps/" target="_blank">Blog</a>
+	    <a href="/help/">Help</a>
+	    <a href="/faq/">FAQ</a>
+	    <a href="/downloads/">Downloads</a>
+	    <a href="/api/">API</a>
+            <a href="/iphone/">iPhone App</a>
+	    <a href="http://groups.google.com/group/biogps-announce" target="_blank">Email updates</a>
+	    <a href="/terms/">Terms of Use</a>
+	</div>
+</div>
+
+{% block footer_js %}{% endblock %}
+{% block ga %}{% ga %}{% endblock %}
+</body>
+</html>

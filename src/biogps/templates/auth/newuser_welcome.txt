@@ -1,0 +1,18 @@
+Dear {{name}},
+
+Welcome to BioGPS, and thanks for signing up for a user account.  Your account information is:
+
+----------------------------
+Username: {{username}}
+Email: {{email}}
+----------------------------
+
+The best way to learn about BioGPS's features is to just tinker around.  Search for your favorite gene of interest, and then search the plugin library for content that is relevant to you.  Alternatively, we've posted some screencasts on the Help page (link found at the bottom of the page).
+
+We encourage users to send us any questions, comments, or suggestions.  Any and all feedback is useful to our development effort.  You can ask a question in our public discussion forum by emailing biogps@googlegroups.com (and you can also search past questions and answers at http://groups.google.com/group/biogps).  Alternatively, you can email the developer team privately at help@biogps.org.
+
+Have fun!
+
+Cheers,
+
+The BioGPS Team
