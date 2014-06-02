@@ -2,6 +2,7 @@ from biogps.apps.dataset.models import BiogpsDataset
 from biogps.apps.gene.models import Gene
 from biogps.apps.layout.models import BiogpsGenereportLayout
 from biogps.apps.stat.models import BiogpsStat
+from biogps.utils.helper import is_int
 
 from datetime import datetime, timedelta
 from django.conf import settings
@@ -83,6 +84,9 @@ def get_stats(coll, stype, tframe, top=100, verbose=False):
     print 'Quering {} stats for {} time-frame...'.format(stype, tframe),
     res = coll.aggregate(query)
     print 'Done. [{:.2f}s]'.format(time() - t0)
+    #remove non-integer ids for Gene
+    if stype == 'gene':
+        res['result'] = [x for x in res['result'] if is_int(x['_id'])]
     return res
 
 

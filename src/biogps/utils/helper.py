@@ -579,3 +579,12 @@ def alwayslist(value):
         return value
     else:
         return [value]
+
+
+def is_int(s):
+    """return True or False if input string is integer or not."""
+    try:
+        int(s)
+        return True
+    except ValueError:
+        return False
