@@ -243,8 +243,10 @@ biogps.renderSearchForm = function(containerid){
 
     biogps.searchform.getForm().on('beforeaction', function(){
     	//tracking by Google Analytics
-    	_gaq.push(['_trackPageview', '/search']);
-        _gaq.push(['_trackEvent', 'BioGPS', 'Search']);
+        //_gaq.push(['_trackPageview', '/search']);
+        //_gaq.push(['_trackEvent', 'BioGPS', 'Search']);
+        ga('send', 'pageview', '/search');
+        ga('send', 'event', 'BioGPS', 'Search', {'nonInteraction': 1});
     })
 
     //tabs.render(container.dom);

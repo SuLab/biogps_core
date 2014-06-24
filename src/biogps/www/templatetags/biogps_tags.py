@@ -109,7 +109,8 @@ e.innerHTML = '<a href="mailto:' + out.join('') + '">' + '%s' + '</a>';
 
 @register.simple_tag
 def ga_header(usertype=None):
-    '''usertype is a optional custom variable for something like
+    '''!!This is deprecated after upgraded to Google Universal Analytics!!
+       usertype is a optional custom variable for something like
        Anonymous, BioGPS User, GNF User, Novartis User
        This makes use of Google Analytics Custom Variables
        http://code.google.com/apis/analytics/docs/tracking/gaTrackingCustomVariables.html
@@ -126,18 +127,26 @@ def ga_header(usertype=None):
 
 
 @register.simple_tag
-def ga():
+def ga(usertype=None):
+    '''usertype is a optional custom variable for something like
+       Anonymous, BioGPS User, GNF User, Novartis User
+       This makes use of Google Universal Analytics Custom Metrics tracking
+       https://developers.google.com/analytics/devguides/collection/analyticsjs/custom-dims-mets
+    '''
     if settings.RELEASE_MODE == 'dev':
-        trackercode = ''
+        trackercode = '<script>var ga=function(){};</script>'
     else:
-        trackercode = '''<script type="text/javascript">
-          (function() {
-            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-          })();
-        </script>
-        '''
+        trackercode = '''<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    '''
+        trackercode += "ga('create', '{}', 'biogps.org');\n".format(settings.GA_ACCOUNT)
+        trackercode += "ga('send', 'pageview');\n"
+        if usertype:
+            trackercode += "ga('set', 'UserType', '{}');\n".format(usertype)
+        trackercode += '</script>'
     return trackercode
 
 

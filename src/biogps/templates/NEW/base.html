@@ -27,9 +27,6 @@
         {% endif %}
     {% endblock %}
     {% block extrastyle %}{% endblock %}
-	{% with user.account_type|default:"Anonymous" as usertype%}
-    	{% ga_header usertype %}
-    {% endwith %}
     {% compressed_js 'bootstrap' %}
 
     {% block extrahead %}{% endblock %}
@@ -150,6 +147,12 @@
 
 {% block footer_js %}{% endblock %}
 {% block footer_js_extra %}{% endblock %}
-{% block ga %}{% ga %}{% endblock %}
+{% block ga %}
+    {% with user.account_type|default:"Anonymous" as usertype%}
+        {% ga usertype%}
+    {% endwith %}
+{% endblock %}
+
+
 </body>
 </html>

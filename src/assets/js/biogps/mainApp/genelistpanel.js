@@ -411,7 +411,8 @@ Ext.extend(biogps.GeneListPanel, biogps.ListPanelBase, {
        }
 
        //tracking "view" button usage by Google Analytics
-        _gaq.push(['_trackEvent', 'BioGPS', 'GR_by_view_btn', selected_genes.length + '']);
+        //_gaq.push(['_trackEvent', 'BioGPS', 'GR_by_view_btn', selected_genes.length + '']);
+        ga('send', 'event', 'BioGPS', 'GR_by_view_btn', selected_genes.length + '', {'nonInteraction': 1});
 
        if (selected_genes.length == 0){
                biogps.error('You did not select any gene. Please select and try again.');
