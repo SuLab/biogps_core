@@ -40,11 +40,13 @@ coreDispatcher = {
     delayedExecute: function(callback){
         //Delays the execution of callback function till biogps is loaded completely
         if (coreDispatcher.biogpsLoaded()){
-        	_gaq.push(['_trackEvent', 'coreDispatcher.delayedExecute', 'callback']);
+        	//_gaq.push(['_trackEvent', 'coreDispatcher.delayedExecute', 'callback']);
+            ga('send', 'event', 'coreDispatcher.delayedExecute', 'callback', {'nonInteraction': 1});
             callback();
         }
         else {
-            _gaq.push(['_trackEvent', 'coreDispatcher.delayedExecute', 'delaying']);
+            //_gaq.push(['_trackEvent', 'coreDispatcher.delayedExecute', 'delaying']);
+            ga('send', 'event', 'coreDispatcher.delayedExecute', 'delaying', {'nonInteraction': 1});
             this.delayedAction = callback;
         }
     },
@@ -102,7 +104,8 @@ coreDispatcher = {
 
     hideSymatlas: function(query){
         //tracking by Google Analytics
-		_gaq.push(['_trackEvent', 'SymAtlas', 'Start BioGPS', query]);
+		//_gaq.push(['_trackEvent', 'SymAtlas', 'Start BioGPS', query]);
+        ga('send', 'event', 'SymAtlas', 'Start BioGPS', query, {'nonInteraction': 1});
 
         if (query.length > 0) {
             // We have a SymAtlas query to run
@@ -124,7 +127,8 @@ coreDispatcher = {
     // Redirects the user back to the deprecated SymAtlas url.
     goBacktoSymatlas: function(str){
         //tracking by Google Analytics
-		_gaq.push(['_trackEvent', 'SymAtlas', 'Back to SymAtlas', str]);
+		//_gaq.push(['_trackEvent', 'SymAtlas', 'Back to SymAtlas', str]);
+        ga('send', 'event', 'SymAtlas', 'Back to SymAtlas', query, {'nonInteraction': 1});
 
     	window.location = "http://symatlas.gnf.org/deprecated/" + str;
     },
@@ -263,7 +267,9 @@ coreDispatcher = {
         form.topquery.blur();
 
         if (_query != '' && _query != 'Quick gene search'){
-            _gaq.push(['_trackEvent', 'BioGPS', 'QuickGeneSearch', _query]);
+            //tracking by Google Analytics
+            //_gaq.push(['_trackEvent', 'BioGPS', 'QuickGeneSearch', _query]);
+            ga('send', 'event', 'BioGPS', 'QuickGeneSearch', _query, {'nonInteraction': 1});
             window.location = '/#goto=search&query='+_query;
         }
         return false;
@@ -297,8 +303,9 @@ coreDispatcher = {
     openid: function(provider){
         var hidden = document.getElementById('openid_url');
         var form = document.getElementById('openid_form');
-
-        _gaq.push(['_trackPageview', '/auth/login/openid/' + provider]);
+        //tracking by Google Analytics
+        //_gaq.push(['_trackPageview', '/auth/login/openid/' + provider]);
+        ga('send', 'pageview', '/auth/login/openid/' + provider);
 
         if (provider == 'google') {
             hidden.value = 'https://www.google.com/accounts/o8/id';

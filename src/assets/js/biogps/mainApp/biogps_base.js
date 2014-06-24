@@ -471,7 +471,8 @@ biogps.init = function (){
 
     // Execute the delayed action, if there is one.
     if (coreDispatcher.delayedAction) {
-        _gaq.push(['_trackEvent', 'coreDispatcher.delayedExecute', 'delayedCallback']);
+        //_gaq.push(['_trackEvent', 'coreDispatcher.delayedExecute', 'delayedCallback']);
+        ga('send', 'event', 'coreDispatcher.delayedExecute', 'delayedCallback', {'nonInteraction': 1});
         coreDispatcher.delayedAction();
     }
 };

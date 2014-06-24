@@ -1543,8 +1543,11 @@ Ext.extend(biogps.GeneReportPage, Ext.Panel, {
 //        biogps.centerTab.getItem('report_panel').body.scrollChildIntoView(this.body);
 
         //tracking by Google Analytics
-        _gaq.push(['_trackPageview', '/gene/'+this.geneid.toString()]);
-        _gaq.push(['_trackEvent', 'BioGPS', 'GeneReport', this.geneid.toString()]);
+        //_gaq.push(['_trackPageview', '/gene/'+this.geneid.toString()]);
+        //_gaq.push(['_trackEvent', 'BioGPS', 'GeneReport', this.geneid.toString()]);
+        ga('send', 'pageview', '/gene/'+this.geneid.toString());
+        ga('send', 'event', 'BioGPS', 'GeneReport', this.geneid.toString(), {'nonInteraction': 1});
+
     },
 
 	renderPage: function(){

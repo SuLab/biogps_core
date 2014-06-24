@@ -149,7 +149,8 @@ Minor fixes by Marc Leglise
             var prov = (gprovider.url) ? gprovider.url.replace('{username}', $('#' + INPUTID).val()): $('#' + INPUTID).val();
             form.append($('<input type="hidden" name="openid_url" value="' + prov + '" />'));
 
-            _gaq.push(['_trackPageview', '/auth/login/openid/' + gprovider.name]);
+            //_gaq.push(['_trackPageview', '/auth/login/openid/' + gprovider.name]);
+            ga('send', 'pageview', '/auth/login/openid/' + gprovider.name]);
         };
 
         var settings = $.extend(defaults, opt || {});
