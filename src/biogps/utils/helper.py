@@ -26,8 +26,8 @@ except:
         from django.utils import simplejson as json
 
 
-MAX_QUERY_LENGTH = 50*1000       #A rough upper limit for length of input gene query.
-
+MAX_QUERY_LENGTH = 10*1000       #A rough upper limit for length of input gene query.
+#MAX_QUERY_LENGTH = 50*1000
 #MAX_QUERY_LENGTH = 50*10000
 
 SPECIES_LIST = [ dict(name='human',
