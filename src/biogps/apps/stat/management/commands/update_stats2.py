@@ -49,7 +49,7 @@ class Command(BaseCommand):
             for stype in stat_types:
                 for tframe in time_frames:
                     stats = get_stats(coll, stype, tframe, top=100)
-                    save_stats(coll, stype, tframe, stats)
+                    save_stats(stype, tframe, stats)
 
             print 'Finished. [{:.2f}s]'.format(time() - start)
 
@@ -90,14 +90,14 @@ def get_stats(coll, stype, tframe, top=100, verbose=False):
     return res
 
 
-def save_stats(coll, stype, tframe, stats):
+def save_stats(stype, tframe, stats):
     """save ranked stats to db"""
     print 'Saving {} {} ranks for {} time-frame...'.format(len(stats['result']),
                                                            stype, tframe),
     con_type = ContentType.objects.get_for_model(stat_types[stype]['model'])
     id_list = [val['_id'] for val in stats['result']]
     #remove existing ids not needed any more
-    BiogpsStat.objects.filter(content_type=con_type)  \
+    BiogpsStat.objects.filter(content_type=con_type, interval=tframe)  \
                       .exclude(object_id__in=id_list) \
                       .delete()
 
