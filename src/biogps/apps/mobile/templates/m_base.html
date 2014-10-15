@@ -1,0 +1,102 @@
+{% load i18n %}
+{% load biogps_tags %}
+{% load ga_mobile %}
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{% block title %}BioGPS - Mobile{% endblock %}</title>
+	{% block extrastyle %}{% endblock %}
+	{% block extrahead %}{% endblock %}
+	{% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE" />{% endblock %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes" />
+    <style>
+    #query{
+          -webkit-appearance: none; -moz-appearance: none;
+          display: block;
+          margin: 0;
+          width: 100%; height: 40px;
+          line-height: 40px; font-size: 17px;
+          border: 1px solid #bbb;
+          font-size: 2em;
+    }
+    input[type=submit] {
+         -webkit-appearance: none; -moz-appearance: none;
+         display: block;
+         font-size: 1em; line-height: 2.5em;
+         color: #333;
+         font-weight: bold;
+         height: 2.5em; width: 100%;
+         background: #fdfdfd; background: -moz-linear-gradient(top, #fdfdfd 0%, #bebebe 100%); background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#fdfdfd), color-stop(100%,#bebebe)); background: -webkit-linear-gradient(top, #fdfdfd 0%,#bebebe 100%); background: -o-linear-gradient(top, #fdfdfd 0%,#bebebe 100%); background: -ms-linear-gradient(top, #fdfdfd 0%,#bebebe 100%); background: linear-gradient(to bottom, #fdfdfd 0%,#bebebe 100%);
+         border: 1px solid #bbb;
+         -webkit-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px;
+    }
+
+    </style>
+
+</head>
+
+<body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}">
+
+<!-- Container -->
+<div id="container">
+
+    {% if not is_popup %}
+    <!-- Header -->
+    <div id="header">
+		<div class="biogps-title" id='biogps-logo'>
+		    <a href="/m/" title="BioGPS - Mobile">
+                <img src="/assets/img2/biogps_logo.png" alt="BioGPS - The Gene Portal Hub" width="280px" height="82px" style="border:none" />
+            </a>
+		</div>
+    </div>
+    <!-- END Header -->
+
+    {% endif %}
+
+        {% if messages %}
+        <ul class="messagelist">{% for message in messages %}<li>{{ message|escape }}</li>{% endfor %}</ul>
+        {% endif %}
+
+    <!-- Content -->
+    <div id="content" class="{% block coltype %}colM{% endblock %} clearfix">
+        {% block pretitle %}{% endblock %}
+        {% block content_title %}{% if title %}<h1>{{ title|escape }}</h1>{% endif %}{% endblock %}
+        {% block content %}
+        {% block object-tools %}{% endblock %}
+        {{ content }}
+        {% endblock %}
+        {% block sidebar %}{% endblock %}
+
+        {% block searchbox %}
+        <div id="qsearch_box" class="roundBoxBlue">
+            <h3>Search genes by Symbol or Accession</h3>
+    		<form id="qsearch_form" action="/m/search/" method="POST">
+    			<input type="text" id="query" name="query" />&nbsp;
+    			<input type="submit" value="Search" />
+    			<br>
+    			<div>Example searches: 1017, CDK2, 117_at, IPR008351</div>
+    		</form>
+    	</div>
+    	{% endblock %}
+    </div>
+    <br><br>
+    <!-- END Content -->
+
+	{% block footer %}{% endblock %}
+</div>
+<!-- END Container -->
+
+<div id="base_footer">
+	<div id="copyright">
+		&#169; {% this_year %} <a href="http://www.scripps.edu" target="_blank">The Scripps Research Institute</a> ({% biogps_ver %})
+	</div>
+	<div id="footer-links">
+	    <a href="/?full">Full BioGPS website</a>
+	</div>
+</div>
+
+{% if not debug %}
+{% block ga %}{% ga_mobile request %}{% endblock %}
+{% endif %}
+</body>
+</html>

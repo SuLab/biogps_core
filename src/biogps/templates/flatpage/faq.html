@@ -1,0 +1,198 @@
+{% extends "NEW/base_site.html" %}
+{% load biogps_tags %}
+
+{% block title %}Frequently Asked Questions{% endblock %}
+
+{% block bodyclass %}flatpage{% endblock %}
+{% block content %}
+<article>
+    <div class="in faq">
+    <h1>Frequently Asked Questions</h1>
+
+    <div class="roundBox">
+        <img src="/assets/img/faq_seven_species.png" alt="BioGPS Species Selector" class="right" />
+        <h3>1. What species does BioGPS support?</h3>
+        <p>Currently, BioGPS supports eight species:
+            {% for s in species %}
+                {% if forloop.last %}and{% endif %}
+                <b>{{ s.name|capfirst }}</b>
+                ({{ s.genus|capfirst }}){% if forloop.last %}.{% else %},{% endif %}
+            {% endfor %}
+            BioGPS presents data in an
+            ortholog-centric format, which allows users to display mouse plugins next
+            to human ones. Our data for defining orthologs comes from NCBI's
+            <a href="http://www.ncbi.nlm.nih.gov/homologene" target="_blank">HomoloGene</a>
+            database.</p><br>
+        <p>For plugins that contain data for multiple species, users can switch
+            between allowed species using the species selector in the upper-right corner
+            of the plugin window, as shown at right. Species which are grayed-out mean either
+            that the species does not have an ortholog for that gene, or that the selected
+            plugin does not provide data for that species.</p>
+    </div>
+
+    <div class="roundBox">
+        <h3>2. How do I cite BioGPS in my paper?</h3>
+        <p>The manuscript describing BioGPS has been published in
+            <a href="http://dx.doi.org/10.1186/gb-2009-10-11-r130" target="_blank" title="BioGPS Paper">Genome Biology</a>.
+            Note that when referencing any of the expression data sets in BioGPS,
+            you should also include a citation to the relevant paper describing
+            those data. Please see the Publications section on our
+            <a href="/downloads/">Downloads page</a>.</p>
+    </div>
+
+    <div class="roundBox">
+        <h3>3. How do I deep link to BioGPS?</h3>
+        <p>Deep links (or permalinks) are most easily generated based on Entrez Gene ID.
+            For example, for the gene <i>CDK2</i> (Entrez Gene ID = 1017):</p>
+        <ul class="indent">
+            <li><a href="http://biogps.org/gene/1017/">http://biogps.org/gene/1017/</a></li>
+        </ul>
+        <p>Queries based on identifiers can also be constructed using URLs like this:</p>
+        <ul class="indent">
+            <li><a href="http://biogps.org/?query=CDK2">http://biogps.org/?query=CDK2</a>
+                (searches by symbols, identifiers, and aliases only)</li>
+            <li><a href="http://biogps.org/?query=CDK2&qtype=keyword">http://biogps.org/?query=CDK2&qtype=keyword</a>
+                (searches all text fields)</li>
+        </ul>
+        <p>If additional linking mechanisms are required, please <a href="/help/">contact us</a>.</p>
+    </div>
+
+    <div class="roundBox">
+        <h3>4. What features are available for users who have created an account?</h3>
+        <table class="gridtable">
+            <tr>
+		        <th></th>
+		        <th>Anonymous</th>
+		        <th>Account</th>
+		    </tr>
+		    <tr>
+		        <td>Search</td>
+		        <td class="yes"></td>
+		        <td class="yes"></td>
+		    </tr>
+		    <tr>
+		        <td>View default gene report layouts</td>
+		        <td class="yes"></td>
+		        <td class="yes"></td>
+		    </tr>
+		    <tr>
+		        <td>Customize layouts</td>
+		        <td class="no"></td>
+		        <td class="yes"></td>
+		    </tr>
+		    <tr>
+		        <td>Register new plugins</td>
+		        <td class="no"></td>
+		        <td class="yes"></td>
+		    </tr>
+		    <tr>
+		        <td>Save gene lists</td>
+		        <td class="no"></td>
+		        <td class="yes"></td>
+		    </tr>
+        </table>
+    </div>
+
+    <div class="roundBox">
+        <h3>5. What kind of gene identifiers are supported for a query?</h3>
+        <p>In addition to official symbols and aliases, BioGPS supports most common
+            public gene identifiers, including Entrez Gene, Ensembl, Uniprot, Refseq,
+            UniGene, Gene Ontology, PDB, and Interpro.  In addition, users can search
+            by Affymetrix probe set identifiers from many common gene expression chip
+            types (U133, MOE430, U95, RGU34, GNF1H and GNF1M).</p>
+    </div>
+
+    <div class="roundBox">
+        <h3>6. Help! There are too many scrollbars!</h3>
+        <p>Although not technically a question, this is a frequently heard frustration.
+            Undoubtedly BioGPS works better on higher-resolution monitors, but we also
+            have some pretty effective strategies for limiting scrollbar overload for
+            all users.</p>
+        <ol class="indent">
+            <li>First, <b>use fewer plugins per layout</b>.  In fact, we often
+                create layouts with just a single plugin.</li>
+            <li>Second, <b>use the maximize plugin button</b> in the upper right of the
+                plugin window, which will show one plugin in a large size while freezing
+                the main browser scrollbar.</li>
+            <li>Third, <b>use the "Open in browser" option</b> under the "more options"
+                plugin menu. This option will open the plugin in a new browser tab or window.</li>
+            <li>Fourth, <b> use the "Open all in browser" feature</b> under the layout
+                options menu. Selecting this option will load all plugins, each in its
+                own browser tab or window.</li>
+        </ol>
+        <div class="center">
+            <img src="/assets/img/faq_maximize.png" alt="" />
+            <img src="/assets/img/faq_openinbrowser.png" alt="" />
+            <img src="/assets/img/faq_openallinbrowser.png" alt="" />
+        </div>
+    </div>
+
+    <h1>Gene Expression Charts</h1>
+
+    <div class="roundBox">
+        <h3><a name="units">7. What are the units of expression?</a></h3> 
+        <p>Expression values from Affymetrix chips relate to fluorescence intensity.
+            Since there are multiple probes for each transcript on the microarray,
+            these intensity values are summarized using various data processing
+            algorithms. In our case, we mostly use gcrma.</p>
+    </div>
+
+    <div class="roundBox">
+        <h3><a name="probe">8. Can I compare values across tissues? across probe sets?</a></h3> 
+        <p>Since each probe and probe set has different background characteristics
+            (depending of cross hybridization, secondary structure, etc.), comparing
+            expression values across different probesets in a single sample is generally
+            not recommended. Microarrays are primarily suited for comparing single
+            probesets across multiple samples.</p>
+    </div>
+
+    <div class="roundBox">
+        <h3>9. Help, I can't see the gene expression chart for my gene, or the text is too small.</h3>
+        <p>For known issues and solutions regarding the gene expression charts, please check out this thread: 
+        Please see here for known bugs and work arounds with regards to viewing the Gene Expression Chart:
+   <a href="https://groups.google.com/forum/#!topic/biogps/-sJuBXNmA6c">in the biogps google group</a>
+       <br>If you are still having problems, please post/send a screenshot and include the name of your Browser 
+       (with version #) and OS in the your help request so we can replicate the issue and solve the problem.</p>
+    </div>
+
+    <h1>Datasets</h1>
+    
+    <div class="roundBox">
+        <h3>10. Where did the datasets come from and how was the data obtained?</h3>
+        <p>There are multiple datasets used by BioGPS.  For more detailed information on how the data from each 
+        dataset was generated, you can view/download the associated peer-reviewed publication from the Publications 
+        and References section on the following page:  <a href="http://biogps.org/downloads/">http://biogps.org/downloads/</a>.</p>
+    </div>
+    
+    <div class="roundBox">
+        <h3>11. Where can I purchase or learn more about the exact cell/tissue/sample seen in your datasets?</h3>
+        <p>Good question.  Your best bet would be to find the publication associated with the dataset where your 
+        exact cell/tissue/sample is found, and inquire with the author of that publication.</p>
+    </div>
+    
+   <div class="roundBox">
+        <h3>12. What is the difference between an "averaged" and "unaveraged" dataset files?  
+        Are the values from the "averaged" dataset files normalized?</h3>
+        <p>The averaged values are normalized, and different datasets may have been normalized differently.
+        See <a href="#units">question #7</a> for more info.</p>
+    </div>    
+
+   <div class="roundBox">
+        <h3>13. I am only interested in gene expression from a specific cell/tissue/organ/system.  
+        How can I get all the gene expression data for only my cell/tissue/organ/system of interest?</h3>
+        <p>Since there is no exact criteria for specifying cell/tissue/organ/system, there is no official way 
+        to do this through bioGPS at this time.  Additionally, you should be careful when comparing expression data 
+        across different data sets <a href="#probe">since different probes may have been used</a>, or different 
+        methodologies applied. You can, however, search for datasets which better suit your purpose by searching 
+        for the appropriate <a href="http://biogps.org/dataset/tag/">dataset tag</a>.</p>
+    </div>
+
+   <div class="roundBox">
+        <h3>14. BioGPS is not working.  What should I do?</h3>
+        <p>In order for us to help you, we need the right information from you.  Please follow the instructions in the <a href="https://drive.google.com/file/d/0B0fn5YFGOT2vT29CTXNURmQ0VEk/view?pli=1" target="_blank">BioGPS self-help guide</a> before contacting us as this will allow us to better help you.</p>
+        <iframe src="https://drive.google.com/file/d/0B0fn5YFGOT2vT29CTXNURmQ0VEk/preview" width="640" height="480"></iframe>
+    </div>
+
+</div>    
+</article>
+{% endblock %}

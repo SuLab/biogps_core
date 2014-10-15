@@ -1,0 +1,1 @@
+This folder is used by BioGPS to store some caching files.

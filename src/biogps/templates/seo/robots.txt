@@ -1,0 +1,13 @@
+User-Agent: *
+Disallow: /auth/
+Disallow: /authx/
+Disallow: /utils/
+Allow: /
+Sitemap: /sitemap.xml
+
+User-Agent: MJ12bot
+Crawl-Delay: 20
+
+User-Agent: 360Spider
+Disallow: /
+

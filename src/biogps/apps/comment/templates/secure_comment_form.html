@@ -1,0 +1,38 @@
+{% load threadedcomments_tags %}
+
+{% get_comment_form for obj as commentForm with comment_id %}
+
+<form class="{{ comment_mode }}Form" 
+{% if comment_mode == "edit" %}
+  action="/comment/{{ model_type }}/{{ obj.id }}/{{ comment_id }}/" method="post"
+{% endif %}
+{% if comment_mode == "reply" %}
+  action="/comment/{{ model_type }}/{{ obj.id }}/" method="post"
+{% endif %}
+>
+  {% if next %}<input type="hidden" name="next" value="{{ next }}" />{% endif %}
+  {% for field in commentForm %}
+    {% if field.is_hidden %}
+      {{ field }}
+    {% else %}
+      {% if field.name != "name" and field.name != "title" and field.name != "email" and field.name != "url" %}
+        {% if field.errors %}{{ field.errors }}{% endif %}
+        <p
+        {% if field.errors %} class="error"{% endif %}
+        {% ifequal field.name "honeypot" %}
+            style="display:none;"
+        {% endifequal %}
+        {% if field.name == "comment" %}
+            class="comment-field"
+        {% endif %}
+        >
+        {{ field }}
+        </p>
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+  <p class="submit">
+    <input type="submit" name="{{ comment_mode }}" class="{{ comment_mode }}Submit btn-use-object" value="Save {{ comment_mode }}" />
+    <a href="#" name="cancel" class="{{ comment_mode }}Cancel btn-use-object">Cancel</a>
+  </p>
+</form>
