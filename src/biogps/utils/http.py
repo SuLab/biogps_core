@@ -6,6 +6,7 @@ from django.conf import settings
 from django.http import HttpResponse, HttpResponseNotAllowed
 from django.template import RequestContext
 from django.shortcuts import render_to_response as raw_render_to_response
+from django.core.paginator import Paginator, EmptyPage
 from biogps.utils import json
 from biogps.utils.const import MIMETYPE
 from biogps.utils.model_serializer import serialize
@@ -89,6 +90,7 @@ class FormattedResponse():
                     if data is a list/tuple of B{Model instance} or a single B{Model instance},
                     "serialize_attrs" parameter can be used to specify the attributes in the output.
                     if data is other type, it is output as it is.
+                    Pagination of data is supported by page query parameter.
         @param serialize_attrs: list of attributes from B{Model instance} need to be serialized
                                 (it can be a method with no extra arguments but self)
         @param model_serializer: can be used to pass a custom serializer:
@@ -111,6 +113,12 @@ class FormattedResponse():
         self.html_template = html_template
         self.html_dictionary = html_dictionary
         self.html_skip_context = html_skip_context
+        self.default_pagination = 10      # default page size for pagination
+                                          # for html rendering, pagination is handled in
+                                          # template by autopagination tag, so the
+                                          # self.default_pagination settings here should be
+                                          # consistent with the autopagination setting in
+                                          # template files (e.g. dataset/list.html, plugin/list.html)
 
         if default_format not in self.SUPPORTED_FORMATS:
             raise UnSupportedFormat
@@ -164,7 +172,17 @@ class FormattedResponse():
         if format not in self.allowed_formats:
             return HttpResponseNotAllowed(self.allowed_formats)
         elif format in ['json', 'xml']:
-            response = HttpResponse(serialize(self._data,
+            # handling pagination here when "page" parameter is passed.
+            # no need for html rendering, as it will be handle by autopagination
+            # tag in the template.
+            paginator = Paginator(self._data, self.default_pagination)
+            # self._request.page is available when
+            # pagination.middleware.PaginationMiddleware is used
+            try:
+                _data = paginator.page(self._request.page).object_list
+            except EmptyPage:
+                _data = []
+            response = HttpResponse(serialize(_data,
                                           format=format,
                                           attrs=self.serialize_attrs,
                                           model_serializer=self.model_serializer,
@@ -231,7 +249,6 @@ def render_to_response(request, *args, **kwargs):
     context = RequestContext(request)
     kwargs.setdefault('context_instance', context)
     return raw_render_to_response(*args, **kwargs)
-
 
 
 def _get_traceback(self, exc_info=None):
