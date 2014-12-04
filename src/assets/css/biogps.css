@@ -1,0 +1,1109 @@
+/*
+ *  BioGPS Sitewide Stylesheet
+ *  Copyright (c) 2009, GNF
+ *  Authors: Chunlei Wu, Marc Leglise
+ *
+ *  This file defines the site-wide CSS definitions that are not specific to
+ *  any one feature or portion of the site, but pervasive throughout.
+ *
+ *  = Hacks =
+ *  In this and other BioGPS CSS files, we use a few standard hacks throughout
+ *  to account for the different rendering bugs of various browsers.  These
+ *  hacks are explained here for simplicity.  When used in code, they should be
+ *  commented just with the hack name.
+ *
+ *  - StarPlus HTML Hack -
+ *  Used to show the given style block to these browser versions:
+ *      IE7, when in Standards Compatibility mode
+ *      IE8, when in IE7 compatability mode
+ *      IE4-5.0/Win
+ *      Opera 5-6
+ *      IE5.x/Mac
+ *  Ex:   *+html .myClass { ... }
+ *
+ *  - Star HTML Hack -
+ *  Used to show the given style block to ONLY IE 6 and 7.
+ *  Ref: http://info.com.ph/~etan/w3pantheon/style/starhtmlbug.html
+ *  Ex:   * html .myClass { ... }
+ *  Ex:   .myClass { *display: inline }
+ *
+ *  - !important -
+ *  Used to give a different attribute value to IE6.
+ *  Ex: Second line will target IE6.  All others will use first line.
+ *        width: 50px !important;
+ *        width: 30px;
+ *
+ *  - Display: inline-block -
+ *  IE6/7 and FF2 don't properly support display:inline-block.  In some cases,
+ *  we expect and use that fact to our advantage.  On the other hand, when we
+ *  want to have them all behave properly, here's the code to put in.
+ *  Ref: http://blog.mozilla.com/webdev/2009/02/20/cross-browser-inline-block/
+ *  .myClass {
+ *      display: -moz-inline-stack;
+ *      display: inline-block;
+ *      zoom: 1;
+ *      *display: inline;
+ *  }
+ *
+ *  = Hair Brained Fixes =
+ *  When a specific change takes so much time to figure out but ends up having
+ *  a profound impact on the project, especially when the change is minimal, we
+ *  should document them here.
+ *
+ *  - "auto" not auto -
+ *  In the first style block of this file, we were setting html, body, #main to
+ *  have the attribute [overflow: auto;].  We finally figured out (after 3 days)
+ *  that adding quotes around the value [overflow: "auto";] fixed 99% of the
+ *  remaining bugs with IE6 & 7.  Thank you Microsoft.
+ *
+ *  - "position: relative" -
+ *  When IE is magically hiding divs, for no apparent reason, try adding
+ *  [position: relative] to the div's style. Not a foolproof fix, but works
+ *  most of the time.
+ */
+
+html, body, #main{
+    width: 100%;    /* make the body expand to fill the visible window */
+    height: 100%;
+    overflow: "auto";   /* ExtJS overrides this to erase window level scrollbars */
+    padding: 0;
+    margin: 0;
+    font: 10pt Arial,Myriad,Tahoma,Verdana,sans-serif;
+    position: relative;   /* Fixes IE bugs with relatively positioned divs */
+}
+
+/*body{
+    behavior:url(/assets/css/csshover2.htc);
+}*/
+
+.clear { clear: both; height: 0; overflow: hidden; }
+.right { float: right; }
+.left { float: left; }
+.center { text-align: center; }
+.centerMargins { margin-right: auto; margin-left: auto; }
+
+h1, h2, h3, h4, h5 { font-weight: bold; }
+h1, h2, h3 { color: #15428B; text-shadow: rgba(150,150,150,.75) 1px 1px 3px; }
+h4, h5, h6 { color: #0E2C5D; }
+h1 { font-size: 18pt; }
+h2 { font-size: 16pt; }
+h3 { font-size: 14pt; }
+h4 { font-size: 12pt; }
+
+p { line-height: 140%; }
+
+hr {
+    color: #D8DCDF;
+    width: 90%;
+}
+
+strong {
+    font-weight: bold;
+}
+
+/* When ol or ul elements have the 'list' class, give them normal list styling. */
+ol.list, ul.list { padding-left: 60px; }
+ol.list, ol.list li { list-style-type: decimal; }
+ul.list, ul.list li { list-style-type: disc; }
+
+
+/* FORM ELEMENTS */
+
+input[type=submit] {
+    font-weight: bold;
+}
+
+input[type="text"], input[type="password"], textarea, select, .vTextField {
+    background: #FFFFFF url(/assets/img/chrome/text-bg.gif) repeat-x scroll 0 0;
+    border: 1px solid #B5B8C8;
+    padding: 2px 3px 0 3px;
+}
+
+input[type="text"], input[type="password"], select {
+    height: 22px;
+    line-height: 18px;
+    vertical-align: middle;
+}
+
+/* Each one is specified here to prevent the border from affecting type "submit",
+   which causes a weird display bug in Firefox. */
+input:focus[type=text], input:focus[type=password],
+input:focus[type=file], input:focus[type=image], textarea:focus {
+    border: 1px solid #7EADD9;
+}
+
+
+
+
+
+/* IE only */
+* html #welcome #content {
+    text-align: center;      /*trick to make fixedWrapper div center in IE*/
+}
+
+/* Used to constrain the page width such that it will look the same on all
+ * displays from 1024 on up.
+ */
+#fixedWrapper {
+    width: 960px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 15px 0;
+    *text-align: left;
+}
+#welcome #fixedWrapper {
+    padding-top: 0;
+}
+
+.infopage {
+    width: 600px;
+    margin: 0 auto;
+    padding: 15px 0;
+    *text-align: left;
+}
+
+
+/*
+ * Clearfix code
+ * Many online resources document it, such as:
+ * http://blog.templatix.org/2008/09/clearfix-problem-and-solution-for-ff-and-ie-incluing-ie7/
+ */
+.clearfix:after {
+    content: ".";
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+.clearfix { display: inline-block; }
+* html .clearfix { height: 1%; }
+.clearfix { display: block; }
+
+
+
+
+/*
+ * Sticky Footer code
+ * Adapted from http://ryanfait.com/
+ */
+#container {
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+    margin: 0 0 -40px 0; /* the bottom margin is the negative value of the footer's height */
+    background: #E0E0C0 url('/assets/img/gradient_sand.gif') repeat-x;
+}
+
+#base_footer, #push {
+    height: 39px; /* .push must be the same height as .footer */
+}
+/* End Sticky Footer */
+
+
+
+#loading-mask{
+    position:absolute;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+    z-index:20000;
+    background-color:white;
+}
+#loading{
+    position:absolute;
+    left:45%;
+    top:40%;
+    padding:2px;
+    z-index:20001;
+    height:auto;
+}
+#loading img {
+    margin-bottom:5px;
+}
+#loading .loading-indicator{
+    background:white;
+    color:#555;
+    font:bold 13px tahoma,arial,helvetica;
+    padding:10px;
+    margin:0;
+    text-align:center;
+    height:auto;
+}
+
+
+
+a {
+    color: #1E4176;
+}
+a:link {
+    color: #1E4176;
+    text-decoration: none;
+}
+
+a:visited {
+   color: #2C5289;
+   text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+    color: #15428b;
+}
+
+.roundBox,
+.roundBoxBlue {
+    color: #000;
+    background: #fff url(/assets/img/roundbox_gradient.gif) repeat-x;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+    border: 1px solid #C0C4C6;
+    margin: 5px;
+    padding: 10px;
+
+    /* Box Shadowing */
+    /* Right Bottom Blur Color */
+    -moz-box-shadow: 1px 1px 3px #777;
+    -webkit-box-shadow: 1px 1px 3px #777;
+    box-shadow: 1px 1px 3px #777;
+}
+
+.roundBoxBlue {
+    background: #F0F5FA url(/assets/img/roundbox_blue_gradient.gif) repeat-x;
+    border-color: #A5A593;
+}
+
+.roundBoxBlue .boxName {
+    color: #1E4176;
+    font-size: 12pt;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.roundButton {
+    color: #444;
+    background: #fff;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+    border: 1px solid #D8DCDF;
+    padding: 5px;
+}
+
+    a.roundButton:hover {
+        background: #EBF0F7;
+        border-color: #1E4176;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+/* Additional properties to make links using the roundBox or roundBoxBlue
+   classes display properly.
+*/
+a.roundBox,
+a.roundBoxBlue {
+    display: block;
+}
+
+a.roundBox p,
+a.roundBox li,
+a.roundBoxBlue p,
+a.roundBoxBlue li {
+    color: #000;
+}
+
+a.roundBoxBlue:hover {
+    background: #EBF0F7;
+    border-color: #1e4176;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.inline-block {
+    vertical-align: middle;
+    display: -moz-inline-stack;
+    display: inline-block;
+    zoom: 1;
+    *display: inline;
+}
+
+.smallNote {
+    color: #666;
+    font-size: 0.8em;
+}
+
+.indent { margin: 10px 20px 10px 40px; }
+.indent li { margin-bottom: 5px; }
+
+.attribute-name { font-weight: bold; }
+.attribute { padding: 5px 5px 10px 20px; }
+
+.inactive { color: #888; }
+
+/*
+#site_wide_announcements {
+	position: absolute;
+	top: 10px;
+	height: auto;
+	width: 400px;
+	float: left;
+	margin-left: 150px;
+	padding: 3px;
+	z-index:20005;
+	color: #ff0000;
+	background: #ffff00;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+    border: 1px solid #D8DCDF;
+}
+
+#site_wide_announcements .title {
+    font-weight: bold;
+    background: transparent url(/assets/img/sound.png) no-repeat scroll 0%;
+    padding-left: 18px;
+}
+
+#site_wide_announcements .close_btn {
+	font-family: Verdana;
+	font-size: 0.8em;
+    position: absolute;
+    top:3px;
+    left:380px;
+    width:10px
+}
+
+#site_wide_announcements .message {
+    line-height: 110%;
+}
+#site_wide_announcements .footer-left {
+	padding:3px 20px 0 3px;
+    font-size: 0.6em;
+    position: relative;
+    float: left;
+}
+
+#site_wide_announcements .footer-right {
+	padding-top:3px;
+    font-size: 0.6em;
+    position: relative;
+    float: right;
+}*/
+
+
+#header {
+    height: 29px;
+    border:0 none;
+    background:#1E4176;
+    color:#ffc;
+    padding-top:3px;
+    padding-left:3px;
+    overflow:hidden;
+}
+#header .biogps-title {
+    font:normal 16px tahoma, arial, sans-serif;
+    color:white;
+    /*font-size:18px; margin:8px 0; font-weight:normal; color:#f4f379;*/
+    float:left;
+    /*padding-top:3px;*/
+    padding-left:3px;
+    padding-top:2px;
+    /*margin-top: 3px;*/
+
+}
+
+#header .header-bar {
+    float:right;
+    margin-right:20px;
+    margin-top: 5px;
+}
+
+#header .header-bar a {
+    color:white;
+	font-weight: bold;
+}
+
+#header .header-bar td {
+    font:normal 12px tahoma, arial, sans-serif;
+    color:white;
+    padding-left: 10px;
+    padding-right: 10px;
+    vertical_align: middle;
+    horizontal_align: right;
+}
+
+
+#header .login-div {
+    font:normal 12px tahoma, arial, sans-serif;
+    color:white;
+    vertical_align: middle;
+    horizontal_align: right;
+    width: 150px;
+}
+
+.topbarsearch {
+    position: relative;
+    float: right;
+    padding: 2px 10px 0 20px;
+}
+
+/* Main sprite image class */
+.biogps-img {
+    background: transparent url('/assets/img2/sprite_sitewide.png') no-repeat;
+}
+
+.biogpslogo_small {
+    background-position: -369px -7px;
+    float: left;
+    height: 25px;
+    margin-right: 10px;
+    width: 84px;
+}
+
+.biogpslogo_medium {
+    background-position: -5px -504px;
+    height: 82px;
+    width: 280px;
+}
+
+.gnflogo_top {
+    position: absolute;
+    top: 59px;
+    right: 10px;
+    width: 261px;
+}
+* html .gnflogo_top { right: 20px; }
+
+
+.gnflogo_bottom {
+    clear: both;
+    text-align: center;
+    padding-top: 20px;
+}
+
+#footer,
+#base_footer {
+    overflow:hidden;
+    color:#15428b;
+    background: #fff;
+    font: 8pt Tahoma, "Arial Narrow", sans-serif;
+    font-weight: normal;
+    vertical-align: bottom;
+}
+
+#footer {
+    float: right;
+    padding-right: 5px;
+}
+
+#base_footer {
+    border-bottom: 1px solid #8DB2E3;
+}
+
+    #base_footer .shadow_up {
+        height: 10px;
+        width: 100%;
+        background: #E0E0C0 url(/assets/img/shadow_up.gif) repeat-x bottom left;
+    }
+
+    #base_footer #footer-top {
+        height: 5px;
+        background: #DFE8F6;
+        border-top: 1px solid #8DB2E3;
+        border-bottom: 1px solid #8DB2E3;
+        *font-size: 3pt;     /*this is require to set the proper height of div bar in IE*/
+    }
+
+
+    #base_footer #copyright {
+        float: right;
+        padding-right: 5px;
+    }
+
+    #base_footer #footer-links {
+        font-size: 10pt;
+        font-weight: bold;
+        padding-left: 50px;
+    }
+
+        #base_footer #footer-links a {
+            padding-right: 20px;
+            vertical-align: middle;
+        }
+
+        #base_footer #footer-links img {
+            vertical-align: bottom;
+        }
+
+/*
+#top_brow{
+    height: 59px;
+    width: 100%;
+    background: url(/assets/img/brow_bkg.gif) repeat-x;
+}
+
+#main_brow {
+    background:transparent url(/assets/img/brow.gif) no-repeat scroll 0%;
+    height:55px;
+    max-height:59px;
+    padding-top:4px;
+    width:100%;
+}
+*/
+
+.orbar {
+    margin: 0 auto 0 auto;
+    width: 90%;
+/*    height: 9px;*/
+    border-top: 1px solid #D8DCDF;
+    text-align: center;
+}
+    .orbar div {
+        margin: 0 auto 0 auto;
+        position: relative;
+        top: -10px;
+        height: 20px;
+        width: 40px;
+        background: #fff;
+        color: #15428B;
+    }
+
+#msg-div {
+    position:absolute;
+    left:35%;
+    top:10px;
+    z-index: 8000;  /*set it behind welcome div*/
+}
+
+.msg a {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.msg .x-box-mc {
+    font-size:14px;
+    text-align: center;
+    background: #F9EDBE;
+    border-color: #F0C36D;
+    color: #F0C36D;
+    border: 1px solid;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+}
+
+.msg .x-box-mc div {
+    color: #900000;
+}
+
+
+#msg-ct {
+/*  position:absolute;
+    left:680px;
+    top:17px;*/
+    width:300px;
+    height:22px;
+}
+
+#msg {
+    width:300px;
+    height:22px;
+    background:transparent;
+    /*background-image:url(/assets/img/msg-bg.png);
+    color:#777;*/
+    color: #15428B;
+    font-family:tahoma,helvetica,arial,sans-serif;
+    font-size:11px;
+    visibility:hidden;
+}
+#msg-inner {
+    padding:5px 10px 0;
+    zoom:1;
+    line-height:12px;
+    text-align:right;
+}
+.msg-over {
+    color:#789030 !important;
+    cursor:pointer;
+    cursor:hand;
+}
+
+/*
+#msg img {
+    width:19px;
+    height:19px;
+}*/
+
+
+.labelstyle1 {
+    font: 12pt Arial,sans-serif;
+    font-weight: bold;
+    text-decoration: underline;
+    color: #333;
+}
+
+.labelstyle2 {
+    font: 12pt Arial,sans-serif;
+    font-weight: bold;
+    color: #333;
+}
+
+.labelsmall {
+    font: 10pt Arial,sans-serif;
+    font-weight: normal;
+}
+
+
+
+.plugindetails .head{
+    font: 9pt Arial, sans-serif;
+    font-weight: bold;
+    padding-left:5px;
+    padding-bottom: 10px;
+}
+
+.plugindetails .name{
+    font: 8pt Arial, sans-serif;
+    font-weight: bold;
+    padding-left:10px;
+    vertical-align: top;
+    padding-bottom: 5px;
+    width: 100px;
+}
+
+.plugindetails td{
+    font: 8pt Arial, sans-serif;
+    font-weight: normal;
+    padding-left:10px;
+}
+
+#pluginview_note{
+    font: 8pt Arial, sans-serif;
+    font-weight: bold;
+    color: red;
+    padding-top:20px;
+    padding-left:0px;
+}
+
+/*
+.x-toolbar {
+height:auto;
+}
+.x-toolbar table {
+float:right;
+}
+*/
+
+#MyToolbar .x-toolbar {
+height:auto;
+}
+#MyToolbar .x-toolbar table {
+float:right;
+}
+
+.frametoggle {
+    float:right;
+    width:15px;
+    height:15px;
+    margin-right:5px;
+    margin-top:5px;
+    z-index:5000;
+}
+
+#status_bar {
+    overflow:hidden;
+    color:#15428b;
+    float:left;
+    font: 8pt Tahoma, "Arial Narrow", sans-serif;
+    font-weight: normal;
+    vertical-align: bottom;
+}
+
+#info_bar {
+    overflow:hidden;
+    color:#15428b;
+    float:left;
+    font: 10pt Tahoma, "Arial Narrow", sans-serif;
+    font-weight: bold;
+    margin-left: 50px;
+    vertical-align: bottom;
+}
+
+/*
+#info_bar a:link {
+    text-decoration: none;
+}
+
+#info_bar a:visited {
+   color: #555;
+   text-decoration: none;
+}
+
+#info_bar a:hover {
+    text-decoration: underline;
+}
+*/
+
+/*.infopage {
+    margin-top: 5px;
+    margin-left: 20px;
+    width: 600px;
+}
+
+.infopage h2{
+    font-size: 14pt;
+}
+
+.infopage h3{
+    font-size: 14pt;
+    text-align: center;
+}*/
+
+.infopage p{
+    font-size: 12pt;
+    text-align:justify;
+    padding-top: 20px;
+}
+
+.infopage .roundBox {
+    margin-bottom: 15px;
+}
+
+.plugin-node{
+    /*margin-bottom:1px;
+    height:15px;*/
+}
+.layout-node{
+    /*background-image:url( ../tree/album.gif ) !important;*/
+}
+
+/*remove icon space in menu
+http://extjs.com/forum/showthread.php?t=3393*/
+.no-icon-menu .x-menu-item-icon { display: none; }
+/*remove vertical bar in menu
+http://extjs.com/forum/showthread.php?t=30051*/
+.x-menu {background-image:none!important;}
+
+.icon-user {
+    background-image: url(/assets/img/user.png) !important;
+}
+
+.icon-config {
+    background-image: url(/assets/img/cog.png) !important;
+}
+
+.help-icon, .icon-help {
+    background-image: url(/assets/img/help.png) !important;
+}
+
+.icon-add {
+    background-image: url(/assets/img/add.png) !important;
+}
+
+.icon-home {
+	background-image: url(/assets/img/house.png) !important;
+}
+
+.icon-loading {
+    background-image: url(/assets/img/loading.gif) !important;
+}
+
+.icon-info {
+    background: url(/assets/img/information.png) !important;
+}
+
+.icon-flag {
+    background: url(/assets/img/flag_red.png) !important;
+}
+
+.icon-pagego {
+    background: url(/assets/img/page_go.png) !important;
+}
+
+.icon-layout-alert {
+    background: url(/assets/img/layout_error.png) !important;
+    width: 12px;
+    height: 14px;
+}
+/* IE only */
+* html .icon-layout-alert {
+    width: 16px;      /*in order for IE to display icon correctly*/
+}
+
+
+.activeBreadcrumb,
+.activeBreadcrumb button {
+    font-weight: bold;
+}
+
+
+
+/* add some padding so it spaces nice and relative elements dn't get clipped */
+.form-group {
+    padding-bottom:5px;
+    overflow:hidden;
+}
+
+/* Simple blue border */
+.form-group .form-group-header {
+    padding:0;
+    text-align: right;
+/*  border-bottom:1px solid #c3daf9; */
+}
+
+/* Position the text element so it appears over the border added above */
+.form-group .form-group-header-text {
+    font-size:11px;
+    font-family:tahoma,arial,sans-serif;
+    line-height:15px;
+    position:relative;
+    right:115px;
+    top:5px;
+    padding:1px 5px 1px 20px;
+    color:#4e79b2;
+    background: transparent url(/assets/img/form-collapse-icon.gif) no-repeat 0 0;
+}
+
+/* Copied from x-plain (for IE + layouts to work) */
+.form-group-body {
+    overflow:hidden;
+}
+
+/* Copied from x-plain (for IE + layouts to work) */
+.form-group-bwrap {
+    overflow:hidden;
+    zoom:1;
+}
+
+/* Change the toggle icon when collapsed */
+.x-panel-collapsed .form-group-header-text {
+    background-position: 0 -18px;
+}
+
+.pluginsearchfield {
+    height: 30px;
+    font: 14pt Tahoma, "Arial Narrow", sans-serif;
+    font-weight: bold;
+    color: #1e4176;
+}
+
+.pluginsearchtrigger {
+    height: 30px !important;
+    width: 30px !important;
+}
+
+
+
+/*css for feedbox*/
+.feedname{
+	font-family:tahoma,arial,helvetica,sans-serif;
+	font-size:11px;
+	font-weight: bold;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+.feedentries{
+	font: 10pt Arial, sans-serif;
+	font-weight: normal;
+	text-indent: 5px;
+	padding: 6px;
+	margin: 2px;
+}
+
+.feedentry {
+	list-style: disc url(/assets/img/bullet.gif) inside;
+}
+
+.feedentry_expanded {
+	list-style: disc url(/assets/img/bullet_downright.gif) inside;
+}
+
+.feedentry_preview {
+	padding-left: 23px;
+	text-indent: 0px;
+	font-size:0.8em;
+	height: auto;
+	overflow: hidden;   /*Needed by IE to hide the box when toggling*/
+}
+
+
+
+
+/*
+ * Error Messages and Notifications
+ */
+
+.error_message {
+    color: #900;
+    font-size: 14px;
+}
+
+
+
+/*
+ * Popup Mask
+ */
+.popup-mask {
+    position: absolute;
+    z-index: 19000;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: .75;
+    filter: alpha(opacity=75);
+    -moz-opacity: 0.75;
+    background: #444;
+}
+
+.popup-box {
+    position: absolute;
+    top: 200px;
+    left: 35%;
+    width: 350px;
+    z-index: 19001;
+    padding: 5px;
+
+    /* Box Shadowing */
+    /* Right Bottom Blur Color */
+    box-shadow: 0px 5px 20px #000;
+    -moz-box-shadow: 0px 5px 20px #000;
+    -webkit-box-shadow: 0px 5px 20px #000;
+}
+
+
+
+/*
+ * Column Layout
+ * Used on the /profile/ pages
+ * Classes are named based on a 960px breakdown into 3 columns.
+ *    +---+---+---+
+ *    | 1 | 2 | 3 |
+ *    +---+---+---+
+ */
+.column-1, .column-2, .column-3, .column-12, .column-23 {
+    float: left;
+    margin: 0 15px 15px 0;
+    position: relative;
+}
+
+.column-1 .roundBox, .column-2 .roundBox, .column-3 .roundBox, .column-12 .roundBox, .column-23 .roundBox
+{ margin: 0 0 15px 0; }
+
+.column-1 {
+    width: 288px;
+}
+
+.column-2 {
+    width: 354px;
+}
+
+.column-3 {
+    margin-right: 0;
+    width: 288px;
+}
+
+.column-12 {
+    width: 657px;
+}
+
+.column-23 {
+    margin-right: 0;
+    width: 657px;
+}
+
+
+
+/* Grid Styled Tables
+ * Used on the /downloads/ page
+ */
+.gridtable {
+    border-collapse: collapse;
+    width: 100%;
+    border-right: 1px solid #D8DCDF;
+    border-left: 1px solid #D8DCDF;
+    margin-top: 10px;
+}
+
+    .gridtable th {
+        background: #F0F5FA;
+        border: 1px solid #C0C4C6;
+        padding: 0.2em 0.5em;
+        font-size: 1.1em;
+    }
+
+    .gridtable td {
+        background: #FFF;
+        border-bottom: 1px solid #D8DCDF;
+        border-left: 1px solid #D8DCDF;
+        padding: 0.2em 0.5em;
+    }
+
+    .gridtable .yes { background: #fff url(/assets/img/v.png) no-repeat center center; }
+    .gridtable .no { background: #fff url(/assets/img/x.png) no-repeat center center; }
+
+
+/* This is to override the default z-index (100) for mask
+ * so that it won't fall behide portlet window, whose z-order
+ * is set at biogps.portletGroup.zseed
+*/
+.ext-el-mask { z-index: 2000; }
+
+
+/* This imageless css button was generated by http://www.bestcssbuttongenerator.com/ */
+.biogps_goback {
+
+    -moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
+    -webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
+    box-shadow:inset 0px 1px 0px 0px #ffffff;
+
+    background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #ffffff), color-stop(1, #f6f6f6));
+    background:-moz-linear-gradient(top, #ffffff 5%, #f6f6f6 100%);
+    background:-webkit-linear-gradient(top, #ffffff 5%, #f6f6f6 100%);
+    background:-o-linear-gradient(top, #ffffff 5%, #f6f6f6 100%);
+    background:-ms-linear-gradient(top, #ffffff 5%, #f6f6f6 100%);
+    background:linear-gradient(to bottom, #ffffff 5%, #f6f6f6 100%);
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#f6f6f6',GradientType=0);
+
+    background-color:#ffffff;
+
+    -moz-border-radius:6px;
+    -webkit-border-radius:6px;
+    border-radius:6px;
+
+    border:1px solid #dcdcdc;
+
+    display:inline-block;
+    color:#666666;
+    font-family:arial;
+    font-size:8px;
+    font-weight:bold;
+    padding:0px 12px;
+    text-decoration:none;
+
+    text-shadow:0px 1px 0px #ffffff;
+}
+.biogps_goback:hover {
+
+    background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #f6f6f6), color-stop(1, #ffffff));
+    background:-moz-linear-gradient(top, #f6f6f6 5%, #ffffff 100%);
+    background:-webkit-linear-gradient(top, #f6f6f6 5%, #ffffff 100%);
+    background:-o-linear-gradient(top, #f6f6f6 5%, #ffffff 100%);
+    background:-ms-linear-gradient(top, #f6f6f6 5%, #ffffff 100%);
+    background:linear-gradient(to bottom, #f6f6f6 5%, #ffffff 100%);
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#f6f6f6', endColorstr='#ffffff',GradientType=0);
+
+    background-color:#f6f6f6;
+}
+.biogps_goback:active {
+    position:relative;
+    top:1px;
+}
+
+.biogps_goback img{
+    width: 70px;
+    height:19px;
+}
+

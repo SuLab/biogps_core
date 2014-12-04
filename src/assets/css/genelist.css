@@ -1,0 +1,142 @@
+/*
+*CSS for genelist_panel and geneset_panel
+*/
+
+/* When a menu item is moused over, Ext gives it this class */
+.x-tree-node-over {
+
+}
+
+
+.icon-gene {
+	background-image: url(/assets/img/double_helix.png) !important;
+}
+
+.icon-save {
+	background-image: url(/assets/img/disk.png) !important;
+}
+
+.icon-undo {
+	background-image: url(/assets/img/arrow_undo.png) !important;
+}
+
+.icon-showreport {
+	background-image: url(/assets/img/application_view_gallery.png) !important;
+}
+
+.icon-geneset {
+	background-image: url(/assets/img/gene_folder.gif) !important;
+}
+
+.icon-load {
+	background-image: url(/assets/img/arrow_join.png) !important;
+}
+
+.icon-export {
+    background-image: url(/assets/img/icons/table_save.png) !important;
+}
+
+.icon-refresh {
+	background-image: url(/assets/img/arrow_refresh.png) !important;
+}
+
+.icon-edit {
+	background-image: url(/assets/img/page_edit.png) !important;
+}
+
+.icon-remove {
+	background-image: url(/assets/img/cross.png) !important;
+}
+
+.icon-edit-small {
+	background-image: url(/assets/img/page_edit.gif) !important;
+}
+
+.icon-remove-small {
+	background-image: url(/assets/img/page_cross.gif) !important;
+}
+
+
+/* Removes the indentation of child nodes in the Gene trees. */
+.x-tree-ec-icon,
+.x-tree-node-indent,
+.x-tree-node-leaf .x-tree-ec-icon { display: none; }
+
+/*
+ * End-of-line fading
+ * Here, we're hacking and repurposing Ext's indentation spans to mask out the
+ * very end of the text line, to give it the fading effect instead of showing
+ * horizontal scrollbars.
+ */
+#genelist-tree .x-panel-body,
+#geneset-tree .x-panel-body { overflow-x: hidden; overflow-y: auto; }
+
+.x-tree-node-leaf .x-tree-node-indent {
+    display: inline-block;
+    position: absolute;
+    top: 2px;
+    right: 0px;
+    background: transparent url(/assets/img/fade_fff.png) repeat-y !important;
+    background: transparent;
+}
+
+.x-tree-node-leaf.x-tree-selected .x-tree-node-indent {
+    background: transparent url(/assets/img/fade_d9e8fb.png) repeat-y !important;
+    background: transparent;
+}
+
+
+.node-root-el {
+    background: #F7F7FF;
+    border-bottom: 1px dashed #99BBE8;
+    margin-bottom: 2px;
+}
+
+.x-tree-node-leaf {
+    position: relative;
+    /* The two lines below are used to fix the toolbar positioning in IE 6, 7, 8. */
+    overflow: hidden;
+    width: 100%;
+}
+
+/* Right-aligned buttons for Genes and Genesets */
+.node-inline-toolbar {
+    display: inline-block;
+    position: absolute;
+    top: 2px;
+    right: 0px;
+	height: 18px;
+	width: 40px; /* 2 buttons */
+    padding-left: 6px;
+    padding-right: 4px;
+	text-align: right;
+    background: transparent url(/assets/img/fade_eee.png) repeat-y !important;
+    background: #eee;
+}
+
+#genelist-tree .node-inline-toolbar {
+    width: 20px; /* 1 button */
+}
+
+.x-tree-selected .node-inline-toolbar {
+    background: transparent url(/assets/img/fade_d9e8fb.png) repeat-y !important;
+    background: transparent;
+}
+
+.node-inline-btn {
+	border: 0px;
+	cursor: pointer;
+	cursor: hand;
+	height: 16px;
+	width: 16px;
+	margin-left:5px;
+}
+
+
+/* Hover style changes */
+.x-tree-node-over .x-tree-node-anchor {
+    font-weight: bold;
+}
+
+.x-tree-node .node-inline-toolbar { visibility: hidden; }
+.x-tree-node-over .node-inline-toolbar { visibility: visible; }

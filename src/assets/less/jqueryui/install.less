@@ -1,0 +1,23 @@
+@charset "utf-8";
+
+.css3_linear_gradient(@start_color: #ccc, @end_color: #eee, @start: center top, @degree: -90deg, @end: center bottom) {
+  background: -moz-linear-gradient(@start @degree, @start_color, @end_color); 
+  background: -webkit-gradient(linear, @start, @end, color-stop(0, @start_color), color-stop(1, @end_color));
+  -webkit-background-origin: padding-box;
+}
+
+@import "colors.less";
+
+@import "jquery.ui.core.less";
+@import "jquery.ui.base.less";
+@import "jquery.ui.resizable.less";
+@import "jquery.ui.selectable.less";
+@import "jquery.ui.accordion.less";
+@import "jquery.ui.autocomplete.less";
+@import "jquery.ui.menu.less";
+@import "jquery.ui.button.less";
+@import "jquery.ui.dialog.less";
+@import "jquery.ui.slider.less";
+@import "jquery.ui.tabs.less";
+@import "jquery.ui.datepicker.less";
+@import "jquery.ui.progressbar.less";
