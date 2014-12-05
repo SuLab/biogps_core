@@ -85,7 +85,8 @@ class FormattedResponse():
                  html_dictionary={},
                  html_skip_context=False,
                  allowed_formats=['html', 'json', 'xml'],
-                 default_format='html'):
+                 default_format='html',
+                 pagination_by=None):
         '''
         @param request: HttpRequest instance
         @param data: any python object to be serialized.
@@ -106,6 +107,7 @@ class FormattedResponse():
         @param html_skip_context: if False(default), a context_instance is always passed to render_to_response
         @param allowed_formats: a list of allowed formats
         @param default_format: the default format if format is not requested.
+        @param pagination_by: None: no pagination; an integer, the pagination size.
         '''
         self._request = request
         self._data = data
@@ -115,12 +117,12 @@ class FormattedResponse():
         self.html_template = html_template
         self.html_dictionary = html_dictionary
         self.html_skip_context = html_skip_context
-        self.default_pagination = 10      # default page size for pagination
-                                          # for html rendering, pagination is handled in
-                                          # template by autopagination tag, so the
-                                          # self.default_pagination settings here should be
-                                          # consistent with the autopagination setting in
-                                          # template files (e.g. dataset/list.html, plugin/list.html)
+        self.pagination_by = pagination_by      # default page size for pagination if not None.
+                                                # for html rendering, pagination is handled in
+                                                # template by autopagination tag, so the
+                                                # self.pagination_by settings here should be
+                                                # consistent with the autopagination setting in
+                                                # template files (e.g. dataset/list.html, plugin/list.html)
 
         if default_format not in self.SUPPORTED_FORMATS:
             raise UnSupportedFormat
@@ -174,12 +176,13 @@ class FormattedResponse():
         if format not in self.allowed_formats:
             return HttpResponseNotAllowed(self.allowed_formats)
         elif format in ['json', 'xml']:
-            if isinstance(self._data, (list, QuerySet, BiogpsSearchResult)):
+            #if isinstance(self._data, (list, QuerySet, BiogpsSearchResult)):
+            if self.pagination_by:
                 # if self._data is one of these types,
                 # handling pagination here when "page" parameter is passed.
                 # no need for html rendering, as it will be handle by autopagination
                 # tag in the template.
-                paginator = Paginator(self._data, self.default_pagination)
+                paginator = Paginator(self._data, self.pagination_by)
                 # self._request.page is available when
                 # pagination.middleware.PaginationMiddleware is used
                 try:

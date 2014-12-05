@@ -64,9 +64,11 @@ def _handle_commom_params(params, types=None):
     start = params.get('from', None)
     if not start:
         start = params.get('start', 0)
+    start = int(start)
     size = params.get('size', None)
     if not size:
         size = params.get('limit', 10)
+    size = int(size)
     explain = params.get('explain', None) == 'true'
 
     # Sorting parameter translation. Defaults to popularity
@@ -128,7 +130,8 @@ def list(request, *args, **kwargs):
                                         allowed_formats=['html', 'json', 'xml'],
                                         model_serializer='object_cvt',
                                         html_template=html_template,
-                                        html_dictionary=html_dictionary)
+                                        html_dictionary=html_dictionary,
+                                        pagination_by=10)
 
 
 def search(request, _type=None):
