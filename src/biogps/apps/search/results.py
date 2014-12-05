@@ -70,7 +70,7 @@ class BiogpsSearchResult(dotdict):
     def get_current_hit_range(self):
         '''Return (start, stop) indexes for returned hits.'''
         start = self.query._q.start
-        stop = self.query._q.start + self.query._q.size
+        stop = start + self.query._q.size
         return (start, stop)
 
     def object_cvt(self):

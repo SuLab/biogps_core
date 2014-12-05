@@ -107,7 +107,8 @@ class PluginLibraryView(RestView):
                                             data=None,
                                             allowed_formats=['html'],
                                             html_template=html_template,
-                                            html_dictionary=html_dictionary)
+                                            html_dictionary=html_dictionary,
+                                            pagination_by=10)
 
     @loginrequired
     def post(self, request, sendemail=True):
