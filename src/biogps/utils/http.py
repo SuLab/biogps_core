@@ -7,9 +7,11 @@ from django.http import HttpResponse, HttpResponseNotAllowed
 from django.template import RequestContext
 from django.shortcuts import render_to_response as raw_render_to_response
 from django.core.paginator import Paginator, EmptyPage
+from django.db.models.query import QuerySet
 from biogps.utils import json
 from biogps.utils.const import MIMETYPE
 from biogps.utils.model_serializer import serialize
+from biogps.apps.search.results import BiogpsSearchResult
 
 
 def JSONResponse(pyobj, do_not_encode=False, **kwargs):
@@ -172,16 +174,20 @@ class FormattedResponse():
         if format not in self.allowed_formats:
             return HttpResponseNotAllowed(self.allowed_formats)
         elif format in ['json', 'xml']:
-            # handling pagination here when "page" parameter is passed.
-            # no need for html rendering, as it will be handle by autopagination
-            # tag in the template.
-            paginator = Paginator(self._data, self.default_pagination)
-            # self._request.page is available when
-            # pagination.middleware.PaginationMiddleware is used
-            try:
-                _data = paginator.page(self._request.page).object_list
-            except EmptyPage:
-                _data = []
+            if isinstance(self._data, (list, QuerySet, BiogpsSearchResult)):
+                # if self._data is one of these types,
+                # handling pagination here when "page" parameter is passed.
+                # no need for html rendering, as it will be handle by autopagination
+                # tag in the template.
+                paginator = Paginator(self._data, self.default_pagination)
+                # self._request.page is available when
+                # pagination.middleware.PaginationMiddleware is used
+                try:
+                    _data = paginator.page(self._request.page).object_list
+                except EmptyPage:
+                    _data = []
+            else:
+                _data = self._data
             response = HttpResponse(serialize(_data,
                                           format=format,
                                           attrs=self.serialize_attrs,

@@ -185,13 +185,14 @@ class BiogpsPlugin(BioGPSModel):
 
     @property
     def certified_owner(self):
-        return 'certified_owner' in self.options and self.options['certified_owner'] == True
+        return self.options and 'certified_owner' in self.options and self.options['certified_owner'] == True
 
     def flag_as_certified_owner(self):
         '''Add optional "certified_owner" flag to indicate this plugin's owner
            is certified.
         '''
         self.update_options(certified_owner=True)
+
 
 from south.modelsinspector import add_introspection_rules
 add_introspection_rules([
