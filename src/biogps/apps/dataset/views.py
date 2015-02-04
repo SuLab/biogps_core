@@ -18,6 +18,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import Http404
 from tagging.models import Tag
 from time import time
+import requests
 
 
 class DatasetLibraryView(RestView):
