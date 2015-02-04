@@ -26,21 +26,23 @@ class DatasetLibraryView(RestView):
     '''
     def get(self, request):
         # Get the assorted dataset lists that will go in tabs.
-        es = ESQuery(request.user)
-        _dbobjects = BiogpsDataset.objects.all()
-        max_in_list = 15
-
+        # get most popular
+        res = requests.get('http://54.185.249.25/dataset/?order=pop')
+        pop = res.json()['details']
         list1 = []
         list1.append({
             'name': 'Most Popular',
             'more': '/dataset/all/?sort=popular',
-            'items': BiogpsStat.objects.sort_model(BiogpsDataset,
-                         'all_time', 'rank', max_in_list)
+            'items': pop
         })
+        # get newest
+        res = requests.get('http://54.185.249.25/dataset/?order=new')
+        new = res.json()['details']
+        list1 = []
         list1.append({
             'name': 'Newest Additions',
             'more': '/dataset/all/?sort=newest',
-            'items': _dbobjects.order_by('-created')[:max_in_list]
+            'items': new
         })
         #if request.user.is_authenticated():
         #    mine = {
@@ -55,28 +57,26 @@ class DatasetLibraryView(RestView):
         # Check first row's category sizes, use largest to set box heights
         max_len = 0
         list2 = []
-
-        cat1 = es.query(None, only_in='dataset', size=5, filter_by=
-            {'tag': 'cancer'}, fields=['id', 'name_wrapped', 'slug']).hits.hits
+        res = requests.get('http://54.185.249.25/dataset/tag/cancer/')
+        cat1 = res.json()['details']['results']
         cat1_len = 0
         for i in cat1:
-            cat1_len += len(i['fields']['name_wrapped'])
+            cat1_len += len(i['name'])
         max_len = cat1_len
 
-        cat2 = es.query(None, only_in='dataset', size=5, filter_by=
-            {'tag': 'arthritis'}, fields=['id', 'name_wrapped', 'slug']
-            ).hits.hits
+        res = requests.get('http://54.185.249.25/dataset/tag/arthritis/')
+        cat2 = res.json()['details']['results']
         cat2_len = 0
         for i in cat2:
-            cat2_len += len(i['fields']['name_wrapped'])
+            cat2_len += len(i['name'])
         if cat2_len > max_len:
             max_len = cat2_len
 
-        cat3 = es.query(None, only_in='dataset', size=5, filter_by=
-            {'tag': 'obesity'}, fields=['id', 'name_wrapped', 'slug']).hits.hits
+        res = requests.get('http://54.185.249.25/dataset/tag/obesity/')
+        cat3 = res.json()['details']['results']
         cat3_len = 0
         for i in cat3:
-            cat3_len += len(i['fields']['name_wrapped'])
+            cat3_len += len(i['name'])
         if cat3_len > max_len:
             max_len = cat3_len
         # Adjust for display
@@ -106,27 +106,25 @@ class DatasetLibraryView(RestView):
         list2.append({
             'name': 'Stem cell',
             'more': '/dataset/tag/stem-cell/',
-            'items': es.query(None, only_in='dataset', size=5, filter_by=
-                {'tag': 'stem-cell'}, fields=['id', 'name_wrapped', 'slug']
-                ).hits.hits
+            'items': requests.get('http://54.185.249.25/dataset/tag/stem cell/')
+                      .json()['details']['results']
         })
         list2.append({
             'name': 'Immune System',
             'more': '/dataset/tag/immune-system/',
-            'items': es.query(None, only_in='dataset', size=5, filter_by=
-                {'tag': 'immune-system'}, fields=['id', 'name_wrapped', 'slug']
-                ).hits.hits
+            'items': requests.get('http://54.185.249.25/dataset/tag/immune system/')
+                      .json()['details']['results']
         })
         list2.append({
             'name': 'Nervous System',
             'more': '/dataset/tag/nervous-system/',
-            'items': es.query(None, only_in='dataset', size=5, filter_by=
-                {'tag': 'nervous-system'}, fields=['id', 'name_wrapped', 'slug']
-                ).hits.hits
+            'items': requests.get('http://54.185.249.25/dataset/tag/nervous system/')
+                      .json()['details']['results']
         })
 
         # Set up the navigation controls, getting category facets from ES
-        res = es.query(None, only_in='dataset', start=0, size=1)
+        # res = es.query(None, only_in='dataset', start=0, size=1)
+        res = None
         nav = BiogpsSearchNavigation(request, type='dataset', es_results=res)
 
         # Do the basic page setup and rendering
@@ -144,7 +142,6 @@ class DatasetLibraryView(RestView):
                                             allowed_formats=['html'],
                                             html_template=html_template,
                                             html_dictionary=html_dictionary)
-
 
     #@loginrequired
     #def post(self, request, sendemail=True):
