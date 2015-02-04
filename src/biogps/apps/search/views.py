@@ -162,24 +162,28 @@ def search(request, _type=None):
         _url = ('/?query=' + q) if q else '/'
         return HttpResponseRedirectWithIEFix(request, _url)
 
-    es = ESQuery(request.user)
-    res = es.query(**common_params)
+#     es = ESQuery(request.user)
+#     res = es.query(**common_params)
 
+    import requests
+    args = {'query': common_params['q']}
+    res = requests.get('http://54.185.249.25/dataset/search/', params=args)
+    res = res.json()['details']['results']
     #logging query stat
-    if res.has_error():
-        logmsg = 'action=es_query in=%s query=%s qlen=%s error=1 errormsg=%s' % \
-                 (','.join(common_params['only_in']),
-                  q[:1000],   # truncated at length 1000
-                  len(q),
-                  res.error)
-    else:
-        logmsg = 'action=es_query in=%s query=%s qlen=%s num_hits=%s total=%s' % \
-                 (','.join(common_params['only_in']),
-                  q[:1000],   # truncated at length 1000
-                  len(q),
-                  res.hits.hit_count,
-                  len(res))
-    log.info(logmsg)
+#     if res.has_error():
+#         logmsg = 'action=es_query in=%s query=%s qlen=%s error=1 errormsg=%s' % \
+#                  (','.join(common_params['only_in']),
+#                   q[:1000],   # truncated at length 1000
+#                   len(q),
+#                   res.error)
+#     else:
+#         logmsg = 'action=es_query in=%s query=%s qlen=%s num_hits=%s total=%s' % \
+#                  (','.join(common_params['only_in']),
+#                   q[:1000],   # truncated at length 1000
+#                   len(q),
+#                   res.hits.hit_count,
+#                   len(res))
+#     log.info(logmsg)
 
     # log plugin_quick_add action
     flag_plugin_quick_add = _type=='plugin' and request.GET.get('quickadd', None) is not None
@@ -187,12 +191,13 @@ def search(request, _type=None):
         log.info('action=plugin_quick_add')
 
     # Set up the navigation controls
-    nav = BiogpsSearchNavigation(request, type='search', es_results=res, params=common_params)
+    # nav = BiogpsSearchNavigation(request, type='search', es_results=res, params=common_params)
 
     # Do the basic page setup and rendering
-    if res.query and res.query.has_valid_doc_types():
+#    if res.query and res.query.has_valid_doc_types():
+    if len(res) > 0:
         # Successful search result
-        ctype = common_params['only_in'][0]
+        ctype = 'dataset'
         request.breadcrumbs('{} Library'.format(ctype.capitalize()), '/{}/'.format(ctype))
         try:
             request.breadcrumbs(u'Search: {}'.format(q.split(' ', 1)[1]), request.path_info + u'?q={}'.format(q))
@@ -202,15 +207,15 @@ def search(request, _type=None):
         html_dictionary = {
             'items': res,
             'species': Species,
-            'navigation': nav
+            #'navigation': nav
         }
     else:
         html_template = 'search/no_results.html'
         html_dictionary = {}
-
-    if res.has_error():
-        html_dictionary['items'] = None
-        html_dictionary['error'] = res.error
+# 
+#     if res.has_error():
+#         html_dictionary['items'] = None
+#         html_dictionary['error'] = res.error
     return render_to_formatted_response(request,
                                         data=res,
                                         allowed_formats=['html', 'json', 'xml'],
