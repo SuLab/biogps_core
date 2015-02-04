@@ -167,7 +167,7 @@ def search(request, _type=None):
 
     import requests
     args = {'query': common_params['q']}
-    res = requests.get('http://54.185.249.25/dataset/search/', params=args)
+    res = requests.get('http://54.185.249.25/dataset/search/4-biogps/', params=args)
     res = res.json()['details']['results']
     #logging query stat
 #     if res.has_error():
