@@ -39,7 +39,6 @@ class DatasetLibraryView(RestView):
         # get newest
         res = requests.get('http://54.185.249.25/dataset/?order=new')
         new = res.json()['details']
-        list1 = []
         list1.append({
             'name': 'Newest Additions',
             'more': '/dataset/all/?sort=newest',
@@ -125,8 +124,8 @@ class DatasetLibraryView(RestView):
 
         # Set up the navigation controls, getting category facets from ES
         # res = es.query(None, only_in='dataset', start=0, size=1)
-        res = None
-        nav = BiogpsSearchNavigation(request, type='dataset', es_results=res)
+        # res = None
+        # nav = BiogpsSearchNavigation(request, type='dataset', es_results=res)
 
         # Do the basic page setup and rendering
         prepare_breadcrumb(request)
@@ -136,7 +135,7 @@ class DatasetLibraryView(RestView):
             'list2': list2,
             'species': Species,
             'all_tags': Tag.objects.all(),
-            'navigation': nav,
+          #  'navigation': nav,
         }
         return render_to_formatted_response(request,
                                             data=None,
