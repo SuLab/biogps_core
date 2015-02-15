@@ -312,34 +312,49 @@ class DatasetView(RestView):
 
         log.info('username=%s clientip=%s action=dataset_metadata id=%s',
             getattr(request.user, 'username', ''),
-            request.META.get('REMOTE_ADDR', ''), dataset.id)
+            request.META.get('REMOTE_ADDR', ''), dataset['id'])
 
         if 'format' in request.GET:
-            meta = dataset.object_cvt()
             sort_fac = request.GET.get('sortFactor', None)
             if sort_fac is not None:
                 # Sort metadata by provided factor
                 try:
-                    meta['factors'].sort(key=lambda x: x.values()[0][sort_fac])
+                    dataset['factors'].sort(key=lambda x: x.values()[0][sort_fac])
                 except KeyError:
                     pass
 
             return render_to_formatted_response(request,
-                data=meta, allowed_formats=['json', 'xml'])
+                data=dataset, allowed_formats=['json', 'xml'])
 
         else:
+            def get_absolute_url(ds):
+                from django.template.defaultfilters import slugify
+                """ Return the appropriate URL for this dataset. """
+                _slug = slugify(ds['name'])
+                if _slug:
+                    return ('dataset_show', [str(ds['id']), _slug])
+                else:
+                    return ('dataset_show', [str(ds['id']), ])
+
+            def wrap_str(_str, max_len):
+                """ Textwrap _str to provided max length """
+                len_str = len(_str)
+                if len_str > max_len and len_str > 3:
+                    _str = textwrap.wrap(_str, max_len - 3)[0] + '...'
+                return _str
+
             # Standard HTML request
             nav = BiogpsSearchNavigation(request, params={'only_in': ['dataset']})
             prepare_breadcrumb(request)
-            request.breadcrumbs(dataset.name_wrapped_short,
-                dataset.get_absolute_url)
+            abs_url = get_absolute_url(dataset)
+            request.breadcrumbs(wrap_str(dataset['name'], 140), abs_url)
             html_template = 'dataset/show.html'
             html_dictionary = {
                 'current_obj': dataset,
-                'obj_factors': dataset.metadata['factors'],
+                'obj_factors': dataset['metadata']['factors'],
                 'rating_scale': Rating.rating_scale,
                 'rating_static': Rating.rating_static,
-                'canonical': dataset.get_absolute_url(),
+                'canonical': abs_url,
                 'navigation': nav
             }
             return render_to_formatted_response(request,
