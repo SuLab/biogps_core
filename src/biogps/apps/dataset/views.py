@@ -297,11 +297,9 @@ class DatasetView(RestView):
        ** more like the PluginView.
     """
     def before(self, request, args, kwargs):
-        try:
-            ds_id = sanitize(kwargs.pop('datasetID'))
-            kwargs['dataset'] = BiogpsDataset.objects.get(id=ds_id)
-        except BiogpsDataset.DoesNotExist:
-            kwargs['dataset'] = None
+        ds_id = sanitize(kwargs.pop('datasetID'))
+        res = requests.get('http://54.185.249.25/dataset/'+ds_id+'/4-biogps/')
+        kwargs['dataset'] = res.json()['details']
 
     def get(self, request, dataset, slug=None):
         """Get a specific dataset page/object via GET
