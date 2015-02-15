@@ -40,7 +40,7 @@
                             <h3>
                                 {% if navigation.multiple_types %}{{ i.in|capfirst }}: {% endif %}
                                 <a href=
-                                    "{% url dataset_show i.geo_gse_id i.slug %}">
+                                    "{% url dataset_show i.id i.slug %}">
                                      {{ i.name }}
                                 </a>
                             </h3>
