@@ -351,7 +351,7 @@ class DatasetView(RestView):
             html_template = 'dataset/show.html'
             html_dictionary = {
                 'current_obj': dataset,
-                'obj_factors': dataset['metadata']['factors'],
+                'obj_factors': dataset['factors'],
                 'rating_scale': Rating.rating_scale,
                 'rating_static': Rating.rating_static,
                 'canonical': abs_url,
