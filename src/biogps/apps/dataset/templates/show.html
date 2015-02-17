@@ -1,5 +1,5 @@
 {% extends "NEW/base_site.html" %}
-{% load threadedcomments_tags %}
+<!-- {% load threadedcomments_tags %} -->
 {% load user_tags %}
 
 {% block title %}{{ current_obj.name_wrapped }} Dataset{% endblock %}
@@ -118,7 +118,7 @@
                 {% endif %}
 
         <hr>
-        <div id="object-comments">
+        <!-- <div id="object-comments">
         {% get_comment_list for current_obj as comment_list %}
         {% if comment_list %}
             <h2><b>{{ comment_list|length }} comment{{ comment_list|length|pluralize }}</b></h2>
@@ -162,10 +162,10 @@
                                  href="#"> Edit</a></i>
                 {% endif %}
                 {% if not comment.parent_id %}
-                    </div> <!-- parent-comment-author -->
-                    </div> <!-- parent-comment -->
+                    </div>
+                    </div>
                 {% else %}
-                    </span> <!-- comment-author -->
+                    </span>
                 {% endif %}
 
                 {% for close in comment.close %}
@@ -233,13 +233,13 @@
                   <input type="submit" name="reply" class="submit-post btn-use-object" value="Save Comment" />
                   </p>
                 </form>
-              </div> <!-- comment-form -->
+              </div>
             {% else %}
               <br />
               <b><center>Please <a href="{% url auth_login %}?next={{ full_path|urlencode }}">Login</a> or <a href="{% url auth_register %}">Sign Up</a> to post comments.</center></b>
               <br />
             {% endif %}
-        </div> <!-- object-comments -->
+        </div> <!-- object-comments --> -->
       </div> <!-- object-full-details -->
 
     </div>
