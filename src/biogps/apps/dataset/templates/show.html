@@ -41,7 +41,7 @@
                         {% endcomment %}
                     </span><br>
 
-                    <p>{{ current_obj.summary }}</p>
+                    <p>{{ current_obj.summary_wrapped }}</p>
 
                     {% if current_obj.certified_owner %}
                         <div class="author">
@@ -49,7 +49,7 @@
                             Certified Owner: <a href="{{ current_obj.owner.get_absolute_url }}" rel="author">{{ current_obj.owner.get_valid_name }}</a>
                         </div>
                     {% else %}
-                        <div class="author">Registered by <a href="{{ current_obj.owner.get_absolute_url }}" rel="author">{{ current_obj.owner.get_valid_name }}</a></div>
+                        <div class="author">Registered by <a href="{{ current_obj.owner }}" rel="author">{{ current_obj.owner }}</a></div>
                     {% endif %}
 
                     {% if current_obj.is_restricted %}<span class="restriction-text">Restricted Access</span>{% endif %}
@@ -72,11 +72,11 @@
             <p>{{ current_obj.summary }}</p>
 
             <dl>
-                <dt>Species:</dt><dd>{{ current_obj.species|join:", " }}</dd><br>
+                <dt>Species:</dt><dd>{{ current_obj.species}}</dd><br>
                 <dt>Samples:</dt><dd>{{ current_obj.sample_count }}</dd><br>
-                {% if current_obj.metadata.source %}
-                    <dt>Source:</dt><dd><a href="{{ current_obj.metadata.source }}" target="_blank">
-                    {% firstof current_obj.geo_gds_id current_obj.geo_gse_id current_obj.metadata.source %}
+                {% if current_obj.source %}
+                    <dt>Source:</dt><dd><a href="{{ current_obj.source }}" target="_blank">
+                    {% firstof current_obj.geo_gds_id current_obj.geo_gse_id current_obj.source %}
                     </a></dd><br>
                 {% endif %}
                 {% if current_obj.mobile_url %}
