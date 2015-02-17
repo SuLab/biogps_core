@@ -81,8 +81,8 @@
                 {% if current_obj.mobile_url %}
                 <dt>Mobile URL:</dt><dd>{{ current_obj.mobile_url }}</dd><br>
                 {% endif %}
-                <dt>Updated:</dt><dd>{{ current_obj.lastmodified|date }}</dd><br>
-                <dt>Registered:</dt><dd>{{ current_obj.created|date }}</dd><br>
+                <dt>Updated:</dt><dd>{{ current_obj.lastmodified }}</dd><br>
+                <dt>Registered:</dt><dd>{{ current_obj.created }}</dd><br>
                 </dl>
 
                 {% if obj_factors and current_obj.id >= 15 %}
