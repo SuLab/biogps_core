@@ -80,7 +80,7 @@ class DatasetLibraryView(RestView):
         if cat3_len > max_len:
             max_len = cat3_len
         # Adjust for display
-        max_len *= 0.75
+        max_len *= 0.6
 
         list2.append({
             'name': 'Cancer',
