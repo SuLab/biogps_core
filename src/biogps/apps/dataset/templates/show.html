@@ -89,8 +89,8 @@
                     <br>
                     <div id="dataset-factors">
                     <span id="dataset-factors-title">Factors:</span>
-                        {% if current_obj.geo_gse_id and not current_obj.geo_gds_id %}
-                            (via <a href="https://insilicodb.org/app/" target="_blank">InsilicoDB</a>)
+                        {% if current_obj.sample_source%}
+                            (via <a href=current_obj.sample_source target="_blank">ArrayExpress</a>)
                         {% endif %}
                     <table id="factors-table">
                     <tr><th>Sample</th>
