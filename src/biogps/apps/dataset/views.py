@@ -2,7 +2,7 @@ from biogps.apps.dataset.models import BiogpsDataset, BiogpsDatasetData
 from biogps.apps.dataset.utils import DatasetQuery, sanitize
 from biogps.apps.rating.models import Rating
 from biogps.apps.search.es_lib import ESQuery
-from biogps.apps.search.navigations import BiogpsSearchNavigation
+from biogps.apps.search.navigations import BiogpsSearchNavigation, BiogpsNavigationDataset
 from biogps.apps.stat.models import BiogpsStat
 from biogps.utils.http import JSONResponse, render_to_formatted_response
 from biogps.utils.models import Species
