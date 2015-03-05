@@ -8,6 +8,48 @@ from biogps.utils.models import Species
 from django.utils.datastructures import SortedDict
 
 
+class BiogpsNavigationDataset(object):
+    def __init__(self, title):
+        self._title = title        
+    
+    @property
+    def title(self):
+        return self._title
+    
+    def init_facets(self):
+        facets = SortedDict()
+        facets['tag'] = {'name': 'TAGS', 'terms': []}
+        res = requests.get('http://54.185.249.25/dataset/tag/')
+        tags = res.json()['details']['results']
+        for e in tags:
+            _f = {
+                  'term': e['name'],
+                  'icon': 'tag2',
+                  'url': '/dataset/tag/'+e['name']+'/'
+                  }
+            facets['tag']['terms'].append(_f)
+        facets['tag']['terms'].append({
+                    'term': 'more ›',
+                    'title': 'Show all Tags',
+                    'url': '/dataset/tag/',
+                    'css_class': 'more-link'
+                })
+        facets['species'] = {
+            'name': 'SPECIES',
+            'terms': []
+        }
+        ds_species =  ['human', 'mouse', 'rat', 'pig']
+        for s in Species:
+            if s.name not in ds_species:
+                continue
+            facets['species']['terms'].append({
+                'term': s.name.capitalize(),
+                'title': s.short_genus,
+                'url': self.add_facet_to_path('species', s.name)
+            })
+        self.facets = facets
+
+
 class BiogpsSearchNavigation(object):
     def __init__(self, request, type='', doc_types=[], es_results=None, params={}):
         self._request = request
@@ -106,7 +148,7 @@ class BiogpsSearchNavigation(object):
                     if t['term'] == s['term']:
                         t['count'] = s['count']
                     try:
-                        if t['term'] in self.doc_types:
+                            if t['term'] in self.doc_types:
                             t['active'] = True
                             active_set = True
                     except KeyError:
