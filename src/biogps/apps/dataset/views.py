@@ -127,6 +127,8 @@ class DatasetLibraryView(RestView):
         # res = None
         # nav = BiogpsSearchNavigation(request, type='dataset', es_results=res)
 
+        nav = BiogpsNavigationDataset('BioGPS Dataset Library')
+
         # Do the basic page setup and rendering
         prepare_breadcrumb(request)
         html_template = 'dataset/index.html'
@@ -135,7 +137,7 @@ class DatasetLibraryView(RestView):
             'list2': list2,
             'species': Species,
             'all_tags': Tag.objects.all(),
-          #  'navigation': nav,
+            'navigation': nav,
         }
         return render_to_formatted_response(request,
                                             data=None,
