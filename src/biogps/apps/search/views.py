@@ -4,7 +4,7 @@ from django.http import HttpResponseBadRequest
 from biogps.utils.helper import HttpResponseRedirectWithIEFix
 from biogps.utils.http import JSONResponse, render_to_formatted_response
 from biogps.utils.models import Species
-from biogps.apps.search.navigations import BiogpsSearchNavigation
+from biogps.apps.search.navigations import BiogpsSearchNavigation, BiogpsNavigationDataset
 from es_lib import ESQuery
 
 import logging
@@ -191,7 +191,7 @@ def search(request, _type=None):
         log.info('action=plugin_quick_add')
 
     # Set up the navigation controls
-    # nav = BiogpsSearchNavigation(request, type='search', es_results=res, params=common_params)
+    nav = BiogpsNavigationDataset('Dataset Search Results')
 
     # Do the basic page setup and rendering
 #    if res.query and res.query.has_valid_doc_types():
@@ -207,7 +207,7 @@ def search(request, _type=None):
         html_dictionary = {
             'items': res,
             'species': Species,
-            #'navigation': nav
+            'navigation': nav
         }
     else:
         html_template = 'search/no_results.html'
