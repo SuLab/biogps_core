@@ -129,7 +129,7 @@
         <ul class="tag-list">
         {% for t in current_obj.tags %}
             <li>
-                <a href="{% url dataset_list_for_tag t.name %}" rel="tag">
+                <a href="{% url dataset_list_for_tag t %}" rel="tag">
                     <span class="ui-icon ui-icon-tag2"></span>
                     {{ t }}
                 </a>
