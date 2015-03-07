@@ -154,6 +154,8 @@ def search(request, _type=None):
     common_params = _handle_commom_params(request.GET, types=_type)
     format = request.GET.get('format', 'html')
     q = common_params.get('q', '')
+    page = common_params.get('page', 1)
+    page_by = common_params.get('page_by', 10)
 
     # For now V2 search does not support genes
     #if format == 'html' and common_params['only_in'] == ['gene']:
@@ -166,7 +168,7 @@ def search(request, _type=None):
 #     res = es.query(**common_params)
 
     import requests
-    args = {'query': common_params['q']}
+    args = {'query': common_params['q'], 'page': page, 'page_by': page_by}
     res = requests.get('http://54.185.249.25/dataset/search/4-biogps/', params=args)
     res = res.json()['details']
     #logging query stat
@@ -191,7 +193,10 @@ def search(request, _type=None):
         log.info('action=plugin_quick_add')
 
     # Set up the navigation controls
-    nav = BiogpsNavigationDataset('Dataset Search Results')
+    res.start = (res.current_page-1) * page_by
+    res.end = res.start + len(res.results)
+    res.start += 1
+    nav = BiogpsNavigationDataset('Dataset Search Results', res)
 
     # Do the basic page setup and rendering
 #    if res.query and res.query.has_valid_doc_types():
@@ -205,7 +210,7 @@ def search(request, _type=None):
             request.breadcrumbs(u'Search: {}'.format(q), request.path_info + u'?q={}'.format(q))
         html_template = '{}/list.html'.format(ctype)
         html_dictionary = {
-            'items': res,
+            'items': res.results,
             'species': Species,
             'navigation': nav
         }
