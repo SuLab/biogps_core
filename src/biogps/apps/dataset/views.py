@@ -301,7 +301,17 @@ class DatasetView(RestView):
     def before(self, request, args, kwargs):
         ds_id = sanitize(kwargs.pop('datasetID'))
         res = requests.get('http://54.185.249.25/dataset/'+ds_id+'/4-biogps/')
-        kwargs['dataset'] = res.json()['details']
+        ds = res.json()['details']
+        owner_map = {
+            'Andrew Su': '/profile/3/asu',
+            'Tom Freeman': '/profile/309/tfreeman',
+            'ArrayExpress Uploader': '/profile/8773/arrayexpressuploader'
+        }
+        try:
+            ds['owner_profile'] = owner_map[ds['owner']]
+        except Exception,e:
+            ds['owner_profile'] = None
+        kwargs['dataset'] = ds
 
     def get(self, request, dataset, slug=None):
         """Get a specific dataset page/object via GET

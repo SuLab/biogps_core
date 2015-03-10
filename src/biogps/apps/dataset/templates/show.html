@@ -48,7 +48,7 @@
                             Certified Owner: <a href="{{ current_obj.owner.get_absolute_url }}" rel="author">{{ current_obj.owner.get_valid_name }}</a>
                         </div>
                     {% else %}
-                        <div class="author">Registered by <a href="{{ current_obj.owner }}" rel="author">{{ current_obj.owner }}</a></div>
+                        <div class="author">Registered by <a href="{{ current_obj.owner_profile }}" rel="author">{{ current_obj.owner }}</a></div>
                     {% endif %}
 
                     {% if current_obj.is_restricted %}<span class="restriction-text">Restricted Access</span>{% endif %}
