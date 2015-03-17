@@ -194,7 +194,8 @@ def search(request, _type=None):
 
     # Set up the navigation controls
     res['start'] = (page-1) * page_by
-    res['end'] = res['start'] + len(res['results'])
+    # should not use page_by
+    res['end'] = res['start'] + page_by
     res['start'] += 1
     nav = BiogpsNavigationDataset('Dataset Search Results', res)
 
