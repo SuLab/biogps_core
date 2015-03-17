@@ -210,7 +210,7 @@ def search(request, _type=None):
             request.breadcrumbs(u'Search: {}'.format(q), request.path_info + u'?q={}'.format(q))
         html_template = '{}/list.html'.format(ctype)
         html_dictionary = {
-            'items': res.results,
+            'items': res['results'],
             'species': Species,
             'navigation': nav
         }
