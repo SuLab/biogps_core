@@ -168,7 +168,7 @@ def search(request, _type=None):
 #     res = es.query(**common_params)
 
     import requests
-    args = {'query': common_params['q'], 'page': page, 'page_by': page_by}
+    args = {'query': common_params['q'], 'page': 1, 'page_by': 99}
     res = requests.get('http://54.185.249.25/dataset/search/4-biogps/', params=args)
     res = res.json()['details']
     #logging query stat
@@ -193,9 +193,9 @@ def search(request, _type=None):
         log.info('action=plugin_quick_add')
 
     # Set up the navigation controls
-    res.start = (res.current_page-1) * page_by
-    res.end = res.start + len(res.results)
-    res.start += 1
+    res['start'] = (page-1) * page_by
+    res['end'] = res['start'] + len(res['results'])
+    res['start'] += 1
     nav = BiogpsNavigationDataset('Dataset Search Results', res)
 
     # Do the basic page setup and rendering
