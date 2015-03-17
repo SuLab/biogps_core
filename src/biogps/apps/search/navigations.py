@@ -54,22 +54,22 @@ class BiogpsNavigationDataset(object):
     
     @property
     def paging_footer(self):
-        if not self.results:
-            return None
-        out = 'Displaying '
-        types = 'dataset'
-
-        # Pluralize results
-        if len(self.results.results) != 1:
-            types += 's '
-
-        if self.results.count > len(self.results.results):
-            out += types
-            out += self.results.start + ' - ' + self.results.end + ' of '
-            out += self.results.count + ' in total.'
-        else:
-            out += str(self.results.count) + ' ' + types
-        return out
+          if not self.results:
+              return None
+          out = 'Displaying '
+          types = 'dataset'
+  
+          # Pluralize results
+          if len(self.results['results']) != 1:
+              types += 's '
+  
+          if self.results['count'] > len(self.results['results']):
+              out += types
+              out += str(self.results['start']) + ' - ' + str(self.results['end']) + ' of '
+              out += str(self.results['count']) + ' in total.'
+          else:
+              out += str(self.results['count']) + ' ' + types
+          return out
 
 
 class BiogpsSearchNavigation(object):
