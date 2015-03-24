@@ -63,14 +63,8 @@ def _handle_commom_params(params, types=None):
             filter_by[f] = _f
 
     # Paging parameters
-    start = params.get('from', None)
-    if not start:
-        start = params.get('start', 0)
-    start = int(start)
-    size = params.get('size', None)
-    if not size:
-        size = params.get('limit', 10)
-    size = int(size)
+    page = params.get('page', 1)
+    page = int(page)
     explain = params.get('explain', None) == 'true'
 
     # Sorting parameter translation. Defaults to popularity
@@ -100,7 +94,7 @@ def _handle_commom_params(params, types=None):
     h = [x.strip() for x in params.get('h', '').split(',') if x.strip() != '']  # hl_fields
 
     return dict(only_in=types, q=q, filter_by=filter_by, fields=fields,
-                start=start, size=size, sort=sort, h=h, facets=f, explain=explain)
+                page=page, sort=sort, h=h, facets=f, explain=explain)
 
 
 def list(request, *args, **kwargs):
@@ -212,7 +206,7 @@ def search(request, _type=None):
         # mock up whole array for django-paginator
         items = [None] * (res['start'] - 1) + res['results']
         if len(items) < res['count']:
-            items += [None] * (res['count'] - len(items))
+            items += [None] * (res['count'] - res['end'])
         ctype = 'dataset'
         request.breadcrumbs('{} Library'.format(ctype.capitalize()), '/{}/'.format(ctype))
         try:
