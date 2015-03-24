@@ -110,18 +110,27 @@ def list(request, *args, **kwargs):
 
 #     es = ESQuery(request.user)
 #     res = es.query(**common_params)
+    page = common_params.get('page', 1)
+    page_by = 10
     species = common_params['filter_by']['species']
-    args = {'species': species}
+    args = {'species': species, 'page': page, 'page_by': page_by}
     res = requests.get('http://54.185.249.25/dataset/search/4-biogps/', params=args)
     res = res.json()['details']
     # Set up the navigation controls
     # nav = BiogpsSearchNavigation(request, type='list', es_results=res, params=common_params)
+    res['start'] = (page-1) * page_by
+    res['end'] = res['start'] + len(res['results'])
+    res['start'] += 1
+    items = [None] * (res['start'] - 1) + res['results']
+    if len(items) < res['count']:
+        items += [None] * (res['count'] - res['end'])
+    html_template = 'dataset/list.html'
     nav = BiogpsNavigationDataset('Datasets for'+species, res)
 
     # Do the basic page setup and rendering
     html_template = 'dataset/list.html'
     html_dictionary = {
-        'items': res,
+        'items': items,
         'species': Species,
         'navigation': nav
     }
