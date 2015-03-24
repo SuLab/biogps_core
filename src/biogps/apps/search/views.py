@@ -130,7 +130,14 @@ def list(request, *args, **kwargs):
     if len(items) < res['count']:
         items += [None] * (res['count'] - res['end'])
     html_template = 'dataset/list.html'
-    nav = BiogpsNavigationDataset('Datasets for '+species, res)
+    
+    if tag is not None:
+        title = tag.capitalize() + ' Datasets'
+    else:
+        title = 'Datasets'
+    if species is not None:
+        title += ' for ' + species.capitalize()
+    nav = BiogpsNavigationDataset(title, res)
 
     # Do the basic page setup and rendering
     html_template = 'dataset/list.html'
