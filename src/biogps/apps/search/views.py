@@ -112,8 +112,13 @@ def list(request, *args, **kwargs):
 #     res = es.query(**common_params)
     page = common_params.get('page', 1)
     page_by = 10
-    species = common_params['filter_by']['species']
-    args = {'species': species, 'page': page, 'page_by': page_by}
+    species = common_params['filter_by'].get('species', None)
+    tag = common_params['filter_by'].get('tag', None)
+    args = {'page': page, 'page_by': page_by}
+    if species is not None:
+        args['species'] = species
+    if tag is not None:
+         args['tag'] = tag
     res = requests.get('http://54.185.249.25/dataset/search/4-biogps/', params=args)
     res = res.json()['details']
     # Set up the navigation controls
