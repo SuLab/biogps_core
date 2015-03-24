@@ -4,6 +4,7 @@ from django.http import HttpResponseBadRequest
 from biogps.utils.helper import HttpResponseRedirectWithIEFix
 from biogps.utils.http import JSONResponse, render_to_formatted_response
 from biogps.utils.models import Species
+from biogps.utils import const
 from biogps.apps.search.navigations import BiogpsSearchNavigation, BiogpsNavigationDataset
 from es_lib import ESQuery
 import requests
@@ -141,9 +142,11 @@ def list(request, *args, **kwargs):
 
     # Do the basic page setup and rendering
     html_template = 'dataset/list.html'
+    sample_gene = const.sample_gene
     html_dictionary = {
         'items': items,
-        'species': Species,
+        # 'species': Species,
+        'sample_geneid': sample_gene,
         'navigation': nav
     }
     return render_to_formatted_response(request,

@@ -361,6 +361,7 @@ class DatasetView(RestView):
             abs_url = get_absolute_url(dataset)
             request.breadcrumbs(wrap_str(dataset['name'], 140), abs_url)
             html_template = 'dataset/show.html'
+            dataset['sample_geneid'] = const.sample_gene[dataset['species']]
             html_dictionary = {
                 'current_obj': dataset,
                 'obj_factors': dataset['factors'],
