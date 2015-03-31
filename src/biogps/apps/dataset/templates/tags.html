@@ -22,8 +22,8 @@
                 <li>
                     <a href="/dataset/tag/"+{{ t.name }} rel="tag">
                         <span class="ui-icon ui-icon-tag2"></span>
-                        {{ t }}
-                        {% if t.count %}
+                        {{ t.name }}
+                        {% if t.items__count %}
                         <span class="count">({{ t.count }})</span>
                         {% endif %}
                     </a>
