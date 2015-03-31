@@ -23,7 +23,7 @@ urlpatterns += patterns('biogps.apps.dataset.views',
     url(r'^tag/(?P<tag>[\w-]+)(?:/species/(?P<species>[\w-]+))?/$', 'DatasetListView'),
 
     # This gets used to generate the URLs for tags in dataset list views
-    url(r'^tag/(?P<tag>[\w\s-]+)/$', 'DatasetListView', name='dataset_list_for_tag'),
+    url(r'^tag/(?P<tag>[\'\w\s-]+)/$', 'DatasetListView', name='dataset_list_for_tag'),
 
     #url(r'test/$', 'test_dataset_url', name='test_dataset_url'),
 
