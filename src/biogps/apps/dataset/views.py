@@ -261,7 +261,7 @@ class DatasetTagView(RestView):
         # if _sort:
         #     if _sort == 'popular':
         #         tags = sorted(tags, key=lambda t: t.count, reverse=True)
-        res = requests.get('http://54.185.249.25/dataset/tag/?page_by=9999')
+        res = requests.get('http://54.185.249.25/dataset/tag/?count=1&page_by=9999')
         tags = res.json()['details']['results']
         # Set up the navigation controls
         # We use ES to give us the category facets
