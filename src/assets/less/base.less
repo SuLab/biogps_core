@@ -1,0 +1,98 @@
+@charset "utf-8";
+/**
+ *  FLAW{LESS} Css Framework
+ *
+ *  Starter Page
+ *  This is an example page that shows many of the possibilities
+ *	you have by using the FLAW{LESS} Css Framework. The base layout
+ *	is divided into 8 columns (in this example) for all devices.
+ *	Through media queries the columns change position and width
+ *	if viewed with smaller screen sizes.
+ *
+ *  @author: Dominik Guzei
+ *  @website: wizzart.at
+ *
+ *  MIT-License: http://www.opensource.org/licenses/mit-license.php
+ */
+
+/* Here we import the framework. Note that this does not
+ * add any styles yet. We are using the less.js framework
+ * which adds variables and mixins (behave like function calls)
+ * This way the framework can provide infinite features, without
+ * adding anything more than you need on your website.
+ */
+@import "flawless/core/production/framework/css3/install.less";
+@import "flawless/core/production/framework/grid/install.less";
+@import "flawless/core/production/framework/nav/install.less";
+@import "flawless/core/production/framework/util/install.less";
+@import "flawless/addons/install.less";
+
+/* ================== SETUP THE FRAMEWORK  ==================
+ * Here you can see the basic three setup variables that most
+ * websites will need to set in order to use the framework.
+ *
+ * it is also important to set up those vars here so that all
+ * imported .less files you create build upon this foundation
+ */
+
+/* Tell the framework where it is relative to the html file  */
+@setup_framework_path: "/assets/less/flawless";
+
+/* The vertical rhythm is used to give your webpages a consistent
+ * look. The whole grid system relies on this value to calculate
+ * gaps, spans and so on. Basically this defines the row-height of
+ * the grid in pixels and aligns all elements in the flow of the grid.
+ */
+@setup_vertical_rhythm: 20;
+
+/* Here you can control the overall font size. Not that this value
+ * strongly correlates with the vertical rhythm. If you make these
+ * two values too different your text flow will look ugly
+ */
+@setup_font_size: 13;
+
+/* ================ COLOR DEFINITIONS ================
+ * This is the single place where we define color hex codes.
+ */
+/*@color_highlight: #A8431D;*/  /*brown color*/
+@color_highlight: #3297FD;  /*blue color*/
+@color_darkgreen: #56787A;
+@color_lightgreen: #75B09E;
+@color_lightgreen_back: @color_lightgreen + #848484;
+@color_darkyellow: #E3DA91;
+@color_lightyellow: #FCF9CA;
+@color_text: #24282B;
+@color_links: #3366CC;
+@color_link_hover: #15428b;
+@color_link_visited: #40428B;
+@color_darkblue: @color_link_hover + #222;
+@color_lightblue: @color_links + #333;
+
+@color_light_border: #BBB;
+@color_medium_border: #888;
+
+// New header/footer colors
+@color_lightyellow: #FFF9CA;
+@color_darkyellow: #DEC07F;
+
+
+/* ================ SPLIT UP YOUR CODE ================
+ * It is highly recommended to split up your various parts
+ * of custom styles for your website to improve maintainance
+ */
+
+//@import "screen-text.less"; /* everything related to text */
+@import "screen-base.less"; /* the base layout applied to all screen sizes */
+
+@import "jqueryui/install.less"; /* port of Aristo theme for Cappucino */
+
+
+@import "biogps/install.less";
+
+/* MEDIA QUERY FILES
+ * Changes the sizing of page elements depending on screen resolution.
+ * Note: These must occur last in this file.
+ */
+@import "screen-half-1080.less";
+@import "screen-medium.less"; /* the changes applied to medium screen sizes */
+@import "screen-small.less"; /* changes applied to small screen sizes */

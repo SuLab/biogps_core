@@ -1,0 +1,150 @@
+{
+    "endpoints": [
+        {
+            "name": "BioGPS plugin API",
+            "methods": [
+
+                {
+                    "MethodName": "BioGPS Plugin All",
+                    "Synopsis": "Get the metadata of all registered BioGPS plugins",
+                    "HTTPMethod": "GET",
+                    "URI": "/plugin/all/",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "format",
+                            "Required": "Y",
+                            "Default": "json",
+                            "Type": "enumerated",
+                            "EnumeratedList": ["json", "xml"],
+                            "Description": "json or xml"
+                        },
+                        {
+                            "Name": "sort",
+                            "Type": "enumerated",
+                            "Description": "return sorted plugins based on various fields",
+                            "EnumeratedList": ["", "popular", "newest", "id", "-id"],
+                            "EnumeratedDescription": {"": "Default \"popular\"",
+                                                      "popular": "by popularity in descending order",
+                                                      "newest": "by plugin submission date in descending order",
+                                                      "id": "by plugin id in ascending order",
+                                                      "-id": "by plugin id in descending order"}
+                        },
+                        {
+                            "Name": "limit",
+                            "Type": "integer",
+                            "Description": "the maximum number of plugins to return (by default 10)"
+                        },
+                        {
+                            "Name": "from",
+                            "Type": "integer",
+                            "Description": "from a given number of plugin to return, 0-based (by default 0)."
+                        }
+                    ]
+                },
+
+                {
+                    "MethodName": "BioGPS Plugins By Tag",
+                    "Synopsis": "Get the metadata of all registered BioGPS plugins with a given tag",
+                    "HTTPMethod": "GET",
+                    "URI": "/plugin/tag/:tag/",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "tag",
+                            "Required": "Y",
+                            "Type": "string",
+                            "Description": "a valid tag, see http://biogps.org/plugin/tag/ for the list of tags"
+                        },
+                        {
+                            "Name": "format",
+                            "Required": "Y",
+                            "Default": "json",
+                            "Type": "enumerated",
+                            "EnumeratedList": ["json", "xml"],
+                            "Description": "json or xml"
+                        },
+                        {
+                            "Name": "sort",
+                            "Type": "enumerated",
+                            "Description": "return sorted plugins based on various fields",
+                            "EnumeratedList": ["", "popular", "newest", "id", "-id"],
+                            "EnumeratedDescription": {"": "Default \"popular\"",
+                                                      "popular": "by popularity in descending order",
+                                                      "newest": "by plugin submission date in descending order",
+                                                      "id": "by plugin id in ascending order",
+                                                      "-id": "by plugin id in descending order"}
+                        },
+                        {
+                            "Name": "limit",
+                            "Type": "integer",
+                            "Description": "the maximum number of plugins to return (by default 10)"
+                        },
+                        {
+                            "Name": "from",
+                            "Type": "integer",
+                            "Description": "from a given number of plugin to return, 0-based (by default 0)."
+                        }
+                    ]
+                },
+
+                {
+                    "MethodName": "BioGPS Plugin",
+                    "Synopsis": "Get the metadata of a registered BioGPS plugin by its ID",
+                    "HTTPMethod": "GET",
+                    "URI": "/plugin/:plugin_id/",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "plugin_id",
+                            "Required": "Y",
+                            "Type": "integer",
+                            "Description": "Plugin ID"
+                        },
+                        {
+                            "Name": "format",
+                            "Required": "Y",
+                            "Default": "json",
+                            "Type": "enumerated",
+                            "EnumeratedList": ["json", "xml"],
+                            "Description": "json or xml"
+                        }
+                    ]
+                },
+
+                {
+                    "MethodName": "BioGPS Plugin URL",
+                    "Synopsis": "Get the \"rendered\" URL for a given plugin and a given gene",
+                    "HTTPMethod": "GET",
+                    "URI": "/plugin/:plugin_id/renderurl/",
+                    "RequiresOAuth": "N",
+                            "booleanTrueVal": "true",
+                            "booleanFalseVal": "false",
+
+                    "parameters": [
+                        {
+                            "Name": "plugin_id",
+                            "Required": "Y",
+                            "Type": "integer",
+                            "Description": "Plugin ID"
+                        },
+                        {
+                            "Name": "geneid",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Entrez (e.g. \"1017\") or Ensembl(e.g. \"ENSG00000123374\") Gene ID"
+                        },
+                        {
+                            "Name": "redirect",
+                            "Type": "boolean",
+                            "Default": "",
+                            "Description": "if true, return a 302 redirect to the \"rendered\" URL"
+                        }
+                    ]
+                }
+            ]
+        }
+
+    ]
+}

@@ -1,0 +1,4 @@
+{% load biogps_tags %}
+
+Your account is not activated. Mostly likely the activation key you supplied is invalid or expired. Click <b><a href="{% url auth_register %}">this link</a></b> to sign up again. If you continue experiencing the problem, please
+{% emailus2 "let us know" %}.

@@ -1,0 +1,32 @@
+<html>
+<body>
+	<h2>RemoteServiceError</h2>
+	<table border="1" style="margin: 10px 20px 10px 20px; border-collapse: collapse; padding-left: 5px; padding-right: 5px;">
+		<tr><td><b>status</b></td><td>{{status}}</td></tr>
+		<tr><td><b>content (raw)</b></td><td>{{content}}</td></tr>
+		<tr><td><b>content</b></td><td>{% autoescape off %}{{content}}{% endautoescape %}</td></tr>
+		<tr><td><b>url</b></td><td>{{url}}
+	{% ifequal method "GET" %}
+		<br>[<a href="{{url}}?{{param}}">open the link</a>]</td></tr>
+	{% else %}
+		</td></tr>
+	{% endifequal %}
+		<tr><td><b>parameters</b></td><td>{{param}}</td></tr>
+        <tr><td><b>method</b></td><td>{{method}}</td></tr>
+    {% if credentials %}
+        <tr><td><b>credentials</b></td><td>{{credentials}}</td></tr>
+    {% endif %}
+    {% if headers %}
+        <tr><td><b>headers</b></td><td>{{headers}}</td></tr>
+    {% endif %}
+
+	{% if request %}
+		<tr><td><b>user</b></td><td>{{ request.user }}</td></tr>
+		<tr><td><b>remote ip</b></td><td>{{ request.META.REMOTE_ADDR }}&nbsp;&nbsp;[<a href="http://www.networksolutions.com/whois/results.jsp?ip={{ request.META.REMOTE_ADDR }}">whois</a>]</td></tr>
+		<tr><td><b>path</b></td><td>{{ request.path }}</td></tr>
+		<tr><td><b>user agent</b></td><td>{{ request.META.HTTP_USER_AGENT }}</td></tr>
+	{% endif %}
+	</table>
+
+</body>
+</html>

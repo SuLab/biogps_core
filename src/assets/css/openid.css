@@ -1,0 +1,104 @@
+#openid_form {
+/*  width: 470px;*/
+}
+
+#openid_inputarea {
+    clear: both;
+    display: none;
+    margin-top: 35px;
+}
+
+#openid_username {
+    margin: 0 4px 0 8px;
+    width: 120px;
+}
+
+#openid_btns, #openid_btns br {
+    clear: both;
+}
+    #openid_highlight {
+        border-radius: 10px;
+        -moz-border-radius: 10px;
+        -webkit-border-radius: 10px;
+        padding: 2px;
+        background-color: #FFFCC9;
+        float: left;
+    }
+    .openid_large_btn, .openid_small_btn {
+        background: url(/assets/img/openid/openid-icons.png) no-repeat;
+        margin: 3px;
+        float: left;
+    }
+    .openid_large_btn {
+        width: 91px;
+        height: 51px;
+    }
+    .openid_small_btn {
+        width: 16px;
+        height: 16px;
+    }   
+    a.openid_large_btn:focus {
+        outline: none;
+        -moz-outline-style: none;
+    }
+    .openid_selected {
+        border: 4px solid #DDD;
+    }
+
+/* OpenID Provider small icons using CSS Sprites */
+.Google { background-position: 0 0; }
+.Yahoo { background-position: 0 -51px; }
+.AOL { background-position: 0 -102px; }
+.OpenID { background-position: 0 -153px; }
+.MyOpenID { background-position: 0 -204px; }
+.Flickr { background-position: 0 -220px; }
+.Technorati { background-position: -17px -220px; }
+.Wordpress { background-position: -17px -204px; }
+.Blogger { background-position: -34px -204px; }
+.Verisign { background-position: -51px -220px; }
+.Vidoop { background-position: -34px -220px; }
+.ClaimID { background-position: -68px -204px; }
+.LiveJournal { background-position: -51px -204px; }
+
+/* Welcome page OpenID buttons */
+#welcome #openid_form {
+    display: none;
+}
+
+#welcome .openid_large_btn {
+    *width: 97px; /* Overrides the default 100px */
+}
+
+#welcome .openid_large_btn, .openid_more_btn {
+    height: 20px;
+    *height: 22px;
+    margin: 0;
+    border: 1px solid #B5B8C8;
+    float: none;
+    display: -moz-inline-stack;
+    display: inline-block;
+    zoom: 1;
+    *display: inline;
+}
+
+.openid_more_btn {
+    width: 26px;
+    background-attachment: scroll;
+    background-color: #fff;
+    background-position: -57px -76px;
+}
+
+#welcome .openid_large_btn:hover,
+#welcome .openid_more_btn:hover {
+    border-color: #1e4176;
+}
+
+#welcome .google {
+    /* Large icon */
+    background: url(/assets/img2/openid/openid-providers-en.png) no-repeat scroll -5px -19px;
+}
+
+#welcome .yahoo {
+    background: url(/assets/img2/openid/openid-providers-en.png) no-repeat scroll -106px -20px;
+    margin: 0 4px;
+}

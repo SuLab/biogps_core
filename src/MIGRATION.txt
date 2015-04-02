@@ -1,0 +1,8 @@
+#This document records all changes needed when we migrate old app to the new one
+
+1. replace src/assets/js with src/assets/js2
+
+2. relpace templates with those under NEW folder.
+
+
+* As the last step, remove this MIGRATION.txt file.

@@ -1,0 +1,46 @@
+.fieldWrapper {
+    margin-top: 10px;
+}
+
+.fieldName {
+    b {
+        color: @color_text;
+        font-size: 108%;
+    }
+}
+
+.fieldErrors {
+    color: @color_highlight;
+    b {
+        color: @color_highlight;
+    }
+}
+
+#id_title,
+#id_url,
+#id_short_description,
+#id_species,
+#id_tags,
+#id_description {
+    .grid_span(6);
+    margin-right: 10px;
+}
+
+.btn_species {
+    margin: 0 15px 10px 0;
+}
+
+.charCounter {
+	color: lighten(@color_text, 50%);
+	font-size: 116%;
+	font-weight: bold;
+}
+
+.preview-url {
+    background: @color_lightgreen_back;
+    border: 1px solid @color_lightgreen + #333;
+    .css3_border_radius(3px);
+    font-size: 123%;
+    padding: 10px;
+    margin-bottom: 10px;
+}
