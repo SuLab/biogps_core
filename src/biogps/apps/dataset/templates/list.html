@@ -32,7 +32,7 @@
                 {% for i in items %}
                     <li>
                         <div class="object-summary-use">
-                            <a class="btn-use-object btn-priority-primary btn-show-dataset" href="/#goto=genereport&id={% sample_geneid i.species %}&show_dataset={{ i.id }}">
+                            <a class="btn-use-object btn-priority-primary btn-show-dataset" href="/#goto=genereport&id={% sample_geneid i.species %}&show_dataset={{ i.geo_gse_id }}">
                                 <h6>View Dataset</h6>
                             </a>
                          </div>
@@ -40,8 +40,8 @@
                             <h3>
                                 {% if navigation.multiple_types %}{{ i.in|capfirst }}: {% endif %}
                                 <a href=
-                                    "{% url dataset_show i.id i.slug %}">
-                                     {{ i.name_wrapped_short }}
+                                    "{% url _dataset_show i.geo_gse_id i.slug %}">
+                                     {{ i.name }}
                                 </a>
                             </h3>
 
@@ -57,10 +57,13 @@
                             <p>{{ i.summary_wrapped }}</p>
 
                             <div class="extra-details">
-                                Species: {{ i.species|join:", " }}
+                                Species: {{ i.species}}
                             </div>
                             <div class="extra-details">
                                 Samples: {{ i.sample_count }}
+                            </div>
+                            <div class="extra-details">
+                                Factors: {{ i.factor_count }}
                             </div>
 
                             {% if i.tags %}
