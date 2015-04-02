@@ -6,6 +6,70 @@ to render left-side navigation panel in search results/browse page.
 
 from biogps.utils.models import Species
 from django.utils.datastructures import SortedDict
+import requests
+
+
+class BiogpsNavigationDataset(object):
+    def __init__(self, title, results=None):
+        self._title = title
+        self.init_facets()
+        self.results = results
+    
+    @property
+    def title(self):
+        return self._title
+    
+    def init_facets(self):
+        facets = SortedDict()
+        facets['tag'] = {'name': 'TAGS', 'terms': []}
+        res = requests.get('http://54.185.249.25/dataset/tag/')
+        tags = res.json()['details']['results']
+        for e in tags:
+            _f = {
+                  'term': e['name'],
+                  'icon': 'tag2',
+                  'url': '/dataset/tag/'+e['name']+'/'
+                  }
+            facets['tag']['terms'].append(_f)
+        facets['tag']['terms'].append({
+                    'term': 'more ›',
+                    'title': 'Show all Tags',
+                    'url': '/dataset/tag/',
+                    'css_class': 'more-link'
+                })
+        facets['species'] = {
+            'name': 'SPECIES',
+            'terms': []
+        }
+        ds_species =  ['human', 'mouse', 'rat', 'pig']
+        for s in Species:
+            if s.name not in ds_species:
+                continue
+            facets['species']['terms'].append({
+                'term': s.name.capitalize(),
+                'title': s.short_genus,
+                'url': '/dataset/species/'+s.name+'/'
+            })
+        self.facets = facets
+    
+    @property
+    def paging_footer(self):
+          if not self.results:
+              return None
+          out = 'Displaying '
+          types = 'dataset'
+  
+          # Pluralize results
+          if len(self.results['results']) != 1:
+              types += 's '
+  
+          if self.results['count'] > len(self.results['results']):
+              out += types
+              out += str(self.results['start']) + ' - ' + str(self.results['end']) + ' of '
+              out += str(self.results['count']) + ' in total.'
+          else:
+              out += str(self.results['count']) + ' ' + types
+          return out
 
 
 class BiogpsSearchNavigation(object):
@@ -106,7 +170,7 @@ class BiogpsSearchNavigation(object):
                     if t['term'] == s['term']:
                         t['count'] = s['count']
                     try:
-                        if t['term'] in self.doc_types:
+                            if t['term'] in self.doc_types:
                             t['active'] = True
                             active_set = True
                     except KeyError:

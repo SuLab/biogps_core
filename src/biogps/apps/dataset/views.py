@@ -2,7 +2,7 @@ from biogps.apps.dataset.models import BiogpsDataset, BiogpsDatasetData
 from biogps.apps.dataset.utils import DatasetQuery, sanitize
 from biogps.apps.rating.models import Rating
 from biogps.apps.search.es_lib import ESQuery
-from biogps.apps.search.navigations import BiogpsSearchNavigation
+from biogps.apps.search.navigations import BiogpsSearchNavigation, BiogpsNavigationDataset
 from biogps.apps.stat.models import BiogpsStat
 from biogps.utils.http import JSONResponse, render_to_formatted_response
 from biogps.utils.models import Species
@@ -18,6 +18,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import Http404
 from tagging.models import Tag
 from time import time
+import requests
 
 
 class DatasetLibraryView(RestView):
@@ -26,21 +27,22 @@ class DatasetLibraryView(RestView):
     '''
     def get(self, request):
         # Get the assorted dataset lists that will go in tabs.
-        es = ESQuery(request.user)
-        _dbobjects = BiogpsDataset.objects.all()
-        max_in_list = 15
-
+        # get most popular
+        res = requests.get('http://54.185.249.25/dataset/?order=pop')
+        pop = res.json()['details']
         list1 = []
         list1.append({
             'name': 'Most Popular',
             'more': '/dataset/all/?sort=popular',
-            'items': BiogpsStat.objects.sort_model(BiogpsDataset,
-                         'all_time', 'rank', max_in_list)
+            'items': pop
         })
+        # get newest
+        res = requests.get('http://54.185.249.25/dataset/?order=new')
+        new = res.json()['details']
         list1.append({
             'name': 'Newest Additions',
             'more': '/dataset/all/?sort=newest',
-            'items': _dbobjects.order_by('-created')[:max_in_list]
+            'items': new
         })
         #if request.user.is_authenticated():
         #    mine = {
@@ -55,32 +57,30 @@ class DatasetLibraryView(RestView):
         # Check first row's category sizes, use largest to set box heights
         max_len = 0
         list2 = []
-
-        cat1 = es.query(None, only_in='dataset', size=5, filter_by=
-            {'tag': 'cancer'}, fields=['id', 'name_wrapped', 'slug']).hits.hits
+        res = requests.get('http://54.185.249.25/dataset/tag/cancer/')
+        cat1 = res.json()['details']['results']
         cat1_len = 0
         for i in cat1:
-            cat1_len += len(i['fields']['name_wrapped'])
+            cat1_len += len(i['name'])
         max_len = cat1_len
 
-        cat2 = es.query(None, only_in='dataset', size=5, filter_by=
-            {'tag': 'arthritis'}, fields=['id', 'name_wrapped', 'slug']
-            ).hits.hits
+        res = requests.get('http://54.185.249.25/dataset/tag/arthritis/')
+        cat2 = res.json()['details']['results']
         cat2_len = 0
         for i in cat2:
-            cat2_len += len(i['fields']['name_wrapped'])
+            cat2_len += len(i['name'])
         if cat2_len > max_len:
             max_len = cat2_len
 
-        cat3 = es.query(None, only_in='dataset', size=5, filter_by=
-            {'tag': 'obesity'}, fields=['id', 'name_wrapped', 'slug']).hits.hits
+        res = requests.get('http://54.185.249.25/dataset/tag/obesity/')
+        cat3 = res.json()['details']['results']
         cat3_len = 0
         for i in cat3:
-            cat3_len += len(i['fields']['name_wrapped'])
+            cat3_len += len(i['name'])
         if cat3_len > max_len:
             max_len = cat3_len
         # Adjust for display
-        max_len *= 0.75
+        max_len *= 0.6
 
         list2.append({
             'name': 'Cancer',
@@ -106,28 +106,28 @@ class DatasetLibraryView(RestView):
         list2.append({
             'name': 'Stem cell',
             'more': '/dataset/tag/stem-cell/',
-            'items': es.query(None, only_in='dataset', size=5, filter_by=
-                {'tag': 'stem-cell'}, fields=['id', 'name_wrapped', 'slug']
-                ).hits.hits
+            'items': requests.get('http://54.185.249.25/dataset/tag/stem cell/')
+                      .json()['details']['results']
         })
         list2.append({
             'name': 'Immune System',
             'more': '/dataset/tag/immune-system/',
-            'items': es.query(None, only_in='dataset', size=5, filter_by=
-                {'tag': 'immune-system'}, fields=['id', 'name_wrapped', 'slug']
-                ).hits.hits
+            'items': requests.get('http://54.185.249.25/dataset/tag/immune system/')
+                      .json()['details']['results']
         })
         list2.append({
             'name': 'Nervous System',
             'more': '/dataset/tag/nervous-system/',
-            'items': es.query(None, only_in='dataset', size=5, filter_by=
-                {'tag': 'nervous-system'}, fields=['id', 'name_wrapped', 'slug']
-                ).hits.hits
+            'items': requests.get('http://54.185.249.25/dataset/tag/nervous system/')
+                      .json()['details']['results']
         })
 
         # Set up the navigation controls, getting category facets from ES
-        res = es.query(None, only_in='dataset', start=0, size=1)
-        nav = BiogpsSearchNavigation(request, type='dataset', es_results=res)
+        # res = es.query(None, only_in='dataset', start=0, size=1)
+        # res = None
+        # nav = BiogpsSearchNavigation(request, type='dataset', es_results=res)
+
+        nav = BiogpsNavigationDataset('BioGPS Dataset Library')
 
         # Do the basic page setup and rendering
         prepare_breadcrumb(request)
@@ -144,7 +144,6 @@ class DatasetLibraryView(RestView):
                                             allowed_formats=['html'],
                                             html_template=html_template,
                                             html_dictionary=html_dictionary)
-
 
     #@loginrequired
     #def post(self, request, sendemail=True):
@@ -256,18 +255,20 @@ class DatasetTagView(RestView):
          /dataset/tag/(?sort=)
     '''
     def get(self, request):
-        _dbobjects = BiogpsDataset.objects.all()
-        tags = Tag.objects.usage_for_queryset(_dbobjects, counts=True, min_count=2)
+        # _dbobjects = BiogpsDataset.objects.all()
+        # tags = Tag.objects.usage_for_queryset(_dbobjects, counts=True, min_count=2)
         _sort = request.GET.get('sort', None)
-        if _sort:
-            if _sort == 'popular':
-                tags = sorted(tags, key=lambda t: t.count, reverse=True)
-
+        # if _sort:
+        #     if _sort == 'popular':
+        #         tags = sorted(tags, key=lambda t: t.count, reverse=True)
+        res = requests.get('http://54.185.249.25/dataset/tag/?count=1&page_by=9999')
+        tags = res.json()['details']['results']
         # Set up the navigation controls
         # We use ES to give us the category facets
-        es = ESQuery(request.user)
-        res = es.query(None, only_in='dataset', start=0, size=1)
-        nav = BiogpsSearchNavigation(request, type='dataset', es_results=res)
+        # es = ESQuery(request.user)
+        # res = es.query(None, only_in='dataset', start=0, size=1)
+        # nav = BiogpsSearchNavigation(request, type='dataset', es_results=res)
+        nav = BiogpsNavigationDataset('Dataset Tags')
 
         # Do the basic page setup and rendering
         prepare_breadcrumb(request)
@@ -300,11 +301,19 @@ class DatasetView(RestView):
        ** more like the PluginView.
     """
     def before(self, request, args, kwargs):
+        ds_id = sanitize(kwargs.pop('datasetID'))
+        res = requests.get('http://54.185.249.25/dataset/'+ds_id+'/4-biogps/')
+        ds = res.json()['details']
+        owner_map = {
+            'Andrew Su': '/profile/3/asu',
+            'Tom Freeman': '/profile/309/tfreeman',
+            'ArrayExpress Uploader': '/profile/8773/arrayexpressuploader'
+        }
         try:
-            ds_id = sanitize(kwargs.pop('datasetID'))
-            kwargs['dataset'] = BiogpsDataset.objects.get(id=ds_id)
-        except BiogpsDataset.DoesNotExist:
-            kwargs['dataset'] = None
+            ds['owner_profile'] = owner_map[ds['owner']]
+        except Exception,e:
+            ds['owner_profile'] = None
+        kwargs['dataset'] = ds
 
     def get(self, request, dataset, slug=None):
         """Get a specific dataset page/object via GET
@@ -317,34 +326,50 @@ class DatasetView(RestView):
 
         log.info('username=%s clientip=%s action=dataset_metadata id=%s',
             getattr(request.user, 'username', ''),
-            request.META.get('REMOTE_ADDR', ''), dataset.id)
+            request.META.get('REMOTE_ADDR', ''), dataset['id'])
 
         if 'format' in request.GET:
-            meta = dataset.object_cvt()
             sort_fac = request.GET.get('sortFactor', None)
             if sort_fac is not None:
                 # Sort metadata by provided factor
                 try:
-                    meta['factors'].sort(key=lambda x: x.values()[0][sort_fac])
+                    dataset['factors'].sort(key=lambda x: x.values()[0][sort_fac])
                 except KeyError:
                     pass
 
             return render_to_formatted_response(request,
-                data=meta, allowed_formats=['json', 'xml'])
+                data=dataset, allowed_formats=['json', 'xml'])
 
         else:
+            def get_absolute_url(ds):
+                from django.template.defaultfilters import slugify
+                """ Return the appropriate URL for this dataset. """
+                _slug = slugify(ds['name'])
+                if _slug:
+                    return ('dataset_show', [str(ds['id']), _slug])
+                else:
+                    return ('dataset_show', [str(ds['id']), ])
+
+            def wrap_str(_str, max_len):
+                """ Textwrap _str to provided max length """
+                len_str = len(_str)
+                if len_str > max_len and len_str > 3:
+                    _str = textwrap.wrap(_str, max_len - 3)[0] + '...'
+                return _str
+
             # Standard HTML request
             nav = BiogpsSearchNavigation(request, params={'only_in': ['dataset']})
             prepare_breadcrumb(request)
-            request.breadcrumbs(dataset.name_wrapped_short,
-                dataset.get_absolute_url)
+            abs_url = get_absolute_url(dataset)
+            request.breadcrumbs(wrap_str(dataset['name'], 140), abs_url)
             html_template = 'dataset/show.html'
+            dataset['sample_geneid'] = const.sample_gene[dataset['species']]
             html_dictionary = {
                 'current_obj': dataset,
-                'obj_factors': dataset.metadata['factors'],
+                'obj_factors': dataset['factors'],
                 'rating_scale': Rating.rating_scale,
                 'rating_static': Rating.rating_static,
-                'canonical': dataset.get_absolute_url(),
+                'canonical': abs_url,
                 'navigation': nav
             }
             return render_to_formatted_response(request,

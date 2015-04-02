@@ -29,10 +29,10 @@
                 <div id="tabs-{{ forloop.counter }}" class="browse-tab-list">
                     <ul>
                     {% for d in l.items %}
-                        <li><a href="/dataset/{{ d.id }}/{{ d.slug }}"
+                        <li><a href="/dataset/{{ d.geo_gse_id }}/{{ d.slug }}"
                             {% if d.summary %}
-                                class="has-tooltip" title="{{ d.summary }}"
-                            {% endif %}>{{ d.name_wrapped }}</a></li>
+                                class="has-tooltip" title="{{ d.name }}"
+                            {% endif %}>{{ d.name }}</a></li>
                     {% endfor %}
                     {% if l.more %}
                         <li><a class="more-link" href="{{ l.more }}">more &rsaquo;</a></li>
@@ -53,8 +53,8 @@
                     <h2><a href="{{ l.more }}">{{ l.name }}</a></h2>
                     <ul>
                     {% for d in l.items %}
-                        <li><a href="/dataset/{{ d.fields.id }}/{{ d.fields.slug }}">
-                            {{ d.fields.name_wrapped }}
+                        <li><a href="/dataset/{{ d.geo_gse_id }}/{{ d.slug }}">
+                            {{ d.name }}
                             </a></li>
                     {% endfor %}
                         <li><a class="more-link" href="{{ l.more }}">more &rsaquo;</a></li>
