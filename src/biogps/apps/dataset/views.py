@@ -341,15 +341,6 @@ class DatasetView(RestView):
                 data=dataset, allowed_formats=['json', 'xml'])
 
         else:
-            def get_absolute_url(ds):
-                from django.template.defaultfilters import slugify
-                """ Return the appropriate URL for this dataset. """
-                _slug = slugify(ds['name'])
-                if _slug:
-                    return ('dataset_show', [str(ds['id']), _slug])
-                else:
-                    return ('dataset_show', [str(ds['id']), ])
-
             def wrap_str(_str, max_len):
                 """ Textwrap _str to provided max length """
                 len_str = len(_str)
@@ -360,8 +351,8 @@ class DatasetView(RestView):
             # Standard HTML request
             nav = BiogpsSearchNavigation(request, params={'only_in': ['dataset']})
             prepare_breadcrumb(request)
-            abs_url = get_absolute_url(dataset)
-            request.breadcrumbs(wrap_str(dataset['name'], 140), abs_url)
+            from django.template.defaultfilters import slugify
+            request.breadcrumbs(wrap_str(dataset['name'], 140), slugify(dataset['name']))
             html_template = 'dataset/show.html'
             dataset['sample_geneid'] = const.sample_gene[dataset['species']]
             html_dictionary = {
