@@ -360,7 +360,6 @@ class DatasetView(RestView):
                 'obj_factors': dataset['factors'],
                 'rating_scale': Rating.rating_scale,
                 'rating_static': Rating.rating_static,
-                'canonical': abs_url,
                 'navigation': nav
             }
             return render_to_formatted_response(request,
