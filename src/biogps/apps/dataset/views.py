@@ -256,13 +256,12 @@ class DatasetTagView(RestView):
          /dataset/tag/(?sort=)
     '''
     def get(self, request):
-        # _dbobjects = BiogpsDataset.objects.all()
-        # tags = Tag.objects.usage_for_queryset(_dbobjects, counts=True, min_count=2)
         _sort = request.GET.get('sort', None)
-        # if _sort:
-        #     if _sort == 'popular':
-        #         tags = sorted(tags, key=lambda t: t.count, reverse=True)
-        res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/tag/?count=1&page_by=9999')
+        # tags start from 1 dataset
+        args = {'count': 1, 'page_by': 9999}
+        if _sort:
+            args['order'] = _sort
+        res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/tag/')
         tags = res.json()['details']['results']
         # Set up the navigation controls
         # We use ES to give us the category facets
