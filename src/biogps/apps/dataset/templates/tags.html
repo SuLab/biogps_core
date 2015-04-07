@@ -20,7 +20,7 @@
             <ul>
             {% for t in all_tags %}
                 <li>
-                    <a href="/dataset/tag/"+{{ t.name }} rel="tag">
+                    <a href="/dataset/tag/{{ t.name }}/"+ rel="tag">
                         <span class="ui-icon ui-icon-tag2"></span>
                         {{ t.name }}
                         {% if t.items__count %}
