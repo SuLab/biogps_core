@@ -18,6 +18,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import Http404
 from tagging.models import Tag
 from time import time
+import textwrap
 import requests
 from django.conf import settings
 
@@ -352,7 +353,8 @@ class DatasetView(RestView):
             nav = BiogpsSearchNavigation(request, params={'only_in': ['dataset']})
             prepare_breadcrumb(request)
             from django.template.defaultfilters import slugify
-            request.breadcrumbs(wrap_str(dataset['name'], 140), slugify(dataset['name']))
+            abs_url = '/dataset/' + dataset['geo_gse_id'] + '/' + slugify(dataset['name'])
+            request.breadcrumbs(wrap_str(dataset['name'], 140), abs_url)
             html_template = 'dataset/show.html'
             dataset['sample_geneid'] = const.sample_gene[dataset['species']]
             html_dictionary = {
