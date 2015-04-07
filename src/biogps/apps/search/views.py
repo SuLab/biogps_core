@@ -8,6 +8,7 @@ from biogps.utils import const
 from biogps.apps.search.navigations import BiogpsSearchNavigation, BiogpsNavigationDataset
 from es_lib import ESQuery
 import requests
+from django.conf import settings
 
 import logging
 from array import array
@@ -122,13 +123,13 @@ def list(request, *args, **kwargs):
             args['order'] = 'pop'
         else:
             args['order'] = 'new'
-        res = requests.get('http://54.185.249.25/dataset/', params=args)
+        res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/', params=args)
     else:
         if species is not None:
             args['species'] = species
         if tag is not None:
              args['tag'] = tag
-        res = requests.get('http://54.185.249.25/dataset/search/4-biogps/', params=args)
+        res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/search/4-biogps/', params=args)
     res = res.json()['details']
     # Set up the navigation controls
     # nav = BiogpsSearchNavigation(request, type='list', es_results=res, params=common_params)
@@ -202,7 +203,7 @@ def search(request, _type=None):
     #page_by equals list.html pagination setting
     page_by = 10
     args = {'query': common_params['q'], 'page': page, 'page_by': page_by}
-    res = requests.get('http://54.185.249.25/dataset/search/4-biogps/', params=args)
+    res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/search/4-biogps/', params=args)
     res = res.json()['details']
     #logging query stat
 #     if res.has_error():
