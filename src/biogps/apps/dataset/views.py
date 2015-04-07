@@ -259,8 +259,8 @@ class DatasetTagView(RestView):
         _sort = request.GET.get('sort', None)
         # tags start from 1 dataset
         args = {'count': 1, 'page_by': 9999}
-        if _sort:
-            args['order'] = _sort
+        if _sort == 'popular':
+            args['order'] = 'pop'
         res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/tag/', params=args)
         tags = res.json()['details']['results']
         # Set up the navigation controls
