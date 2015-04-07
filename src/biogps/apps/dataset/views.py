@@ -29,7 +29,7 @@ class DatasetLibraryView(RestView):
         # Get the assorted dataset lists that will go in tabs.
         # get most popular
         res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/?order=pop')
-        pop = res.json()['details']
+        pop = res.json()['details']['results']
         list1 = []
         list1.append({
             'name': 'Most Popular',
@@ -38,7 +38,7 @@ class DatasetLibraryView(RestView):
         })
         # get newest
         res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/?order=new')
-        new = res.json()['details']
+        new = res.json()['details']['results']
         list1.append({
             'name': 'Newest Additions',
             'more': '/dataset/all/?sort=newest',
