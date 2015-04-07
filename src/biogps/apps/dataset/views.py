@@ -261,7 +261,7 @@ class DatasetTagView(RestView):
         args = {'count': 1, 'page_by': 9999}
         if _sort:
             args['order'] = _sort
-        res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/tag/')
+        res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/tag/', params=args)
         tags = res.json()['details']['results']
         # Set up the navigation controls
         # We use ES to give us the category facets
