@@ -19,7 +19,7 @@ from django.http import Http404
 from tagging.models import Tag
 from time import time
 import requests
-
+from django.conf import settings
 
 class DatasetLibraryView(RestView):
     '''This class defines views for REST URL:
@@ -28,7 +28,7 @@ class DatasetLibraryView(RestView):
     def get(self, request):
         # Get the assorted dataset lists that will go in tabs.
         # get most popular
-        res = requests.get('http://54.185.249.25/dataset/?order=pop')
+        res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/?order=pop')
         pop = res.json()['details']
         list1 = []
         list1.append({
@@ -37,7 +37,7 @@ class DatasetLibraryView(RestView):
             'items': pop
         })
         # get newest
-        res = requests.get('http://54.185.249.25/dataset/?order=new')
+        res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/?order=new')
         new = res.json()['details']
         list1.append({
             'name': 'Newest Additions',
@@ -57,14 +57,14 @@ class DatasetLibraryView(RestView):
         # Check first row's category sizes, use largest to set box heights
         max_len = 0
         list2 = []
-        res = requests.get('http://54.185.249.25/dataset/tag/cancer/')
+        res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/tag/cancer/')
         cat1 = res.json()['details']['results']
         cat1_len = 0
         for i in cat1:
             cat1_len += len(i['name'])
         max_len = cat1_len
 
-        res = requests.get('http://54.185.249.25/dataset/tag/arthritis/')
+        res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/tag/arthritis/')
         cat2 = res.json()['details']['results']
         cat2_len = 0
         for i in cat2:
@@ -72,7 +72,7 @@ class DatasetLibraryView(RestView):
         if cat2_len > max_len:
             max_len = cat2_len
 
-        res = requests.get('http://54.185.249.25/dataset/tag/obesity/')
+        res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/tag/obesity/')
         cat3 = res.json()['details']['results']
         cat3_len = 0
         for i in cat3:
@@ -106,19 +106,19 @@ class DatasetLibraryView(RestView):
         list2.append({
             'name': 'Stem cell',
             'more': '/dataset/tag/stem-cell/',
-            'items': requests.get('http://54.185.249.25/dataset/tag/stem cell/')
+            'items': requests.get(settings.DATASET_SERVICE_HOST + '/dataset/tag/stem cell/')
                       .json()['details']['results']
         })
         list2.append({
             'name': 'Immune System',
             'more': '/dataset/tag/immune-system/',
-            'items': requests.get('http://54.185.249.25/dataset/tag/immune system/')
+            'items': requests.get(settings.DATASET_SERVICE_HOST + '/dataset/tag/immune system/')
                       .json()['details']['results']
         })
         list2.append({
             'name': 'Nervous System',
             'more': '/dataset/tag/nervous-system/',
-            'items': requests.get('http://54.185.249.25/dataset/tag/nervous system/')
+            'items': requests.get(settings.DATASET_SERVICE_HOST + '/dataset/tag/nervous system/')
                       .json()['details']['results']
         })
 
@@ -261,7 +261,7 @@ class DatasetTagView(RestView):
         # if _sort:
         #     if _sort == 'popular':
         #         tags = sorted(tags, key=lambda t: t.count, reverse=True)
-        res = requests.get('http://54.185.249.25/dataset/tag/?count=1&page_by=9999')
+        res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/tag/?count=1&page_by=9999')
         tags = res.json()['details']['results']
         # Set up the navigation controls
         # We use ES to give us the category facets
@@ -302,7 +302,7 @@ class DatasetView(RestView):
     """
     def before(self, request, args, kwargs):
         ds_id = sanitize(kwargs.pop('datasetID'))
-        res = requests.get('http://54.185.249.25/dataset/'+ds_id+'/4-biogps/')
+        res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/'+ds_id+'/4-biogps/')
         ds = res.json()['details']
         owner_map = {
             'Andrew Su': '/profile/3/asu',
