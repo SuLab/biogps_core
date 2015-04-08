@@ -130,6 +130,7 @@ def list(request, *args, **kwargs):
         if tag is not None:
              args['tag'] = tag
         res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/search/4-biogps/', params=args)
+    tag_agg = res.json()['details']['aggregations']
     res = res.json()['details']
     # Set up the navigation controls
     # nav = BiogpsSearchNavigation(request, type='list', es_results=res, params=common_params)
@@ -147,7 +148,6 @@ def list(request, *args, **kwargs):
         title = 'Datasets'
     if species is not None:
         title += ' for ' + species.capitalize()
-    tag_agg = res.json()['details']['aggregations']
     nav = BiogpsNavigationDataset(title, res, tag_agg)
 
     # Do the basic page setup and rendering
