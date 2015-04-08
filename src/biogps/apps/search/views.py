@@ -147,7 +147,8 @@ def list(request, *args, **kwargs):
         title = 'Datasets'
     if species is not None:
         title += ' for ' + species.capitalize()
-    nav = BiogpsNavigationDataset(title, res)
+    tag_agg = res.json()['details']['aggregations']
+    nav = BiogpsNavigationDataset(title, res, tag_agg)
 
     # Do the basic page setup and rendering
     html_template = 'dataset/list.html'
