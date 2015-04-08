@@ -7,13 +7,15 @@ to render left-side navigation panel in search results/browse page.
 from biogps.utils.models import Species
 from django.utils.datastructures import SortedDict
 import requests
+from django.conf import settings
 
 
 class BiogpsNavigationDataset(object):
-    def __init__(self, title, results=None):
+    def __init__(self, title, results=None, tags=None):
         self._title = title
-        self.init_facets()
         self.results = results
+        self.tags = tags
+        self.init_facets()
     
     @property
     def title(self):
@@ -22,8 +24,11 @@ class BiogpsNavigationDataset(object):
     def init_facets(self):
         facets = SortedDict()
         facets['tag'] = {'name': 'TAGS', 'terms': []}
-        res = requests.get('http://54.185.249.25/dataset/tag/')
-        tags = res.json()['details']['results']
+        if self.tags is None:
+            res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/tag/')
+            tags = res.json()['details']['results']
+        else:
+            tags = self.tags
         for e in tags:
             _f = {
                   'term': e['name'],
@@ -31,6 +36,7 @@ class BiogpsNavigationDataset(object):
                   'url': '/dataset/tag/'+e['name']+'/'
                   }
             facets['tag']['terms'].append(_f)
+            
         facets['tag']['terms'].append({
                     'term': 'more ›',
                     'title': 'Show all Tags',

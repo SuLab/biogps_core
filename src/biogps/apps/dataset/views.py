@@ -18,8 +18,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import Http404
 from tagging.models import Tag
 from time import time
+import textwrap
 import requests
-
+from django.conf import settings
 
 class DatasetLibraryView(RestView):
     '''This class defines views for REST URL:
@@ -28,8 +29,8 @@ class DatasetLibraryView(RestView):
     def get(self, request):
         # Get the assorted dataset lists that will go in tabs.
         # get most popular
-        res = requests.get('http://54.185.249.25/dataset/?order=pop')
-        pop = res.json()['details']
+        res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/?order=pop')
+        pop = res.json()['details']['results']
         list1 = []
         list1.append({
             'name': 'Most Popular',
@@ -37,8 +38,8 @@ class DatasetLibraryView(RestView):
             'items': pop
         })
         # get newest
-        res = requests.get('http://54.185.249.25/dataset/?order=new')
-        new = res.json()['details']
+        res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/?order=new')
+        new = res.json()['details']['results']
         list1.append({
             'name': 'Newest Additions',
             'more': '/dataset/all/?sort=newest',
@@ -57,14 +58,14 @@ class DatasetLibraryView(RestView):
         # Check first row's category sizes, use largest to set box heights
         max_len = 0
         list2 = []
-        res = requests.get('http://54.185.249.25/dataset/tag/cancer/')
+        res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/tag/cancer/')
         cat1 = res.json()['details']['results']
         cat1_len = 0
         for i in cat1:
             cat1_len += len(i['name'])
         max_len = cat1_len
 
-        res = requests.get('http://54.185.249.25/dataset/tag/arthritis/')
+        res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/tag/arthritis/')
         cat2 = res.json()['details']['results']
         cat2_len = 0
         for i in cat2:
@@ -72,7 +73,7 @@ class DatasetLibraryView(RestView):
         if cat2_len > max_len:
             max_len = cat2_len
 
-        res = requests.get('http://54.185.249.25/dataset/tag/obesity/')
+        res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/tag/obesity/')
         cat3 = res.json()['details']['results']
         cat3_len = 0
         for i in cat3:
@@ -106,19 +107,19 @@ class DatasetLibraryView(RestView):
         list2.append({
             'name': 'Stem cell',
             'more': '/dataset/tag/stem-cell/',
-            'items': requests.get('http://54.185.249.25/dataset/tag/stem cell/')
+            'items': requests.get(settings.DATASET_SERVICE_HOST + '/dataset/tag/stem cell/')
                       .json()['details']['results']
         })
         list2.append({
             'name': 'Immune System',
             'more': '/dataset/tag/immune-system/',
-            'items': requests.get('http://54.185.249.25/dataset/tag/immune system/')
+            'items': requests.get(settings.DATASET_SERVICE_HOST + '/dataset/tag/immune system/')
                       .json()['details']['results']
         })
         list2.append({
             'name': 'Nervous System',
             'more': '/dataset/tag/nervous-system/',
-            'items': requests.get('http://54.185.249.25/dataset/tag/nervous system/')
+            'items': requests.get(settings.DATASET_SERVICE_HOST + '/dataset/tag/nervous system/')
                       .json()['details']['results']
         })
 
@@ -255,13 +256,12 @@ class DatasetTagView(RestView):
          /dataset/tag/(?sort=)
     '''
     def get(self, request):
-        # _dbobjects = BiogpsDataset.objects.all()
-        # tags = Tag.objects.usage_for_queryset(_dbobjects, counts=True, min_count=2)
         _sort = request.GET.get('sort', None)
-        # if _sort:
-        #     if _sort == 'popular':
-        #         tags = sorted(tags, key=lambda t: t.count, reverse=True)
-        res = requests.get('http://54.185.249.25/dataset/tag/?count=1&page_by=9999')
+        # tags start from 1 dataset
+        args = {'count': 1, 'page_by': 9999}
+        if _sort == 'popular':
+            args['order'] = 'pop'
+        res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/tag/', params=args)
         tags = res.json()['details']['results']
         # Set up the navigation controls
         # We use ES to give us the category facets
@@ -302,7 +302,7 @@ class DatasetView(RestView):
     """
     def before(self, request, args, kwargs):
         ds_id = sanitize(kwargs.pop('datasetID'))
-        res = requests.get('http://54.185.249.25/dataset/'+ds_id+'/4-biogps/')
+        res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/'+ds_id+'/4-biogps/')
         ds = res.json()['details']
         owner_map = {
             'Andrew Su': '/profile/3/asu',
@@ -341,15 +341,6 @@ class DatasetView(RestView):
                 data=dataset, allowed_formats=['json', 'xml'])
 
         else:
-            def get_absolute_url(ds):
-                from django.template.defaultfilters import slugify
-                """ Return the appropriate URL for this dataset. """
-                _slug = slugify(ds['name'])
-                if _slug:
-                    return ('dataset_show', [str(ds['id']), _slug])
-                else:
-                    return ('dataset_show', [str(ds['id']), ])
-
             def wrap_str(_str, max_len):
                 """ Textwrap _str to provided max length """
                 len_str = len(_str)
@@ -360,7 +351,8 @@ class DatasetView(RestView):
             # Standard HTML request
             nav = BiogpsSearchNavigation(request, params={'only_in': ['dataset']})
             prepare_breadcrumb(request)
-            abs_url = get_absolute_url(dataset)
+            from django.template.defaultfilters import slugify
+            abs_url = '/dataset/' + dataset['geo_gse_id'] + '/' + slugify(dataset['name'])
             request.breadcrumbs(wrap_str(dataset['name'], 140), abs_url)
             html_template = 'dataset/show.html'
             dataset['sample_geneid'] = const.sample_gene[dataset['species']]
@@ -369,7 +361,6 @@ class DatasetView(RestView):
                 'obj_factors': dataset['factors'],
                 'rating_scale': Rating.rating_scale,
                 'rating_static': Rating.rating_static,
-                'canonical': abs_url,
                 'navigation': nav
             }
             return render_to_formatted_response(request,
