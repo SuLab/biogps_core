@@ -24,7 +24,7 @@ class BiogpsNavigationDataset(object):
     def init_facets(self):
         facets = SortedDict()
         facets['tag'] = {'name': 'TAGS', 'terms': []}
-        if tags is None:
+        if self.tags is None:
             res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/tag/')
             tags = res.json()['details']['results']
         else:
