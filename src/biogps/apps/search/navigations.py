@@ -13,9 +13,9 @@ from django.conf import settings
 class BiogpsNavigationDataset(object):
     def __init__(self, title, results=None, tags=None):
         self._title = title
-        self.init_facets()
         self.results = results
         self.tags = tags
+        self.init_facets()
     
     @property
     def title(self):
