@@ -117,6 +117,7 @@ def list(request, *args, **kwargs):
     species = common_params['filter_by'].get('species', None)
     tag = common_params['filter_by'].get('tag', None)
     args = {'page': page, 'page_by': page_by}
+    tag_agg = None
     if species is None and tag is None:
         order = kwargs.get('sort', None)
         if order == 'popular':
@@ -131,7 +132,7 @@ def list(request, *args, **kwargs):
              args['tag'] = tag
         args['agg'] = 1
         res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/search/4-biogps/', params=args)
-    tag_agg = res.json()['details']['aggregations']
+        tag_agg = res.json()['details']['aggregations']
     res = res.json()['details']
     # Set up the navigation controls
     # nav = BiogpsSearchNavigation(request, type='list', es_results=res, params=common_params)
