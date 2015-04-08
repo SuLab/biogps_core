@@ -62,10 +62,11 @@
                             <div class="extra-details">
                                 Samples: {{ i.sample_count }}
                             </div>
-                            <div class="extra-details">
-                                Factors: {{ i.factor_count }}
-                            </div>
-
+                            {% if i.factor_count != 0 %}
+                                <div class="extra-details">
+                                    Factors: {{ i.factor_count }}
+                                </div>
+                            {% endif %}
                             {% if i.tags %}
                                 <div class="extra-details">
                                     Tags:

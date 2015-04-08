@@ -8,6 +8,7 @@ from biogps.utils import const
 from biogps.apps.search.navigations import BiogpsSearchNavigation, BiogpsNavigationDataset
 from es_lib import ESQuery
 import requests
+from django.conf import settings
 
 import logging
 from array import array
@@ -116,11 +117,22 @@ def list(request, *args, **kwargs):
     species = common_params['filter_by'].get('species', None)
     tag = common_params['filter_by'].get('tag', None)
     args = {'page': page, 'page_by': page_by}
-    if species is not None:
-        args['species'] = species
-    if tag is not None:
-         args['tag'] = tag
-    res = requests.get('http://54.185.249.25/dataset/search/4-biogps/', params=args)
+    tag_agg = None
+    if species is None and tag is None:
+        order = kwargs.get('sort', None)
+        if order == 'popular':
+            args['order'] = 'pop'
+        else:
+            args['order'] = 'new'
+        res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/', params=args)
+    else:
+        if species is not None:
+            args['species'] = species
+        if tag is not None:
+             args['tag'] = tag
+        args['agg'] = 1
+        res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/search/4-biogps/', params=args)
+        tag_agg = res.json()['details']['aggregations']
     res = res.json()['details']
     # Set up the navigation controls
     # nav = BiogpsSearchNavigation(request, type='list', es_results=res, params=common_params)
@@ -138,7 +150,7 @@ def list(request, *args, **kwargs):
         title = 'Datasets'
     if species is not None:
         title += ' for ' + species.capitalize()
-    nav = BiogpsNavigationDataset(title, res)
+    nav = BiogpsNavigationDataset(title, res, tag_agg)
 
     # Do the basic page setup and rendering
     html_template = 'dataset/list.html'
@@ -194,7 +206,7 @@ def search(request, _type=None):
     #page_by equals list.html pagination setting
     page_by = 10
     args = {'query': common_params['q'], 'page': page, 'page_by': page_by}
-    res = requests.get('http://54.185.249.25/dataset/search/4-biogps/', params=args)
+    res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/search/4-biogps/', params=args)
     res = res.json()['details']
     #logging query stat
 #     if res.has_error():

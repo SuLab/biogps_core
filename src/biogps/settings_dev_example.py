@@ -138,3 +138,6 @@ if USE_CACHES:
     INSTALLED_APPS += (
         'memcache_status',
     )
+
+# host that provide dataset service
+DATASET_SERVICE_HOST = 'http://xx.xxx.xxx.xxx'
