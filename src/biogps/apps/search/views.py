@@ -129,6 +129,7 @@ def list(request, *args, **kwargs):
             args['species'] = species
         if tag is not None:
              args['tag'] = tag
+        args['agg'] = 1
         res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/search/4-biogps/', params=args)
     tag_agg = res.json()['details']['aggregations']
     res = res.json()['details']
