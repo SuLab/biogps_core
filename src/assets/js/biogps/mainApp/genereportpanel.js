@@ -2223,7 +2223,7 @@ Ext.extend(biogps.GeneReportPage, Ext.Panel, {
                 //Need to add datachart plugin to current layout
                 var p = new biogps.Plugin({id: DATACHART_PLUGIN_ID});
                 p.on('load', function(p){
-                    p.url = "http://54.185.249.25/data_chart.html?gene={{EntrezGene}}";
+                    p.url = "http://ds.biogps.org/?gene={{EntrezGene}}";
                     p.orig_url = p.url;
                     p.url += '&dataset='+dataset_id;
                     //setting default position/dimension
