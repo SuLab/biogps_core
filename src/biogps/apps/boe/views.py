@@ -5,7 +5,9 @@ from biogps.utils.helper import (allowedrequestmethod, alwayslist,
                                  JSONResponse, species_d, taxid_d,
                                  is_valid_geneid, assembly_d)
 from biogps.utils import log
-import httplib2
+# import httplib2
+import requests
+from requests.adapters import HTTPAdapter
 from urllib2 import urlparse
 from shlex import shlex
 import re
@@ -22,7 +24,10 @@ class MyGeneInfo():
         if self.url[-1] == '/':
             self.url = self.url[:-1]
         self.url_root = self._get_url_root(self.url)
-        self.h = httplib2.Http()
+        # self.h = httplib2.Http()
+        self.s = requests.Session()
+        # set max_retries
+        self.s.mount(self.url, HTTPAdapter(max_retries=5))
         self.max_query = 10000
         self.step = 10000
         self.userfilter = None   # optional predefined userfilter
@@ -75,7 +80,7 @@ class MyGeneInfo():
             _out = a_list     # a_list is already a comma separated string
         return _out
 
-    def _get(self, url, params={}):
+    def _get_httplib2_old(self, url, params={}):
         debug = params.pop('debug', False)
         return_raw = params.pop('return_raw', False)
         headers = {'user-agent': "Python-httplib2_biogps/%s (gzip)" % httplib2.__version__}
@@ -95,7 +100,27 @@ class MyGeneInfo():
         else:
             return json.loads(con)
 
-    def _post(self, url, params):
+    def _get(self, url, params={}):
+        debug = params.pop('debug', False)
+        return_raw = params.pop('return_raw', False)
+        headers = {'user-agent': "Python-requests_biogps/%s (gzip)" % requests.__version__}
+        if params:
+            _url = url + '?' + urlencode(params)
+        else:
+            _url = url
+        res = self.s.get(_url, headers=headers)
+        if debug:
+            return _url, res
+        if res.status_code == 404:
+            raise MyGeneInfo404
+        else:
+            assert res.status_code == 200, (_url, res)
+        if return_raw:
+            return res.content
+        else:
+            return res.json()
+
+    def _post_httplib2_old(self, url, params):
         debug = params.pop('debug', False)
         return_raw = params.pop('return_raw', False)
         headers = {'content-type': 'application/x-www-form-urlencoded',
@@ -111,6 +136,23 @@ class MyGeneInfo():
             return con
         else:
             return json.loads(con)
+
+    def _post(self, url, params):
+        debug = params.pop('debug', False)
+        return_raw = params.pop('return_raw', False)
+        headers = {'content-type': 'application/x-www-form-urlencoded',
+                   'user-agent': "Python-requests_biogps/%s (gzip)" % requests.__version__}
+        res = self.s.post(url, data=urlencode(params), headers=headers)
+        if debug:
+            return url, res
+        if res.status_code == 404:
+            raise MyGeneInfo404
+        else:
+            assert res.status_code == 200, (url, res)
+        if return_raw:
+            return res.content
+        else:
+            return res.json()
 
     def _homologene_trimming(self, gdoc_li):
         '''A special step to remove species not included in <species_li>
