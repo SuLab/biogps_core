@@ -11,7 +11,6 @@ import requests
 from django.conf import settings
 
 import logging
-from array import array
 log = logging.getLogger('biogps_prod')
 
 
@@ -47,7 +46,7 @@ def _handle_commom_params(params, types=None):
     # Ensure types finishes as an array
     if types is not None:
         types = [x.strip() for x in types.split(',')]
- # Handle tag and species filtering
+    # Handle tag and species filtering
     _filters = ['tag', 'species']
     filter_by = {}
     for f in _filters:
@@ -65,8 +64,14 @@ def _handle_commom_params(params, types=None):
             filter_by[f] = _f
 
     # Paging parameters
-    page = params.get('page', 1)
-    page = int(page)
+    start = params.get('from', None)
+    if not start:
+        start = params.get('start', 0)
+    start = int(start)
+    size = params.get('size', None)
+    if not size:
+        size = params.get('limit', 10)
+    size = int(size)
     explain = params.get('explain', None) == 'true'
 
     # Sorting parameter translation. Defaults to popularity
@@ -96,7 +101,7 @@ def _handle_commom_params(params, types=None):
     h = [x.strip() for x in params.get('h', '').split(',') if x.strip() != '']  # hl_fields
 
     return dict(only_in=types, q=q, filter_by=filter_by, fields=fields,
-                page=page, sort=sort, h=h, facets=f, explain=explain)
+                start=start, size=size, sort=sort, h=h, facets=f, explain=explain)
 
 
 def list(request, *args, **kwargs):
@@ -110,57 +115,90 @@ def list(request, *args, **kwargs):
         _cap_type = _type[0].upper() + _type[1:]
         request.breadcrumbs('All {}s'.format(_cap_type), '/{}/all/'.format(_type))
 
-#     es = ESQuery(request.user)
-#     res = es.query(**common_params)
-    page = common_params.get('page', 1)
-    page_by = 10
-    species = common_params['filter_by'].get('species', None)
-    tag = common_params['filter_by'].get('tag', None)
-    args = {'page': page, 'page_by': page_by}
-    tag_agg = None
-    if species is None and tag is None:
-        order = kwargs.get('sort', None)
-        if order == 'popular':
-            args['order'] = 'pop'
-        else:
-            args['order'] = 'new'
-        res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/', params=args)
-    else:
-        if species is not None:
-            args['species'] = species
-        if tag is not None:
-             args['tag'] = tag
-        args['agg'] = 1
-        res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/search/4-biogps/', params=args)
-        tag_agg = res.json()['details']['aggregations']
-    res = res.json()['details']
+    es = ESQuery(request.user)
+    res = es.query(**common_params)
+
     # Set up the navigation controls
-    # nav = BiogpsSearchNavigation(request, type='list', es_results=res, params=common_params)
-    res['start'] = (page-1) * page_by
-    res['end'] = res['start'] + len(res['results'])
-    res['start'] += 1
-    items = [None] * (res['start'] - 1) + res['results']
-    if len(items) < res['count']:
-        items += [None] * (res['count'] - res['end'])
-    html_template = 'dataset/list.html'
-    
-    if tag is not None:
-        title = tag.capitalize() + ' Datasets'
-    else:
-        title = 'Datasets'
-    if species is not None:
-        title += ' for ' + species.capitalize()
-    nav = BiogpsNavigationDataset(title, res, tag_agg)
+    nav = BiogpsSearchNavigation(request, type='list', es_results=res, params=common_params)
 
     # Do the basic page setup and rendering
-    html_template = 'dataset/list.html'
-    sample_gene = const.sample_gene
+    html_template = '{}/list.html'.format(_type)
     html_dictionary = {
-        'items': items,
-        # 'species': Species,
-        'sample_geneid': sample_gene,
+        'items': res,
+        'species': Species,
         'navigation': nav
     }
+    ctype = common_params['only_in'][0]
+    if ctype == 'plugin':
+        es = ESQuery(request.user)
+        res = es.query(**common_params)
+
+        # Set up the navigation controls
+        nav = BiogpsSearchNavigation(request, type='list', es_results=res, params=common_params)
+
+        # Do the basic page setup and rendering
+        html_template = '{}/list.html'.format(_type)
+        html_dictionary = {
+            'items': res,
+            'species': Species,
+            'navigation': nav
+        }
+    elif ctype == 'dataset':
+        page = request.GET.get('page', 1)
+        page = int(page)
+        #page_by = common_params.get('page_by', 10)
+        #page_by equals list.html pagination setting
+        page_by = 10
+        species = common_params['filter_by'].get('species', None)
+        tag = common_params['filter_by'].get('tag', None)
+        args = {'page': page, 'page_by': page_by}
+        tag_agg = None
+        if species is None and tag is None:
+            order = kwargs.get('sort', None)
+            if order == 'popular':
+                args['order'] = 'pop'
+            else:
+                args['order'] = 'new'
+            res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/', params=args)
+        else:
+            if species is not None:
+                args['species'] = species
+            if tag is not None:
+                args['tag'] = tag
+            args['agg'] = 1
+            res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/search/4-biogps/', params=args)
+            tag_agg = res.json()['details']['aggregations']
+        res = res.json()['details']
+        # Set up the navigation controls
+        # nav = BiogpsSearchNavigation(request, type='list', es_results=res, params=common_params)
+        res['start'] = (page-1) * page_by
+        res['end'] = res['start'] + len(res['results'])
+        res['start'] += 1
+        items = [None] * (res['start'] - 1) + res['results']
+        if len(items) < res['count']:
+            items += [None] * (res['count'] - res['end'])
+        html_template = 'dataset/list.html'
+
+        if tag is not None:
+            title = tag.capitalize() + ' Datasets'
+        else:
+            title = 'Datasets'
+        if species is not None:
+            title += ' for ' + species.capitalize()
+        nav = BiogpsNavigationDataset(title, res, tag_agg)
+
+        # Do the basic page setup and rendering
+        html_template = 'dataset/list.html'
+        sample_gene = const.sample_gene
+        html_dictionary = {
+            'items': items,
+            # 'species': Species,
+            'sample_geneid': sample_gene,
+            'navigation': nav
+        }
+    else:
+        raise ValueError("invalid ctype!")
+
     return render_to_formatted_response(request,
                                         data=res,
                                         allowed_formats=['html', 'json', 'xml'],
@@ -188,10 +226,8 @@ def search(request, _type=None):
 
     '''
     common_params = _handle_commom_params(request.GET, types=_type)
-    format = request.GET.get('format', 'html')
+    # format = request.GET.get('format', 'html')
     q = common_params.get('q', '')
-    page = common_params.get('page', 1)
-    #page_by = common_params.get('page_by', 10)
 
     # For now V2 search does not support genes
     #if format == 'html' and common_params['only_in'] == ['gene']:
@@ -200,68 +236,98 @@ def search(request, _type=None):
         _url = ('/?query=' + q) if q else '/'
         return HttpResponseRedirectWithIEFix(request, _url)
 
-#     es = ESQuery(request.user)
-#     res = es.query(**common_params)
+    ctype = common_params['only_in'][0]
+    if ctype == 'plugin':
+        es = ESQuery(request.user)
+        res = es.query(**common_params)
+        #logging query stat
+        if res.has_error():
+            logmsg = 'action=es_query in=%s query=%s qlen=%s error=1 errormsg=%s' % \
+                     (','.join(common_params['only_in']),
+                      q[:1000],   # truncated at length 1000
+                      len(q),
+                      res.error)
+        else:
+            logmsg = 'action=es_query in=%s query=%s qlen=%s num_hits=%s total=%s' % \
+                     (','.join(common_params['only_in']),
+                      q[:1000],   # truncated at length 1000
+                      len(q),
+                      res.hits.hit_count,
+                      len(res))
+        log.info(logmsg)
+        # log plugin_quick_add action
+        flag_plugin_quick_add = _type == 'plugin' and request.GET.get('quickadd', None) is not None
+        if flag_plugin_quick_add:
+            log.info('action=plugin_quick_add')
 
-    #page_by equals list.html pagination setting
-    page_by = 10
-    args = {'query': common_params['q'], 'page': page, 'page_by': page_by}
-    res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/search/4-biogps/', params=args)
-    res = res.json()['details']
-    #logging query stat
-#     if res.has_error():
-#         logmsg = 'action=es_query in=%s query=%s qlen=%s error=1 errormsg=%s' % \
-#                  (','.join(common_params['only_in']),
-#                   q[:1000],   # truncated at length 1000
-#                   len(q),
-#                   res.error)
-#     else:
-#         logmsg = 'action=es_query in=%s query=%s qlen=%s num_hits=%s total=%s' % \
-#                  (','.join(common_params['only_in']),
-#                   q[:1000],   # truncated at length 1000
-#                   len(q),
-#                   res.hits.hit_count,
-#                   len(res))
-#     log.info(logmsg)
+        # Set up the navigation controls
+        nav = BiogpsSearchNavigation(request, type='search', es_results=res, params=common_params)
 
-    # log plugin_quick_add action
-    flag_plugin_quick_add = _type=='plugin' and request.GET.get('quickadd', None) is not None
-    if flag_plugin_quick_add:
-        log.info('action=plugin_quick_add')
+        # Do the basic page setup and rendering
+        if res.query and res.query.has_valid_doc_types():
+            # Successful search result
+            ctype = common_params['only_in'][0]
+            request.breadcrumbs('{} Library'.format(ctype.capitalize()), '/{}/'.format(ctype))
+            try:
+                request.breadcrumbs(u'Search: {}'.format(q.split(' ', 1)[1]), request.path_info + u'?q={}'.format(q))
+            except IndexError:
+                request.breadcrumbs(u'Search: {}'.format(q), request.path_info + u'?q={}'.format(q))
+            html_template = '{}/list.html'.format(ctype)
+            html_dictionary = {
+                'items': res,
+                'species': Species,
+                'navigation': nav
+            }
+        else:
+            html_template = 'search/no_results.html'
+            html_dictionary = {}
 
-    # Set up the navigation controls
-    res['start'] = (page-1) * page_by
-    # should not use page_by
-    res['end'] = res['start'] + len(res['results'])
-    res['start'] += 1
-    nav = BiogpsNavigationDataset('Dataset Search Results', res)
+        if res.has_error():
+            html_dictionary['items'] = None
+            html_dictionary['error'] = res.error
 
-    # Do the basic page setup and rendering
-#    if res.query and res.query.has_valid_doc_types():
-    if len(res['results']) > 0:
-        # mock up whole array for django-paginator
-        items = [None] * (res['start'] - 1) + res['results']
-        if len(items) < res['count']:
-            items += [None] * (res['count'] - res['end'])
-        ctype = 'dataset'
-        request.breadcrumbs('{} Library'.format(ctype.capitalize()), '/{}/'.format(ctype))
-        try:
-            request.breadcrumbs(u'Search: {}'.format(q.split(' ', 1)[1]), request.path_info + u'?q={}'.format(q))
-        except IndexError:
-            request.breadcrumbs(u'Search: {}'.format(q), request.path_info + u'?q={}'.format(q))
-        html_template = '{}/list.html'.format(ctype)
-        html_dictionary = {
-            'items': items,
-            'species': Species,
-            'navigation': nav
-        }
+    elif ctype == 'dataset':
+        page = request.GET.get('page', 1)
+        page = int(page)
+        #page_by = common_params.get('page_by', 10)
+        #page_by equals list.html pagination setting
+        page_by = 10
+        args = {'query': common_params['q'], 'page': page, 'page_by': page_by}
+        res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/search/4-biogps/', params=args)
+        res = res.json()['details']
+
+        # Set up the navigation controls
+        res['start'] = (page-1) * page_by
+        # should not use page_by
+        res['end'] = res['start'] + len(res['results'])
+        res['start'] += 1
+        nav = BiogpsNavigationDataset('Dataset Search Results', res)
+
+        # Do the basic page setup and rendering
+    #    if res.query and res.query.has_valid_doc_types():
+        if len(res['results']) > 0:
+            # mock up whole array for django-paginator
+            items = [None] * (res['start'] - 1) + res['results']
+            if len(items) < res['count']:
+                items += [None] * (res['count'] - res['end'])
+            ctype = 'dataset'
+            request.breadcrumbs('{} Library'.format(ctype.capitalize()), '/{}/'.format(ctype))
+            try:
+                request.breadcrumbs(u'Search: {}'.format(q.split(' ', 1)[1]), request.path_info + u'?q={}'.format(q))
+            except IndexError:
+                request.breadcrumbs(u'Search: {}'.format(q), request.path_info + u'?q={}'.format(q))
+            html_template = '{}/list.html'.format(ctype)
+            html_dictionary = {
+                'items': items,
+                'species': Species,
+                'navigation': nav
+            }
+        else:
+            html_template = 'search/no_results.html'
+            html_dictionary = {}
     else:
-        html_template = 'search/no_results.html'
-        html_dictionary = {}
-# 
-#     if res.has_error():
-#         html_dictionary['items'] = None
-#         html_dictionary['error'] = res.error
+        raise ValueError("invalid ctype!")
+
     return render_to_formatted_response(request,
                                         data=res,
                                         allowed_formats=['html', 'json', 'xml'],
