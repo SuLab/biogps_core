@@ -132,10 +132,13 @@ def alternate_layout(request, altlayout):
     #set custom default dataset
     # hard-coded here for now, it should be moved to DB eventually
     if altlayout == 'exrna':
-        get_dict['dataset'] = 2428              #set datachart default dataset to this one instead
+        #get_dict['dataset'] = 2428              #set datachart default dataset to this one instead
+        get_dict['dataset'] = 'BDS_00010'       # 
+                                                #"miRNA profiling in bodily fluids"
         get_dict['search_filter'] = 'exrna'     #add additional userfilter to the default mygene.info gene query
     if altlayout == 'primarycellatlas':
-        get_dict['dataset'] = 2429
+        #get_dict['dataset'] = 2429              # "Primary Cell Atlas"
+        get_dict['dateset'] = 'BDS_00013'
 
     request.GET = get_dict
     return index(request, orig_url=request.get_full_path())
