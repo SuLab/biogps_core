@@ -303,6 +303,9 @@ class DatasetView(RestView):
     def before(self, request, args, kwargs):
         ds_id = sanitize(kwargs.pop('datasetID'))
         res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/'+ds_id+'/4-biogps/')
+        if res.json()['code'] != 0:
+            raise Http404
+
         ds = res.json()['details']
         owner_map = {
             'Andrew Su': '/profile/3/asu',
