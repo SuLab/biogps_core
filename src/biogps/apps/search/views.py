@@ -190,8 +190,9 @@ def list(request, *args, **kwargs):
         # Do the basic page setup and rendering
         html_template = 'dataset/list.html'
         sample_gene = const.sample_gene
+        res = items
         html_dictionary = {
-            'items': items,
+            'items': res,
             # 'species': Species,
             'sample_geneid': sample_gene,
             'navigation': nav
