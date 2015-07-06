@@ -12,6 +12,7 @@ from django.conf import settings
 
 class BiogpsNavigationDataset(object):
     def __init__(self, title, results=None, tags=None):
+	self.doc_types = ['dataset']
         self._title = title
         self.results = results
         self.tags = tags
@@ -57,6 +58,13 @@ class BiogpsNavigationDataset(object):
                 'url': '/dataset/species/'+s.name+'/'
             })
         self.facets = facets
+
+    @property
+    def query_string(self):
+        out = ''
+        if self.doc_types:
+            out += 'in:' + ','.join(self.doc_types) + ' '
+        return out
     
     @property
     def paging_footer(self):
