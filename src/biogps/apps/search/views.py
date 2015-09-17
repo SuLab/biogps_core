@@ -132,6 +132,7 @@ def list(request, *args, **kwargs):
     if ctype == 'plugin':
         es = ESQuery(request.user)
         res = es.query(**common_params)
+        page_by = common_params.get('size', 10)
 
         # Set up the navigation controls
         nav = BiogpsSearchNavigation(request, type='list', es_results=res, params=common_params)
@@ -206,7 +207,7 @@ def list(request, *args, **kwargs):
                                         model_serializer='object_cvt',
                                         html_template=html_template,
                                         html_dictionary=html_dictionary,
-                                        pagination_by=10)
+                                        pagination_by=page_by)  #10)
 
 
 def search(request, _type=None):
