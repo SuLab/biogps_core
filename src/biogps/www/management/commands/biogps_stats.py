@@ -10,7 +10,7 @@ from biogps.apps.plugin.models import BiogpsPlugin
 from django.contrib.auth.models import User
 from biogps.apps.layout.models import BiogpsGenereportLayout
 from biogps.apps.genelist.models import BiogpsGeneList
-from biogps.apps.dataset.models import BiogpsDataset
+
 
 class Command(NoArgsCommand):
     help = "This command get some latest stats for BioGPS"
@@ -47,9 +47,6 @@ def get_stats():
         for layout in BiogpsGenereportLayout.objects.all():
             user_set.add(layout.owner.id)
         stats['layout_owner'] = len(user_set)
-
-        #datasets
-        stats['dataset_total'] = BiogpsDataset.objects.count()
 
         #genelists
         stats['genelist_total'] = BiogpsGeneList.objects.count()

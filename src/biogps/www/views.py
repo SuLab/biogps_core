@@ -18,8 +18,8 @@ from django.utils.http import urlencode
 
 from biogps.apps.gene.models import Gene
 from biogps.apps.layout.models import BiogpsGenereportLayout
-from biogps.apps.dataset.models import BiogpsDataset
 from biogps.apps.plugin.models import BiogpsPlugin
+from biogps.apps.dataset.utils import DatasetQuery
 from biogps.apps.stat.models import BiogpsStat
 from biogps.utils.http import JSONResponse, render_to_formatted_response
 from biogps.utils import log
@@ -81,10 +81,11 @@ def index(request, **kwargs):
         # Default dataset changing
         alt_defaultdataset = request.GET.get('dataset', None)
         if alt_defaultdataset:
-            try:
-                query_result = BiogpsDataset.objects.get_available(request.user)
-                alt_dataset = query_result.get(id=alt_defaultdataset)
-            except (BiogpsDataset.DoesNotExist, ValueError):
+            # check if alt_defaultdataset exists
+            ds = DatasetQuery.get_ds(alt_defaultdataset)
+            if ds:
+                alt_dataset = alt_defaultdataset
+            else:
                 alt_dataset = None
             if alt_dataset:
                 d['alt_defaultdataset'] = alt_dataset.id
@@ -133,7 +134,7 @@ def alternate_layout(request, altlayout):
     # hard-coded here for now, it should be moved to DB eventually
     if altlayout == 'exrna':
         #get_dict['dataset'] = 2428              #set datachart default dataset to this one instead
-        get_dict['dataset'] = 'BDS_00010'       # 
+        get_dict['dataset'] = 'BDS_00010'       #
                                                 #"miRNA profiling in bodily fluids"
         get_dict['search_filter'] = 'exrna'     #add additional userfilter to the default mygene.info gene query
     if altlayout == 'primarycellatlas':
@@ -183,7 +184,7 @@ def mytest(request):
                        'HTTP_USER_AGENT: %s <br>' % request.META['HTTP_USER_AGENT']])
         #s1.extend([request.session.session_key, str(dir(request))])
         s1.extend(['DJANGO_SETTINGS_MODULE:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + os.environ['DJANGO_SETTINGS_MODULE'] +'<br>' +\
-                   'BOCSERVICE_URL:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + settings.BOCSERVICE_URL +'<br>' + \
+                   'BOESERVICE_URL:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + settings.BOESERVICE_URL +'<br>' + \
                    'ES_HOST:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + str(settings.ES_HOST) +'<br>' + \
                    #'DATABASE_NAME:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + settings.DATABASE_NAME +'<br>' + \
                    'DATABASE_NAME:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + settings.DATABASES['default']['NAME'] +'<br>' + \

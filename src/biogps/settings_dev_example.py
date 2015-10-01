@@ -10,10 +10,6 @@ TEST_CASE = 1  # normal dev mode
 ######BioGPS specific settings#########
 RELEASE_MODE = 'dev'   #or dev; prod; maintenance;
 
-##URL for CouchDB backed Gene query service provider
-#Deprecated using BOESERVICE_URL instead
-#BOCSERVICE_URL = 'http://xx.xx.xx.xx'
-
 ##URL for ElastisSearch backed Gene query service provider
 BOESERVICE_URL= 'http://xx.xx.xx.xx'
 
