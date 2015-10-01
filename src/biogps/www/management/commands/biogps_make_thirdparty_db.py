@@ -51,7 +51,6 @@ def make_dev():
         from biogps.apps.plugin.models import BiogpsPlugin
         from biogps.www.models import BiogpsAltLayout
         from django.contrib.auth.models import Group
-        from biogps.apps.dataset.models import BiogpsDataset
         from friends.models import (FriendshipInvitation, Friendship, Contact,
                                     JoinInvitation, FriendshipInvitationHistory)
         from south.models import MigrationHistory
@@ -88,18 +87,13 @@ def make_dev():
         # remove all the rest of non-public plugins
         BiogpsPlugin.objects.exclude(id__in=[x.id for x in public_plugins]).delete()
         print 5 ###
-        for dataset in BiogpsDataset.objects.all():
-            if dataset.owner not in [cwu, asu, geo]:
-                dataset.owner = asu
-                dataset.save()
-        print 6 ###
         # Now remove all users except cwu/asu/cwudemo
         User.objects.exclude(username__in=['cwu', 'asu', 'cwudemo', 'GEO Uploader']).delete()
-        print 7 ###
+        print 6 ###
         for u in User.objects.all():
             u.set_password('123')
             u.save()
-        print 8 ###
+        print 7 ###
 
         # #clean up Group
         Group.objects.filter(name__in=['nvsusers', 'gnfusers', 'adam']).delete()

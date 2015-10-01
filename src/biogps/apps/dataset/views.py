@@ -1,19 +1,13 @@
-from biogps.apps.dataset.models import BiogpsDataset, BiogpsDatasetData
 from biogps.apps.dataset.utils import DatasetQuery, sanitize
 from biogps.apps.rating.models import Rating
-from biogps.apps.search.es_lib import ESQuery
 from biogps.apps.search.navigations import BiogpsSearchNavigation, BiogpsNavigationDataset
-from biogps.apps.stat.models import BiogpsStat
 from biogps.utils.http import JSONResponse, render_to_formatted_response
 from biogps.utils.models import Species
 from biogps.utils.restview import RestView
 from biogps.utils import (const, log)
-from django.http import (
-    HttpResponse,
-    HttpResponseForbidden,
-    HttpResponseNotFound
-    )
-from django.shortcuts import get_object_or_404, render_to_response
+
+from django.http import HttpResponseNotFound
+from django.shortcuts import render_to_response
 from django.views.decorators.csrf import csrf_exempt
 from django.http import Http404
 from tagging.models import Tag
@@ -146,65 +140,6 @@ class DatasetLibraryView(RestView):
                                             html_template=html_template,
                                             html_dictionary=html_dictionary)
 
-    #@loginrequired
-    #def post(self, request, sendemail=True):
-    #    '''
-    #    If sendemail is True, an notification email will be sent out for every new dataset added.
-    #    '''
-    #    rolepermission = request.POST.get('rolepermission', None)
-    #    userpermission = request.POST.get('userpermission', None)
-    #    tags = request.POST.get('tags', None)
-    #    data = {'success': False}
-
-    #    f = BiogpsDatasetForm(request.POST)
-    #    if f.is_valid():
-    #        #flag to allow save duplicated (same url, type, options) dataset
-    #        allowdup = (request.POST.get('allowdup', None) == '1')
-    #        if not allowdup:
-    #            all_datasets = BiogpsDataset.objects.get_available(request.user)
-    #            dup_datasets = all_datasets.filter(url=f.cleaned_data['url'])
-
-    #            if dup_datasets.count() > 0:
-    #                data = {'success': False,
-    #                        'dup_datasets': [dict(id=d.id, text=unicode(d), url=d.get_absolute_url()) for d in dup_datasets],
-    #                        'error': 'Duplicated dataset exists!'}
-    #                return JSONResponse(data, status=400)
-
-    #        # proceed with saving the dataset
-    #        dataset = f.save(commit=False)
-    #        dataset.type = 'iframe'
-    #        dataset.ownerprofile = request.user.get_profile()
-    #        dataset.save()
-
-    #        if rolepermission or userpermission:
-    #            set_object_permission(dataset, rolepermission, userpermission, sep=',')
-
-    #        if tags is not None:
-    #            dataset.tags = smart_unicode(tags)
-
-    #        dataset.save()   # Save again to trigger ES index update
-    #        data['success'] = True
-    #        data['id'] = dataset.id
-
-    #        #logging dataset add
-    #        log.info('username=%s clientip=%s action=dataset_add id=%s',
-    #                    getattr(request.user, 'username', ''),
-    #                    request.META.get('REMOTE_ADDR', ''),
-    #                    dataset.id)
-
-    #        if not settings.DEBUG and sendemail:
-    #            #send email notification
-    #            from biogps.utils.helper import mail_managers_in_html
-    #            current_site = Site.objects.get_current()
-    #            subject = 'New dataset "%s" by %s' % (dataset.name, dataset.owner.username)
-    #            message = render_to_string('dataset/newdataset_notification.html', {'d': dataset, 'site': current_site})
-    #            mail_managers_in_html(subject, message, fail_silently=True)
-    #    else:
-    #        data['success'] = False
-    #        data['errors'] = f.errors
-
-    #    return JSONResponse(data, status=200 if data['success'] else 400)
-
 
 class DatasetListView(RestView):
     '''This class defines views for REST URL:
@@ -221,34 +156,6 @@ class DatasetListView(RestView):
         kwargs.update(request.GET.items())
         kwargs.update({'in': 'dataset'})
         return list_view(request, *args, **kwargs)
-
-
-class DatasetNewView(RestView):
-    '''This class defines views for REST URL:
-         /dataset/new/
-    '''
-    #@loginrequired
-    def get(self, request):
-        return HttpResponseNotFound()
-    #    '''Get a creation form for a new dataset object via GET
-    #       format = html (default)    display dataset creation page
-    #    '''
-    #    form = BiogpsPluginForm()
-    #    nav = BiogpsSearchNavigation(request, params={'only_in': ['dataset']})
-    #    prepare_breadcrumb(request)
-    #    request.breadcrumbs('New Dataset', request.path_info)
-    #    html_template = 'dataset/new.html'
-    #    html_dictionary = {
-    #        'form': form,
-    #        'species': Species,
-    #        'all_tags': Tag.objects.all(),
-    #        'navigation': nav
-    #    }
-    #    return render_to_formatted_response(request,
-    #                                        data=None,
-    #                                        allowed_formats=['html'],
-    #                                        html_template=html_template,
-    #                                        html_dictionary=html_dictionary)
 
 
 class DatasetTagView(RestView):
@@ -302,21 +209,11 @@ class DatasetView(RestView):
     """
     def before(self, request, args, kwargs):
         ds_id = sanitize(kwargs.pop('datasetID'))
-        res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/'+ds_id+'/4-biogps/')
-        if res.json()['code'] != 0:
+        ds = DatasetQuery.get_ds(ds_id)
+        if ds:
+            kwargs['dataset'] = ds
+        else:
             raise Http404
-
-        ds = res.json()['details']
-        owner_map = {
-            'Andrew Su': '/profile/3/asu',
-            'Tom Freeman': '/profile/309/tfreeman',
-            'ArrayExpress Uploader': '/profile/8773/arrayexpressuploader'
-        }
-        try:
-            ds['owner_profile'] = owner_map[ds['owner']]
-        except Exception,e:
-            ds['owner_profile'] = None
-        kwargs['dataset'] = ds
 
     def get(self, request, dataset, slug=None):
         """Get a specific dataset page/object via GET
@@ -449,155 +346,14 @@ class DatasetBotView(RestView):
             rep_li = rep_li.strip(' ').split(',')
             for i in ds_li:
                 ds_id = i['id']
-                ds_reps = BiogpsDatasetData.objects.filter(dataset=ds_id,
-                    reporter__in=rep_li).values_list('reporter', flat=True)
+                #ds_reps = BiogpsDatasetData.objects.filter(dataset=ds_id,
+                #    reporter__in=rep_li).values_list('reporter', flat=True)
 
                 # Combine dataset names and reporters based on ID
-                _ds_dict = {ds_id: {'name': i['name'], 'reps': ds_reps}}
+                #_ds_dict = {ds_id: {'name': i['name'], 'reps': ds_reps}}
+                _ds_dict = {ds_id: {'name': i['name'], 'reps': rep_li}}
                 ds_info.append(_ds_dict)
 
             return render_to_response('dataset/bot.html',
                 {'gene_id': geneID, 'ds_info': ds_info})
 
-
-@csrf_exempt
-class DatasetValuesView(RestView):
-    """This class defines views for REST URL:
-        /dataset/<datasetID>/values/?reporters=...(&gene=)(&format=)
-    """
-    def get(self, request, datasetID):
-        try:
-            get_reporters = [i for i in request.GET['reporters'].split(',')]
-        except KeyError:
-            return HttpResponseNotFound('<b>No reporters provided.</b>'
-                                        '<br />Please provide reporters '
-                                        'in the form of ?reporters=rep1,rep2')
-        datasetID = sanitize(datasetID)
-        alt_formats = ['csv']
-        gene_id = request.GET.get('gene', None)
-        _format = request.GET.get('format', None)
-        try:
-            _format = _format.lower()
-            if _format not in alt_formats:
-                _format = None
-        except AttributeError:
-            # None type
-            pass
-        _data = DatasetQuery.get_ds_data(datasetID, get_reporters, gene_id,
-            _format)
-        if _data and _format is not None:
-            # Already formatted, simply return data
-            return _data
-        else:
-            return render_to_formatted_response(request, data=_data,
-                allowed_formats=['json', 'xml'])
-
-
-@csrf_exempt
-class DatasetStaticChartView(RestView):
-    """This class defines views for REST URL:
-        /dataset/<datasetID>/chart/<reporterID>/
-
-       Given a dataset ID and reporter,
-       return the static chart image.
-    """
-    def get(self, request, datasetID, reporterID):
-        datasetID = sanitize(datasetID)
-        sort_fac = request.GET.get('sortFactor', None)
-        chart_img = DatasetQuery.get_ds_chart(datasetID, reporterID, sort_fac)
-        if chart_img is None:
-            return HttpResponseNotFound("No data found for dataset ID #{}"
-                " and reporter '{}'.".format(datasetID, reporterID))
-        try:
-            return HttpResponse(chart_img.read(),
-                mimetype=chart_img.info().type)
-        except AttributeError:
-            return HttpResponseNotFound("Dataset ID #{}"
-                " does not exist.".format(datasetID))
-
-
-@csrf_exempt
-class DatasetCorrelationView(RestView):
-    """This class defines views for REST URL:
-        /dataset/<datasetID>/corr/<reporterID>/?co=
-
-       Run Pearson correlation for provided reporter
-       against all reporters in dataset.
-    """
-    def get(self, request, datasetID, reporterID):
-        try:
-            min_corr = float(request.GET['co'])
-        except KeyError:
-            return HttpResponseNotFound("<b>No correlation value provided.</b>"
-                "<br />Please provide a correlation cutoff value in the form"
-                " of ?co=0.9, etc.")
-        if min_corr < 0.5 or min_corr > 1:
-            return HttpResponseForbidden(
-                "Correlation threshold value must be between 0.5 and 1")
-        datasetID = sanitize(datasetID)
-        log.info('username=%s clientip=%s action=dataset_correlation id=%s',
-            getattr(request.user, 'username', ''),
-            request.META.get('REMOTE_ADDR', ''), datasetID)
-
-        return render_to_formatted_response(request,
-            data=DatasetQuery.get_ds_corr(datasetID, reporterID, min_corr),
-            allowed_formats=['json', 'xml'])
-
-
-@csrf_exempt
-class DatasetD3View(RestView):
-    """This class defines views for REST URL:
-       /dataset/d3/<ds_id>/<rep_id>/
-    """
-    def get(self, request, ds_id, rep_id):
-        dsd = get_object_or_404(BiogpsDatasetData, dataset=ds_id,
-                                reporter=rep_id)
-        ds_data = dsd.data
-
-        ds = dsd.dataset
-        ds_meta = ds.metadata
-        is_internal_ds = not ds.geo_id_plat
-
-        # Response object
-        res = {'meta': {}, 'data': []}
-        res_meta = res['meta']
-        res_meta['id'] = ds_id
-        res_meta['reporter'] = rep_id
-        res_meta['display_params'] = ds_meta['display_params']
-        res_meta['name'] = ds.name
-        res_meta['species'] = ds.species
-        res_meta['summary'] = ds_meta['summary']
-
-        # Owner
-        user = ds.ownerprofile.user
-        res_meta['owner'] = {'id': user.id,
-                             'name': user.get_full_name(),
-                             'profile': user.get_absolute_url(),
-                             'username': user.username}
-
-        res_data = res['data']
-        for idx, fact_dict in enumerate(ds_meta['factors']):
-            samp_id = fact_dict.keys()[0]
-            samp_val = ds_data[idx]
-
-            # Add data value to response
-            val_dict = fact_dict[samp_id]
-            data_dict = {'factors': {}, 'sample': samp_id, 'value': samp_val}
-
-            # Make all keys lowercase, add factors to samples
-            skip_factors = ['sample', 'value']
-            for key, val in val_dict.iteritems():
-                key = key.lower()
-                if key == 'title':
-                    data_dict[key] = val
-                    if is_internal_ds:
-                        data_dict['factors']['tissue'] = val
-                elif key not in skip_factors:
-                    data_dict['factors'][key] = val
-                else:
-                    data_dict[key] = val
-
-            res_data.append(data_dict)
-
-        return render_to_formatted_response(request, data=res,
-            allowed_formats=['json', 'xml'])
