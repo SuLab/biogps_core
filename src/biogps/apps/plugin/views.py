@@ -385,7 +385,6 @@ def test_plugin_url(request):
 
        if species is not provided, all available species are assumed.
     '''
-    #from biogps.apps.boc import boc_svc as svc
     from biogps.apps.boe.views import MyGeneInfo
     from biogps.apps.plugin.plugin import PluginUrlRenderError
     from biogps.utils.helper import is_valid_geneid

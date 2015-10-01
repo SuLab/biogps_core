@@ -22,7 +22,6 @@ from models import BiogpsPlugin, BiogpsPluginPopularity
 
 from tagging.models import Tag, TaggedItem
 from tagging.utils import calculate_cloud
-#from biogps.apps.boc import boc_svc as svc
 from biogps.apps.boe.views import MyGeneInfo
 
 

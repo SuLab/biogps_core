@@ -10,9 +10,7 @@ from biogps.utils.helper import (docenabled, alwayslist,
                                is_valid_geneid,
                                GO_CATEGORY,
                                )
-# from biogps.apps.boc import boc_svc as svc
-from biogps.apps.boe.views import MyGeneInfo
-from biogps.apps.boc.boc_svc import Gene
+from biogps.apps.boe.views import Gene, MyGeneInfo
 import httplib2
 import urllib
 

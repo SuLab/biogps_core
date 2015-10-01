@@ -11,7 +11,6 @@ from biogps.utils.helper import (MIMETYPE, STD_FORMAT, ANONYMOUS_USER_ERROR, Ext
                                  is_valid_geneid, allowedrequestmethod, json)
 from biogps.utils import log
 from biogps.apps.plugin.plugin import PluginUrlRenderError
-# from biogps.apps.boc import boc_svc as svc
 from biogps.apps.boe.views import MyGeneInfo
 
 

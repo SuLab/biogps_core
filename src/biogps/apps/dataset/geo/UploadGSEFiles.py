@@ -15,7 +15,7 @@ sys.path.append('/projects/BioGPS/dev_imacleod/BiogpsRedesign/site-packages/'\
                                                                'django_apps/')
 os.environ['DJANGO_SETTINGS_MODULE'] = 'biogps.settings_dev_local'
 from ast import literal_eval
-from biogps.apps.boc.boc_svc import RemoteServiceError
+from biogps.apps.boe.boc_svc import RemoteServiceError
 from biogps.apps.dataset.models import SL_Dataset
 
 

@@ -4,7 +4,6 @@ from django.shortcuts import render_to_response
 from django.utils.http import urlencode
 
 from biogps.utils.helper import isRobot, HttpResponseRedirectWithIEFix
-# import biogps.apps.boc.boc_svc as svc
 
 
 def genereport(request, geneid):

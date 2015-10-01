@@ -1,15 +1,12 @@
 ''' Empty gene model used only for valid content type with favorites, etc.'''
 import copy
 
-# from biogps.apps.boc import boc_svc as boc
 from biogps.apps.boe.views import MyGeneInfo
 from biogps.utils.remote_models import RemoteModel
 
 
 def get_gene_list(geneid_li):
     if geneid_li:
-        # ds = boc.DataService()
-        # gene_list = ds.querygenelist(geneid_li)
         mg = MyGeneInfo()
         gene_list = mg.querygenelist(geneid_li)
     else:

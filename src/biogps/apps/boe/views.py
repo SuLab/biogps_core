@@ -3,15 +3,150 @@ from django.http import Http404
 from django.utils.http import urlencode
 from biogps.utils.helper import (allowedrequestmethod, alwayslist,
                                  JSONResponse, species_d, taxid_d,
-                                 is_valid_geneid, assembly_d)
+                                 is_valid_geneid, assembly_d,
+                                 dotdict, genus_d)
 from biogps.utils import log
-# import httplib2
+
+#import httplib2
 import requests
 from requests.adapters import HTTPAdapter
 from urllib2 import urlparse
 from shlex import shlex
 import re
 import json
+import types
+
+
+class Gene(dotdict):
+    '''A extension to dictionary to hold all gene annotation data and add more functions.'''
+
+    @property
+    def id(self):
+        return self['_id']
+
+    def _get_value(self, value, fn=None):
+        if value:
+            if type(value) is types.ListType:
+                out = [fn(x) if fn else x for x in value]
+            else:
+                out = fn(value) if fn else value
+        else:
+            out = None
+        return out
+
+    def get_genomelocation_string(self):
+        '''return gene's genomic location string in a format of chrX:xxx-yyy'''
+        def cvt(d):
+            if ('chr' in d and 'start' in d and 'end' in d):
+                return ('chr%(chr)s:%(start)d-%(end)d' % d)
+            else:
+                return ''
+        return self._get_value(self.get('genomic_pos', None), cvt)
+
+    def get_species(self, taxid=None):
+        tid = int(taxid or self['taxid'])    #need to store int taxid for ensembl only gene at loadloading
+        return species_d[tid]
+
+    def get_genus(self):
+        return genus_d[self.get_species()]
+
+    def get_genomeassembly(self):
+        return assembly_d[self.get_species()]
+
+    def get_homologene(self):
+        if 'homologene' in self:
+            hgenes = []
+            for hgene in self['homologene']['genes']:
+                if hgene[0] in species_d:
+                    hgenes.append({'species': self.get_species(hgene[0]),
+                                    'taxid': hgene[0],
+                                    'geneid': hgene[1]})
+            return {'id': self['homologene']['id'],
+                    'genes': hgenes}
+
+    def get_ensemblgene(self):
+        """return the ensembl gene id (or a list if multiple)."""
+        ensembl = self.get('ensembl', None)
+        out = []
+        if ensembl:
+            for _ensembl in alwayslist(ensembl):
+                out.append(_ensembl['gene'])
+            return out[0] if len(out) == 1 else out
+
+    def get_geneidentifiers(self):
+        '''
+           Parsing genedoc object into a compatible gene object as current BioGPS SL returns.
+           This will be retired after full switch of CouchDB-based SL.
+        '''
+        geneobj = {}
+        geneobj['species'] = self.get_species()
+
+        #these attrs should be included without changing either the name or the value
+        id_attrs = ['entrezgene', 'symbol', 'unigene', 'pdb', 'taxid',
+                   'ZFIN', 'RGD', 'MIM', 'FLYBASE', 'TAIR','WormBase', 'MGI', 'HPRD', 'HGNC']
+        #these attrs should be included by applying a name change or simple value cvt fn
+        attr_li = [('aliases', 'synonyms', None),
+                   ('uniprot', 'uniprot', lambda x:x.get('Swiss-Prot', None))
+                  ]
+        attr_li.extend([(attr, attr, None) for attr in id_attrs])
+        for attr_out, attr_src, fn in attr_li:
+            value = self.get(attr_src, None)
+            if value:
+                _value = self._get_value(value, fn)
+                if _value:
+                    geneobj[attr_out.lower()] = _value       #all output attrs are lower-case.
+
+        #special handling for Uniprot (remove dup and the first one only if multiple found)
+        #on next dataload, it should be fixed at data level
+        if "uniprot" in geneobj and type(geneobj['uniprot']) is types.ListType and len(geneobj['uniprot'])>0:
+            geneobj['uniprot'] = sorted(geneobj['uniprot'])[0]
+
+        #refseq
+        refseq = self.get('refseq', None)
+        if refseq:
+            rna = refseq.get('rna', None)
+            if rna:
+                geneobj['refseq_mrna'] = alwayslist(rna)
+            protein = refseq.get('protein', None)
+            if protein:
+                geneobj['refseq_protein'] = alwayslist(protein)
+
+        #ensembl
+        ensembl = self.get('ensembl', None)
+        if ensembl:
+            _ensemblgene = []
+            _ensembltranscript = []
+            _ensemblprotein = []
+            for _ensembl in alwayslist(ensembl):
+                _ensemblgene.append(_ensembl['gene'])
+                _ensembltranscript.extend(alwayslist(_ensembl['transcript']))
+                _ensemblprotein.extend(alwayslist(_ensembl['protein']))
+            _ensemblgene =  _ensemblgene[0] if len(_ensemblgene) == 1 else _ensemblgene
+            _ensembltranscript =  _ensembltranscript[0] if len(_ensembltranscript) == 1 else _ensembltranscript
+            _ensemblprotein =  _ensemblprotein[0] if len(_ensemblprotein) == 1 else _ensemblprotein
+            geneobj['ensemblgene'] = _ensemblgene
+            geneobj['ensembltranscript'] = _ensembltranscript
+            geneobj['ensemblprotein'] = _ensemblprotein
+
+        #genomelocation
+        gpos = self.get('genomic_pos', None)
+        if gpos:
+            if type(gpos) is types.ListType:         # omit multiple mapping locations, always use the first one here.
+               gpos=gpos[0]
+            if gpos.has_key('chr'):
+                geneobj['chr'] = gpos['chr']
+            if gpos.has_key('start'):
+                geneobj['gstart'] = gpos['start']
+            if gpos.has_key('end'):
+                geneobj['gend'] = gpos['end']
+
+            genomelocation_str = self.get_genomelocation_string()
+            if genomelocation_str:
+                geneobj['genomelocation'] = genomelocation_str
+        #genomeassembly
+        geneobj['assembly'] = self.get_genomeassembly()
+
+        return geneobj
 
 
 class MyGeneInfo404(Exception):
@@ -24,7 +159,6 @@ class MyGeneInfo():
         if self.url[-1] == '/':
             self.url = self.url[:-1]
         self.url_root = self._get_url_root(self.url)
-        # self.h = httplib2.Http()
         self.s = requests.Session()
         # set max_retries
         self.s.mount(self.url, HTTPAdapter(max_retries=5))
