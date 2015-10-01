@@ -11,7 +11,6 @@ from biogps.utils.helper import (ExtError, loginrequired, cvtPermission,
                                  setObjectPermission, json)
 from biogps.utils import log
 from biogps.apps.genelist.models import BiogpsGeneList
-# from biogps.apps.boc import boc_svc as svc
 from biogps.apps.boe.views import MyGeneInfo
 
 

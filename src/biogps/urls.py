@@ -11,7 +11,6 @@ urlpatterns = patterns('biogps.www.views',
     url(r'^tickermsgs/$', 'get_tickermsgs', name='tickermsgs'),
     url(r'^mystuff/$', 'mystuff', name='mystuff'),
 
-    (r'^boc/', include('biogps.apps.boc.urls')),
     (r'^boe/', include('biogps.apps.boe.urls')),
     (r'^gene/', include('biogps.apps.gene.urls')),
 
@@ -217,9 +216,6 @@ urlpatterns += patterns('', (r'^favorite/', include('biogps.apps.favorite.urls')
 urlpatterns += patterns('biogps.apps.boe.views',
     (r'^service/search/$', 'query'),
 )
-# urlpatterns += patterns('biogps.apps.boc.views',
-#     (r'^service/search/$', 'query_gene_for_iphone'),
-# )
 
 urlpatterns += patterns('biogps.apps.plugin.plugin',
     (r'^plugin_v1/(?P<pluginid>\d+)/renderurl/$', 'render_plugin_url'),

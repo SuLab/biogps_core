@@ -3,7 +3,6 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 
 from biogps.utils.helper import json
-#from biogps.apps.boc import views as boc_views
 from biogps.apps.boe import views as boe_views
 from biogps.apps.layout.layout import get_plugin_urls
 

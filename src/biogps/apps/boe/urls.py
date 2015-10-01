@@ -1,5 +1,5 @@
 '''
-The URLs listed here are served under /boc/
+The URLs listed here are served under /boe/
 '''
 from django.conf.urls.defaults import *
 
