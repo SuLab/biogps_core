@@ -127,47 +127,6 @@ class BiogpsESIndexerBase(object):
         return self.conn.optimize(self.ES_INDEX_NAME, wait_for_merge=True)
 
 
-class BiogpsGeneESIndexer(BiogpsESIndexerBase):
-    GeneDoc_DB_URL = 'http://cwu-dev.lj.gnf.org:5984'
-    GeneDoc_DB_NAME = 'genedoc'
-    ES_INDEX_TYPE = 'gene'
-
-    def build_index(self, update_mapping=False, bulk=True, step=10000):
-        from build_index_gene_utils import (get_db, doc_feeder,
-                                            genedoc_cvt2, make_field_mapping)
-
-        db = get_db(self.GeneDoc_DB_URL, self.GeneDoc_DB_NAME)
-        conn = self.conn
-        index_name = self.ES_INDEX_NAME
-        index_type = self.ES_INDEX_TYPE
-
-        #Test if index exists
-        try:
-            print conn.open_index(index_name)
-        except NotFoundException:
-            print 'Error: index "%s" does not exist. Create it first.' % index_name
-            return -1
-
-        if update_mapping:
-            genedoc_mapping = make_field_mapping(db)
-            print conn.put_mapping(index_type,
-                                   {'properties': genedoc_mapping},
-                                   [index_name])
-
-        for docs in doc_feeder(db, step=step, inbatch=True):
-            try:
-#                docs = [genedoc_cvt(doc.doc) for doc in docs if not doc.id.startswith('_')]
-                docs = [genedoc_cvt2(doc.doc, db) for doc in docs if not doc.id.startswith('_')]
-            except TypeError:
-                print doc.id
-                raise
-            for doc in docs:
-                conn.index(doc, index_name, index_type, doc['id'], bulk=bulk)
-            if bulk:
-                conn.force_bulk()
-            print conn.refresh([index_name]),
-
-
 class BiogpsModelESIndexer(BiogpsESIndexerBase):
     '''The base class for indexing objects from BioGPSModel derived models,
        e.g., BioGPSPlugin, BiogpsGenereportLayout, etc.
@@ -401,8 +360,6 @@ def _rebuild_x(delete_old=False, update_mapping=False, indexer=None):
         update_mapping = True   # if delete_old is True, update_mapping should be True anyway
     es_indexer.build_index(update_mapping=update_mapping, bulk=True)
 
-rebuild_gene = partial(_rebuild_x, indexer=BiogpsGeneESIndexer)
-rebuild_gene.__doc__ = 'A convenient function for re-building all genes from CouchDB.'
 rebuild_plugin = partial(_rebuild_x, indexer=BiogpsPluginESIndexer)
 rebuild_plugin.__doc__ = 'A convenient function for re-building all plugins.'
 rebuild_layout = partial(_rebuild_x, indexer=BiogpsLayoutESIndexer)
