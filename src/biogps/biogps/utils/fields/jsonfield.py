@@ -76,3 +76,6 @@ class JSONField(models.TextField):
         if not self.empty_strings_allowed or (self.null and not connection.features.interprets_empty_strings_as_nulls):
             return None
         return ""
+
+from south.modelsinspector import add_introspection_rules
+add_introspection_rules([], ["^biogps\.utils\.fields\.jsonfield\.JSONField"])

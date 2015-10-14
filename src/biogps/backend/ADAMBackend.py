@@ -5,9 +5,9 @@ from django.conf import settings
 from django.contrib.auth.models import User, Group
 from django.db import connection
 
-from biogps.apps.adamauth.adamadapter import ADAMService, ROLE_SEPARATOR, ROLE_GNFUSER, ROLE_NVSUSER
-from biogps.apps.adamauth.models import UserProfile
-from biogps.apps.adamauth.models import _extend_user
+from biogps.adamauth.adamadapter import ADAMService, ROLE_SEPARATOR, ROLE_GNFUSER, ROLE_NVSUSER
+from biogps.adamauth.models import UserProfile
+from biogps.adamauth.models import _extend_user
 
 class ADAMBackend(object):
     """
