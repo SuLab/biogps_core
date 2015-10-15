@@ -49,6 +49,8 @@ class DualSessionMiddleware(object):
             pass
         else:
             if modified or settings.SESSION_SAVE_EVERY_REQUEST:
+                if not request.session.session_key:
+                    request.session.create()
                 session_key = request.session.session_key or Session.objects.get_new_session_key()
                 
                 if not request.session.get(settings.PERSISTENT_SESSION_KEY, False):
