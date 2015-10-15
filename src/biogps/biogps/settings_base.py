@@ -245,6 +245,9 @@ STATICFILES_FINDERS = (
 
 STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
 
+# Make this unique, and don't share it with anybody.
+SECRET_KEY = '*cp6weayxc%l908tl14len!t@w4ws*@j8*2s$$29h(rb55$791'
+
 # Sensitive settings get imported here.
 from settings_private import *
 
