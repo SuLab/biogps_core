@@ -28,8 +28,11 @@ elif(os.name == 'nt'):
 #COMPRESS = True  #force to toggle compress on/off, default not DEBUG
 COMPRESS_VERSION = True
 
-COMPRESS_YUI_BINARY = "java -jar " + os.path.join(TOOL_PATH, "yuicompressor-2.4.6.jar")
-COMPRESS_CLOSURE_BINARY = "java -jar " + os.path.join(TOOL_PATH, "closure/compiler.jar")
+PIPELINE_YUI_BINARY = "java -jar " + os.path.join(TOOL_PATH, "yuicompressor-2.4.6.jar")
+PIPELINE_CLOSURE_BINARY = "java -jar " + os.path.join(TOOL_PATH, "closure/compiler.jar")
+
+PIPELINE_JS_COMPRESSOR = 'pipeline.compressors.closure.ClosureCompressor'
+PIPELINE_CSS_COMPRESSOR = 'pipeline.compressors.yuglify.YuglifyCompressor'
 
 COMPRESS_CSS_FILTERS = ('compress.filters.yui.YUICompressorFilter',)
 COMPRESS_JS_FILTERS = (
@@ -41,12 +44,12 @@ COMPRESS_JS_FILTERS = (
 #COMPRESS_CLOSURE_JS_ARGUMENTS = {'compilation_level': 'ADVANCED_OPTIMIZATIONS', }
 
 # Defaults to 'lessc' available on PATH
-LESS_BINARY = os.path.join(ROOT_PATH, 'build/less/bin/lessc')
+LESS_BINARY = os.path.join(ROOT_PATH, 'build', 'less', 'bin', 'lessc')
 
 #####################################################################
 # Compress CSS & JS File Groupings
 
-COMPRESS_CSS = {
+PIPELINE_CSS = {
     'mainApp': {
         'source_filenames': (
 #                            EXTJS_PATH+"resources/css/ext-all.css",
@@ -94,7 +97,7 @@ COMPRESS_CSS = {
     # other CSS groups goes here
 }
 
-COMPRESS_JS = {
+PIPELINE_JS = {
     'core': {
         'source_filenames': ('js/biogps/core/core_dispatch.js',),
         'output_filename': 'js/min/core.js'
