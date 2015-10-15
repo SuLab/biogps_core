@@ -1,4 +1,5 @@
 import os.path
+
 from django.conf.urls.defaults import *
 from django.views.generic.simple import direct_to_template
 from django.conf import settings
@@ -79,9 +80,9 @@ if settings.USE_UWSGI:
                            )
 
 if getattr(settings, 'SERVE_ASSETS', False):
-    urlpatterns += patterns("django.views.static",
-                           (r'^assets/(?P<path>.*)$', 'serve',
-                            {'document_root': os.path.join(settings.ROOT_PATH, 'assets')}))
+    urlpatterns += patterns('django.contrib.staticfiles.views',
+        url(r'^assets/(?P<path>.*)$', 'serve'),
+    )
     urlpatterns += patterns('django.views.generic.simple',
                            (r'^favicon.ico$', 'redirect_to', {'url': '/assets/img/favicon.ico'}),
                            )

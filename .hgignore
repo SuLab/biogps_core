@@ -8,6 +8,7 @@ src/assets/less/base_tmp.css
 biogps_cleanup.log
 biogps_updatepopscores.log
 *.*~
+src/assets/
 
 # use regexp syntax
 syntax: regexp

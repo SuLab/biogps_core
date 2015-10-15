@@ -3,7 +3,6 @@
 #         settings_dev.py         (for dev server)
 #         settings_prod.py        (for prod server)
 #
-
 import os.path
 
 ######BioGPS specific settings#########
@@ -43,7 +42,7 @@ CACHE_WEEK = 604800
 BOT_HTTP_USER_AGENT = ('Googlebot', 'msnbot', 'Yahoo! Slurp')    #The string appearing in HTTP_USER_AGENT header to indicate it is from a web crawler.
 
 # Used in middleware/maintenance.py
-MAINTENANCE_PAGE = os.path.join(ROOT_PATH, 'assets', 'maintenance.html')
+MAINTENANCE_PAGE = os.path.join(ROOT_PATH, 'biogps', 'assets', 'maintenance.html')
 
 #used in user_tags.py of biogps.app.friends
 ACCOUNT_USER_DISPLAY = lambda u: u.get_full_name() or u.username
@@ -109,12 +108,12 @@ USE_I18N = False
 USE_TZ = True
 
 # Absolute path to the directory that holds media.
-MEDIA_ROOT = os.path.join(ROOT_PATH, 'assets')
+MEDIA_ROOT = os.path.join(ROOT_PATH, 'media')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = '/assets/'
+MEDIA_URL = '/media/'
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
@@ -133,6 +132,7 @@ TEMPLATE_CONTEXT_PROCESSORS = ( "django.contrib.auth.context_processors.auth",
                                 "django.core.context_processors.debug",
                                 "django.core.context_processors.i18n",
                                 "django.core.context_processors.media",
+                                'django.core.context_processors.static',
                                 "django.core.context_processors.request",
                                 "biogps.utils.context_processors.base_processor")
 
@@ -173,6 +173,7 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.admin',
     'django.contrib.messages',
+    'django.contrib.staticfiles',
     'django.contrib.humanize',
     'django.contrib.admindocs',
     'django.contrib.contenttypes',
@@ -192,7 +193,7 @@ INSTALLED_APPS = (
     "authsub",
     "bbauth",
     'threadedcomments',
-    'compress',
+    'pipeline',
     'django_extensions',
     'django_authopenid',
     'urlauth',
@@ -218,6 +219,31 @@ INSTALLED_APPS = (
     'biogps.stat',
     'biogps.search',
 )
+
+# Absolute path to the directory static files should be collected to.
+# Don't put anything in this directory yourself; store your static files
+# in apps' "static/" subdirectories and in STATICFILES_DIRS.
+# Example: "/home/media/media.lawrence.com/static/"
+STATIC_ROOT = os.path.join(ROOT_PATH, 'assets')
+
+# URL prefix for static files.
+# Example: "http://media.lawrence.com/static/"
+STATIC_URL = '/assets/'
+
+# Additional locations of static files
+STATICFILES_DIRS = (
+    os.path.join(ROOT_PATH, 'biogps', 'assets'),
+)
+
+# List of finder classes that know how to find static files in
+# various locations.
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
+)
+
+STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
 
 # Sensitive settings get imported here.
 from settings_private import *
