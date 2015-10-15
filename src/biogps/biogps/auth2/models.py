@@ -109,8 +109,10 @@ def _extend_user(user):
     @models.permalink
     def get_absolute_url(user):
         """ Returns the appropriate URL for this profile. """
-        return ('bgprofile.view', [str(user.id), clean_username(user.username)])
-    setattr(user, 'get_absolute_url', new.instancemethod(get_absolute_url, user, User))
+        return ('apps.bgprofile.view',
+                [str(user.id), clean_username(user.username)])
+    setattr(user, 'get_absolute_url',
+            new.instancemethod(get_absolute_url, user, User))
 
     def get_clean_username(user):
         ''' Return a string suitable for identifying the user.
