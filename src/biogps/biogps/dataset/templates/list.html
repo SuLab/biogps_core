@@ -40,7 +40,7 @@
                             <h3>
                                 {% if navigation.multiple_types %}{{ i.in|capfirst }}: {% endif %}
                                 <a href=
-                                    "{% url _dataset_show i.geo_gse_id i.slug %}">
+                                    "{% url '_dataset_show' i.geo_gse_id i.slug %}">
                                      {{ i.name }}
                                 </a>
                             </h3>
@@ -72,7 +72,7 @@
                                     Tags:
                                     {% for t in i.tags %}
                                         <a href=
-                                            "{% url dataset_list_for_tag t %}"
+                                            "{% url 'dataset_list_for_tag' t %}"
                                             rel="tag">
                                             <span class="ui-icon ui-icon-tag2"></span>
                                             {{ t }}</a>{% if not forloop.last %},{% endif %}

@@ -16,7 +16,7 @@
     <p>If you believe this is in error, please contact us directly: {% emailus %}</p>
 {% else %}
     <p>Either it doesn't exist or you need to login.</p>
-    <a href="{% url auth_login %}" class="btn-use-object btn-large">Login</a>
+    <a href="{% url 'auth_login' %}" class="btn-use-object btn-large">Login</a>
 {% endif %}
 
 {% endblock %}

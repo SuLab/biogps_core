@@ -7,7 +7,7 @@
 {% block breadcrumbs %}<div class="breadcrumbs"><a href="/">Home</a> &rsaquo; Notices</div>{% endblock %}
 
 {% block extrahead %}
-    <link rel="alternate" type="application/atom+xml" title="Notices Feed" href="{% url notification_feed_for_user %}" />
+    <link rel="alternate" type="application/atom+xml" title="Notices Feed" href="{% url 'notification_feed_for_user' %}" />
     <link rel="stylesheet" href="/assets/css/pagination.css" />
     <link rel="stylesheet" href="/assets/css/notification.css" />
 {% endblock %}
@@ -23,7 +23,7 @@
     {% autopaginate notices %}
 
     {% if notices %}
-        <a href="{% url notification_mark_all_seen %}">{% trans "Mark all unseen notices seen" %}</a>
+        <a href="{% url 'notification_mark_all_seen' %}">{% trans "Mark all unseen notices seen" %}</a>
 
         {# TODO: get timezone support working with regroup #}
         {% regroup notices by added.date as notices_by_date %}
@@ -56,7 +56,7 @@
     <div class="roundBox clearfix notice_settings">
         <h2>{% trans "Settings" %}</h2>
 
-        {% url auth_userinfo_edit as email_url %}
+        {% url 'auth_userinfo_edit' as email_url %}
         {% if user.email %}
             <p>
                 {% trans "Primary email" %}: &nbsp;&nbsp;

@@ -12,7 +12,7 @@ Sign up
 {% block content_title %}{% endblock %}
 {% block userlinks %}{% endblock %}
 
-{% block breadcrumbs %}<div class="breadcrumbs"><a href="/">{% trans 'Home' %} </a> &rsaquo; <a href="{% url auth_register %}">{% trans 'Sign up' %}</a></div>{% endblock %}
+{% block breadcrumbs %}<div class="breadcrumbs"><a href="/">{% trans 'Home' %} </a> &rsaquo; <a href="{% url 'auth_register' %}">{% trans 'Sign up' %}</a></div>{% endblock %}
 
 {% block content %}
 	{% if error_message %}
@@ -33,15 +33,15 @@ Sign up
 		</div>
 
     	<div class="openid_form roundBoxBlue">
-    	    <form name="fverify" action="{% url auth_register_openid %}" method="POST">
+    	    <form name="fverify" action="{% url 'auth_register_openid' %}" method="POST">
     	        {{ openid_form.next }}
 				<label for="id_username">Username: </label> {{ openid_form.username }} &nbsp; &nbsp;
 				<label for="id_passwordl">Password: </label> {{ openid_form.password }} &nbsp; &nbsp;
 				<input type="submit" name="bverify" value="Verify">
     		</form>
 
-    		<p class="smallNote"><br />Did you forget your <a href="{% url auth_forget_username %}">username</a>
-                or <a href="{% url auth_password_reset %}">password</a>?
+    		<p class="smallNote"><br />Did you forget your <a href="{% url 'auth_forget_username' %}">username</a>
+                or <a href="{% url 'auth_password_reset' %}">password</a>?
             </p>
     	</div>
 
@@ -54,9 +54,9 @@ Sign up
 	{% endif %}
 
     {% if openid_form %}
-    <form name="f" action="{% url auth_register_openid %}" method="POST">
+    <form name="f" action="{% url 'auth_register_openid' %}" method="POST">
     {% else %}
-    <form name="f" action="{% url auth_register %}" method="POST">
+    <form name="f" action="{% url 'auth_register' %}" method="POST">
     {% endif %}
     <div class="half-box-container">
     <section class="half-box">

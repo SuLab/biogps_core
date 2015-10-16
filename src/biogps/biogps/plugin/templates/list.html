@@ -52,10 +52,10 @@
                                 {% if navigation.multiple_types %}{{ i.in|capfirst }}: {% endif %}
                                 <a href=
                                 {% if i.in == "plugin" %}
-                                    "{% url plugin_show i.id i.name|slugify %}">
+                                    "{% url 'plugin_show' i.id i.name|slugify %}">
                                 {% endif %}
                                 {% if i.in == "dataset" %}
-                                    "{% url dataset_show i.id i.name|slugify %}">
+                                    "{% url 'dataset_show' i.id i.name|slugify %}">
                                 {% endif %}
                                 {{ i.name }}</a>
                             </h3>
@@ -81,10 +81,10 @@
                                     {% for t in i.tags %}
                                         <a href=
                                         {% if i.in == "plugin" %}
-                                            "{% url plugin_list_for_tag t %}"
+                                            "{% url 'plugin_list_for_tag' t %}"
                                         {% endif %}
                                         {% if i.in == "dataset" %}
-                                            "{% url dataset_list_for_tag t %}"
+                                            "{% url 'dataset_list_for_tag' t %}"
                                         {% endif %}
                                             rel="tag">
                                             <span class="ui-icon ui-icon-tag2"></span>

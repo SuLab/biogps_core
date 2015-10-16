@@ -81,19 +81,19 @@ coreDispatcher.dispatch();
             	        {% if user.is_authenticated %}
                 	        <div id="welcome-loggedin">
                 	            {% if user.first_name %}Hi <b>{{ user.first_name|escape }}</b>!{% endif %}
-                	            You are logged in as <a href="{{ user.get_absolute_url }}" title="Manage Your Account">{{ user.clean_username|escape }}</a> <span class="login-type">[<a href="{% url auth_logout %}">logout</a>]</span>.
+                	            You are logged in as <a href="{{ user.get_absolute_url }}" title="Manage Your Account">{{ user.clean_username|escape }}</a> <span class="login-type">[<a href="{% url 'auth_logout' %}">logout</a>]</span>.
                 	            <br />
-                	            <span class="login-type">(Are you <a href="{% url auth_logout %}{% if goto_url %}?next={{ goto_url }}{% endif %}">not {{ user.display_name|escape }}</a>?)</span>
+                	            <span class="login-type">(Are you <a href="{% url 'auth_logout' %}{% if goto_url %}?next={{ goto_url }}{% endif %}">not {{ user.display_name|escape }}</a>?)</span>
                 	        </div>
                 	    {% else %}
                 	        <div class="inline-block">
-                    	        <a href="{% url auth_register %}">Sign Up</a> or
-                    	        <a href="{% url auth_login %}">Login</a>
+                    	        <a href="{% url 'auth_register' %}">Sign Up</a> or
+                    	        <a href="{% url 'auth_login' %}">Login</a>
                 	        </div>
 
                 		    <div class="inline-block centerCol">
                 		        <div class="login-type">BioGPS account</div>
-                    	        <form action="{%if with_https %}https://{{site}}{%endif%}{% url auth_login %}" method="post" id="login-form">
+                    	        <form action="{%if with_https %}https://{{site}}{%endif%}{% url 'auth_login' %}" method="post" id="login-form">
                     	            <input type="text" name="username" id="id_username"
                 	                        value="username" class="inactive"
                 	                        onfocus="coreDispatcher.onInputFocus(this,event);"
@@ -117,9 +117,9 @@ coreDispatcher.dispatch();
                         		<div id="openid_btns">
                             	    <a class="google openid_large_btn" title="Google" href="#" onClick="coreDispatcher.openid('google');return false;"></a>
                             	    <a class="yahoo openid_large_btn" title="Yahoo" href="#" onClick="coreDispatcher.openid('yahoo');return false;"></a>
-                            	    <a class="openid_more_btn biogps-img" title="More OpenID options" href="{% url auth_login %}{% if goto_url %}?next={{ goto_url }}{% endif %}"></a>
+                            	    <a class="openid_more_btn biogps-img" title="More OpenID options" href="{% url 'auth_login' %}{% if goto_url %}?next={{ goto_url }}{% endif %}"></a>
                         		</div>
-                        		<form id="openid_form" name="fopenid" action="{%if not dev_server %}https://{{site}}{%endif%}{% url auth_login %}" method="post">
+                        		<form id="openid_form" name="fopenid" action="{%if not dev_server %}https://{{site}}{%endif%}{% url 'auth_login' %}" method="post">
                         		    <input name="bsignin" type="hidden" />
                         		    <input id="openid_url" name="openid_url" type="text" value="" />
                         		    {% if goto_url %}

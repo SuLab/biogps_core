@@ -60,7 +60,7 @@
      <dl class="twostep_import">
     {% if not authsub_token %}
         <!-- step one -->
-            <dt class="current_step">Step 1:<dt><dd class="current_step">First you must <a href="{% url authsub_login %}">authenticate with Google</a>. Once you have agreed
+            <dt class="current_step">Step 1:<dt><dd class="current_step">First you must <a href="{% url 'authsub_login' %}">authenticate with Google</a>. Once you have agreed
                 to let BioGPS have access to your Google Contacts, you will be taken back here for step two.
                 </dd>
             <dt>Step 2:</dt><dd>Click "Import Google Contacts" button here:
@@ -68,7 +68,7 @@
             </dd>
     {% else %}
         <!-- step two -->
-            <dt>Step 1:<dt><dd>First you must <a href="{% url authsub_login %}">authenticate with Google</a>. Once you have agreed
+            <dt>Step 1:<dt><dd>First you must <a href="{% url 'authsub_login' %}">authenticate with Google</a>. Once you have agreed
                 to let BioGPS have access to your Google Contacts, you will be taken back here for step two.
                 </dd>
             <dt class="current_step">Step 2:<dt><dd class="current_step">Click "Import Google Contacts" button here:
@@ -90,7 +90,7 @@
     {% else %}
         <p>
             This will be a two step process. First you must
-            <a href="{% url authsub_login %}">authenticate with Google</a>.
+            <a href="{% url 'authsub_login' %}">authenticate with Google</a>.
             Once you have agreed to let BioGPS have access to your Google Contacts, you will be taken back here and
             an "Import Google Contacts" button will appear here.
         </p>
@@ -106,7 +106,7 @@
     {% else %}
         <p>
             This will be a two step process. First you must
-            <a href="{% url bbauth_login %}">authenticate with Yahoo</a>.
+            <a href="{% url 'bbauth_login' %}">authenticate with Yahoo</a>.
             Once you have agreed to let BioGPS have access to your Yahoo Address Book, you will be taken back here and
             an "Import Yahoo Address Book" button will appear here.
         </p>
@@ -145,7 +145,7 @@
                         <td><input type="checkbox" name="contact_id" value="{{contact.id}}"></td>
                         <td>{% if contact.name %}{{ contact.name }}{% else %}?{% endif %}</td>
                         <td>{{ contact.email }}</td>
-                        <td><a href="{% url invite_friend %}?email={{ contact.email }}">invite to join</a></td>
+                        <td><a href="{% url 'invite_friend' %}?email={{ contact.email }}">invite to join</a></td>
                         <td>
                             {% for other_user in contact.users.all %}
                                 <a href="{{ other_user.username }}">{% user_display other_user %}</a>
