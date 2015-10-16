@@ -23,7 +23,6 @@ pymongo==2.3
 python-dateutil==2.1
 python-openid==2.2.5
 pytz==2012c
-simplejson==2.5.2
 urllib3==1.4  #needed by pyes
 vobject==0.8.1c
 
