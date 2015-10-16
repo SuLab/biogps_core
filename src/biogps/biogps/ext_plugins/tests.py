@@ -1,7 +1,6 @@
 from django.test import Client
-from django.utils import simplejson
 
-c=Client()
+c = Client()
 
 ## GeneViewer is decpreated
 #def testgrGeneViewer():

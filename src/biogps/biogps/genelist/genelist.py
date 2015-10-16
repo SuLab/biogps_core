@@ -221,14 +221,14 @@ def getmygenelists(request):
     200
     >>> res.content
     '[{"size": 14, "id": 1, "name": "test_set_1", "description": "test desc."}, {"size": 17, "id": 2, "name": "test_set_2", "description": "IPR008351"}]'
-    >>> from django.utils import simplejson
-    >>> type(simplejson.loads(res.content))
+    >>> import json
+    >>> type(json.loads(res.content))
     <type 'list'>
     >>> c.logout()
     >>> res = c.get('/getmygenelists/')
     >>> res.status_code
     200
-    >>> simplejson.loads(res.content)['success']
+    >>> json.loads(res.content)['success']
     False
 
     '''

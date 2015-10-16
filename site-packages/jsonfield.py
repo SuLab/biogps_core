@@ -1,9 +1,10 @@
+import json
+
 from django import forms
 from django.db import models, connection
 from django.db.models import signals
 from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
-from django.utils import simplejson as json
 
 
 class JSONWidget(forms.Textarea):

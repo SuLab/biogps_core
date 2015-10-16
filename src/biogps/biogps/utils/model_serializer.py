@@ -31,8 +31,8 @@ if passed data are not a model instance (or a list of), the data will be
 '''
 
 import types
+import json
 from decimal import Decimal
-import simplejson as json
 try:
     import pyxslt.serialize
 except:
