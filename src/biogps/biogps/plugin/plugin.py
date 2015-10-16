@@ -40,7 +40,7 @@ def plugin(request, query=None):
     searchable fields: author, url, description, type, tags
     """
 #    if request.adamuser.is_anonymous():
-#        return HttpResponse(simplejson.dumps(ANONYMOUS_USER_ERROR), mimetype=MIMETYPE['json'])
+#        return HttpResponse(json.dumps(ANONYMOUS_USER_ERROR), mimetype=MIMETYPE['json'])
     sortable_fields = ['author', 'created', 'lastmodified', 'title', 'type', 'url', 'popularity']
 
     if request.method == 'GET':
@@ -179,7 +179,7 @@ def plugin(request, query=None):
 #                              description = description)
 #        plugin.save()
 #        data = {'success': True}
-#        return HttpResponse(simplejson.dumps(data), mimetype=MIMETYPE['json'])
+#        return HttpResponse(json.dumps(data), mimetype=MIMETYPE['json'])
 
         if query == 'add':
             return _plugin_add(request)
@@ -414,7 +414,7 @@ def _plugin_delete(request):
 
 #def getall(request):
 #    if request.adamuser.is_anonymous():
-#        return HttpResponse(simplejson.dumps(ANONYMOUS_USER_ERROR), mimetype=MIMETYPE['json'])
+#        return HttpResponse(json.dumps(ANONYMOUS_USER_ERROR), mimetype=MIMETYPE['json'])
 #
 #    format = request.GET.get('format', 'json')
 #    all_plugins = BiogpsPlugin.objects.all()

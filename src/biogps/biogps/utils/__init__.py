@@ -1,13 +1,9 @@
-#Load faster simplejson module if possible (/site-packages/simple-json)
-#otherwise, fall back to Django's slower version
-try:
-    import simplejson as json
-except:
-    from django.utils import simplejson as json
-from django.conf import settings
-
+import json
 import types
 import logging
+
+from django.conf import settings
+
 log = logging.getLogger('biogps_prod' if settings.RELEASE_MODE == 'prod' else 'biogps_dev')
 
 

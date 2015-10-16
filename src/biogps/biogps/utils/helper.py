@@ -4,6 +4,8 @@ import textwrap
 import types
 import string
 import re
+import json
+
 from functools import wraps
 from django.utils import timezone
 
@@ -15,15 +17,6 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadReque
 from django.conf import settings
 from django.utils.http import urlquote
 from django.contrib.sites.models import Site
-#Load faster simplejson module if possible (/site-packages/simple-json)
-#otherwise, fall back Python's buildin json or Django's slower version
-try:
-    import simplejson as json
-except:
-    try:
-        import json
-    except:
-        from django.utils import simplejson as json
 
 
 MAX_QUERY_LENGTH = 10*1000       #A rough upper limit for length of input gene query.
