@@ -2,7 +2,7 @@
 The URLs listed here are served under /auth/, via https only in prod.
 '''
 from django.conf.urls.defaults import patterns, url
-from django.views.generic.simple import direct_to_template
+from django.views.generic import TemplateView
 from django.contrib.auth import views as auth_views
 
 urlpatterns = patterns('biogps.auth2.views',
@@ -14,15 +14,15 @@ urlpatterns = patterns('biogps.auth2.views',
                            'check_username',
                            name='auth_checkusername'),
 
-                        # Registration
-                        url(r'^signup/$', 'registration',
-                            name='auth_register'),
-                        url(r'^activation/required/$', direct_to_template,
-                            {'template':'account/activation_required.html'},
-                            name='activation_required'),
-                        url(r'^signup/complete/$', direct_to_template,
-                            {'template':'account/registration_complete.html'},
-                            name='registration_complete'),
+                       # Registration
+                       url(r'^signup/$', 'registration',
+                           name='auth_register'),
+                       url(r'^activation/required/$',
+                           TemplateView.as_view(template_name='account/activation_required.html'),
+                           name='activation_required'),
+                       url(r'^signup/complete/$',
+                           TemplateView.as_view(template_name='account/registration_complete.html'),
+                           name='registration_complete'),
 
                        #openid registration
                        url(r'^openid_signup/$',
