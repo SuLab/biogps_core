@@ -13,11 +13,11 @@
 	{% endif %}
 
     <div class="roundBoxBlue">
-        <p><a href="{% url auth_password_change %}">Change BioGPS password</a></p>
-        <p><a href="{% url auth_userinfo_edit %}">Edit account information</a></p>
+        <p><a href="{% url 'auth_password_change' %}">Change BioGPS password</a></p>
+        <p><a href="{% url 'auth_userinfo_edit' %}">Edit account information</a></p>
         <p><a href="{{ user.get_absolute_url }}">Edit profile</a></p>
         {% if user.has_openid %}
-            <p><a href="{% url auth_change_openid %}">Change OpenID</a></p>
+            <p><a href="{% url 'auth_change_openid' %}">Change OpenID</a></p>
         {% endif %}
     </div>
 </div>

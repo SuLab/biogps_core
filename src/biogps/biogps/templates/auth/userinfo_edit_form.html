@@ -17,7 +17,7 @@ Edit user account information
 <div class="in">
 	<div class="editAccountForm roundBoxBlue">
 	    <h1>{% trans 'Edit user account information' %}</h1>
-        <form action="{% url auth_userinfo_edit %}" method="POST">
+        <form action="{% url 'auth_userinfo_edit' %}" method="POST">
         <table>
         <tr>
             <td align="right" valign="top">Username:</td>
@@ -28,7 +28,7 @@ Edit user account information
         <tr>
             <td align="right" valign="top">Email:</td>
             <td>
-                {{ form.user.email }} &nbsp;&nbsp;[<a href="{% url auth_email_change %}" title="Change your email">change</a>]<br/>
+                {{ form.user.email }} &nbsp;&nbsp;[<a href="{% url 'auth_email_change' %}" title="Change your email">change</a>]<br/>
             </td>
         </tr>
         <tr>

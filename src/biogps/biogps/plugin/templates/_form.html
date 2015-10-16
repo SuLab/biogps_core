@@ -1,5 +1,5 @@
 <form action="{% if plugin %}{{ plugin.get_absolute_url }}
-    {% else %}{% url plugin_home %}{% endif %}" method="post">
+    {% else %}{% url 'plugin_home' %}{% endif %}" method="post">
 <div class="object-summary
             {% if plugin.is_restricted %}object-restricted{% endif %}
             {% if plugin.is_private %}object-private{% endif %}">
@@ -110,7 +110,7 @@
     <div class="form-controls">
         <input type="submit" value="{% if plugin %}Save Changes{% else %}Register Plugin{% endif %}" class="btn-use-object btn-priority-primary btn-large">
         <a href="{% if plugin %}{{ plugin.get_absolute_url }}
-            {% else %}{% url plugin_home %}{% endif %}" class="btn-use-object">Cancel</a>
+            {% else %}{% url 'plugin_home' %}{% endif %}" class="btn-use-object">Cancel</a>
     </div>
 </div>
 </form>

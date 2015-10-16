@@ -42,14 +42,14 @@
 
         {% if user.is_openid_only %}
             <p>Your account can only be accessed via your OpenID, so you can't remove it unless
-                you first <a href="{% url auth_password_change %}">set a BioGPS password</a>.
+                you first <a href="{% url 'auth_password_change' %}">set a BioGPS password</a>.
             </p>
         {% else %}
             <p>If you're <b>absolutely sure</b> you want to <b>remove</b> your OpenID association from
                 your account, go ahead and click the button.</p><br />
 
             <div class="aligned">
-            	<form action="{% url auth_remove_openid %}" method="post" accept-charset="utf-8">
+            	<form action="{% url 'auth_remove_openid' %}" method="post" accept-charset="utf-8">
             		<p class="center">Account Username: <b>{{ user.username|escape }}</b></p><br />
                     <p class="center"><input type="submit" value="REMOVE OpenID from my account" onClick="return confirmRemove()"></p>
             	</form>

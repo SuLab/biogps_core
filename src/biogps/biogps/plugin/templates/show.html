@@ -61,7 +61,7 @@
                         <span>View your gene of interest</span>
                     </a>
                     {% if user.is_authenticated and user.id == current_obj.owner.id %}
-                      <a class="btn-use-object btn-priority-primary" href="{% url plugin_edit current_obj.id %}">Edit</a>
+                      <a class="btn-use-object btn-priority-primary" href="{% url 'plugin_edit' current_obj.id %}">Edit</a>
                     {% endif %}
                 </div>
             </span> <!-- itemscope -->
@@ -199,7 +199,7 @@
               </div> <!-- comment-form -->
             {% else %}
               <br />
-              <b><center>Please <a href="{% url auth_login %}?next={{ full_path|urlencode }}">Login</a> or <a href="{% url auth_register %}">Sign Up</a> to post comments.</center></b>
+              <b><center>Please <a href="{% url 'auth_login' %}?next={{ full_path|urlencode }}">Login</a> or <a href="{% url 'auth_register' %}">Sign Up</a> to post comments.</center></b>
               <br />
             {% endif %}
         </div> <!-- object-comments -->
@@ -231,7 +231,7 @@
         <ul class="tag-list">
         {% for t in current_obj.tags %}
             <li>
-                <a href="{% url plugin_list_for_tag t.name %}" rel="tag">
+                <a href="{% url 'plugin_list_for_tag' t.name %}" rel="tag">
                     <span class="ui-icon ui-icon-tag2"></span>
                     {{ t }}
                 </a>

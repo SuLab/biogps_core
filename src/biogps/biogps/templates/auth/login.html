@@ -23,7 +23,7 @@
     <div class="roundBox optionBox">
         <h1>Option 1: BioGPS Account</h1>
         <div class="loginBox roundBoxBlue">
-            <form action="{% url auth_login %}" method="post" id="login-form">
+            <form action="{% url 'auth_login' %}" method="post" id="login-form">
                 <table id="content-table">
                 <tr>
                     <td align="right" valign="top"><label for="id_username">{% trans 'Username:' %}</label></td>
@@ -43,8 +43,8 @@
                 </tr>
                 </table>
 
-                <p class="smallNote">Did you forget your <a href="{% url auth_forget_username %}">username</a>
-                    or <a href="{% url auth_password_reset %}">password</a>?
+                <p class="smallNote">Did you forget your <a href="{% url 'auth_forget_username' %}">username</a>
+                    or <a href="{% url 'auth_password_reset' %}">password</a>?
                 </p>
 
                 {% if goto_url %}
@@ -55,7 +55,7 @@
 
    	    <div class="loginBox roundBox">
        		<p><b>Don't have an account yet?</b><br />
-       		<a href="{% url auth_register %}">Create your free BioGPS account.</a></p>
+       		<a href="{% url 'auth_register' %}">Create your free BioGPS account.</a></p>
        		<p class="smallNote">Then you can save customized layouts<br /> and lots more!</p>
        	</div>
 
@@ -73,7 +73,7 @@
 	    <b><a href="/help_openid/">OpenID</a></b> from any
         of the account providers below, or provide your own URL.</p>
 
-		<form id="openid_form" name="fopenid" action="{% url auth_login %}" method="post">
+		<form id="openid_form" name="fopenid" action="{% url 'auth_login' %}" method="post">
 		    {{ form2.next }}
 		    <input name="bsignin" type="hidden" />
 		    <input type="hidden" name="action" value="verify" />

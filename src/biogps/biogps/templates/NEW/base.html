@@ -16,7 +16,7 @@
     <meta name="description" content="{% block meta-description %}{% endblock %}">
 
     <link rel="alternate" type="application/rss+xml" title="BioGPS Blog Feed" href="http://feeds.feedburner.com/biogps">
-    <link rel="alternate" type="application/rss+xml" title="Newest BioGPS Plugins" href="{% url rss_plugins %}">
+    <link rel="alternate" type="application/rss+xml" title="Newest BioGPS Plugins" href="{% url 'rss_plugins' %}">
     <link rel="shortcut icon" href="/assets/img2/favicon.png">
     <link rel="apple-touch-icon" href="/assets/img2/apple-touch-icon.png">
 
@@ -56,10 +56,10 @@
                         <li><a class="active" href="/dataset/">Datasets</a></li>
                         {% if user.is_authenticated %}
                             <li><a href="{{ user.get_absolute_url }}">User: {{ user.display_name|escape }}</a></li>
-                            <li><a href="{% url auth_logout %}?next={{ request.path|urlencode }}">Logout</a></li>
+                            <li><a href="{% url 'auth_logout' %}?next={{ request.path|urlencode }}">Logout</a></li>
                         {% else %}
-                            {% url auth_login as login_url %}
-                            <li><a href="{% url auth_register %}">Sign Up</a></li>
+                            {% url 'auth_login' as login_url %}
+                            <li><a href="{% url 'auth_register' %}">Sign Up</a></li>
                             {% ifequal request.path login_url %}
                             <li><a href="{{login_url}}">Login</a></li>
                             {% else %}

@@ -37,11 +37,11 @@
 			{% if user.is_authenticated %}
 		        {% trans 'Hello' %} <a href="{{ user.get_absolute_url }}"><b>{{ user.display_name|escape }}</b></a>
 		        {% block userlinks %}
-		        / <a href="{% url auth_logout %}">Logout</a>
+		        / <a href="{% url 'auth_logout' %}">Logout</a>
 				{% endblock %}
 			{% else %}
-			    <a href="{% url auth_register %}">Sign Up</a> or
-    	        <a href="{% url auth_login %}">Login</a>
+			    <a href="{% url 'auth_register' %}">Sign Up</a> or
+    	        <a href="{% url 'auth_login' %}">Login</a>
 	        {% endif %}
 		</div>
 		<div class="biogps-title" id='biogps-logo'>
