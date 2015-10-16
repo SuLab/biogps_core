@@ -1,8 +1,8 @@
 import os.path
 
 from django.conf.urls.defaults import *
-from django.views.generic.simple import direct_to_template
 from django.conf import settings
+from django.views.generic import TemplateView, RedirectView
 
 
 urlpatterns = patterns('biogps.www.views',
@@ -83,9 +83,9 @@ if getattr(settings, 'SERVE_ASSETS', False):
     urlpatterns += patterns('django.contrib.staticfiles.views',
         url(r'^assets/(?P<path>.*)$', 'serve'),
     )
-    urlpatterns += patterns('django.views.generic.simple',
-                           (r'^favicon.ico$', 'redirect_to', {'url': '/assets/img/favicon.ico'}),
-                           )
+    urlpatterns += patterns('',
+        url(r'^favicon.ico$', RedirectView.as_view(url='/assets/img/favicon.ico'))
+    )
 
 urlpatterns += patterns('biogps.layout.layout',
                         (r'^layout/$', 'layout'),
@@ -109,9 +109,10 @@ urlpatterns += patterns('biogps.genelist.genelist',
 )
 
 # Redirect /library/ to /plugin/
-urlpatterns += patterns('django.views.generic.simple',
-                       (r'^library/$', 'redirect_to', {'url': '/plugin/'}),
-                       )
+urlpatterns += patterns('',
+    url(r'^library/$',
+        RedirectView.as_view(url='/plugin/')),
+)
 
 # Library browsing and searching URLs
 urlpatterns += patterns('',
@@ -126,55 +127,59 @@ urlpatterns += patterns('',
 )
 
 # redirect /genereport/<geneid>/ to /gene/<geneid>/ for back-compatibility
-urlpatterns += patterns('django.views.generic.simple',
-                        ('^genereport/(?P<geneid>[\w-]+)/$', 'redirect_to', {'url': '/gene/%(geneid)s/'}),
-                       )
+urlpatterns += patterns('',
+    ('^genereport/(?P<geneid>[\w-]+)/$',
+     RedirectView.as_view(url='/gene/%(geneid)s/')),
+)
 
 #/robots.txt /dtds /biositemap.rdf
-urlpatterns += patterns('django.views.generic.simple',
-                       (r'^robots.txt$', 'direct_to_template',
-                         {'template': 'seo/robots.txt',
-                          'mimetype': 'text/plain'}),
-                       (r'dtds', 'redirect_to', {'url': 'http://biogps.org'}),    #RSS DTDs 301 re-direct
-                       (r'^biositemap.rdf$', 'direct_to_template',
-                         {'template': 'seo/biositemap.rdf',
-                          'mimetype': 'text/plain'}),
-                       )
+urlpatterns += patterns('',
+    (r'^robots.txt$',
+     TemplateView.as_view(template_name='seo/robots.txt',
+                          content_type='text/plain')),
+    (r'dtds',
+     RedirectView.as_view(url='http://biogps.org')),  #RSS DTDs 301 re-direct
+    (r'^biositemap.rdf$',
+     TemplateView.as_view(template_name='seo/biositemap.rdf',
+                          content_type='text/plain')),
+)
 
 
 ##For Google webmaster tool verification
 # for biogps.org verification
-urlpatterns += patterns('django.views.generic.simple',
-                        url(r'^googlee9fa2e25be0dbf05.html$','direct_to_template',    #cwu
-                            {'template': 'seo/googlee9fa2e25be0dbf05.html'}),
-                        url(r'^google6200b97dec6e7048.html$','direct_to_template',    #asu
-                            {'template': 'seo/google6200b97dec6e7048.html'}))
+urlpatterns += patterns('',
+    url(r'^googlee9fa2e25be0dbf05.html$',
+        TemplateView.as_view(template_name='seo/googlee9fa2e25be0dbf05.html')),  #cwu
+    url(r'^google6200b97dec6e7048.html$',
+        TemplateView.as_view(template_name='seo/google6200b97dec6e7048.html')),  #asu
+)
 
 ##For LiveSearch webmaster tool verification
-urlpatterns += patterns('django.views.generic.simple',
-                        url(r'^LiveSearchSiteAuth.xml$','direct_to_template',
-                            {'template': 'seo/LiveSearchSiteAuth.xml'}),    #cwu
-                       )
+urlpatterns += patterns('',
+    url(r'^LiveSearchSiteAuth.xml$',
+        TemplateView.as_view(template_name='seo/LiveSearchSiteAuth.xml')),  #cwu
+)
+
 ##For Bing webmaster tool verification
-urlpatterns += patterns('django.views.generic.simple',
-                        url(r'^BingSiteAuth.xml$','direct_to_template',
-                            {'template': 'seo/BingSiteAuth.xml'}),    #cwu
-                       )
+urlpatterns += patterns('',
+    url(r'^BingSiteAuth.xml$',
+        TemplateView.as_view(template_name='seo/BingSiteAuth.xml')),  #cwu
+)
 
 
 ##For Yahoo Search site expolorer verification
-urlpatterns += patterns('django.views.generic.simple',
-                        url(r'^y_key_ed4322ac06f730b4.html$','direct_to_template',
-                            {'template': 'seo/y_key_ed4322ac06f730b4.html'}),    #cwu. old for biogps.gnf.org
-                        url(r'^y_key_7d8d0625ecb11a35.html$','direct_to_template',
-                            {'template': 'seo/y_key_7d8d0625ecb11a35.html'}),    #cwu  new for biogps.org
+urlpatterns += patterns('',
+    url(r'^y_key_ed4322ac06f730b4.html$',
+        TemplateView.as_view(template_name='seo/y_key_ed4322ac06f730b4.html')),  #cwu. old for biogps.gnf.org
+    url(r'^y_key_7d8d0625ecb11a35.html$',
+        TemplateView.as_view(template_name='seo/y_key_7d8d0625ecb11a35.html')),  #cwu  new for biogps.org
+)
 
-                       )
 ##For Yahoo API Key verification
-urlpatterns += patterns('django.views.generic.simple',
-                        url(r'^MIVAECR.Jh0Gh6x1t0fQyA--.html$','direct_to_template',
-                            {'template': 'seo/empty.html'}),
-                       )
+urlpatterns += patterns('',
+    url(r'^MIVAECR.Jh0Gh6x1t0fQyA--.html$',
+        TemplateView.as_view(template_name='seo/empty.html')),
+)
 
 #urlpatterns += patterns('',
 #    url(r'^captcha/', include('captcha.urls')),
