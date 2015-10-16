@@ -3,7 +3,6 @@ from django.contrib import auth
 from django.core.urlresolvers import reverse
 from django.http import (HttpResponse, HttpResponseBadRequest,
                         HttpResponseRedirect)
-from django.http import str_to_unicode
 from django.template.loader import render_to_string
 from django.utils.encoding import smart_str
 from django.utils.http import urlquote_plus
@@ -71,7 +70,7 @@ def clean_next(next_url):
     DEFAULT_NEXT = '/'
     if not next_url:
         return DEFAULT_NEXT
-    next_url = str_to_unicode(urllib.unquote(next_url), 'utf-8')
+    next_url = unicode(urllib.unquote(next_url), 'utf-8')
     next_url = next_url.strip()
     #disallow redirect to external URL
     if next_url.lower().startswith('http'):
