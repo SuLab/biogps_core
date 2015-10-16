@@ -55,8 +55,8 @@ class Command(BaseCommand):
         #os.environ['DJANGO_SETTINGS_MODULE'] = 'biogps.settings_dev'
 
         path = {'/': app,
-                settings.MEDIA_URL: MediaHandler(settings.MEDIA_ROOT),
-                settings.ADMIN_MEDIA_PREFIX:
+                settings.STATIC_URL: MediaHandler(settings.STATIC_ROOT),
+                settings.MEDIA_URL:
                     MediaHandler(
                         os.path.join(django.contrib.admin.__path__[0],
                                      'media')
