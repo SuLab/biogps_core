@@ -16,11 +16,11 @@ import itertools
 import re
 import random
 import urlparse
+import hashlib
 
 from django.conf import settings
 from django.core.urlresolvers import get_callable
 from django.utils.cache import patch_vary_headers
-from django.utils.hashcompat import md5_constructor
 from django.utils.safestring import mark_safe
 
 _POST_FORM_RE = \
@@ -42,11 +42,11 @@ def _get_failure_view():
     return get_callable(settings.CSRF_FAILURE_VIEW)
 
 def _get_new_csrf_key():
-    return md5_constructor("%s%s"
+    return hashlib.md5("%s%s"
                 % (randrange(0, _MAX_CSRF_KEY), settings.SECRET_KEY)).hexdigest()
 
 def _make_legacy_session_token(session_id):
-    return md5_constructor(settings.SECRET_KEY + session_id).hexdigest()
+    return hashlib.md5(settings.SECRET_KEY + session_id).hexdigest()
 
 def get_token(request):
     """
