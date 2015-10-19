@@ -1,9 +1,10 @@
 '''
 The URLs listed here are served under /auth/, via https only in prod.
 '''
-from django.conf.urls.defaults import patterns, url
+from django.conf.urls import patterns, url
 from django.views.generic import TemplateView
 from django.contrib.auth import views as auth_views
+
 
 urlpatterns = patterns('biogps.auth2.views',
                        url(r'^$',

@@ -1,7 +1,7 @@
 '''
 The URLs listed here are served under /m/ and /mobile/ interchangeably.
 '''
-from django.conf.urls.defaults import *
+from django.conf.urls import patterns, url
 
 
 urlpatterns = patterns('biogps.mobile.views',
