@@ -3,7 +3,11 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.encoding import smart_unicode
 from helper import cvtPermission, json
 
+
 class Serializer(JSONSerializer):
+    def start_serialization(self):
+        self._current = None
+        self.objects = []
 
     def handle_field(self, obj, field):
         if field.value_to_string:
