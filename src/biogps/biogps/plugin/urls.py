@@ -1,4 +1,5 @@
-from django.conf.urls.defaults import *
+from django.conf.urls import patterns, url
+
 
 urlpatterns = patterns('biogps.plugin.plugin',
     url(r'^(?P<pluginid>\d+)/renderurl/$', 'render_plugin_url'),

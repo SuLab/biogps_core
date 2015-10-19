@@ -1,5 +1,6 @@
-from django.conf.urls.defaults import *
+from django.conf.urls import patterns
 from biogps.extdirect import views
+
 
 urlpatterns = patterns(
     '',

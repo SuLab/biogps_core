@@ -1,6 +1,6 @@
 import os.path
 
-from django.conf.urls.defaults import *
+from django.conf.urls import patterns, url, include
 from django.conf import settings
 from django.views.generic import TemplateView, RedirectView
 
