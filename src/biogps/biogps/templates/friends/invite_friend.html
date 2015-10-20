@@ -11,7 +11,7 @@
 {% endblock %}
 
 
-{% block breadcrumbs %}<div class="breadcrumbs"><a href="/">Home</a> &rsaquo; <a href="{%url friends %}">Friends</a> &rsaquo; Invite a friend</div>{% endblock %}
+{% block breadcrumbs %}<div class="breadcrumbs"><a href="/">Home</a> &rsaquo; <a href="{% url 'friends' %}">Friends</a> &rsaquo; Invite a friend</div>{% endblock %}
 
 {% block bodyclass %}login{% endblock %}
 {% block title %}Invite a Friend | BioGPS{% endblock %}
