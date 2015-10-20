@@ -41,7 +41,7 @@
                     <span class="notice_message">{{ notice.message|safe }}</span>
                      {% comment %} <span class="notice_time">{{ notice.added|localtime:account.timezone|time:"P" }}</span> {% endcomment %}
                       <span class="notice_time">{{ notice.added|time:"P" }}</span>
-                     {%if debug%}<a href="{%url notification_notice notice.id%}">more...</a>{%endif%}
+                     {%if debug%}<a href="{% url 'notification_notice' notice.id %}">more...</a>{%endif%}
                 </div>
             {% endfor %}
         {% endfor %}

@@ -41,7 +41,7 @@
 
     </script>
 {% endblock %}
-{% block breadcrumbs %}<div class="breadcrumbs"><a href="/">Home</a> &rsaquo; <a href="{%url friends %}">Friends</a> &rsaquo; Contacts</div>{% endblock %}
+{% block breadcrumbs %}<div class="breadcrumbs"><a href="/">Home</a> &rsaquo; <a href="{% url 'friends' %}">Friends</a> &rsaquo; Contacts</div>{% endblock %}
 {% block title %}Contacts | BioGPS{% endblock %}
 {% block content %}
 <div id="fixedWrapper" class="clearfix">

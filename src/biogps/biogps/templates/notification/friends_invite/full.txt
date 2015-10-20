@@ -6,7 +6,7 @@
  - {{name}}
 
 You can accept this invitation at:
-    http://{{ current_site }}{% url friends %} (login required)
+    http://{{ current_site }}{% url 'friends' %} (login required)
 
 To view {{invitation_from_user.first_name|default:invitation_from_user.username}}'s profile:
     http://{{ current_site }}{{ invitation_from_user.get_absolute_url }}

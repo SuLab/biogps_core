@@ -1,7 +1,7 @@
 {% extends "NEW/base_auth.html" %}
 {% load i18n %}
 
-{% block breadcrumbs %}<div class="breadcrumbs"><a href="/">Home</a> &rsaquo; <a href="{%url auth_dashboard %}">Account</a> &rsaquo; OpenID change</div>{% endblock %}
+{% block breadcrumbs %}<div class="breadcrumbs"><a href="/">Home</a> &rsaquo; <a href="{% url 'auth_dashboard' %}">Account</a> &rsaquo; OpenID change</div>{% endblock %}
 
 {% block bodyclass %}authpage login{% endblock %}
 {% block title %}Change OpenID | BioGPS{% endblock %}

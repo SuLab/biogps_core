@@ -5,7 +5,7 @@
 {% load timezone_filters %}
 
 {% block title %}View notice | BioGPS{% endblock %}
-{% block breadcrumbs %}<div class="breadcrumbs"><a href="/">Home</a> &rsaquo; <a href="{%url notification_notices %}">Notices</a> &rsaquo; View notice</div>{% endblock %}
+{% block breadcrumbs %}<div class="breadcrumbs"><a href="/">Home</a> &rsaquo; <a href="{% url 'notification_notices' %}">Notices</a> &rsaquo; View notice</div>{% endblock %}
 
 {% block extrahead %}
     <link rel="stylesheet" href="/assets/css/notification.css" />
