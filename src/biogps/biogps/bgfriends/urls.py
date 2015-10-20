@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, url
 
 
-urlpatterns = patterns('biogps.friends.views',
+urlpatterns = patterns('biogps.bgfriends.views',
     url(r'^invite/$', 'invite_friend', name='invite_friend'),
 
     url(r'^$', 'friends', name='friends'),
