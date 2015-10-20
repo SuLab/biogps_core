@@ -63,9 +63,11 @@ django-pagination==1.0.7
 django-ses==0.4.1
 django-tagging==0.3.1
 django-timezones==0.1.4
-django-urlauth==0.1.8   ##
-django-uwsgi-admin==0.1-alpha
 
+#django-urlauth==0.1.8
+-e hg+https://bitbucket.org/gustavoam/django-urlauth@8327c5cb75e2226d503d4886e67493ef3fa362cf#egg=django-urlauth   #this is a patched version for biogps
+
+django-uwsgi-admin==0.1-alpha
 
 ## The following Django apps with our own patches ##
 #django-account==0.1.14
