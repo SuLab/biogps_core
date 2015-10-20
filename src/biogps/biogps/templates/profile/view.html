@@ -52,10 +52,10 @@
                     You are friends with {{ vprofile.name|escape }}.
                 {% else %}
                     {% if inviteStatus %}
-                        <a href="{%url friends %}" class='roundButton'>Friend Request Sent</a>
+                        <a href="{% url 'friends' %}" class='roundButton'>Friend Request Sent</a>
                     {% else %}
                         {% if inverseInviteStatus %}
-                            {{ vprofile.name|escape }} sent you a <a href="{%url friends %}">Friend Request</a>
+                            {{ vprofile.name|escape }} sent you a <a href="{% url 'friends' %}">Friend Request</a>
                         {% else %}
                             {% if user.is_authenticated %}
                                 <div id="profileFriend"></div>
@@ -122,7 +122,7 @@
 
         {% if vprofile.show_friends %}
         <div class="roundBox">
-            <h2>{% if isOwner %}<a href="{%url friends %}">Friends on BioGPS &raquo;</a>{% else %}Friends on BioGPS{% endif %}</h2>
+            <h2>{% if isOwner %}<a href="{% url 'friends' %}">Friends on BioGPS &raquo;</a>{% else %}Friends on BioGPS{% endif %}</h2>
             {% if vfriends %}
             <ul class="friends_list">
                 {% for friend in vfriends %}
