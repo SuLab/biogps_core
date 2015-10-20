@@ -8,7 +8,8 @@ from django.utils.encoding import smart_str
 from django.utils.http import urlquote_plus
 from django.views.decorators.cache import never_cache
 from django.contrib.sites.models import Site
-from django.contrib.auth.models import User, Group, UNUSABLE_PASSWORD
+from django.contrib.auth.models import User, Group
+from django.contrib.auth.hashers import UNUSABLE_PASSWORD_PREFIX
 
 from biogps.utils.helper import (allowedrequestmethod,
                                loginrequired,
@@ -70,7 +71,7 @@ def clean_next(next_url):
     DEFAULT_NEXT = '/'
     if not next_url:
         return DEFAULT_NEXT
-    next_url = unicode(urllib.unquote(next_url), 'utf-8')
+    next_url = urllib.unquote(next_url).encode('utf-8')
     next_url = next_url.strip()
     #disallow redirect to external URL
     if next_url.lower().startswith('http'):
@@ -172,8 +173,8 @@ def register_openid(request, template_name='auth/registration_form.html'):
     form = RegistrationForm(initial={
         'username': nickname,
         'email': email,
-        'password': UNUSABLE_PASSWORD,
-        'password_dup': UNUSABLE_PASSWORD,
+        'password': UNUSABLE_PASSWORD_PREFIX,
+        'password_dup': UNUSABLE_PASSWORD_PREFIX,
         'first_name': firstname,
         'last_name': lastname,
     })

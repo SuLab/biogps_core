@@ -182,7 +182,7 @@ INSTALLED_APPS = (
     'flag',
     "pagination",
     "emailconfirmation",
-    "notification",
+    "pinax.notifications",
     "friends",
     "timezones",
     "authsub",
@@ -244,6 +244,8 @@ STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '*cp6weayxc%l908tl14len!t@w4ws*@j8*2s$$29h(rb55$791'
+
+PINAX_NOTIFICATIONS_LANGUAGE_MODEL = "bgutils.Language"
 
 # Sensitive settings get imported here.
 from settings_private import *
