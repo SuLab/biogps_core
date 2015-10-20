@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse
 from friends.models import (FriendshipInvitation, Friendship,
                             JoinInvitation, friend_set_for)
 from friends.forms import InviteFriendForm, JoinRequestForm
-from biogps.friends.forms import ImportVCardForm
+from biogps.bgfriends.forms import ImportVCardForm
 from biogps.auth2.forms import RegistrationForm
 from friends.importer import import_yahoo, import_google
 

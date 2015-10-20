@@ -209,7 +209,7 @@ INSTALLED_APPS = (
     'biogps.ext_plugins',
     'biogps.bgutils',
     'biogps.bgprofile',
-    'biogps.friends',
+    'biogps.bgfriends',
     'biogps.comment',
     'biogps.rating',
     'biogps.favorite',

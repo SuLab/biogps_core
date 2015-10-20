@@ -24,7 +24,7 @@ urlpatterns = patterns('biogps.www.views',
     (r'^utils/', include('biogps.bgutils.urls')),
     (r'^ext/', include('biogps.ext_plugins.urls')),
 
-    (r'^friends/', include('biogps.friends.urls')),
+    (r'^friends/', include('biogps.bgfriends.urls')),
     (r'^bbauth/', include('bbauth.urls')),
     (r'^authsub/', include('authsub.urls')),
     url(r'^notices/', include('pinax.notifications.urls')),
