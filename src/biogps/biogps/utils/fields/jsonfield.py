@@ -50,13 +50,14 @@ class JSONField(models.TextField):
             pass
         return value
 
-    def get_db_prep_value(self, value):
-        '''Convert our JSON object to a string before we save'''
+    def get_db_prep_value(self, value, connection, prepared=False):
+        ''' Convert our JSON object to a string before we save '''
         if value == "":
             return None
         if isinstance(value, dict) or isinstance(value, list):
             value = json.dumps(value, cls=DjangoJSONEncoder)
-        return super(JSONField, self).get_db_prep_value(value)
+        return super(JSONField, self).get_db_prep_value(
+            value, connection, prepared)
 
     def value_to_string(self, model_instance):
         '''Returns a string value of this field from the passed model_instance.
