@@ -1,5 +1,6 @@
 {% extends "NEW/base_site.html" %}
 {% load user_tags %}
+{% load cycle from future %}
 
 {% block title %}{{ current_obj.name_wrapped }} Dataset{% endblock %}
 {% block bodyclass %}current_obj{% endblock %}
