@@ -84,6 +84,8 @@ LOGIN_URL = '/auth/login'
 
 AUTH_PROFILE_MODULE = "auth2.UserProfile"
 
+SITE_ID = 1
+
 SERIALIZATION_MODULES = {
     'myjson': 'biogps.utils.jsonserializer',
     'jsonfix': 'biogps.utils.jsonserializer2',
@@ -175,7 +177,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.sitemaps',
-    'django.contrib.comments',
+    'django_comments',
 
     #third-party apps
     'tagging',

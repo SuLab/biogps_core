@@ -207,7 +207,9 @@ urlpatterns += patterns('django.contrib.sitemaps.views',
 
 # Comments
 urlpatterns += patterns('', (r'^comment/', include('biogps.comment.urls')),)
-urlpatterns += patterns('', (r'^comment/', include('django.contrib.comments.urls')),)
+urlpatterns += patterns('',
+    url(r'^comment/', include('django_comments.urls')),
+)
 
 # Ratings
 urlpatterns += patterns('biogps.rating.views',
