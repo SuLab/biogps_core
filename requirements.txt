@@ -74,7 +74,7 @@ django-uwsgi-admin==0.1-alpha
 
 #django-friends==0.1.5
 #-e git+git://github.com/newgene/django-friends.git#egg=django-friends   #this is a patched version for biogps
--e git+git://github.com/gustavoam/django-friends@75bec9c495de9fcd9447bede6e71e6d149453088#egg=django-friends   #this is a patched version for biogps
+-e git+git://github.com/gustavoam/django-friends@7a874fc34b152d004ccfdbd0c6c396706c9c4558#egg=django-friends   #this is a patched version for biogps
 
 #django-threadedcomments==0.5.3
 #-e git+git://github.com/newgene/django-threadedcomments.git#egg=django-threadedcomments   #this is a patched version for biogps
