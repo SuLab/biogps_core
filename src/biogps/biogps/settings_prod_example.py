@@ -20,7 +20,6 @@ WITH_HTTPS = True  # True if https is allowed, set to False if not, e.g., runnin
 #######################################
 
 DEBUG = False
-TEMPLATE_DEBUG = DEBUG
 SITE_ID = 1
 
 

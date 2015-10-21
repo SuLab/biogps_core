@@ -12,7 +12,6 @@ WITH_HTTPS = False  # True if https is allowed, set to False if not, e.g., runni
 #######################################
  
 DEBUG = True
-TEMPLATE_DEBUG = DEBUG
 SITE_ID = 1
 SERVE_ASSETS = 1
  
