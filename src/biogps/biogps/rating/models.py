@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericForeignKey
 
 
 class Rating(models.Model):
@@ -9,7 +9,7 @@ class Rating(models.Model):
     rating = models.PositiveSmallIntegerField()
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
-    content_object = generic.GenericForeignKey()
+    content_object = GenericForeignKey()
     submit_date = models.DateTimeField(auto_now=True)
     rating_scale = list([[1, "Very Poor"], [2, "Poor"], [3, "Good"], [4, "Very Good"],
                          [5, "Great"]])
