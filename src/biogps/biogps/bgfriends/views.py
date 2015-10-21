@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
-from django.contrib.comments import Comment
+from django_comments.models import Comment
 from django.core.urlresolvers import reverse
 from friends.models import (FriendshipInvitation, Friendship,
                             JoinInvitation, friend_set_for)
