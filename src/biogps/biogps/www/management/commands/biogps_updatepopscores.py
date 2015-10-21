@@ -11,7 +11,7 @@ class Command(NoArgsCommand):
         make_option('--batch', '-b', action='store_true', dest='batch',
             help='Run in batch mode without confirmation.'),
         )
-    requires_model_validation = True
+    requires_system_checks = True
 
     def handle_noargs(self, **options):
 
