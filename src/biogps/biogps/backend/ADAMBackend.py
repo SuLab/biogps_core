@@ -69,7 +69,7 @@ class ADAMBackend(object):
         user.save()
 
         try:
-            userprofile=user.get_profile()
+            userprofile=user.profile
         except UserProfile.DoesNotExist:
             userprofile = UserProfile(user_id = user.id)
 

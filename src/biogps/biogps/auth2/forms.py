@@ -140,7 +140,7 @@ class EditUserInfoForm(forms.Form):
                 new_value = self.cleaned_data.get(attr, None)
                 if new_value:
                     if attr == 'affiliation':
-                        profile = self.user.get_profile()
+                        profile = self.user.profile
                         profile.affiliation = new_value
                         profile.save()
                     else:

@@ -92,14 +92,14 @@ def layout(request, query=None):
         if format not in get_serializer_formats():
             format = 'json'
         if format == 'json':
-            #return HttpResponse(serialize('jsonfix', query_result),mimetype=MIMETYPE.get(format, None))
-            return HttpResponse(serialize('myjson', query_result, extra_fields={'totalCount': query_total_cnt}, extra_itemfields=extra_itemfields), mimetype=MIMETYPE.get(format, None))
+            #return HttpResponse(serialize('jsonfix', query_result),content_type=MIMETYPE.get(format, None))
+            return HttpResponse(serialize('myjson', query_result, extra_fields={'totalCount': query_total_cnt}, extra_itemfields=extra_itemfields), content_type=MIMETYPE.get(format, None))
         else:
-            return HttpResponse(serialize(STD_FORMAT.get(format, format), query_result), mimetype=MIMETYPE.get(format, None))
+            return HttpResponse(serialize(STD_FORMAT.get(format, format), query_result), content_type=MIMETYPE.get(format, None))
 
     elif request.method == 'POST':
         if request.user.is_anonymous():
-            return HttpResponse(json.dumps(ANONYMOUS_USER_ERROR), mimetype=MIMETYPE['json'])
+            return HttpResponse(json.dumps(ANONYMOUS_USER_ERROR), content_type=MIMETYPE['json'])
 
         if query == 'add':
             return _layout_add(request)
@@ -113,7 +113,7 @@ def layout(request, query=None):
     elif request.method == 'PUT':
         #update a record
         if request.user.is_anonymous():
-            return HttpResponse(json.dumps(ANONYMOUS_USER_ERROR), mimetype=MIMETYPE['json'])
+            return HttpResponse(json.dumps(ANONYMOUS_USER_ERROR), content_type=MIMETYPE['json'])
 
 #        authorid = request.user.sid
 #        layout_id = query
@@ -137,12 +137,12 @@ def layout(request, query=None):
 #            #data = {'success': False,
 #            #        'errors': "Layout does not exist."}
 #
-#        return HttpResponse(json.dumps(data), mimetype=MIMETYPE['json'])
+#        return HttpResponse(json.dumps(data), content_type=MIMETYPE['json'])
 
     elif request.method == 'DELETE':
         #delete a layout
         if request.user.is_anonymous():
-            return HttpResponse(json.dumps(ANONYMOUS_USER_ERROR), mimetype=MIMETYPE['json'])
+            return HttpResponse(json.dumps(ANONYMOUS_USER_ERROR), content_type=MIMETYPE['json'])
 
 #        authorid = request.user.sid
 #        layout_id = query
@@ -155,7 +155,7 @@ def layout(request, query=None):
 #            #data = {'success': False,
 #            #        'errors': "Layout does not exist."}
 #
-#        return HttpResponse(json.dumps(data), mimetype=MIMETYPE['json'])
+#        return HttpResponse(json.dumps(data), content_type=MIMETYPE['json'])
 #
     else:
         return HttpResponseBadRequest('Unsupported request method "%s"' % request.method)
@@ -290,10 +290,10 @@ def layoutlist(request, query=None):
             format = 'json'
         if format == 'json':
             #using specialized jsonserializer
-            return HttpResponse(serialize('myjson', query_result, extra_fields={'totalCount': query_total_cnt}, extra_itemfields=extra_itemfields), mimetype=MIMETYPE.get(format, None))
+            return HttpResponse(serialize('myjson', query_result, extra_fields={'totalCount': query_total_cnt}, extra_itemfields=extra_itemfields), content_type=MIMETYPE.get(format, None))
         else:
-            return HttpResponse(serialize(STD_FORMAT.get(format, format), query_result), mimetype=MIMETYPE.get(format, None))
-        #return HttpResponse(serialize(STD_FORMAT.get(format, format), query_result),mimetype=MIMETYPE.get(format, None))
+            return HttpResponse(serialize(STD_FORMAT.get(format, format), query_result), content_type=MIMETYPE.get(format, None))
+        #return HttpResponse(serialize(STD_FORMAT.get(format, format), query_result),content_type=MIMETYPE.get(format, None))
 
 
 def get_my_layouts(user):
@@ -310,7 +310,7 @@ def get_shared_layouts(user, userselectedonly=False):
         #query_result = BiogpsGenereportLayout.objects.get_shared2(user)
         query_result = BiogpsGenereportLayout.objects.get_available(user, excludemine=True)
     else:
-        shared_layouts = user.profile.get('sharedlayouts', [])
+        shared_layouts = user.uiprofile.get('sharedlayouts', [])
         query_result = BiogpsGenereportLayout.objects.filter(id__in=shared_layouts).exclude(ownerprofile__sid=user.sid)
 
     return query_result
@@ -340,7 +340,7 @@ def _layout_name_exists(layout_name, user):
 @loginrequired
 def _layout_add(request):
     #authorid = request.user.sid
-    #ownerprofile = request.user.get_profile()
+    #ownerprofile = request.user.profile
     #author = request.user.get_full_name() or request.user.username
     layout_name = smart_unicode(request.POST['layout_name'].strip())
     layout_data = request.POST['layout_data']
@@ -353,7 +353,7 @@ def _layout_add(request):
     else:
         layout = BiogpsGenereportLayout(layout_name=layout_name,
                                         #authorid = authorid,
-                                        ownerprofile=request.user.get_profile(),
+                                        ownerprofile=request.user.profile,
                                         #author = author,
                                         description=description)
 
@@ -483,7 +483,7 @@ def layout_tree(request):
                 children.append(child)
         elif node.split('/') == ['', 'sharedlayout']:
             query_result = get_shared_layouts(request.user, userselectedonly=True)
-#            shared_layouts = request.adamuser.profile.get('sharedlayouts', [])
+#            shared_layouts = request.adamuser.uiprofile.get('sharedlayouts', [])
 #            query_result = BiogpsGenereportLayout.objects.filter(id__in=shared_layouts)
             for _layout in query_result:
                 child = dict(text=_layout.layout_name,
@@ -520,9 +520,9 @@ def layout_tree(request):
 #            query_result = getall(request.adamuser)
 #        else:
 #            #shared
-#            if request.adamuser.profile.has_key('sharedlayouts') and type(request.adamuser.profile['sharedlayouts']) is type([]):
-#                query_result = BiogpsGenereportLayout.objects.filter(id__in=request.adamuser.profile['sharedlayouts'])
-        return HttpResponse(json.dumps(children), mimetype='application/json')
+#            if request.adamuser.uiprofile.has_key('sharedlayouts') and type(request.adamuser.profile['sharedlayouts']) is type([]):
+#                query_result = BiogpsGenereportLayout.objects.filter(id__in=request.adamuser.uiprofile['sharedlayouts'])
+        return HttpResponse(json.dumps(children), content_type='application/json')
     else:
         return HttpResponseBadRequest('Unsupported request method "%s"' % request.method)
 

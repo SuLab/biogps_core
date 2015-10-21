@@ -55,7 +55,7 @@ def json_error(errmsg, status=200, **extra):
     '''
     error = {'success': False,
              'error': errmsg}
-    return HttpResponse(json.dumps(error), mimetype=MIMETYPE['json'], status=status)
+    return HttpResponse(json.dumps(error), content_type=MIMETYPE['json'], status=status)
 
 
 class UnSupportedFormat(Exception):
@@ -196,7 +196,7 @@ class FormattedResponse():
                                           attrs=self.serialize_attrs,
                                           model_serializer=self.model_serializer,
                                           **self.model_serializer_kwargs),
-                                mimetype=MIMETYPE.get(format, None))
+                                content_type=MIMETYPE.get(format, None))
             if format == 'json':
                 #handle jsonp callback case
                 jsonp_callback = self._request.GET.get('callback', '')

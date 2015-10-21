@@ -47,7 +47,7 @@ class UserProfile(models.Model):
     '''
     This model provides extra information for each user.
     '''
-    user = models.ForeignKey(User, unique=True)
+    user = models.OneToOneField(User, related_name='profile')
     sid = models.CharField(max_length=100,blank=True,unique=True, db_index=True)
     affiliation = models.CharField(max_length=100,blank=True)
     roles = models.CharField(max_length=200,blank=True)
@@ -94,11 +94,11 @@ class UserProfile(models.Model):
 # template system as well, allowing calls like:
 #       {{ user.display_name|escape }}
 def _extend_user(user):
-    _profile = user.get_profile()
+    _profile = user.profile
     setattr(user, 'sid', _profile.sid)
     setattr(user, 'affiliation', _profile.affiliation)
     setattr(user, 'roles', _profile.get_roles())
-    setattr(user, 'profile', _profile.get_uiprofile_or_create())
+    setattr(user, 'uiprofile', _profile.get_uiprofile_or_create())
     setattr(user, 'is_gnf_user', _profile.is_gnf_user())
     setattr(user, 'is_nvs_user', _profile.is_nvs_user())
     setattr(user, 'myplugins', _profile.biogpsplugin_set)
@@ -136,7 +136,7 @@ def _extend_user(user):
     setattr(user, 'get_valid_name', new.instancemethod(get_valid_name, user, User))
 
     def save_uiprofile(user, uiprofile):
-        _profile = user.get_profile()
+        _profile = user.profile
         _profile.uiprofile = uiprofile
         _profile.save()
     setattr(user, 'save_uiprofile', new.instancemethod(save_uiprofile, user,User))
@@ -251,8 +251,8 @@ class UserFlag(models.Model):
 class UserMigration(models.Model):
     user = models.OneToOneField(User, related_name='migration')
     date = models.DateTimeField(auto_now_add=True)
-    migrated = models.BooleanField()    #mark user migrated
-    to_delete = models.BooleanField(blank=True)    #mark user to be deleted
+    migrated = models.BooleanField(default=False)    #mark user migrated
+    to_delete = models.NullBooleanField()    #mark user to be deleted
     flag = models.CharField(max_length=100, blank=True)  # a placeholder to keep any other flags
 
 #    class Meta:

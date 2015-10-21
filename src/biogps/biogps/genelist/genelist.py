@@ -56,7 +56,7 @@ class GeneListResource(Resource):
         genelist = BiogpsGeneList(name=name,
                                 data=data,
                                 size=len(data),
-                                ownerprofile=user.get_profile(),
+                                ownerprofile=user.profile,
                                 #author=user.get_full_name() or user.username,
                                 description=description)
         if options:
@@ -405,7 +405,7 @@ def genelist_download(request, format='csv'):
 
     if format == 'csv':
         output_filename = 'saved_genelists.csv'
-        response = HttpResponse(mimetype='text/csv')
+        response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename=' + output_filename
         response.write('\r\n'.join(['%s,%s' % row for row in gene_li]))
         return response

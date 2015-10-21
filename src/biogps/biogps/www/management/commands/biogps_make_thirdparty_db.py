@@ -53,7 +53,9 @@ def make_dev():
         from django.contrib.auth.models import Group
         from friends.models import (FriendshipInvitation, Friendship, Contact,
                                     JoinInvitation, FriendshipInvitationHistory)
-        from south.models import MigrationHistory
+        # TODO: what about this?? needs to be reviewed
+        from django.db.migrations.recorder import MigrationRecorder
+        MigrationHistory = MigrationRecorder.Migration
         from flag.models import FlaggedContent, FlagInstance
         for _model in [BiogpsGeneList, BiogpsAltLayout,
                        FriendshipInvitation, Friendship, Contact,

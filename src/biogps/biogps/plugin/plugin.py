@@ -40,7 +40,7 @@ def plugin(request, query=None):
     searchable fields: author, url, description, type, tags
     """
 #    if request.adamuser.is_anonymous():
-#        return HttpResponse(json.dumps(ANONYMOUS_USER_ERROR), mimetype=MIMETYPE['json'])
+#        return HttpResponse(json.dumps(ANONYMOUS_USER_ERROR), content_type=MIMETYPE['json'])
     sortable_fields = ['author', 'created', 'lastmodified', 'title', 'type', 'url', 'popularity']
 
     if request.method == 'GET':
@@ -155,10 +155,10 @@ def plugin(request, query=None):
             format = 'json'
         if format == 'json':
             #using specialized jsonserializer
-            return HttpResponse(serialize('myjson', query_result, extra_fields={'totalCount': query_total_cnt}, extra_itemfields=extra_itemfields), mimetype=MIMETYPE.get(format, None))
+            return HttpResponse(serialize('myjson', query_result, extra_fields={'totalCount': query_total_cnt}, extra_itemfields=extra_itemfields), content_type=MIMETYPE.get(format, None))
         else:
-            return HttpResponse(serialize(STD_FORMAT.get(format, format), query_result), mimetype=MIMETYPE.get(format, None))
-        #return HttpResponse(serialize(STD_FORMAT.get(format, format), query_result),mimetype=MIMETYPE.get(format, None))
+            return HttpResponse(serialize(STD_FORMAT.get(format, format), query_result), content_type=MIMETYPE.get(format, None))
+        #return HttpResponse(serialize(STD_FORMAT.get(format, format), query_result),content_type=MIMETYPE.get(format, None))
 
     elif request.method == 'POST':
 
@@ -179,7 +179,7 @@ def plugin(request, query=None):
 #                              description = description)
 #        plugin.save()
 #        data = {'success': True}
-#        return HttpResponse(json.dumps(data), mimetype=MIMETYPE['json'])
+#        return HttpResponse(json.dumps(data), content_type=MIMETYPE['json'])
 
         if query == 'add':
             return _plugin_add(request)
@@ -303,7 +303,7 @@ def _plugin_add(request, sendemail=True):
     plugin = BiogpsPlugin(title=title,
                           url=url,
                           type=type,
-                          ownerprofile=request.user.get_profile(),
+                          ownerprofile=request.user.profile,
                           description=description)
     if options:
         plugin.options = options
@@ -338,7 +338,7 @@ def _plugin_add(request, sendemail=True):
 
 @loginrequired
 def _plugin_update(request):
-#    ownerprofile = request.user.get_profile()
+#    ownerprofile = request.user.profile
     plugin_id = smart_unicode(request.POST['plugin_id'])
     rolepermission = request.POST.get('rolepermission', None)
     userpermission = request.POST.get('userpermission', None)
@@ -390,7 +390,7 @@ def _plugin_update(request):
 @loginrequired
 def _plugin_delete(request):
     #authorid = request.user.sid
-#    ownerprofile = request.user.get_profile()
+#    ownerprofile = request.user.profile
     plugin_id = request.POST['plugin_id']
     try:
 #        plugin = BiogpsPlugin.objects.get(ownerprofile__sid = ownerprofile.sid,
@@ -414,11 +414,11 @@ def _plugin_delete(request):
 
 #def getall(request):
 #    if request.adamuser.is_anonymous():
-#        return HttpResponse(json.dumps(ANONYMOUS_USER_ERROR), mimetype=MIMETYPE['json'])
+#        return HttpResponse(json.dumps(ANONYMOUS_USER_ERROR), content_type=MIMETYPE['json'])
 #
 #    format = request.GET.get('format', 'json')
 #    all_plugins = BiogpsPlugin.objects.all()
-#    return HttpResponse(serialize(STD_FORMAT.get(format, format), all_plugins),mimetype=MIMETYPE.get(format, None))
+#    return HttpResponse(serialize(STD_FORMAT.get(format, format), all_plugins),content_type=MIMETYPE.get(format, None))
 
 
 class PluginSearchForm(forms.Form):

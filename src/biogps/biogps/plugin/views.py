@@ -137,7 +137,7 @@ class PluginLibraryView(RestView):
             # proceed with saving the plugin
             plugin = f.save(commit=False)
             plugin.type = 'iframe'
-            plugin.ownerprofile = request.user.get_profile()
+            plugin.ownerprofile = request.user.profile
             plugin.save()
 
             if rolepermission or userpermission:

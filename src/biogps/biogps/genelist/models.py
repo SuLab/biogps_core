@@ -56,14 +56,3 @@ except tagging.AlreadyRegistered:
     pass
 
 set_on_the_fly_indexing(BiogpsGeneList)
-
-from south.modelsinspector import add_introspection_rules
-add_introspection_rules([
-    (
-        [BiogpsGeneList], # Class(es) these apply to
-        [],         # Positional arguments (not used)
-        {           # Keyword argument
-            "slug": ["slug", {}],
-        },
-    ),
-], ["^biogps\.dataset\.models\.BiogpsGeneList"])
