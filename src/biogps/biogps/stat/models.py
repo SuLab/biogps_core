@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericForeignKey
 
 
 class BiogpsStatManager(models.Manager):
@@ -26,7 +26,7 @@ class BiogpsStatManager(models.Manager):
 class BiogpsStat(models.Model):
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
-    content_object = generic.GenericForeignKey()
+    content_object = GenericForeignKey()
     interval = models.CharField(blank=False, max_length=100)
     count = models.IntegerField()
     rank = models.IntegerField()

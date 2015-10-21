@@ -11,7 +11,7 @@ from django.utils.text import capfirst
 from biogps.www.models import BiogpsPermission
 from biogps.utils.const import (ROLEPERMISSION_VALUES,
                                 ROLEPERMISSION_SHORTNAMES)
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from biogps.rating.models import Rating
 from biogps.favorite.models import Favorite
@@ -420,7 +420,7 @@ class BioGPSModel(ModelWithPermission):
 
     objects = PermissionManager()
 
-    ratings = generic.GenericRelation(Rating)
+    ratings = GenericRelation(Rating)
 
     def check_user_favorite(self, user, con_type):
         '''Check if user favorited this object.'''
