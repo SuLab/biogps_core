@@ -117,21 +117,31 @@ MEDIA_ROOT = os.path.join(ROOT_PATH, 'media')
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
 MEDIA_URL = '/media/'
 
-# List of callables that know how to import templates from various sources.
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'biogps.utils.template.app_prefixed_loader',
-    'django.template.loaders.app_directories.Loader',
-)
-
-TEMPLATE_CONTEXT_PROCESSORS = ( "django.contrib.auth.context_processors.auth",
-                                "django.contrib.messages.context_processors.messages",
-                                "django.core.context_processors.debug",
-                                "django.core.context_processors.i18n",
-                                "django.core.context_processors.media",
-                                'django.core.context_processors.static',
-                                "django.core.context_processors.request",
-                                "biogps.utils.context_processors.base_processor")
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [
+            os.path.join(ROOT_PATH, 'biogps', 'biogps', 'templates'),
+        ],
+        'OPTIONS': {
+            'context_processors': [
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.debug',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
+                'django.template.context_processors.request',
+                'biogps.utils.context_processors.base_processor',
+            ],
+            'loaders': [
+                'django.template.loaders.filesystem.Loader',
+                'biogps.utils.template.BiogpsLoader',
+                'django.template.loaders.app_directories.Loader',
+            ]
+        },
+    },
+]
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.gzip.GZipMiddleware',
@@ -155,13 +165,6 @@ MIDDLEWARE_CLASSES = (
 )
 
 ROOT_URLCONF = 'biogps.urls'
-
-TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-    os.path.join(ROOT_PATH, 'biogps', 'biogps', 'templates'),
-)
 
 WSGI_APPLICATION = 'biogps.wsgi.application'
 
