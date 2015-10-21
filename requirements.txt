@@ -4,7 +4,7 @@
 # Required python modules for BioGPS app running in prod mode
 # To install all requirements, run:
 #    pip install -r requirements.txt
-Django==1.7.10
+Django==1.8.5
 thrift==0.8.0
 Werkzeug==0.8.3
 boto==2.5.1
@@ -60,7 +60,7 @@ django-mailer==0.1.0
 pinax-notifications==3.0.0
 django-pagination==1.0.7
 django-ses==0.4.1
-django-tagging==0.3.1
+django-tagging==0.3.6
 django-timezones==0.1.4
 
 #django-urlauth==0.1.8
