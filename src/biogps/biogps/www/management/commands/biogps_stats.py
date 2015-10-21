@@ -15,7 +15,7 @@ from biogps.genelist.models import BiogpsGeneList
 class Command(NoArgsCommand):
     help = "This command get some latest stats for BioGPS"
 
-    requires_model_validation = True
+    requires_system_checks = True
 
     def handle_noargs(self, **options):
         get_stats()

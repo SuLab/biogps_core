@@ -11,7 +11,7 @@ from django.db import transaction
 class Command(NoArgsCommand):
     help = "A utility script to make a prod/dev db OK for third-party installation by stripping all sensitive data."
 
-    requires_model_validation = True
+    requires_system_checks = True
 
     def handle_noargs(self, **options):
         make_dev()

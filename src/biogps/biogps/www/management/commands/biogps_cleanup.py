@@ -3,7 +3,7 @@ from django.core.management.base import NoArgsCommand
 class Command(NoArgsCommand):
     help = "A weekly clean-up utility for BioGPS app. It cleans both expired session data and httplib2 cache files."
 
-    requires_model_validation = True
+    requires_system_checks = True
 
     def handle_noargs(self, **options):
         from django.conf import settings

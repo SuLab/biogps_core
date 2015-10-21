@@ -19,7 +19,7 @@ SITEMAP_TABLE = "WWW_BIOGPSROOTNODE"
 class Command(NoArgsCommand):
     help = "This command updates WWW_BIOGPSROOTNODE table for sitemap.xml generation from a CouchDB host"
 
-    requires_model_validation = True
+    requires_system_checks = True
     option_list = NoArgsCommand.option_list + (
             make_option( "-c", "--couch", dest="couch_host", default=None, help='Specify couchdb host (default taken from settings)'),
             make_option( "-d", "--db", dest="dbname", default="genedoc", help='Specify database name (default "genedoc")')
