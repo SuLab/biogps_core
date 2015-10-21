@@ -194,18 +194,6 @@ class BiogpsPlugin(BioGPSModel):
         self.update_options(certified_owner=True)
 
 
-from south.modelsinspector import add_introspection_rules
-add_introspection_rules([
-    (
-        [BiogpsPlugin], # Class(es) these apply to
-        [],         # Positional arguments (not used)
-        {           # Keyword argument
-            "slug": ["slug", {}],
-        },
-    ),
-], ["^biogps\.plugin\.models\.BiogpsPlugin"])
-
-
 def init_handler(sender, **kwargs):
     '''Handle post-initialization for model.
        Initialize species field when backwards compatibility is needed.

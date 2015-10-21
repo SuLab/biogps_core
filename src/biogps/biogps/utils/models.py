@@ -396,7 +396,7 @@ class BioGPSModel(ModelWithPermission):
     def get_owner(self):
         return self.ownerprofile.user
     def set_owner(self, user):
-        self.ownerprofile = user.get_profile()
+        self.ownerprofile = user.profile
     owner = property(get_owner, set_owner)
 
     @property

@@ -17,6 +17,6 @@ syntax: regexp
 ^sqlite/
 ^doc/
 #^site-packages/
-/migrations/
+#/migrations/
 ^src/.settings/
 ^src/assets/js/ext/

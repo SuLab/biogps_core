@@ -41,7 +41,7 @@ def _create_test_plugin():
     plugin = BiogpsPlugin(title=data['title'],
                           url=data['url'],
                           type=data['type'],
-                          ownerprofile=user.get_profile(),
+                          ownerprofile=user.profile,
                           description=data['description'])
     plugin.save()
 #    setObjectPermission(plugin, data['rolepermission'])

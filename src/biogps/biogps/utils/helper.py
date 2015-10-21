@@ -292,7 +292,7 @@ def loginrequired(fn):
         elif len(args)>1 and isinstance(args[1], HttpRequest):
             request = args[1]
         if hasattr(request, 'user') and request.user.is_anonymous():
-            return HttpResponse(json.dumps(ANONYMOUS_USER_ERROR), mimetype=MIMETYPE['json'])
+            return HttpResponse(json.dumps(ANONYMOUS_USER_ERROR), content_type=MIMETYPE['json'])
         else:
             return fn(*args, **kwargs)
     return check_usr
@@ -408,7 +408,7 @@ def getObjectPermission(request, object_type, object_id):
         permission = None
     else:
         permission = list2dict([(obj['permission_type'], obj['permission_value']) for obj in _permission], 0, alwayslist=1)
-    return HttpResponse(json.dumps(permission), mimetype=MIMETYPE['json'])
+    return HttpResponse(json.dumps(permission), content_type=MIMETYPE['json'])
 
 
 def setObjectPermission(object, roles=None, users=None, sep=','):
@@ -470,7 +470,7 @@ def ExtError(errmsg):
     '''Return a Json-ized dictionary favored by EXTJS with given errmsg.'''
     error = {'success': False,
              'error': errmsg}
-    return HttpResponse(json.dumps(error), mimetype=MIMETYPE['json'])
+    return HttpResponse(json.dumps(error), content_type=MIMETYPE['json'])
 
 def biogpsError(errmsg, format='html'):
     '''if formate is 'html', return a full html page for errmsg using biogps_error.html template;

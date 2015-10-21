@@ -24,7 +24,7 @@ def _create_test_genelist(i=0):
     genelist = BiogpsGeneList(name=s['name'],
                             data=s['data'],
                             size=len(s['data']),
-                            ownerprofile=user.get_profile())
+                            ownerprofile=user.profile)
     genelist.save()
     return genelist.id
 
@@ -34,7 +34,7 @@ def _cleanup_test_genelist():
     '''remove created test genelists.'''
     user = User.objects.get(username='cwudemo')
     BiogpsGeneList.objects.filter(name__startswith='nosetest_genelist',
-                                 ownerprofile=user.get_profile().sid).delete()
+                                 ownerprofile=user.profile.sid).delete()
 
 
 @nottest

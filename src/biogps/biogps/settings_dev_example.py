@@ -90,10 +90,6 @@ DEBUG_TOOLBAR_PANELS = (
 TEST_RUNNER='biogps.test.nose_runner.run_tests'
 NOSE_ARGS = ['--exe']
 
-INSTALLED_APPS += (
-    'south',
-)
-
 #EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
 #COMPRESS = True
 #COMPRESS_AUTO = False

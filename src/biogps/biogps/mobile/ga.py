@@ -110,7 +110,6 @@ def write_gif_data():
                 }
 
     response = HttpResponse(content = GIF_DATA,
-                            mimetype = 'image/gif',
                             content_type = 'image/gif' )
     response['Cache-Control'] = 'private, no-cache, no-cache=Set-Cookie, proxy-revalidate'
     response['Pragma'] = 'no-cache'

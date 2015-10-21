@@ -64,10 +64,6 @@ TEST_RUNNER='biogps.test.nose_runner.run_tests'
 NOSE_ARGS = ['--exe']
  
  
-INSTALLED_APPS += (
-    'south',
-)
- 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 CACHES['default'] = {
     'BACKEND': 'django.core.cache.backends.dummy.DummyCache',

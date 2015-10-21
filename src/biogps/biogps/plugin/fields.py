@@ -63,6 +63,3 @@ class SpeciesField(models.CharField):
                 if s not in value:
                     return False
         return True
-
-from south.modelsinspector import add_introspection_rules
-add_introspection_rules([], ["^biogps\.plugin\.fields\.SpeciesField"])

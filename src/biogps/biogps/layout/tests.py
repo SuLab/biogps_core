@@ -25,7 +25,7 @@ def _create_test_layout():
     test_layout['layout_data'] = _e(test_layout['layout_data'])
     user = User.objects.get(username='cwudemo')
     layout = BiogpsGenereportLayout(layout_name=_test_layout['layout_name'],
-                                    ownerprofile=user.get_profile(),
+                                    ownerprofile=user.profile,
                                     description=_test_layout['description'])
     layout.save()
     layout.layout_data = _test_layout['layout_data']

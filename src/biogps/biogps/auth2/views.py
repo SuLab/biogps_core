@@ -602,7 +602,7 @@ def getuserdata(request):
                         can_share=user.groups.filter(name='can_share').count() > 0,
                         is_gnf_user=user.is_gnf_user,
                         is_nvs_user=user.is_nvs_user,
-                        profile=user.profile)
+                        profile=user.uiprofile)
     else:
         userdata = {}
 
@@ -627,7 +627,7 @@ def save_uiprofile(request):
             return HttpResponseBadRequest('Can not save user profile.')
 
         json_response = json.dumps({'success': True})
-        return HttpResponse(json_response, mimetype='application/json')
+        return HttpResponse(json_response, content_type='application/json')
     else:
         return HttpResponseBadRequest('Missing required parameter.')
 
