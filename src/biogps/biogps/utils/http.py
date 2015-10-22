@@ -209,7 +209,7 @@ class FormattedResponse():
                 context = None
             else:
                 if settings.DEBUG:
-                    from django.core.context_processors import request as request_processor
+                    from django.template.context_processors import request as request_processor
                     context = RequestContext(self._request, {}, (request_processor,))
                 else:
                     context = RequestContext(self._request)
