@@ -1,18 +1,19 @@
 '''
 The URLs listed here are served under /authx/ as ajax services via http.
 '''
-from django.conf.urls import patterns, url
+from django.conf.urls import url
+
+from biogps.auth2 import views
 
 
-urlpatterns = patterns('biogps.auth2.views',
-
-                       url(r'^logout/$',
-                           'logout',
-                           name='auth_logout_x'),
-                       url(r'^getuserdata$',
-                           'getuserdata',
-                           name='auth_getuserdata'),
-                       url(r'^saveprofile$',
-                           'save_uiprofile',
-                           name='auth_saveprofile'),
-                       )
+urlpatterns = [
+    url(r'^logout/$',
+        views.logout,
+        name='auth_logout_x'),
+    url(r'^getuserdata$',
+        views.getuserdata,
+        name='auth_getuserdata'),
+    url(r'^saveprofile$',
+        views.save_uiprofile,
+        name='auth_saveprofile'),
+]

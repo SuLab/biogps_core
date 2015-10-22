@@ -1,12 +1,14 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from django.conf import settings
 
+from biogps.gene import views
 
-urlpatterns = patterns('biogps.gene.views',
-    url(r'^(?P<geneid>[\w\-\.]+)/$', 'genereport', name='genereport'),
-)
+
+urlpatterns = [
+    url(r'^(?P<geneid>[\w\-\.]+)/$', views.genereport, name='genereport'),
+]
 
 if settings.RELEASE_MODE == 'dev':
-    urlpatterns += patterns('biogps.gene.views',
-                            (r'^bot/(?P<geneid>.+)/$', 'genereport_for_bot'),
-    )
+    urlpatterns += [
+        url(r'^bot/(?P<geneid>.+)/$', views.genereport_for_bot),
+    ]

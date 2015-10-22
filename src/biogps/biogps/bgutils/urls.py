@@ -1,13 +1,15 @@
-from django.conf.urls import patterns
+from django.conf.urls import url
+
+from biogps.bgutils import views
 
 
-urlpatterns = patterns('biogps.bgutils.views',
+urlpatterns = [
     # Example:
-    # (r'^biogps/', include('biogps.foo.urls')),
-     (r'^proxy', 'proxy'),
-     (r'^errorreport/(?P<errorreport_id>.+)/', 'errorreport'),
-     (r'^showchart/$', 'showchart'),
-     (r'^feedbox/$', 'feedbox'),
-     (r'^d9d7fd01be668950e3ea61c574e8eca9/$', 'set_domain_cookie'),
-     #(r'^getform', 'getform'),
-)
+    # url(r'^biogps/', include('biogps.foo.urls')),
+    url(r'^proxy', views.proxy),
+    url(r'^errorreport/(?P<errorreport_id>.+)/', views.errorreport),
+    url(r'^showchart/$', views.showchart),
+    url(r'^feedbox/$', views.feedbox),
+    url(r'^d9d7fd01be668950e3ea61c574e8eca9/$', views.set_domain_cookie),
+    # url(r'^getform', views.getform),
+]

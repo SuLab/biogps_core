@@ -1,24 +1,25 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
+
+from biogps.ext_plugins import views
 
 
-urlpatterns = patterns('biogps.ext_plugins.views',
-                       url(r'^geneviewer/$',
-                           'grGeneViewer',
-                           name='grGeneViewer'),
+urlpatterns = [
+    url(r'^geneviewer/$',
+        views.grGeneViewer,
+        name='grGeneViewer'),
 
-                       url(r'^description/$',
-                           'grDescription',
-                           name='grDescription'),
-                       url(r'^function/$',
-                           'grFunction',
-                           name='grFunction'),
+    url(r'^description/$',
+        views.grDescription,
+        name='grDescription'),
+    url(r'^function/$',
+        views.grFunction,
+        name='grFunction'),
 
-                       url(r'^symatlasbar/$',
-                           'grSymatlasTable',
-                           name='grSymatlasTable'),
+    url(r'^symatlasbar/$',
+        views.grSymatlasTable,
+        name='grSymatlasTable'),
 
-                       url(r'^googlescholarproxy/$',
-                           'googleScholarTmpFix',
-                           name='googleScholarProxy'),
-
-                      )
+    url(r'^googlescholarproxy/$',
+        views.googleScholarTmpFix,
+        name='googleScholarProxy'),
+]
