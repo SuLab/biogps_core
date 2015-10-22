@@ -1,22 +1,24 @@
 '''
 The URLs listed here are served under /profile/
 '''
-from django.conf.urls import patterns, url
+from django.conf.urls import url
+
+from biogps.bgprofile import views
 
 
-urlpatterns = patterns('biogps.bgprofile.views',
+urlpatterns = [
     url(r'^$',
-        'index',
+        views.index,
         name='apps.bgprofile.mine'),
 
     url(r'^edit/$',
-        'edit',
+        views.edit,
         name='apps.bgprofile.edit'),
 
     url(r'^(?P<userid>[\w-]+)/$',
-        'view'),
+        views.view),
 
     url(r'^(?P<userid>[\w-]+)/(?P<junk>.+)$',
-        'view',
+        views.view,
         name='apps.bgprofile.view'),
-)
+]

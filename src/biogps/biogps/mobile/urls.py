@@ -1,24 +1,26 @@
 '''
 The URLs listed here are served under /m/ and /mobile/ interchangeably.
 '''
-from django.conf.urls import patterns, url
+from django.conf.urls import url
+
+from biogps.mobile import views, ga
 
 
-urlpatterns = patterns('biogps.mobile.views',
-                       url(r'^$',
-                           'index',
-                           name='m_index'),
+urlpatterns = [
+    url(r'^$',
+        views.index,
+        name='m_index'),
 
-                       url(r'^search/$',
-                           'query_gene',
-                           name='m_search'),
+    url(r'^search/$',
+        views.query_gene,
+        name='m_search'),
 
-                       url(r'^gene/(?P<geneid>[\w-]+)/$',
-                           'getgeneurls',
-                           name='m_geneurls'),
-)
+    url(r'^gene/(?P<geneid>[\w-]+)/$',
+        views.getgeneurls,
+        name='m_geneurls'),
+]
 
-urlpatterns += patterns('biogps.mobile.ga',
-                    url(r'^ga/$',
-                        'track_page_view'),
-)
+urlpatterns += [
+    url(r'^ga/$',
+        ga.track_page_view),
+]

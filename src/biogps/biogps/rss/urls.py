@@ -1,7 +1,7 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from feeds import LatestPluginsRSS
 
 
-urlpatterns = patterns('',
+urlpatterns = [
     url(r'^plugins/$', LatestPluginsRSS(), name="rss_plugins"),
-)
+]

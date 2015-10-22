@@ -1,10 +1,14 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
+
+from biogps.favorite import views
 
 
-urlpatterns = patterns('biogps.favorite.views',
-    url(r'^$', 'FavoriteView', name='FavoriteView'),
-    url(r'^(?P<modelType>.+)/(?P<objectID>\d+)/$', 'FavoriteSubmitView',
+urlpatterns = [
+    url(r'^$', views.FavoriteView, name='FavoriteView'),
+    url(r'^(?P<modelType>.+)/(?P<objectID>\d+)/$',
+        views.FavoriteSubmitView,
         name='FavoriteSubmitView'),
-    url(r'^(?P<modelType>.+)/$', 'FavoriteObjectView',
+    url(r'^(?P<modelType>.+)/$',
+        views.FavoriteObjectView,
         name='FavoriteObjectView'),
-)
+]

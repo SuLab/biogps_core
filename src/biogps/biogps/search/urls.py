@@ -1,10 +1,12 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
+
+from biogps.search import views
 
 
-urlpatterns = patterns('biogps.search.views',
-    url(r'^$', 'search', name='search'),
-    url(r'^status/$', 'status', name='status'),
-    url(r'^mapping/$', 'get_mapping'),
-    url(r'^interval/$', 'interval', name='interval_search'),
-    url(r'^(?P<_type>.+)/$', 'search', name='search_in'),
-)
+urlpatterns = [
+    url(r'^$', views.search, name='search'),
+    url(r'^status/$', views.status, name='status'),
+    url(r'^mapping/$', views.get_mapping),
+    url(r'^interval/$', views.interval, name='interval_search'),
+    url(r'^(?P<_type>.+)/$', views.search, name='search_in'),
+]

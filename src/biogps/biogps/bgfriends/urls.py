@@ -1,13 +1,14 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
+
+from biogps.bgfriends import views
 
 
-urlpatterns = patterns('biogps.bgfriends.views',
-    url(r'^invite/$', 'invite_friend', name='invite_friend'),
+urlpatterns = [
+    url(r'^invite/$', views.invite_friend, name='invite_friend'),
 
-    url(r'^$', 'friends', name='friends'),
-    url(r'^contacts/$', 'contacts',  name='invitations_contacts'),
-    url(r'^contacts_yahootest/$', 'contacts', {'includeyahoo': True}),
-    url(r'^accept/(\w+)/$', 'accept_join', name='friends_accept_join'),
-    #url(r'^invite_to_join/$', 'invite_to_join', name="invite_to_join"),
-
-)
+    url(r'^$', views.friends, name='friends'),
+    url(r'^contacts/$', views.contacts,  name='invitations_contacts'),
+    url(r'^contacts_yahootest/$', views.contacts, {'includeyahoo': True}),
+    url(r'^accept/(\w+)/$', views.accept_join, name='friends_accept_join'),
+    #url(r'^invite_to_join/$', views.invite_to_join, name="invite_to_join"),
+]
