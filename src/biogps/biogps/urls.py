@@ -3,6 +3,7 @@ import os.path
 from django.conf.urls import patterns, url, include
 from django.conf import settings
 from django.views.generic import TemplateView, RedirectView
+from django.contrib.sitemaps import views as sitemap_views
 
 
 urlpatterns = patterns('biogps.www.views',
@@ -200,10 +201,17 @@ sitemaps = {
     'genereport': GenereportSitemap(),
     'flatpage': FlatPageSitemap(),
 }
-urlpatterns += patterns('django.contrib.sitemaps.views',
-                        (r'^sitemap.xml$', 'index', {'sitemaps': sitemaps}),
-                        (r'^sitemap-(?P<section>.+)\.xml$', 'sitemap', {'sitemaps': sitemaps}),
-                       )
+
+urlpatterns += patterns('',
+    url(r'^sitemap.xml$',
+        sitemap_views.index,
+        {'sitemaps': sitemaps},
+        name='django.contrib.sitemaps.views.index'),
+    url(r'^sitemap-(?P<section>.+)\.xml$',
+        sitemap_views.sitemap,
+        {'sitemaps': sitemaps},
+        name='django.contrib.sitemaps.views.sitemap'),
+)
 
 # Comments
 urlpatterns += patterns('', (r'^comment/', include('biogps.comment.urls')),)
