@@ -219,7 +219,8 @@ class FormattedResponse():
 
                 # add get_vars for use in passing on search parameters to JSON and XML links
                 # this logic is adapted from django-pagination
-                getvars = context['request'].GET.copy()
+                # getvars = context['request'].GET.copy()
+                getvars = context.request.GET.copy()
                 if len(getvars.keys()) > 0:
                     context['getvars'] = "&%s" % getvars.urlencode()
                 else:
