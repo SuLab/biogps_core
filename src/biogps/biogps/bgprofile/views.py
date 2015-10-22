@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.http import Http404
 from django.shortcuts import render_to_response
-from django.template import RequestContext
+from django.template.base import RequestContext
 from django.contrib.auth.models import User
 
 from biogps.utils.helper import (docenabled,

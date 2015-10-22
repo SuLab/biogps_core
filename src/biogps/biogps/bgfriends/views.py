@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404, render_to_response
-from django.template import RequestContext
+from django.template.base import RequestContext
 from django.http import HttpResponseRedirect
 from django_comments.models import Comment
 from django.core.urlresolvers import reverse

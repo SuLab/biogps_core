@@ -2,7 +2,7 @@ import types
 
 from django.utils import timezone
 from django.conf import settings
-from django.template import Library
+from django.template.base import Library
 
 register = Library()
 

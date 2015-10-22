@@ -4,7 +4,7 @@ HttpRequest related. They are often used in view functions/classes
 '''
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseNotAllowed
-from django.template import RequestContext
+from django.template.base import RequestContext
 from django.shortcuts import render_to_response as raw_render_to_response
 from django.core.paginator import Paginator, EmptyPage
 from django.db.models.query import QuerySet

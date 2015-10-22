@@ -1,5 +1,5 @@
 import types
-from django.template import Library
+from django.template.base import Library
 from django.template.defaultfilters import stringfilter
 from django.utils.encoding import force_unicode
 from django.utils.safestring import mark_safe
