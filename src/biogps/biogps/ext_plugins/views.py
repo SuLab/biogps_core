@@ -2,7 +2,7 @@ import random
 import string
 from django.utils.html import escape
 from django.shortcuts import render_to_response
-from django.template import RequestContext
+from django.template.base import RequestContext
 from django.template.loader import render_to_string
 from django.http import HttpResponse, HttpResponseBadRequest
 
