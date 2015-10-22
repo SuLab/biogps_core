@@ -104,7 +104,7 @@ def index(request, **kwargs):
         d['goto_url'] = orig_url
 
         if settings.DEBUG:
-            from django.core.context_processors import request as request_processor
+            from django.template.context_processors import request as request_processor
             context = RequestContext(request, {}, (request_processor,))
         else:
             context = RequestContext(request)
