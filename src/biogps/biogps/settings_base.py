@@ -156,6 +156,7 @@ MIDDLEWARE_CLASSES = (
     #'django.contrib.sessions.middleware.SessionMiddleware',
     'biogps.middleware.DualSession.DualSessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.admindocs.middleware.XViewMiddleware',
     'django_authopenid.middleware.OpenIDMiddleware',
