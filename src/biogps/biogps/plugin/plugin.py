@@ -465,7 +465,8 @@ def flagplugin(request, pluginid):
     except BiogpsPlugin.DoesNotExist:
         return ExtError('Plugin does not exist (id "%s").' % pluginid)
     try:
-        content_type = ContentType.objects.get(app_label=plugin._meta.app_label, model=plugin._meta.module_name)
+        content_type = ContentType.objects.get(
+            app_label=plugin._meta.app_label, model=plugin._meta.model_name)
     except BiogpsPlugin.DoesNotExist:
         return ExtError('ContenType for "BiogpsPlugin" does not exist.')
 
