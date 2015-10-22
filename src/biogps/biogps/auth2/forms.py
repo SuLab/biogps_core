@@ -15,6 +15,8 @@ from models import DEFAULT_UIPROFILE, ROLE_BIOGPSUSER, expanded_username_list
 from account.forms import RegistrationForm as _RegistrationForm
 from account.forms import PasswordResetForm as _PasswordResetForm
 
+from biogps.auth2.models import UserProfile
+
 # I put this on all required fields, because it's easier to pick up
 # on them with CSS or JavaScript if they have a class of "required"
 # in the HTML. Your mileage may vary. If/when Django ticket #3515
@@ -61,16 +63,16 @@ class RegistrationForm(_RegistrationForm):
             email = self.cleaned_data['email']
             return email
 
-
     def save(self):
         user = super(RegistrationForm, self).save()
         #now create user profile
-        profile = user.userprofile_set.create(user=user,
-                                              sid=user.username+'_sid',   #not useful now, set a dummy value here. Will be deleted eventually.
-                                              roles=ROLE_BIOGPSUSER,
-                                              uiprofile=DEFAULT_UIPROFILE,
-                                              )
-        affiliation = self.cleaned_data.get('affiliation','')
+        profile = UserProfile.objects.create(
+            user=user,
+            sid=user.username + '_sid',  # not useful now, set a dummy value here. Will be deleted eventually.
+            roles=ROLE_BIOGPSUSER,
+            uiprofile=DEFAULT_UIPROFILE,
+        )
+        affiliation = self.cleaned_data.get('affiliation', '')
         if affiliation:
             profile.affiliation = affiliation
         profile.save()
