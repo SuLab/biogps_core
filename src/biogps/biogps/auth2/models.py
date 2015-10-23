@@ -157,7 +157,7 @@ def _extend_user(user):
         Membership in that group is assigned elsewhere.
         '''
 #        return self.groups.filter(name='openid').count()>0
-        return self.userassociation_set.count() > 0
+        return hasattr(self, 'userassociation')
     setattr(user, 'has_openid', new.instancemethod(has_openid, user))
 
     def is_openid_only(self):
