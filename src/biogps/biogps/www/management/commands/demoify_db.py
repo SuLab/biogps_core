@@ -9,20 +9,20 @@ and non-admin users are deleted.
 '''
 
 from django.conf import settings
-from django.core.management.base import NoArgsCommand
+from django.core.management.base import BaseCommand
 from biogps.auth2.models import User
 from biogps.plugin.models import BiogpsPlugin
 from friends.models import (Friendship, FriendshipInvitation, FriendshipInvitationHistory)
 
 
-class Command(NoArgsCommand):
+class Command(BaseCommand):
     help = '''A utility that demo-ifies a DB for external use (GSOC, etc).
               All plugins are assigned to a demo account, then all non-demo
               and non-admin users are deleted. Manually set the user and DB
               in this script.
            '''
 
-    def handle_noargs(self, **options):
+    def handle(self, **options):
         target_DB = settings.DATABASES['default']['NAME']
         target_user = 'demouser'
         keep_users = ['keepuser']

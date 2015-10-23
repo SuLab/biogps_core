@@ -1,11 +1,12 @@
-from django.core.management.base import NoArgsCommand
+from django.core.management.base import BaseCommand
 
-class Command(NoArgsCommand):
+
+class Command(BaseCommand):
     help = "A weekly clean-up utility for BioGPS app. It cleans both expired session data and httplib2 cache files."
 
     requires_system_checks = True
 
-    def handle_noargs(self, **options):
+    def handle(self, **options):
         from django.conf import settings
         cleanupSession()
         res = cleanupHttplib2Cache()
@@ -18,6 +19,7 @@ class Command(NoArgsCommand):
             log_f.write('.cache folder: #before=%d; #removed=%d; #after=%d' % (file_cnt, removed_cnt, file_cnt-removed_cnt))
         log_f.close()
 
+
 def cleanupSession():
     """Clean up expired sessions."""
     from django.contrib.sessions.models import Session
@@ -28,6 +30,7 @@ def cleanupSession():
     Session.objects.filter(expire_date__lt=timezone.now()).delete()
     transaction.commit_unless_managed()
     print 'Done!'
+
 
 def cleanupHttplib2Cache():
     '''clean up old (by default 1 week older) cached httplib2 requests.'''
