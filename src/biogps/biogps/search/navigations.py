@@ -3,27 +3,29 @@
 This file defines a BiogpsSearchNavigation class to hold navigation data used
 to render left-side navigation panel in search results/browse page.
 '''
+import requests
+
+from collections import OrderedDict
+
+from django.conf import settings
 
 from biogps.utils.models import Species
-from django.utils.datastructures import SortedDict
-import requests
-from django.conf import settings
 
 
 class BiogpsNavigationDataset(object):
     def __init__(self, title, results=None, tags=None):
-	self.doc_types = ['dataset']
+        self.doc_types = ['dataset']
         self._title = title
         self.results = results
         self.tags = tags
         self.init_facets()
-    
+
     @property
     def title(self):
         return self._title
-    
+
     def init_facets(self):
-        facets = SortedDict()
+        facets = OrderedDict()
         facets['tag'] = {'name': 'TAGS', 'terms': []}
         if self.tags is None:
             res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/tag/')
@@ -160,7 +162,7 @@ class BiogpsSearchNavigation(object):
         return out
 
     def _init_facets(self):
-        facets = SortedDict()
+        facets = OrderedDict()
         # OBJECT TYPE NAVIGATION
         # TMP disabled
         '''
