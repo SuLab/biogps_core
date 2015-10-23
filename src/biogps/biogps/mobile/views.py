@@ -27,7 +27,8 @@ def query_gene(request):
        accepts POST only
        parameter: query
     '''
-    if not request.REQUEST.get('query', '').strip():
+    rm = request.POST if request.method == 'POST' else request.GET
+    if not rm.get('query', '').strip():
         return HttpResponseRedirect('/m/')
 
     response = boe_views.query(request, mobile=True)
