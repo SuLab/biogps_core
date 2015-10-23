@@ -8,7 +8,7 @@
 import os
 import os.path
 import socket
-from optparse import OptionParser, make_option
+from optparse import OptionParser
 
 from django.core.management.base import BaseCommand, CommandError
 from django.core.handlers.wsgi import WSGIHandler
@@ -25,15 +25,55 @@ def null_technical_500_response(request, exc_type, exc_value, tb):
 
 
 class Command(BaseCommand):
-    option_list = BaseCommand.option_list + (
-            make_option("-h", "--host", dest="host", default="0.0.0.0", help='Specify host (default "0.0.0.0")'),
-            make_option("-p", "--port", dest="port", default=8000, type="int", help='Specify port (default "8000")'),
-            make_option("-t", "--threads", dest="num_threads", type="int", default=20, help="Set number of threads (default 20)"),
-            make_option("-l", "--no_logger", dest="use_logger", action="store_false", default=True, help="Disable logger"),
-            make_option("-x", "--no-debugger", dest="use_debugger", action="store_false", default=True, help='Disable debugger'),
-            make_option("-r", "--no-reloader", dest="use_reloader", action="store_false", default=True, help='Disable reloader'),
-            make_option("-w", "--use_werkzeug", dest="use_werkzeug", action="store_true", default=False, help='Start server using Werkzeug instead (for test)'),
-            )
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "-o", "--host",
+            dest="host",
+            default="0.0.0.0",
+            help='Specify host (default "0.0.0.0")',
+        )
+        parser.add_argument(
+            "-p", "--port",
+            dest="port",
+            default=8000,
+            type=int,
+            help='Specify port (default "8000")',
+        )
+        parser.add_argument(
+            "-t", "--threads",
+            dest="num_threads",
+            type=int,
+            default=20,
+            help="Set number of threads (default 20)",
+        )
+        parser.add_argument(
+            "-l", "--no_logger",
+            dest="use_logger",
+            action="store_false",
+            default=True,
+            help="Disable logger",
+        )
+        parser.add_argument(
+            "-x", "--no-debugger",
+            dest="use_debugger",
+            action="store_false",
+            default=True,
+            help='Disable debugger',
+        )
+        parser.add_argument(
+            "-r", "--no-reloader",
+            dest="use_reloader",
+            action="store_false",
+            default=True,
+            help='Disable reloader',
+        )
+        parser.add_argument(
+            "-w", "--use_werkzeug",
+            dest="use_werkzeug",
+            action="store_true",
+            default=False,
+            help='Start server using Werkzeug instead (for test)',
+        )
 
     def handle(self, *args, **options):
         try:
@@ -98,13 +138,13 @@ class Command(BaseCommand):
         else:
             inner_run()
 
-    def create_parser(self, prog, subcommand):
-        """
-        Create and return the ``OptionParser`` which will be used to
-        parse the arguments to this command.
-        """
-        return OptionParser(prog=prog,
-                            usage=self.usage(subcommand),
-                            version=self.get_version(),
-                            option_list=self.option_list,
-                            conflict_handler="resolve")
+    # def create_parser(self, prog, subcommand):
+    #     """
+    #     Create and return the ``OptionParser`` which will be used to
+    #     parse the arguments to this command.
+    #     """
+    #     return OptionParser(prog=prog,
+    #                         usage=self.usage(subcommand),
+    #                         version=self.get_version(),
+    #                         option_list=self.option_list,
+    #                         conflict_handler="resolve")
