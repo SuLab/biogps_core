@@ -1,7 +1,7 @@
 {% extends "base_site.html" %}
 {% load i18n %}
 {% load biogps_tags %}
-{% load compressed %}
+{% load pipeline %}
 
 {% block bodyclass %}bgprofile{% endblock %}
 
@@ -12,6 +12,6 @@ User Profiles
 {% block nav-global %}{% endblock %}
 
 {% block footer_js %}
-    {% compressed_js 'jquery' %}
-    {% compressed_js 'bgprofile' %}
+    {% javascript 'jquery' %}
+    {% javascript 'bgprofile' %}
 {% endblock %}
