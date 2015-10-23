@@ -34,79 +34,79 @@ def make_dev():
         from biogps.auth2.models import UserFlag, UserMigration
         from django.contrib.auth.models import Message, User
 
-        for _model in [Session, LogEntry,
-                       Notice,
-                       Nonce, Association, UserAssociation, UserPasswordQueue,
-                       AuthKey,
-                       UserFlag, UserMigration,
-                       Message,
-                       ]:
-            _model.objects.all().delete()
+        with transaction.atomic():
+            for _model in [Session, LogEntry,
+                           Notice,
+                           Nonce, Association, UserAssociation,
+                           UserPasswordQueue,
+                           AuthKey,
+                           UserFlag, UserMigration,
+                           Message,
+                           ]:
+                _model.objects.all().delete()
 
+            Site.objects.exclude(id='1').delete()
 
-        Site.objects.exclude(id='1').delete()
+            # More third-party specific clean-up
+            from biogps.genelist.models import BiogpsGeneList
+            from biogps.layout.models import BiogpsGenereportLayout
+            from biogps.plugin.models import BiogpsPlugin
+            from biogps.www.models import BiogpsAltLayout
+            from django.contrib.auth.models import Group
+            from friends.models import (
+                FriendshipInvitation, Friendship, Contact,
+                JoinInvitation, FriendshipInvitationHistory,
+            )
+            # TODO: what about this?? needs to be reviewed
+            from django.db.migrations.recorder import MigrationRecorder
+            MigrationHistory = MigrationRecorder.Migration
+            from flag.models import FlaggedContent, FlagInstance
+            for _model in [BiogpsGeneList, BiogpsAltLayout,
+                           FriendshipInvitation, Friendship, Contact,
+                           JoinInvitation, FriendshipInvitationHistory,
+                           MigrationHistory,
+                           FlaggedContent, FlagInstance,
+                          ]:
+                _model.objects.all().delete()
+            print 1  # ##
 
+            uu = User.objects.get(username='cwudemo')   # a regular Biogps user
+            cwu = User.objects.get(username='cwu')
+            asu = User.objects.get(username='asu')
+            geo = User.objects.get(username='GEO Uploader')
 
-        # More third-party specific clean-up
-        from biogps.genelist.models import BiogpsGeneList
-        from biogps.layout.models import BiogpsGenereportLayout
-        from biogps.plugin.models import BiogpsPlugin
-        from biogps.www.models import BiogpsAltLayout
-        from django.contrib.auth.models import Group
-        from friends.models import (FriendshipInvitation, Friendship, Contact,
-                                    JoinInvitation, FriendshipInvitationHistory)
-        # TODO: what about this?? needs to be reviewed
-        from django.db.migrations.recorder import MigrationRecorder
-        MigrationHistory = MigrationRecorder.Migration
-        from flag.models import FlaggedContent, FlagInstance
-        for _model in [BiogpsGeneList, BiogpsAltLayout,
-                       FriendshipInvitation, Friendship, Contact,
-                       JoinInvitation, FriendshipInvitationHistory,
-                       MigrationHistory,
-                       FlaggedContent, FlagInstance,
-                      ]:
-            _model.objects.all().delete()
-        print 1 ###
+            public_layouts = BiogpsGenereportLayout.objects.get_available(
+                uu, excludemine=True)
+            for layout in public_layouts:
+                if layout.owner not in [cwu, asu]:
+                    layout.owner = asu
+                    layout.save()
+            print 2  # ##
+            # remove all the rest of layouts (private layouts)
+            BiogpsGenereportLayout.objects.exclude(
+                id__in=[x.id for x in public_layouts]).delete()
+            print 3  # ##
+            public_plugins = BiogpsPlugin.objects.get_available(
+                uu, excludemine=True)
+            for plugin in public_plugins:
+                if plugin.owner not in [cwu, asu]:
+                    plugin.owner = asu
+                    plugin.save()
+            print 4  # ##
+            # remove all the rest of non-public plugins
+            BiogpsPlugin.objects.exclude(id__in=[x.id for x in public_plugins]).delete()
+            print 5  # ##
+            # Now remove all users except cwu/asu/cwudemo
+            User.objects.exclude(
+                username__in=['cwu', 'asu', 'cwudemo', 'GEO Uploader']).delete()
+            print 6  # ##
+            for u in User.objects.all():
+                u.set_password('123')
+                u.save()
+            print 7  # ##
 
-        uu = User.objects.get(username='cwudemo')   # a regular Biogps user
-        cwu = User.objects.get(username='cwu')
-        asu = User.objects.get(username='asu')
-        geo = User.objects.get(username='GEO Uploader')
+            # #clean up Group
+            Group.objects.filter(
+                name__in=['nvsusers', 'gnfusers', 'adam']).delete()
 
-        public_layouts = BiogpsGenereportLayout.objects.get_available(uu, excludemine=True)
-        for layout in public_layouts:
-            if layout.owner not in [cwu, asu]:
-                layout.owner = asu
-                layout.save()
-        print 2 ###
-        # remove all the rest of layouts (private layouts)
-        BiogpsGenereportLayout.objects.exclude(id__in=[x.id for x in public_layouts]).delete()
-        print 3 ###
-        public_plugins = BiogpsPlugin.objects.get_available(uu, excludemine=True)
-        for plugin in public_plugins:
-            if plugin.owner not in [cwu, asu]:
-                plugin.owner = asu
-                plugin.save()
-        print 4 ###
-        # remove all the rest of non-public plugins
-        BiogpsPlugin.objects.exclude(id__in=[x.id for x in public_plugins]).delete()
-        print 5 ###
-        # Now remove all users except cwu/asu/cwudemo
-        User.objects.exclude(username__in=['cwu', 'asu', 'cwudemo', 'GEO Uploader']).delete()
-        print 6 ###
-        for u in User.objects.all():
-            u.set_password('123')
-            u.save()
-        print 7 ###
-
-        # #clean up Group
-        Group.objects.filter(name__in=['nvsusers', 'gnfusers', 'adam']).delete()
-
-
-        transaction.commit_unless_managed()
         print 'Done!'
-
-
-
-
-
