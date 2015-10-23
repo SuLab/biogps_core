@@ -5,20 +5,21 @@ import urllib
 import json
 from collections import OrderedDict
 
-from django.core.management.base import NoArgsCommand
+from django.core.management.base import BaseCommand
 from biogps.plugin.models import BiogpsPlugin
 from django.contrib.auth.models import User
 from biogps.layout.models import BiogpsGenereportLayout
 from biogps.genelist.models import BiogpsGeneList
 
 
-class Command(NoArgsCommand):
+class Command(BaseCommand):
     help = "This command get some latest stats for BioGPS"
 
     requires_system_checks = True
 
-    def handle_noargs(self, **options):
+    def handle(self, **options):
         get_stats()
+
 
 def get_stats():
     stats = OrderedDict()

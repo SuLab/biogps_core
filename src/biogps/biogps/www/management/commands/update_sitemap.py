@@ -8,7 +8,7 @@
 
 from django.conf import settings
 from django.db import connection
-from django.core.management.base import NoArgsCommand
+from django.core.management.base import BaseCommand
 from django.contrib.sitemaps import ping_google
 from optparse import make_option
 
@@ -16,20 +16,22 @@ from biogps.utils.helper import ask
 
 SITEMAP_TABLE = "WWW_BIOGPSROOTNODE"
 
-class Command(NoArgsCommand):
+
+class Command(BaseCommand):
     help = "This command updates WWW_BIOGPSROOTNODE table for sitemap.xml generation from a CouchDB host"
 
     requires_system_checks = True
-    option_list = NoArgsCommand.option_list + (
+    option_list = BaseCommand.option_list + (
             make_option( "-c", "--couch", dest="couch_host", default=None, help='Specify couchdb host (default taken from settings)'),
             make_option( "-d", "--db", dest="dbname", default="genedoc", help='Specify database name (default "genedoc")')
             )
 
-    def handle_noargs(self, **options):
+    def handle(self, **options):
         couch_host = options['couch_host'] or settings.BOCSERVICE_URL.rstrip('/')+':5984'
         dbname=options['dbname']
 
         update_sitemap(couch_host, dbname)
+
 
 def update_sitemap(couch_host, dbname):
     import couchdb

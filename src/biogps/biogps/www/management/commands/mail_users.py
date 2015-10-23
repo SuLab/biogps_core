@@ -13,15 +13,15 @@ from django.conf import settings
 from django.core.mail import get_connection, send_mail, EmailMessage
 from django.template.loader import render_to_string
 
-from django.core.management.base import NoArgsCommand
+from django.core.management.base import BaseCommand
 from optparse import make_option
 
 from django.contrib.auth.models import User
 
 
-class EmailUsersCommand(NoArgsCommand):
+class EmailUsersCommand(BaseCommand):
     help = "Sends an HTML email out to a list of users."
-    option_list = NoArgsCommand.option_list + (
+    option_list = BaseCommand.option_list + (
         make_option('--send', '-s', action='store_true', dest='send',
             help='Actually send the emails out to each user.'),
         make_option('--test', '-t', dest='test_email',
@@ -30,7 +30,7 @@ class EmailUsersCommand(NoArgsCommand):
 
     args = ''
 
-    def handle_noargs(self, **options):
+    def handle(self, **options):
         self.args = options
 
         if self.args.get("send", False):

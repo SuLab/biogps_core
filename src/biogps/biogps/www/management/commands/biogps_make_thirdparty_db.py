@@ -5,16 +5,18 @@ by stripping all sensitive data.
 ##USE IT WITH CAUTION##
 """
 from django.conf import settings
-from django.core.management.base import NoArgsCommand
+from django.core.management.base import BaseCommand
 from django.db import transaction
 
-class Command(NoArgsCommand):
+
+class Command(BaseCommand):
     help = "A utility script to make a prod/dev db OK for third-party installation by stripping all sensitive data."
 
     requires_system_checks = True
 
-    def handle_noargs(self, **options):
+    def handle(self, **options):
         make_dev()
+
 
 def make_dev():
     for attr in ['ENGINE', 'NAME', 'HOST']:
