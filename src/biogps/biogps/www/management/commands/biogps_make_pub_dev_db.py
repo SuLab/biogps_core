@@ -33,30 +33,27 @@ def make_dev():
         from biogps.auth2.models import UserProfile, UserFlag, UserMigration
         from django.contrib.auth.models import Message, User
 
-        for _model in [Session, LogEntry,
-                       Notice,
-                       Nonce, Association, UserAssociation, UserPasswordQueue,
-                       AuthKey,
-                       UserFlag, UserMigration,
-                       Message,
-                       ]:
-            _model.objects.all().delete()
+        with transaction.atomic():
+            for _model in [Session, LogEntry, Notice, Nonce, Association,
+                           UserAssociation, UserPasswordQueue, AuthKey,
+                           UserFlag, UserMigration, Message]:
+                _model.objects.all().delete()
 
-        Site.objects.exclude(id='1').delete()
+            Site.objects.exclude(id='1').delete()
 
-        for u in UserProfile.objects.all():
-            if u.affiliation:
-                u.affiliation = 'affiliation_masked'
+            for u in UserProfile.objects.all():
+                if u.affiliation:
+                    u.affiliation = 'affiliation_masked'
+                    u.save()
+
+            for u in User.objects.all():
+                if u.username in ['cwu', 'asu', 'x0xMaximus'] or \
+                        u.username.find('demo') != -1:
+                    u.set_password('123')
+                    continue
+                if u.email:
+                    u.email = "email_masked@dummy.com"
+                    u.set_unusable_password()
                 u.save()
 
-        for u in User.objects.all():
-            if u.username in ['cwu', 'asu', 'x0xMaximus'] or u.username.find('demo') != -1:
-                u.set_password('123')
-                continue
-            if u.email:
-                u.email = "email_masked@dummy.com"
-                u.set_unusable_password()
-            u.save()
-
-        transaction.commit_unless_managed()
         print 'Done!'

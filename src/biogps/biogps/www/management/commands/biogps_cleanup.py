@@ -27,8 +27,8 @@ def cleanupSession():
     from django.utils import timezone
 
     print "Cleaning expired sessions...",
-    Session.objects.filter(expire_date__lt=timezone.now()).delete()
-    transaction.commit_unless_managed()
+    with transaction.atomic():
+        Session.objects.filter(expire_date__lt=timezone.now()).delete()
     print 'Done!'
 
 
