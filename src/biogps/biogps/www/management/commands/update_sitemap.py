@@ -5,12 +5,10 @@
 #   python manage.py update_sitemap --settings=settings_prod --couch=http://cwu-dev:5984
 #
 #   When updates on prod DB table, ping_google will be called to notify google for sitemap changes.
-
 from django.conf import settings
 from django.db import connection
 from django.core.management.base import BaseCommand
 from django.contrib.sitemaps import ping_google
-from optparse import make_option
 
 from biogps.utils.helper import ask
 
@@ -19,12 +17,21 @@ SITEMAP_TABLE = "WWW_BIOGPSROOTNODE"
 
 class Command(BaseCommand):
     help = "This command updates WWW_BIOGPSROOTNODE table for sitemap.xml generation from a CouchDB host"
-
     requires_system_checks = True
-    option_list = BaseCommand.option_list + (
-            make_option( "-c", "--couch", dest="couch_host", default=None, help='Specify couchdb host (default taken from settings)'),
-            make_option( "-d", "--db", dest="dbname", default="genedoc", help='Specify database name (default "genedoc")')
-            )
+
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "-c", "--couch",
+            dest="couch_host",
+            default=None,
+            help='Specify couchdb host (default taken from settings)'),
+        )
+        parser.add_argument(
+            "-d", "--db",
+            dest="dbname",
+            default="genedoc",
+            help='Specify database name (default "genedoc")',
+        )
 
     def handle(self, **options):
         couch_host = options['couch_host'] or settings.BOCSERVICE_URL.rstrip('/')+':5984'

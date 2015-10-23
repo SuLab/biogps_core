@@ -1,5 +1,5 @@
 import os.path, time
-from optparse import make_option
+
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from biogps.plugin.models import BiogpsPlugin, BiogpsPluginPopularity
@@ -7,11 +7,15 @@ from biogps.plugin.models import BiogpsPlugin, BiogpsPluginPopularity
 
 class Command(BaseCommand):
     help = "A daily utility to update plugin's popularity scores for BioGPS app. It should be scheduled as a daily job."
-    option_list = BaseCommand.option_list + (
-        make_option('--batch', '-b', action='store_true', dest='batch',
-            help='Run in batch mode without confirmation.'),
-        )
     requires_system_checks = True
+
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--batch', '-b',
+            action='store_true',
+            dest='batch',
+            help='Run in batch mode without confirmation.',
+        )
 
     def handle(self, **options):
         target_DB = settings.DATABASES['default']['NAME']

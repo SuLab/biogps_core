@@ -25,11 +25,15 @@ from biogps.plugin.models import BiogpsPlugin
 
 class Command(BaseCommand):
     help = "Sends an HTML email out to all plugin developers."
-    option_list = BaseCommand.option_list + (
-        make_option('--send', '-s', action='store_true', dest='send',
-            help='Actually send the emails out to each user.'),
-        )
     args = ''
+
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--send', '-s',
+            action='store_true',
+            dest='send',
+            help='Actually send the emails out to each user.',
+        )
 
     def handle(self, **options):
         self.args = options
