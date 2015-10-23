@@ -55,7 +55,9 @@ django-debug-toolbar==0.9.4
 -e git+git://github.com/gustavoam/django-email-confirmation@1daadf6345995bbb0d2640ca916d73ad0bd1831f#egg=django-email-confirmation   #this is a patched version for biogps
 
 django-extensions==1.5.6
-django-flag==0.1.1
+
+-e git+git://github.com/gustavoam/django-flag@a84bc4fc583285e9ff4450d69ac6fd63265dc82d#egg=django-flag
+
 django-mailer==0.1.0
 pinax-notifications==3.0.0
 django-pagination==1.0.7
