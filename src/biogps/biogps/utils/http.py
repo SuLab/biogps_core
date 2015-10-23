@@ -164,7 +164,8 @@ class FormattedResponse():
         '''Get requested format based on passed "format" URL parameter.
            Return None if no such parameter or passed value is not supported.
         '''
-        format = request.REQUEST.get('format', '').lower().strip()
+        rm = request.GET if request.method == 'GET' else request.POST
+        format = rm.get('format', '').lower().strip()
         if format not in self.SUPPORTED_FORMATS:
             format = None
         return format
