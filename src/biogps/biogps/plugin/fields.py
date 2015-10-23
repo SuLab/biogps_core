@@ -37,10 +37,8 @@ class SpeciesSelectMultiple(CheckboxSelectMultiple):
 class SpeciesField(models.CharField):
     description = "An array of species strings"
     widget = SpeciesSelectMultiple
-    
-    __metaclass__ = models.SubfieldBase
-    
-    def to_python(self, value):
+
+    def from_db_value(self, value, expression, connection, context):
         if not value:
             return Species.available_species
         if type(value) is types.ListType:
