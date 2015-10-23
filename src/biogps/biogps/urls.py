@@ -119,7 +119,8 @@ if getattr(settings, 'SERVE_ASSETS', False):
     ]
     urlpatterns += [
         url(r'^favicon.ico$',
-            RedirectView.as_view(url='/assets/img/favicon.ico'))
+            RedirectView.as_view(url='/assets/img/favicon.ico',
+                                 permanent=True))
     ]
 
 urlpatterns += [
@@ -146,7 +147,7 @@ urlpatterns += [
 # Redirect /library/ to /plugin/
 urlpatterns += [
     url(r'^library/$',
-        RedirectView.as_view(url='/plugin/')),
+        RedirectView.as_view(url='/plugin/', permanent=True)),
 ]
 
 # Library browsing and searching URLs
@@ -165,7 +166,7 @@ urlpatterns += [
 # redirect /genereport/<geneid>/ to /gene/<geneid>/ for back-compatibility
 urlpatterns += [
     url('^genereport/(?P<geneid>[\w-]+)/$',
-        RedirectView.as_view(url='/gene/%(geneid)s/')),
+        RedirectView.as_view(url='/gene/%(geneid)s/', permanent=True)),
 ]
 
 # /robots.txt /dtds /biositemap.rdf
@@ -174,7 +175,8 @@ urlpatterns += [
         TemplateView.as_view(template_name='seo/robots.txt',
                              content_type='text/plain')),
     url(r'dtds', RedirectView.as_view(
-            url='http://biogps.org')),  # RSS DTDs 301 re-direct
+            url='http://biogps.org',
+            permanent=True)),  # RSS DTDs 301 re-direct
     url(r'^biositemap.rdf$',
         TemplateView.as_view(template_name='seo/biositemap.rdf',
                              content_type='text/plain')),
