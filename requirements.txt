@@ -18,7 +18,10 @@ requests==2.7.0
 ipython>=0.12.1
 nose==1.1.2
 psycopg2==2.4.5   #require libpq-dev
-pyes==0.19.1
+
+#pyes==0.19.1
+-e git+git://github.com/gustavoam/pyes@dd99479f017dc75ca32225387a69407d5c443eb7#egg=pyes
+
 pymongo==2.3
 python-dateutil==2.1
 python-openid==2.2.5
