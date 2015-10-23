@@ -1,5 +1,5 @@
 {% load biogps_tags %}
-{% load compressed %}
+{% load pipeline %}
 <!DOCTYPE html>
 <!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
 <!--[if lt IE 7 ]> <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" class="ie6"> <![endif]-->
@@ -15,9 +15,9 @@
     <link rel="alternate" type="application/rss+xml" title="BioGPS Blog Feed" href="http://feeds.feedburner.com/biogps" />
     <link rel="apple-touch-icon" href="/assets/img2/apple-touch-icon.png">
 
-    {% compressed_js 'core' %}
+    {% javascript 'core' %}
     {% extcssfiles %}
-    {% compressed_css 'mainApp' %}
+    {% stylesheet 'mainApp' %}
     <!-- GC -->
 
     <!--[if lt IE 7]>
@@ -415,9 +415,9 @@ coreDispatcher.dispatch();
     </form>
 
     {% ga user_type %}
-    {% compressed_js 'ext_mainApp' %}
-    {% compressed_js 'jquery' %}
-    {% compressed_js 'mainApp' %}
+    {% javascript 'ext_mainApp' %}
+    {% javascript 'jquery' %}
+    {% javascript 'mainApp' %}
 
 
     <!-- jQuery initialization -->

@@ -80,7 +80,7 @@ django-uwsgi-admin==0.1-alpha
 #-e git+git://github.com/newgene/django-threadedcomments.git#egg=django-threadedcomments   #this is a patched version for biogps
 -e git+git://github.com/gustavoam/django-threadedcomments@272016f6d05561740fa72bf7ec920d33175be931#egg=django-threadedcomments   #this is a patched version for biogps
 
-django-pipeline==1.3.16
+django-pipeline==1.5.4
 
 #django-rest-interface
 -e hg+https://bitbucket.org/newgene/django-rest-interface#egg=django-rest-interface
