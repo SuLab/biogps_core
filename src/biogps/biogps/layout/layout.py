@@ -4,7 +4,7 @@ from django.utils.encoding import smart_unicode, smart_str
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.utils.html import escape
 
-from models import BiogpsGenereportLayout
+from biogps.layout.models import BiogpsGenereportLayout
 from biogps.plugin.models import BiogpsPlugin
 from biogps.utils.helper import (MIMETYPE, STD_FORMAT, ANONYMOUS_USER_ERROR, ExtError, JSONResponse,
                                  setObjectPermission, loginrequired, formatDateTime, cvtPermission,
@@ -298,7 +298,7 @@ def layoutlist(request, query=None):
 
 def get_my_layouts(user):
     if user.is_anonymous():
-        return BiogpsGenereportLayout.objects.get_empty_query_set()
+        return BiogpsGenereportLayout.objects.none()
     else:
         #query_result = BiogpsGenereportLayout.objects.get_mine(authorid=adamuser.sid)
         query_result = user.mylayouts.all()
