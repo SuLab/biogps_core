@@ -85,12 +85,6 @@ class BiogpsGenereportLayout(BioGPSModel):
                     #for p in self.biogpslayoutplugin_set.order_by('top', 'left')]
                     #for p in self.biogpslayoutplugin_set.select_related().order_by('top', 'left')]
                     for p in self.biogpslayoutplugin_set.order_by('top', 'left').select_related(
-                        "height",
-                        "width",
-                        "left",
-                        "top",
-                        "useroptions",
-
                         "plugin__id",
                         "plugin__url",
                         "plugin__type",
@@ -113,12 +107,6 @@ class BiogpsGenereportLayout(BioGPSModel):
                          useroptions=p.useroptions)
                     #for p in self.biogpslayoutplugin_set.select_related().order_by('top', 'left')]
                     for p in self.biogpslayoutplugin_set.order_by('top', 'left').select_related(
-                        "height",
-                        "width",
-                        "left",
-                        "top",
-                        "useroptions",
-
                         "plugin__id",
                         )]
 
