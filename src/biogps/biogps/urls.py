@@ -36,7 +36,7 @@ urlpatterns = [
     url(r'^friends/', include('biogps.bgfriends.urls')),
     url(r'^bbauth/', include('bbauth.urls')),
     url(r'^authsub/', include('authsub.urls')),
-    url(r'^notices/', include('pinax.notifications.urls')),
+    url(r'^notices/', include('notification.urls')),
     url(r'^extdirect/', include('biogps.extdirect.urls')),
     # url(r"^announcements/", include("announcements.urls")),
 

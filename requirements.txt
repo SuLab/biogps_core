@@ -62,7 +62,9 @@ django-extensions==1.5.6
 -e git+git://github.com/gustavoam/django-flag@a84bc4fc583285e9ff4450d69ac6fd63265dc82d#egg=django-flag
 
 django-mailer==0.1.0
-pinax-notifications==3.0.0
+
+-e git+git://github.com/gustavoam/django-notification@8df0f3793fcb0d0ac4ee97a1b35fc9b038b2fbe5#egg=django-notification
+
 django-pagination==1.0.7
 django-ses==0.4.1
 django-tagging==0.3.6
