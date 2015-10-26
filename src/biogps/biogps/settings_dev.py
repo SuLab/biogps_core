@@ -57,12 +57,10 @@ DEBUG_TOOLBAR_PANELS = (
     'debug_toolbar.panels.signals.SignalDebugPanel',
     'debug_toolbar.panels.logger.LoggingPanel',
 )
- 
- 
-TEST_RUNNER='biogps.test.nose_runner.run_tests'
+
+TEST_RUNNER = 'biogps.test.nose_runner.BiogpsTestSuiteRunner'
 NOSE_ARGS = ['--exe']
- 
- 
+
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 CACHES['default'] = {
     'BACKEND': 'django.core.cache.backends.dummy.DummyCache',

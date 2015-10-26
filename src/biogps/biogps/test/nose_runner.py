@@ -46,6 +46,7 @@ import django.db
 connection = django.db.connection
 
 from django.conf import settings
+from django.test.runner import DiscoverRunner
 
 #settings.DATABASE_ENGINE = 'sqlite3'        #set DB to sqlite3, then test_db will be created as a in-memory sqlite DB.
 ##settings.DATABASE_NAME = os.path.join(settings.ROOT_PATH, 'sqlite/db')
@@ -103,59 +104,51 @@ def teardown_test_environment(teardown_funcs):
         func()
 
 
-def run_tests(test_labels, verbosity=1, interactive=True, extra_tests=[]):
-    setup_funcs, teardown_funcs = get_test_enviroment_functions()
-    # Prepare django for testing.
-    setup_test_environment(setup_funcs)
+class BiogpsTestSuiteRunner(DiscoverRunner):
+    def run_tests(self, test_labels, extra_tests=None, **kwargs):
+        setup_funcs, teardown_funcs = get_test_enviroment_functions()
+        # Prepare django for testing.
+        setup_test_environment(setup_funcs)
 
-    extra_params = ['--newdb', '--nofixture']
+        extra_params = ['--newdb', '--nofixture']
 
-    new_db = '--newdb' in sys.argv[1:]
-    if new_db:
-        #create a new in memory sqlite db with provided fixtures
-        test_db = settings.DATABASE_NAME
-        connection.creation.create_test_db(verbosity,
-                                           autoclobber=not interactive)
+        new_db = '--newdb' in sys.argv[1:]
+        if new_db:
+            #create a new in memory sqlite db with provided fixtures
+            test_db = settings.DATABASE_NAME
+            connection.creation.create_test_db(verbosity,
+                                               autoclobber=not interactive)
 
-        no_fixture = '--nofixture' in sys.argv[1:]
-        if len(FIXTURES) > 0 and not no_fixture:
-            call_command('loaddata', *FIXTURES, **{'verbosity': verbosity})
-    else:
-        #using existing sqlite db
-        pass
-#        test_db = os.path.join(settings.ROOT_PATH,'test/testdata/test_db')
-#        if os.path.exists(test_db):
-#            os.remove(test_db)
-#        shutil.copy(TEST_SQLITE_DB, test_db)
-#        settings.DATABASE_NAME = test_db
+            no_fixture = '--nofixture' in sys.argv[1:]
+            if len(FIXTURES) > 0 and not no_fixture:
+                call_command('loaddata', *FIXTURES, **{'verbosity': verbosity})
+        else:
+            pass
 
-    settings_str = "\nUnit test for BioGPS application\n"
-    for attr in ['ENGINE', 'NAME', 'HOST']:
-        settings_str += '  DATABASE_%s:  %s\n' % (attr, settings.DATABASES['default'][attr])
-    for attr in ['DEBUG', 'RELEASE_MODE', "BOESERVICE_URL", "ES_HOST"]:
-        settings_str += '  %s:  %s\n' % (attr, getattr(settings, attr))
-    print settings_str
+        settings_str = "\nUnit test for BioGPS application\n"
+        for attr in ['ENGINE', 'NAME', 'HOST']:
+            settings_str += '  DATABASE_%s:  %s\n' % (attr, settings.DATABASES['default'][attr])
+        for attr in ['DEBUG', 'RELEASE_MODE', "BOESERVICE_URL", "ES_HOST"]:
+            settings_str += '  %s:  %s\n' % (attr, getattr(settings, attr))
+        print settings_str
 
-#    # Pretend it's a production environment.
-#    settings.DEBUG = False
+        nose_argv = ['nosetests']
+        if hasattr(settings, 'NOSE_ARGS'):
+            nose_argv.extend(settings.NOSE_ARGS)
 
-    nose_argv = ['nosetests']
-    if hasattr(settings, 'NOSE_ARGS'):
-        nose_argv.extend(settings.NOSE_ARGS)
+        # Everything after '--' is passed to nose.
+        if '--' in sys.argv:
+            hyphen_pos = sys.argv.index('--')
+            nose_argv.extend(sys.argv[hyphen_pos + 1:])
+            for param in extra_params:
+                if param in nose_argv:
+                    #remove this customized argument
+                    nose_argv.remove(param)
 
-    # Everything after '--' is passed to nose.
-    if '--' in sys.argv:
-        hyphen_pos = sys.argv.index('--')
-        nose_argv.extend(sys.argv[hyphen_pos + 1:])
-        for param in extra_params:
-            if param in nose_argv:
-                #remove this customized argument
-                nose_argv.remove(param)
+        print  ' '.join(nose_argv)
 
-    print  ' '.join(nose_argv)
+        nose.run(argv=nose_argv)
 
-    nose.run(argv=nose_argv)
-
-    # Clean up django.
-    #connection.creation.destroy_test_db(test_db, verbosity)
-    teardown_test_environment(teardown_funcs)
+        # Clean up django.
+        #connection.creation.destroy_test_db(test_db, verbosity)
+        teardown_test_environment(teardown_funcs)
