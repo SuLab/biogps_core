@@ -69,7 +69,7 @@ django-tagging==0.3.6
 django-timezones==0.1.4
 
 #django-urlauth==0.1.8
--e hg+https://bitbucket.org/gustavoam/django-urlauth@d73af7eb0ed4b298c22fb0f8f035405f0b047d64#egg=django-urlauth   #this is a patched version for biogps
+-e hg+https://bitbucket.org/gustavoam/django-urlauth@786cbc2d52924d1be245a9102574c01789db3bec#egg=django-urlauth   #this is a patched version for biogps
 
 django-uwsgi-admin==0.1-alpha
 
