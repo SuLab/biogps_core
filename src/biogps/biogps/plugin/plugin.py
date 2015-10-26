@@ -214,7 +214,7 @@ def plugin_usage(request, pluginid):
 def get_my_plugins(user):
     #query_result = BiogpsPlugin.objects.filter(authorid=adamuser.sid)
     if user.is_anonymous():
-        return BiogpsPlugin.objects.get_empty_query_set()
+        return BiogpsPlugin.objects.none()
     else:
         #query_result = BiogpsPlugin.objects.get_mine(authorid=adamuser.sid)
         query_result = user.myplugins.all()

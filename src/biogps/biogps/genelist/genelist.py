@@ -198,7 +198,7 @@ class GeneListResource(Resource):
 
 def get_my_genelists(user):
     if user.is_anonymous():
-        return BiogpsGeneList.objects.get_empty_query_set()
+        return BiogpsGeneList.objects.none()
     else:
         query_result = user.mygenelists.all()
         return query_result
