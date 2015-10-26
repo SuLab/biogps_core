@@ -31,12 +31,12 @@ def make_dev():
         from django_authopenid.models import Nonce, Association, UserAssociation, UserPasswordQueue
         from urlauth.models import AuthKey
         from biogps.auth2.models import UserProfile, UserFlag, UserMigration
-        from django.contrib.auth.models import Message, User
+        from django.contrib.auth.models import User
 
         with transaction.atomic():
             for _model in [Session, LogEntry, Notice, Nonce, Association,
                            UserAssociation, UserPasswordQueue, AuthKey,
-                           UserFlag, UserMigration, Message]:
+                           UserFlag, UserMigration]:
                 _model.objects.all().delete()
 
             Site.objects.exclude(id='1').delete()
