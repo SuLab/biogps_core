@@ -34,7 +34,6 @@ urlpatterns = [
     url(r'^ext/', include('biogps.ext_plugins.urls')),
 
     url(r'^friends/', include('biogps.bgfriends.urls')),
-    url(r'^bbauth/', include('bbauth.urls')),
     url(r'^authsub/', include('authsub.urls')),
     url(r'^notices/', include('notification.urls')),
     url(r'^extdirect/', include('biogps.extdirect.urls')),

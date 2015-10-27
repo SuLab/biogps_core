@@ -117,12 +117,6 @@ def contacts(request, form_class=ImportVCardForm,
                 import_vcard_form = ImportVCardForm()
         else:
             import_vcard_form = form_class()
-            if request.POST["action"] == "import_yahoo":
-                bbauth_token = request.session.get('bbauth_token')
-                del request.session['bbauth_token']
-                if bbauth_token:
-                    imported, total = import_yahoo(bbauth_token, request.user)
-                    #request.user.message_set.create(message=_("%(total)s people with email found, %(imported)s contacts imported.") % {'imported': imported, 'total': total})
             if request.POST["action"] == "import_google":
                 authsub_token = request.session.get('authsub_token')
                 del request.session['authsub_token']
@@ -134,7 +128,6 @@ def contacts(request, form_class=ImportVCardForm,
 
     return render_to_response(template_name, {
         "import_vcard_form": import_vcard_form,
-        "bbauth_token": request.session.get('bbauth_token'),
         "authsub_token": request.session.get('authsub_token'),
         "includeyahoo": includeyahoo,
     }, context_instance=RequestContext(request))

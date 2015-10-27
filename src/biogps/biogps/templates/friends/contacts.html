@@ -98,6 +98,7 @@
     {% endcomment %}
     {% if includeyahoo %}
     <li>Import from Yahoo Address Book</li>
+    {% comment %}
     {% if bbauth_token %}
         <form method="POST" action="">
             <input type="hidden" name="action" value="import_yahoo" />
@@ -111,6 +112,7 @@
             an "Import Yahoo Address Book" button will appear here.
         </p>
     {% endif %}
+    {% endcomment %}
     {%endif%}
     <li>Import vCard</li>
     <div class="vcard_import">
