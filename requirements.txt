@@ -96,5 +96,3 @@ django-contrib-comments==1.6.1
 
 ## The following Django apps are included in BioGPS code repo, no need to install ##
 #django-authopenid
-#authsub
-
