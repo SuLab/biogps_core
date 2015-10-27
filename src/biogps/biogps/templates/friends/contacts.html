@@ -58,6 +58,7 @@
      <div class="google_import">
      <p>This will be a two step process:</p>
      <dl class="twostep_import">
+    {% comment %}
     {% if not authsub_token %}
         <!-- step one -->
             <dt class="current_step">Step 1:<dt><dd class="current_step">First you must <a href="{% url 'authsub_login' %}">authenticate with Google</a>. Once you have agreed
@@ -78,6 +79,7 @@
 		        </form>
             </dd>
     {% endif %}
+    {% endcomment %}
     </dl>
     </div>
 
