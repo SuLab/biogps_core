@@ -192,7 +192,6 @@ INSTALLED_APPS = (
     "friends",
     "timezones",
     "authsub",
-    "bbauth",
     'threadedcomments',
     'pipeline',
     'django_extensions',

@@ -47,12 +47,6 @@ EMAIL_SUBJECT_PREFIX = '[BioGPS-Admin] '
 
 ######Third-party Django Apps specific settings#########
 
-## djagno_friends
-#  used by friends app to import yahoo contacts
-#  get it from http://developer.yahoo.com/bbauth/appreg.html
-BBAUTH_APP_ID = 'aaaa'
-BBAUTH_SHARED_SECRET = 'bbbb'
-
 ## django_ses for sending email via SES
 EMAIL_BACKEND = 'django_ses.SESBackend'
 AWS_ACCESS_KEY_ID = 'aaaa'
