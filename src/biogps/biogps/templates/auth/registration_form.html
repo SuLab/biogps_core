@@ -100,7 +100,7 @@ Sign up
         		<tr>
         		    <td align="right" valign="top">Password:</td>
         		    <td>
-        		        {{ form.password }} <br/>
+        		        {{ form.password1 }} <br/>
         		        {% for error in form.password1.errors %}
         		        <span style="color:red">{{ error }}</span>
         		        {% endfor %}
@@ -109,7 +109,7 @@ Sign up
         		<tr>
         		    <td align="right" valign="top">Password (again):</td>
         		    <td>
-        		        {{ form.password_dup }} <br/>
+        		        {{ form.password2 }} <br/>
         		        {% for error in form.password2.errors %}
         		        <span style="color:red">{{ error }}</span>
         		        {% endfor %}

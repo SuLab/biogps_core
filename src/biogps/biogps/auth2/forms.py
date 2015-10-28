@@ -11,9 +11,11 @@ from django.contrib.auth.models import User
 from django_authopenid.forms import OpenidVerifyForm
 #from captcha.fields import CaptchaField
 
-from models import DEFAULT_UIPROFILE, ROLE_BIOGPSUSER, expanded_username_list
-from account.forms import RegistrationForm as _RegistrationForm
-from account.forms import PasswordResetForm as _PasswordResetForm
+from biogps.auth2.models import (
+    DEFAULT_UIPROFILE, ROLE_BIOGPSUSER, expanded_username_list,
+)
+from allauth.account.forms import SignupForm
+from allauth.account.forms import ResetPasswordForm
 
 from biogps.auth2.models import UserProfile
 
@@ -24,9 +26,9 @@ from biogps.auth2.models import UserProfile
 attrs_dict = { 'class': 'required' }
 
 
-class RegistrationForm(_RegistrationForm):
+class RegistrationForm(SignupForm):
     #required fields
-    # username, email, password and password_dup are already defined in _RegistrationForm.
+    # username, email, password and password_dup are already defined in SignupForm.
 
     #optional fields
     first_name = forms.CharField(max_length=50, required=False,
@@ -63,8 +65,8 @@ class RegistrationForm(_RegistrationForm):
             email = self.cleaned_data['email']
             return email
 
-    def save(self):
-        user = super(RegistrationForm, self).save()
+    def save(self, request):
+        user = super(RegistrationForm, self).save(request)
         #now create user profile
         profile = UserProfile.objects.create(
             user=user,
@@ -153,7 +155,7 @@ class EditUserInfoForm(forms.Form):
         return self.user
 
 
-class PasswordResetForm(_PasswordResetForm):
+class PasswordResetForm(ResetPasswordForm):
     '''subclass original PasswordResetForm to add username field, as the emails in our
        auth_user table are not unique.
     '''
@@ -168,5 +170,10 @@ class PasswordResetForm(_PasswordResetForm):
         raise forms.ValidationError(u'Can not find matched user account')
 
 
+# taken from django-account to keep previous site functionality
+class EmailChangeForm(forms.Form):
+    """
+    Form for email chanage.
+    """
 
-
+    email = forms.EmailField(label=_(u'New email'))

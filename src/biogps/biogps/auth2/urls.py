@@ -6,7 +6,6 @@ from django.views.generic import TemplateView
 from django.contrib.auth import views as auth_views
 
 from biogps.auth2 import views as auth2_views
-from account import views as account_views
 
 
 urlpatterns = [
@@ -107,15 +106,14 @@ urlpatterns += [
     # url(r'^password/change/$',
     #     account_views.password_change,
     #     name='auth_password_change'),
-    url(r'^password/change/done/$',
-        account_views.password_change_done,
-        name='auth_password_change_done'),
 
-    # Email management
-    url(r'^email/change/$',
-        account_views.email_change,
-        name='auth_email_change'),
+    url(r"^password/change/done/$",
+        auth2_views.password_change_done,
+        name="auth_password_change_done"),
+    url(r"^email/change/$",
+        auth2_views.email_change,
+        name="auth_email_change"),
     url(r'^email/change/done/$',
-        account_views.email_change_done,
+        auth2_views.email_change_done,
         name='auth_email_change_done'),
 ]

@@ -81,7 +81,15 @@ def get_test_enviroment_functions():
     """
     setup_funcs = []
     teardown_funcs = []
-    for app_name in settings.INSTALLED_APPS:
+    EXCLUDE_APPS = (
+        'allauth',
+        'allauth.account',
+        'allauth.socialaccount',
+        'allauth.socialaccount.providers.google',
+        'allauth.socialaccount.providers.openid',
+    )
+    apps = [app for app in settings.INSTALLED_APPS if app not in EXCLUDE_APPS]
+    for app_name in apps:
         mod = __import__(app_name, fromlist=['tests'])
         if hasattr(mod, 'tests'):
             if hasattr(mod.tests, SETUP_ENV):
