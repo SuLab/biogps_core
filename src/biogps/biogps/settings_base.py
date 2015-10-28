@@ -78,6 +78,7 @@ PERSISTENT_SESSION_KEY = 'sessionpersistent'     #used by 'biogps.middleware.Dua
 
 AUTHENTICATION_BACKENDS = (
  'django.contrib.auth.backends.ModelBackend',
+ 'allauth.account.auth_backends.AuthenticationBackend',
 )
 
 LOGIN_URL = '/auth/login'
@@ -187,7 +188,6 @@ INSTALLED_APPS = (
     'tagging',
     'flag',
     "pagination",
-    "emailconfirmation",
     "notification",
     "friends",
     "timezones",
@@ -196,8 +196,13 @@ INSTALLED_APPS = (
     'django_extensions',
     'django_authopenid',
     'urlauth',
-    'account',
     'uwsgi_admin',
+
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.openid',
 
     #our own biogps apps
     'biogps.www',
@@ -252,15 +257,13 @@ SECRET_KEY = '*cp6weayxc%l908tl14len!t@w4ws*@j8*2s$$29h(rb55$791'
 # Sensitive settings get imported here.
 from settings_private import *
 
-
-
-
 ######Third-party Django Apps specific settings#########
 
 ## django_account
 from urlauth.settings import *
-from account.settings import *
-ACCOUNT_REGISTRATION_FORM = 'biogps.auth2.forms.RegistrationForm'
+ACCOUNT_REGISTRATION_ENABLED = True
+ACCOUNT_ACTIVATION_REQUIRED = True
+ACCOUNT_ADAPTER = 'biogps.auth2.adapter.BiogpsAccountAdapter'
 
 ## django_authopenid
 #LOGIN_REDIRECT_URL='/account/profile'

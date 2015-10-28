@@ -10,6 +10,7 @@ from django.views.decorators.cache import never_cache
 from django.contrib.sites.models import Site
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.hashers import UNUSABLE_PASSWORD_PREFIX
+from django.contrib.auth.decorators import login_required
 
 from biogps.utils.helper import (allowedrequestmethod,
                                loginrequired,
@@ -28,19 +29,32 @@ from django_authopenid.util import from_openid_response
 from django_authopenid.models import UserAssociation
 import urllib
 
-from forms import (RegistrationForm, OpenidVerifyForm, ForgetUsernameForm,
-                   EditUserInfoForm, PasswordResetForm)
-from models import UserProfile, expanded_username_list
+from biogps.auth2.forms import (
+    RegistrationForm, OpenidVerifyForm, ForgetUsernameForm, EditUserInfoForm,
+    PasswordResetForm, EmailChangeForm,
+)
+from biogps.auth2.models import UserProfile, expanded_username_list
 
 from django.utils.translation import ugettext as _
-from account.util import render_to, email_template
-from account.views import hostname, message
 from urlauth.util import wrap_url
-from account.views import ChangePasswordForm
-from account import signals
+from allauth.account.forms import ChangePasswordForm
+from allauth.account.signals import user_signed_up
 from django.shortcuts import redirect
 
 from biogps.utils import log
+from biogps.auth2.utils import render_to, email_template
+
+from allauth.utils import build_absolute_uri
+from allauth.account.utils import user_pk_to_url_str
+from allauth.account.app_settings import DEFAULT_HTTP_PROTOCOL
+from django.contrib.auth.tokens import default_token_generator
+
+
+# taken from django-account
+@render_to('account/message.html')
+def message_view(request, msg):
+    """ Shortcut that prepare data for message view. """
+    return {'message': msg}
 
 
 def _send_email(email, subject_template, msg_template, msg_context):
@@ -98,14 +112,15 @@ def check_username(request, username):
             data = {'success': True, 'valid': False, 'reason': 'This username is taken.'}
     return JSONResponse(data)
 
+
 #@render_to('account/registration.html')
 @not_authenticated
 @render_to('auth/registration_form.html')
 def registration(request, form_class=RegistrationForm):
     if not settings.ACCOUNT_REGISTRATION_ENABLED:
-        return message(request, _('Sorry. Registration is disabled.'))
+        return message_view(request, _('Sorry. Registration is disabled.'))
     if request.user.is_authenticated():
-        return message(request, _('You have to logout before registration'))
+        return message_view(request, _('You have to logout before registration'))
 
     if 'POST' == request.method:
         form = form_class(request.POST, request.FILES)
@@ -113,11 +128,12 @@ def registration(request, form_class=RegistrationForm):
         form = form_class()
 
     if form.is_valid():
-        user = form.save()
+        user = form.save(request)
 
-        signals.account_created.send(None, user=user, request=request)
-        password = form.cleaned_data['password']
+        user_signed_up.send(None, user=user, request=request)
+        password = form.cleaned_data['password1']
 
+        hostname = Site.objects.get_current().domain
         if settings.ACCOUNT_ACTIVATION_REQUIRED:
             url = 'http://%s%s' % (hostname, reverse('registration_complete'))
             url = wrap_url(url, uid=user.id, action='activation')
@@ -130,7 +146,10 @@ def registration(request, form_class=RegistrationForm):
                 return HttpResponseRedirect(next_url)
             else:
                 user.delete()
-                return message(request, _('The error was occuried while sending email with activation code. Account was not created. Please, try later.'))
+                msg = ('The error was occuried while sending email '
+                       'with activation code. Account was not created. '
+                       'Please, try later.')
+                return message_view(request, _(msg))
         else:
             user.backend = 'django.contrib.auth.backends.ModelBackend'
             auth.login(request, user)
@@ -138,8 +157,8 @@ def registration(request, form_class=RegistrationForm):
             email_template(user.email, 'account/mail/registration_complete', **args)
             return redirect(reverse(settings.ACCOUNT_REGISTRATION_REDIRECT_URLNAME))
 
-    return {'form': form,
-            }
+    return {'form': form}
+
 
 @not_authenticated
 def register_openid(request, template_name='auth/registration_form.html'):
@@ -207,6 +226,7 @@ def register_openid(request, template_name='auth/registration_form.html'):
 
                 #sending out activating email
                 #this block of code were taken from account.views.registration
+                hostname = Site.objects.get_current().domain
                 url = 'http://%s%s' % (hostname, reverse('registration_complete'))
                 url = wrap_url(url, uid=user.id, action='activation')
                 params = {'domain': hostname, 'login': user.username, 'url': url}
@@ -221,9 +241,10 @@ def register_openid(request, template_name='auth/registration_form.html'):
                     return HttpResponseRedirect(next_url)
                 else:
                     user.delete()
-                    return message(request, _('The error occurred while sending email with activation code. Account was not created. Please, try later.'))
-
-
+                    msg = ('The error occurred while sending email '
+                           'with activation code. Account was not created. '
+                           'Please, try later.')
+                    return message_view(request, _(msg))
 
         elif 'bverify' in request.POST.keys():
             form2 = OpenidVerifyForm(request.POST)
@@ -652,17 +673,29 @@ def password_reset(request):
         email = form.cleaned_data['email']
         hostname = Site.objects.get_current().domain
         user = User.objects.get(username__in=expanded_username_list(username.lower()), email=email)
-        url = 'http://%s%s' % (hostname, reverse('auth_password_change'))
-        url = wrap_url(url, uid=user.id, onetime=False, action='password_change')
+
+        temp_key = default_token_generator.make_token(user)
+        path = reverse("account_reset_password_from_key",
+                       kwargs=dict(uidb36=user_pk_to_url_str(user),
+                                   key=temp_key))
+        url = build_absolute_uri(request, path, protocol=DEFAULT_HTTP_PROTOCOL)
+
         args = {'domain': hostname, 'url': url, 'user': user}
         if email_template(user.email, 'account/mail/password_reset', **args):
             #return message(request, 'Check the mail please')
             return render_to_response(request, 'auth/password_reset_request_done.html')
         else:
-            return message(request, 'Unfortunately we could not send you email in current time. Please, try later')
+            msg = ('Unfortunately we could not send you email '
+                   'in current time. Please, try later')
+            return message_view(request, msg)
 
-    return {'form': form,
-            }
+    return {'form': form}
+
+
+# taken from django-account to keep previous site functionality
+@render_to('account/password_change_done.html')
+def password_change_done(request):
+    return {'login_url': reverse('auth_login')}
 
 
 @render_to('account/password_change.html')
@@ -697,9 +730,9 @@ def password_change(request):
             initial = {}
 
     if 'POST' == request.method:
-        form = ChangePasswordForm(request.POST, require_old=require_old, user=request.user)
+        form = ChangePasswordForm(user=request.user, data=request.POST)
     else:
-        form = ChangePasswordForm(require_old=require_old, initial=initial, user=request.user)
+        form = ChangePasswordForm(initial=initial, user=request.user)
 
     if form.is_valid():
         form.save()
@@ -707,5 +740,37 @@ def password_change(request):
             authkey.delete()
         return HttpResponseRedirect(reverse('auth_password_change_done'))
 
-    return {'form': form,
-            }
+    return {'form': form}
+
+
+# taken from django-account to keep previous site functionality
+@render_to('account/email_change.html')
+def email_change(request):
+    if 'POST' == request.method:
+        form = EmailChangeForm(request.POST)
+    else:
+        form = EmailChangeForm()
+
+    if form.is_valid():
+        email = form.cleaned_data['email']
+        hostname = Site.objects.get_current().domain
+        url = 'http://%s%s' % (hostname, reverse('auth_email_change_done'))
+        url = wrap_url(url, uid=request.user.id, action='new_email',
+                       email=email)
+        args = {'domain': hostname, 'url': url, 'email': email}
+        if email_template(email, 'account/mail/email_change', **args):
+            return message_view(request, _('Check the mail please'))
+        else:
+            msg = ('Unfortunately we could not send you email '
+                   'in current time. Please, try later')
+            return message_view(request, _(msg))
+    return {'form': form}
+
+
+# taken from django-account to keep previous site functionality
+@login_required
+def email_change_done(request):
+    return message_view(
+        request,
+        _('Your email has been changed to %s') % request.user.email,
+    )

@@ -54,9 +54,6 @@ vobject==0.8.1c
 django-breadcrumbs==1.1.0
 django-debug-toolbar==0.9.4
 
-#django-email-confirmation==0.2
--e git+git://github.com/gustavoam/django-email-confirmation@1daadf6345995bbb0d2640ca916d73ad0bd1831f#egg=django-email-confirmation   #this is a patched version for biogps
-
 django-extensions==1.5.6
 
 -e git+git://github.com/gustavoam/django-flag@a84bc4fc583285e9ff4450d69ac6fd63265dc82d#egg=django-flag
@@ -75,13 +72,9 @@ django-timezones==0.1.4
 
 django-uwsgi-admin==0.1-alpha
 
-## The following Django apps with our own patches ##
-#django-account==0.1.14
--e hg+https://bitbucket.org/newgene/django-account#egg=django-account   #this is a patched version for biogps
-
 #django-friends==0.1.5
 #-e git+git://github.com/newgene/django-friends.git#egg=django-friends   #this is a patched version for biogps
--e git+git://github.com/gustavoam/django-friends@7a874fc34b152d004ccfdbd0c6c396706c9c4558#egg=django-friends   #this is a patched version for biogps
+-e git+git://github.com/gustavoam/django-friends@8c83cbc19faa9a668ce6d32494b9e10a6aca488c#egg=django-friends   #this is a patched version for biogps
 
 #django-threadedcomments==0.5.3
 #-e git+git://github.com/newgene/django-threadedcomments.git#egg=django-threadedcomments   #this is a patched version for biogps
@@ -96,3 +89,5 @@ django-contrib-comments==1.6.1
 
 ## The following Django apps are included in BioGPS code repo, no need to install ##
 #django-authopenid
+
+django-allauth==0.23.0

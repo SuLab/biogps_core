@@ -27,6 +27,7 @@ urlpatterns = [
     url(r'^auth/', include('biogps.auth2.urls')),  # this is through https
     url(r'^authx/', include('biogps.auth2.urls_x')),
 
+    url(r'^accounts/', include('allauth.urls')),
     url(r'^account/', include('django_authopenid.urls')),
     url(r'^profile/', include('biogps.bgprofile.urls')),
 
