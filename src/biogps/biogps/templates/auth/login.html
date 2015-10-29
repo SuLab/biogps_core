@@ -1,5 +1,6 @@
 {% extends "NEW/base_auth.html" %}
 {% load i18n %}
+{% load socialaccount %}
 
 {% block title %} Log in {% endblock %}
 
@@ -82,7 +83,24 @@
             <fieldset>
 			<div id="openid_choice">
 				<p>Please click your account provider:</p>
-				<div id="openid_btns"></div>
+				<!-- <div id="openid_btns"></div> -->
+                                <div id="openid_btns_allauth">
+                                  <a title="log in with Google" href="{% provider_login_url 'google' %}" style="background: #FFF url(/assets/img2/openid/openid-providers-en.png); background-position: 0px 0px" class="google openid_large_btn"></a>
+                                  <a title="log in with Yahoo" href="{% provider_login_url 'openid' openid='http://me.yahoo.com' %}" style="background: #FFF url(/assets/img2/openid/openid-providers-en.png); background-position: -100px 0px" class="yahoo openid_large_btn"></a>
+                                  {% comment %}
+                                  <a title="log in with MyOpenID" href="javascript:openid.signin('myopenid');" style="background: #FFF url(/assets/img2/openid/openid-providers-en.png); background-position: -200px 0px" class="myopenid openid_large_btn"></a>
+                                  <a title="log in with OpenID" href="javascript:openid.signin('openid');" style="background: #FFF url(/assets/img2/openid/openid-providers-en.png); background-position: -300px 0px" class="openid openid_large_btn"></a>
+                                  <br style="clear:both"/>
+                                  <a title="log in with AOL" href="javascript:openid.signin('aol');" style="background: #FFF url(/assets/img2/openid/openid-providers-en.png); background-position: -96px -60px" class="aol openid_small_btn"></a>
+                                  <a title="log in with LiveJournal" href="javascript:openid.signin('livejournal');" style="background: #FFF url(/assets/img2/openid/openid-providers-en.png); background-position: -120px -60px" class="livejournal openid_small_btn"></a>
+                                  <a title="log in with Wordpress" href="javascript:openid.signin('wordpress');" style="background: #FFF url(/assets/img2/openid/openid-providers-en.png); background-position: -144px -60px" class="wordpress openid_small_btn"></a>
+                                  <a title="log in with Blogger" href="javascript:openid.signin('blogger');" style="background: #FFF url(/assets/img2/openid/openid-providers-en.png); background-position: -168px -60px" class="blogger openid_small_btn"></a>
+                                  <a title="log in with Verisign" href="javascript:openid.signin('verisign');" style="background: #FFF url(/assets/img2/openid/openid-providers-en.png); background-position: -192px -60px" class="verisign openid_small_btn"></a>
+                                  <a title="log in with ClaimID" href="javascript:openid.signin('claimid');" style="background: #FFF url(/assets/img2/openid/openid-providers-en.png); background-position: -216px -60px" class="claimid openid_small_btn"></a>
+                                  <a title="log in with ClickPass" href="javascript:openid.signin('clickpass');" style="background: #FFF url(/assets/img2/openid/openid-providers-en.png); background-position: -240px -60px" class="clickpass openid_small_btn"></a>
+                                  <a title="log in with Google Profile" href="javascript:openid.signin('google_profile');" style="background: #FFF url(/assets/img2/openid/openid-providers-en.png); background-position: -264px -60px" class="google_profile openid_small_btn"></a>
+                                  {% endcomment %}
+                                </div>
 			</div>
 		    <div id="openid_input_area" class="roundBoxBlue">
 				<input id="openid_url" name="openid_url" type="text" value="http://" />
