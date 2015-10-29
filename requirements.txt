@@ -56,7 +56,7 @@ django-debug-toolbar==0.9.4
 
 django-extensions==1.5.6
 
--e git+git://github.com/gustavoam/django-flag@a84bc4fc583285e9ff4450d69ac6fd63265dc82d#egg=django-flag
+-e git+git://github.com/gustavoam/django-flag@a5ea5e0e0bc987ea4c1988633a0641bee33fa565#egg=django-flag
 
 django-mailer==0.1.0
 
@@ -86,8 +86,5 @@ django-pipeline==1.5.4
 -e hg+https://bitbucket.org/newgene/django-rest-interface#egg=django-rest-interface
 
 django-contrib-comments==1.6.1
-
-## The following Django apps are included in BioGPS code repo, no need to install ##
-#django-authopenid
 
 django-allauth==0.23.0
