@@ -264,12 +264,8 @@ from urlauth.settings import *
 ACCOUNT_REGISTRATION_ENABLED = True
 ACCOUNT_ACTIVATION_REQUIRED = True
 ACCOUNT_ADAPTER = 'biogps.auth2.adapter.BiogpsAccountAdapter'
-
-## django_authopenid
-#LOGIN_REDIRECT_URL='/account/profile'
-#LOGIN_URL = '/account/signin'
-##settings for django_registration
-#ACCOUNT_ACTIVATION_DAYS = 7
+SOCIALACCOUNT_ADAPTER = 'biogps.auth2.adapter.BiogpsSocialAccountAdapter'
+ACCOUNT_EMAIL_REQUIRED = True
 
 ## django_threadedcomments
 COMMENTS_APP = 'threadedcomments'
