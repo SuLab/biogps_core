@@ -18,8 +18,8 @@ from tagging.models import Tag
 from biogps.rating.models import Rating
 from biogps.search.navigations import BiogpsSearchNavigation
 from biogps.search.es_lib import ESQuery
-from models import BiogpsPlugin
-from forms import BiogpsPluginForm
+from biogps.plugin.models import BiogpsPlugin
+from biogps.plugin.forms import BiogpsPluginForm
 
 
 class PluginLibraryView(RestView):
