@@ -9,6 +9,9 @@ biogps_cleanup.log
 biogps_updatepopscores.log
 *.*~
 src/assets/
+settings_dev.py
+settings_private.py
+settings_prod.py
 
 # use regexp syntax
 syntax: regexp
