@@ -11,7 +11,8 @@ from biogps.utils.models import BioGPSModel, Species
 from biogps.utils.fields.jsonfield import JSONField
 from biogps.search.build_index import set_on_the_fly_indexing
 
-from fields import SpeciesField
+from biogps.plugin.fields import SpeciesField
+
 
 class BiogpsPlugin(BioGPSModel):
     '''Model definition for BioGPSPlugin.'''
