@@ -12,6 +12,7 @@ src/assets/
 
 # use regexp syntax
 syntax: regexp
+^env$
 ^.tmp/
 ^.cache/
 ^sqlite/
