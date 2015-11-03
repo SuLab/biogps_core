@@ -37,7 +37,7 @@ from biogps.auth2.models import UserProfile, expanded_username_list
 
 from django.utils.translation import ugettext as _
 from urlauth.util import wrap_url
-from allauth.account.forms import ChangePasswordForm
+from allauth.account.forms import ChangePasswordForm, SetPasswordForm
 from allauth.account.signals import user_signed_up
 from django.shortcuts import redirect
 
@@ -729,10 +729,15 @@ def password_change(request):
             require_old = True
             initial = {}
 
-    if 'POST' == request.method:
-        form = ChangePasswordForm(user=request.user, data=request.POST)
+    if request.user.is_openid_only():
+        form_class = SetPasswordForm
     else:
-        form = ChangePasswordForm(initial=initial, user=request.user)
+        form_class = ChangePasswordForm
+
+    if 'POST' == request.method:
+        form = form_class(user=request.user, data=request.POST)
+    else:
+        form = form_class(initial=initial, user=request.user)
 
     if form.is_valid():
         form.save()

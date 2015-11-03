@@ -266,6 +266,22 @@ ACCOUNT_ACTIVATION_REQUIRED = True
 ACCOUNT_ADAPTER = 'biogps.auth2.adapter.BiogpsAccountAdapter'
 SOCIALACCOUNT_ADAPTER = 'biogps.auth2.adapter.BiogpsSocialAccountAdapter'
 ACCOUNT_EMAIL_REQUIRED = True
+# SOCIALACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+SOCIALACCOUNT_AUTO_SIGNUP = False
+SOCIALACCOUNT_PROVIDERS = {
+    'openid': {
+        'SERVERS': [
+            {'id': 'yahoo',
+             'name': 'Yahoo',
+             'openid_url': 'http://me.yahoo.com'},
+        ],
+    },
+    'google': {},
+}
+
+SOCIALACCOUNT_FORMS = {
+    'signup': 'biogps.auth2.forms.SocialSignupForm'
+}
 
 ## django_threadedcomments
 COMMENTS_APP = 'threadedcomments'
