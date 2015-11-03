@@ -16,6 +16,7 @@ from biogps.auth2.models import (
 )
 from allauth.account.forms import SignupForm
 from allauth.account.forms import ResetPasswordForm
+from allauth.socialaccount.forms import SignupForm as AllauthSocialSignupForm
 
 from biogps.auth2.models import UserProfile
 
@@ -177,3 +178,10 @@ class EmailChangeForm(forms.Form):
     """
 
     email = forms.EmailField(label=_(u'New email'))
+
+
+class SocialSignupForm(AllauthSocialSignupForm):
+    def __init__(self, *args, **kwargs):
+        # TODO: may need to customize this form,
+        #       or keep it as provided by allauth is ok?
+        super(SocialSignupForm, self).__init__(*args, **kwargs)

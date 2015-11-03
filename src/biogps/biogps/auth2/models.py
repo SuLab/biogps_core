@@ -156,8 +156,9 @@ def _extend_user(user):
         The decision is made by checking if the user is in the **openid** group.
         Membership in that group is assigned elsewhere.
         '''
-#        return self.groups.filter(name='openid').count()>0
-        return hasattr(self, 'userassociation')
+        # return self.groups.filter(name='openid').count()>0
+        # return hasattr(self, 'userassociation')
+        return self.socialaccount_set.exists()
     setattr(user, 'has_openid', new.instancemethod(has_openid, user))
 
     def is_openid_only(self):
@@ -168,7 +169,8 @@ def _extend_user(user):
         '''
 #        return (self.groups.filter(name='openid').count()>0 and
 #                self.groups.filter(name='adam').count()==0)
-        return self.has_openid() and self.password == '!'
+        # return self.has_openid() and self.password == '!'
+        return self.has_openid() and not self.has_usable_password()
     setattr(user, 'is_openid_only', new.instancemethod(is_openid_only, user))
 
     def add_group_by_name(self, group_name):

@@ -37,13 +37,11 @@
         </div>
 
         {% if isOwner %}
-            <div id="accountLinks">
+            <div id="accountLinks" style="width:250px">
                 <h4>Account Management</h4>
                 <p><a href="{% url 'auth_userinfo_edit' %}">Edit account information</a></p>
                 <p><a href="{% url 'auth_password_change' %}">Change BioGPS password</a></p>
-                {% if user.has_openid %}
-                    <p><a href="{% url 'auth_change_openid' %}">Change OpenID</a></p>
-                {% endif %}
+                <p><a href="{% url 'socialaccount_connections' %}">Change Social Account Connections</a></p>
                 <p><a href="#" id="privacyLink">Privacy Controls</a></p>
             </div>
         {% else %}
