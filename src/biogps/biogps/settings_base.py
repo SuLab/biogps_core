@@ -205,6 +205,7 @@ INSTALLED_APPS = (
     'allauth.socialaccount.providers.openid',
     'allauth.socialaccount.providers.facebook',
     'allauth.socialaccount.providers.twitter',
+    'allauth.socialaccount.providers.orcid',
 
     #our own biogps apps
     'biogps.www',
