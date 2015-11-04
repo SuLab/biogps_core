@@ -87,6 +87,9 @@ def get_test_enviroment_functions():
         'allauth.socialaccount',
         'allauth.socialaccount.providers.google',
         'allauth.socialaccount.providers.openid',
+        'allauth.socialaccount.providers.facebook',
+        'allauth.socialaccount.providers.twitter',
+        'allauth.socialaccount.providers.orcid',
     )
     apps = [app for app in settings.INSTALLED_APPS if app not in EXCLUDE_APPS]
     for app_name in apps:
