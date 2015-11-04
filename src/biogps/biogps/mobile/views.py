@@ -1,8 +1,9 @@
+import json
+
 from django.http import HttpResponseBadRequest, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template.base import RequestContext
 
-from biogps.utils.helper import json
 from biogps.boe import views as boe_views
 from biogps.layout.layout import get_plugin_urls
 
