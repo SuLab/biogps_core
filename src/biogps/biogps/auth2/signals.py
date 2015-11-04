@@ -1,11 +1,16 @@
 from django.contrib import auth
 from django.dispatch import Signal
 from django.contrib.sites.models import Site
+from django.contrib.auth import get_user_model
+from django.db.models.signals import post_save
 
 from urlauth.signals import authkey_processed
 from urlauth.models import AuthKey
 
 from biogps.auth2.utils import email_template
+from biogps.auth2.models import (
+    UserProfile, DEFAULT_UIPROFILE, ROLE_BIOGPSUSER,
+)
 
 account_created = Signal(providing_args=['user', 'request'])
 
@@ -30,3 +35,19 @@ def authkey_handler(key, user, **kwargs):
 
 
 authkey_processed.connect(authkey_handler, sender=AuthKey)
+
+
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        user = instance
+        profile = UserProfile.objects.filter(user=user).first()
+        if not profile:
+            sid_prefix = user.username if user.username else str(user.id)
+            UserProfile.objects.create(
+                user=user,
+                roles=ROLE_BIOGPSUSER,
+                uiprofile=DEFAULT_UIPROFILE,
+                sid=sid_prefix + '_sid',
+            )
+
+post_save.connect(create_user_profile, sender=get_user_model())
