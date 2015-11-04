@@ -68,13 +68,18 @@ class RegistrationForm(SignupForm):
 
     def save(self, request):
         user = super(RegistrationForm, self).save(request)
-        #now create user profile
-        profile = UserProfile.objects.create(
-            user=user,
-            sid=user.username + '_sid',  # not useful now, set a dummy value here. Will be deleted eventually.
-            roles=ROLE_BIOGPSUSER,
-            uiprofile=DEFAULT_UIPROFILE,
-        )
+        profile = UserProfile.objects.filter(user=user).first()
+        if not profile:
+            # now create user profile
+            # not useful now, set a dummy value here.
+            # Will be deleted eventually.
+            sid = user.username + '_sid'
+            profile = UserProfile.objects.create(
+                user=user,
+                sid=sid,
+                roles=ROLE_BIOGPSUSER,
+                uiprofile=DEFAULT_UIPROFILE,
+            )
         affiliation = self.cleaned_data.get('affiliation', '')
         if affiliation:
             profile.affiliation = affiliation
