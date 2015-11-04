@@ -91,13 +91,16 @@
                                   <a title="log in with Twitter" href="{% provider_login_url 'twitter' %}" style="background: #FFF url(/assets/img2/twittericon.png);" class="twitter openid_large_btn"></a>
                                   <div style="padding-top: 80px;margin-bottom:80px;">
                                     <a title="log in with ORCID" href="{% provider_login_url 'orcid' %}" style="background: #FFF url(/assets/img2/orcidicon.png);" class="orcid openid_large_btn"></a>
+                                    <a title="log in with OpenID" href="{% provider_login_url 'openid' %}" style="background: #FFF url(/assets/img2/openid/openid-providers-en.png); background-position: -300px 0px" class="openid openid_large_btn"></a>
                                   </div>
                                 </div>
 			</div>
-		    <div id="openid_input_area" class="roundBoxBlue">
-				<input id="openid_url" name="openid_url" type="text" value="http://" />
-				<input id="openid_submit" type="submit" value="Log in"/>
+                        {% comment %}
+		        <div id="openid_input_area" class="roundBoxBlue">
+			  <input id="openid_url" name="openid_url" type="text" value="http://" />
+			  <input id="openid_submit" type="submit" value="Log in"/>
 			</div>
+                        {% endcomment %}
 			<noscript>
 			<p>OpenID is service that allows you to log-on to many different websites using a single indentity.
 			Find out <a href="http://openid.net/what/">more about OpenID</a> and <a href="http://openid.net/get/">how to get an OpenID enabled account</a>.</p>
