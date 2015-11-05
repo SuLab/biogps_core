@@ -13,6 +13,7 @@ from biogps.genelist import genelist
 from biogps.rating import views as rating_views
 from biogps.boe import views as boe_views
 from biogps.plugin import plugin
+from biogps.auth2 import views as auth2_views
 
 
 urlpatterns = [
@@ -27,6 +28,9 @@ urlpatterns = [
     url(r'^auth/', include('biogps.auth2.urls')),  # this is through https
     url(r'^authx/', include('biogps.auth2.urls_x')),
 
+    url('^accounts/social/signup/$',
+        auth2_views.social_signup,
+        name='socialaccount_signup'),
     url(r'^accounts/', include('allauth.urls')),
     url(r'^account/', include('django_authopenid.urls')),
     url(r'^profile/', include('biogps.bgprofile.urls')),

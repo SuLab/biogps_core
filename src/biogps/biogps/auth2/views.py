@@ -31,7 +31,7 @@ import urllib
 
 from biogps.auth2.forms import (
     RegistrationForm, OpenidVerifyForm, ForgetUsernameForm, EditUserInfoForm,
-    PasswordResetForm, EmailChangeForm,
+    PasswordResetForm, EmailChangeForm, SocialRegistrationForm,
 )
 from biogps.auth2.models import UserProfile, expanded_username_list
 
@@ -47,6 +47,7 @@ from biogps.auth2.utils import render_to, email_template
 from allauth.utils import build_absolute_uri
 from allauth.account.utils import user_pk_to_url_str
 from allauth.account.app_settings import DEFAULT_HTTP_PROTOCOL
+from allauth.socialaccount.views import SignupView
 from django.contrib.auth.tokens import default_token_generator
 
 
@@ -779,3 +780,47 @@ def email_change_done(request):
         request,
         _('Your email has been changed to %s') % request.user.email,
     )
+
+
+class BiogpsSignupView(SignupView):
+    form_class = SocialRegistrationForm
+    verify_form_class = OpenidVerifyForm
+    template_name = 'auth/social_registration_form.html'
+
+    def get_form_kwargs(self):
+        kwargs = super(SignupView, self).get_form_kwargs()
+        kwargs.update(dict(sociallogin=self.sociallogin))
+        return kwargs
+
+    def get(self, request, *args, **kwargs):
+        form = self.get_form()
+        context = self.get_context_data(form=form)
+        verify_form = self.verify_form_class(auto_id='openid_%s')
+        context.update(dict(openid_form=verify_form))
+        return self.render_to_response(context)
+
+    def post(self, request, *args, **kwargs):
+        if 'bverify' in request.POST:
+            verify_form = self.verify_form_class(
+                data=request.POST, auto_id='openid_%s')
+            if verify_form.is_valid():
+                user = verify_form.get_user()
+                self.sociallogin.connect(request, user)
+                auth.login(request, user)
+                return HttpResponseRedirect(reverse('mainpage'))
+            form = self.form_class(sociallogin=self.sociallogin)
+            context = self.get_context_data(form=form)
+            context.update(dict(openid_form=verify_form))
+            return self.render_to_response(context)
+
+        else:
+            form = self.get_form()
+            if form.is_valid():
+                return self.form_valid(form)
+            context = self.get_context_data(form=form)
+            verify_form = self.verify_form_class()
+            context.update(dict(openid_form=verify_form))
+            return self.render_to_response(context)
+
+
+social_signup = BiogpsSignupView.as_view()
