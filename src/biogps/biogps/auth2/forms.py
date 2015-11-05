@@ -104,6 +104,57 @@ class RegistrationForm(SignupForm):
         return user
 
 
+class SocialRegistrationForm(AllauthSocialSignupForm):
+    first_name = forms.CharField(max_length=50, required=False,
+                                widget=forms.TextInput(),
+                                label=_(u'first name'))
+    last_name = forms.CharField(max_length=50, required=False,
+                                widget=forms.TextInput(),
+                                label=_(u'last name'))
+    affiliation = forms.CharField(max_length=150, required=False,
+                                  widget=forms.TextInput(),
+                                  label=_(u'affiliation'))
+    tou = forms.BooleanField(
+        widget=forms.CheckboxInput(attrs=attrs_dict),
+        label=_(u'I have read and agree to the Terms of Use'),
+    )
+    signup_ann = forms.BooleanField(widget=forms.CheckboxInput(),
+                                    initial=True, required=False)
+    invitation_key = forms.CharField(max_length=40, required=False,
+                                     widget=forms.HiddenInput())
+
+    def clean_tou(self):
+        if self.cleaned_data.get('tou', False):
+            return self.cleaned_data['tou']
+        raise forms.ValidationError('You must agree to the terms to register')
+
+    def save(self, request):
+        user = super(SocialRegistrationForm, self).save(request)
+
+        affiliation = self.cleaned_data.get('affiliation', '')
+        profile = user.profile
+        if affiliation:
+            profile.affiliation = affiliation
+        profile.save()
+
+        for param in ['first_name', 'last_name']:
+            value = self.cleaned_data.get(param, '')
+            if value:
+                setattr(user, param, value)
+        user.save()
+
+        if self.cleaned_data["invitation_key"]:
+            from friends.models import JoinInvitation
+            try:
+                join_invitation = JoinInvitation.objects.get(
+                    confirmation_key=self.cleaned_data["invitation_key"])
+                join_invitation.accept(user)
+            except JoinInvitation.DoesNotExist:
+                pass
+
+        return user
+
+
 #override original OpenidVerifyForm to fix an issue when using fqu
 class OpenidVerifyForm(OpenidVerifyForm):
     def clean_username(self):
@@ -183,10 +234,3 @@ class EmailChangeForm(forms.Form):
     """
 
     email = forms.EmailField(label=_(u'New email'))
-
-
-class SocialSignupForm(AllauthSocialSignupForm):
-    def __init__(self, *args, **kwargs):
-        # TODO: may need to customize this form,
-        #       or keep it as provided by allauth is ok?
-        super(SocialSignupForm, self).__init__(*args, **kwargs)

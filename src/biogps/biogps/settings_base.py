@@ -282,10 +282,6 @@ SOCIALACCOUNT_PROVIDERS = {
     'google': {},
 }
 
-SOCIALACCOUNT_FORMS = {
-    'signup': 'biogps.auth2.forms.SocialSignupForm'
-}
-
 ## django_threadedcomments
 COMMENTS_APP = 'threadedcomments'
 
