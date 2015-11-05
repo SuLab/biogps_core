@@ -1,8 +1,14 @@
-from allauth.account.adapter import DefaultAccountAdapter
-from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
-
 from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
+from django.core.exceptions import ValidationError
+from django.utils.translation import ugettext_lazy as _
+from django.utils.safestring import mark_safe
+
+from allauth.account.adapter import DefaultAccountAdapter
+from allauth.account.app_settings import EmailVerificationMethod
+from allauth.account.models import EmailAddress
+from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
+from allauth.socialaccount import app_settings
 
 from biogps.auth2.models import (
     UserProfile, DEFAULT_UIPROFILE, ROLE_BIOGPSUSER,
@@ -47,3 +53,23 @@ class BiogpsSocialAccountAdapter(DefaultSocialAccountAdapter):
             )
 
         return user
+
+    def validate_disconnect(self, account, accounts):
+        """
+        Validate whether or not the socialaccount account can be
+        safely disconnected.
+        """
+        if len(accounts) == 1:
+            # No usable password would render the local account unusable
+            if not account.user.has_usable_password():
+                msg = ('Your account has no password set up. Please set your '
+                       'password <a href="{}">here</a>.').format(
+                    reverse('auth_password_change'))
+                raise ValidationError(mark_safe(_(msg)))
+            # No email address, no password reset
+            if app_settings.EMAIL_VERIFICATION \
+                    == EmailVerificationMethod.MANDATORY:
+                if EmailAddress.objects.filter(user=account.user,
+                                               verified=True).count() == 0:
+                    raise ValidationError(_("Your account has no verified"
+                                            " e-mail address."))
