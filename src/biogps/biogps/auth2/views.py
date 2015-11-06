@@ -1,3 +1,6 @@
+import urllib
+import requests
+
 from django.conf import settings
 from django.contrib import auth
 from django.core.urlresolvers import reverse
@@ -27,7 +30,6 @@ from django_authopenid.forms import OpenidSigninForm, ChangeopenidForm
 from django_authopenid.views import get_url_host, sreg, ask_openid, complete
 from django_authopenid.util import from_openid_response
 from django_authopenid.models import UserAssociation
-import urllib
 
 from biogps.auth2.forms import (
     RegistrationForm, OpenidVerifyForm, ForgetUsernameForm, EditUserInfoForm,
@@ -40,6 +42,7 @@ from urlauth.util import wrap_url
 from allauth.account.forms import ChangePasswordForm, SetPasswordForm
 from allauth.account.signals import user_signed_up
 from django.shortcuts import redirect
+from django.contrib.auth.tokens import default_token_generator
 
 from biogps.utils import log
 from biogps.auth2.utils import render_to, email_template
@@ -48,7 +51,10 @@ from allauth.utils import build_absolute_uri
 from allauth.account.utils import user_pk_to_url_str
 from allauth.account.app_settings import DEFAULT_HTTP_PROTOCOL
 from allauth.socialaccount.views import SignupView
-from django.contrib.auth.tokens import default_token_generator
+from allauth.socialaccount.providers.orcid.views import OrcidOAuth2Adapter
+from allauth.socialaccount.providers.oauth2.views import (
+    OAuth2LoginView, OAuth2CallbackView,
+)
 
 
 # taken from django-account
@@ -824,3 +830,16 @@ class BiogpsSignupView(SignupView):
 
 
 social_signup = BiogpsSignupView.as_view()
+
+
+class BiogpsOrcidOAuth2Adapter(OrcidOAuth2Adapter):
+    def complete_login(self, request, app, token, **kwargs):
+        resp = requests.get(self.profile_url % kwargs['response']['orcid'],
+                            headers={'accept': 'application/orcid+json'})
+        extra_data = resp.json()
+        return self.get_provider().sociallogin_from_response(request,
+                                                             extra_data)
+
+biogps_oauth2_login = OAuth2LoginView.adapter_view(BiogpsOrcidOAuth2Adapter)
+biogps_oauth2_callback = \
+    OAuth2CallbackView.adapter_view(BiogpsOrcidOAuth2Adapter)
