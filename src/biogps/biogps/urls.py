@@ -28,6 +28,13 @@ urlpatterns = [
     url(r'^auth/', include('biogps.auth2.urls')),  # this is through https
     url(r'^authx/', include('biogps.auth2.urls_x')),
 
+    url('^accounts/orcid/login/$',
+        auth2_views.biogps_oauth2_login,
+        name='orcid_login'),
+    url('^accounts/orcid/login/callback/$',
+        auth2_views.biogps_oauth2_callback,
+        name='orcid_callback'),
+
     url('^accounts/social/signup/$',
         auth2_views.social_signup,
         name='socialaccount_signup'),
