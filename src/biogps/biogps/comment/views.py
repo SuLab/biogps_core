@@ -6,7 +6,7 @@ from django.contrib.sites.models import Site
 from django.template.base import RequestContext
 from biogps.utils.models import BioGPSModel
 from threadedcomments.models import ThreadedComment
-from threadedcomments.forms import ThreadedCommentForm
+from biogps.comment.forms import BiogpsThreadedCommentForm
 from biogps.utils.decorators import loginrequired
 from django.utils import timezone
 from biogps.utils.restview import RestView
@@ -34,9 +34,9 @@ class CommentSubmitView(RestView):
         # User has submitted new/reply comment - validate and save to DB.
         obj, con_type = BioGPSModel.get_object_and_ctype(modelType,
                                                          pk=objectID)
-        comment_form = ThreadedCommentForm(target_object=obj,
-                                           parent=request.POST['parent'],
-                                           data=request.POST)
+        comment_form = BiogpsThreadedCommentForm(target_object=obj,
+                                                 parent=request.POST['parent'],
+                                                 data=request.POST)
         if comment_form.is_valid():
             #parent_link = request.META['HTTP_REFERER']
             user_comment = comment_form.cleaned_data['comment']
@@ -79,7 +79,7 @@ class CommentSubmitView(RestView):
                            settings.DEFAULT_FROM_EMAIL, [obj.owner.email],
                                           [i[1] for i in settings.ADMINS])
                 msg.content_subtype = "html"
- 	        msg.send(fail_silently=False)
+                msg.send(fail_silently=False)
 
             # Re-direct to parent comment that user replied to.
             #return HttpResponseRedirect(parent_link)
@@ -101,9 +101,9 @@ class CommentEditView(RestView):
         ''' To simplify new/editing comments into one template the 'parent'
         in the PUT is actually the commentID, not the parentID. This doesn't
         matter since we only use the 'parent' for validation briefly.'''
-        comment_form = ThreadedCommentForm(target_object=obj,
-                                           parent=request.PUT['parent'],
-                                           data=request.PUT)
+        comment_form = BiogpsThreadedCommentForm(target_object=obj,
+                                                 parent=request.PUT['parent'],
+                                                 data=request.PUT)
         data = {'success': False, 'commentID': commentID}
         if comment_form.is_valid():
             existing_comment = get_object_or_404(Comment, pk=commentID)
