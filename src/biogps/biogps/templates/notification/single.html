@@ -1,0 +1,36 @@
+{% extends "base_site.html" %}
+
+{% load humanize i18n %}
+{% load pagination_tags %}
+{% load timezone_filters %}
+
+{% block title %}View notice | BioGPS{% endblock %}
+{% block breadcrumbs %}<div class="breadcrumbs"><a href="/">Home</a> &rsaquo; <a href="{% url 'notification_notices' %}">Notices</a> &rsaquo; View notice</div>{% endblock %}
+
+{% block extrahead %}
+    <link rel="stylesheet" href="/assets/css/notification.css" />
+{% endblock %}
+{% block bodyclass %}notices{% endblock %}
+{% block content %}
+<div id="fixedWrapper" class="clearfix">
+    <h1>{% trans "Notices" %}</h1>
+
+    <div class="roundBox clearfix">
+
+    {% if notice %}
+                {% if notice.is_unseen %}
+                    <div class="unseen_notice">
+                {% else %}
+                    <div class="notice">
+                {% endif %}
+                    <span class="notice_type">[{% trans notice.notice_type.display %}]</span>
+                    <span class="notice_message">{{ notice.message|safe }}</span>
+                     {% comment %} <span class="notice_time">{{ notice.added|localtime:account.timezone|time:"P" }}</span> {% endcomment %}
+                      <span class="notice_time">{{ notice.added|time:"P" }}</span>
+                </div>
+    {% else %}
+        <p>{% trans "No notices." %}</p>
+    {% endif %}
+    </div>
+</div>
+{% endblock %}

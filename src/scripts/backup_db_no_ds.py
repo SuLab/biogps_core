@@ -1,18 +1,19 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+import subprocess
 
-from datetime import date
+from django.utils import timezone
+
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
 from os import remove
-import subprocess
 
 
 def backup_db():
     """Dump all BioGPS Postgres tables and their definitions,
        excluding datasets. Send to AWS S3."""
 
-    now = date.today()
+    now = timezone.now().date()
     backup_file = 'BioGPSP_no_DS_{}-{}-{}.dmp.gz'.format(now.year, now.month,
                   now.day)
 

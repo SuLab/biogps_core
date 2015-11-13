@@ -7,14 +7,20 @@ src/biogps/settings_*.py
 src/assets/less/base_tmp.css
 biogps_cleanup.log
 biogps_updatepopscores.log
+*.*~
+src/assets/
+settings_dev.py
+settings_private.py
+settings_prod.py
 
 # use regexp syntax
 syntax: regexp
+^env$
 ^.tmp/
 ^.cache/
 ^sqlite/
 ^doc/
 #^site-packages/
-/migrations/
+#/migrations/
 ^src/.settings/
 ^src/assets/js/ext/
