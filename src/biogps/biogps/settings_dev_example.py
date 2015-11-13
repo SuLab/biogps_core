@@ -87,7 +87,6 @@ DEBUG_TOOLBAR_PANELS = (
 )
 
 
-TEST_RUNNER='biogps.test.nose_runner.run_tests'
 NOSE_ARGS = ['--exe']
 
 #EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
