@@ -1,0 +1,22 @@
+{% extends "NEW/base_site.html" %}
+{% load i18n %}
+
+{% block breadcrumbs %}<div class="breadcrumbs"><a href="/">Home</a></div>{% endblock %}
+
+{% block bodyclass %}authpage login{% endblock %}
+{% block title %}OpenID Sign In{% endblock %}
+
+{% block content %}
+<article>
+  <div class="in">
+    <div class="editAccountForm roundBoxBlue">
+      <h1>{% trans 'OpenID Sign In' %}</h1>
+      <form id="openid_login_form" class="openid_login" method="post" action="{% url 'openid_login' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Sign In</button>
+      </form>
+    </div>
+  </div>
+</article>
+{% endblock %}
