@@ -204,7 +204,7 @@ li {
             <span class="subtitle">Molecular Function</span>
             <ul>
             {% for goterm in gene.go.MF|alwayslist %}
-              <li>{{goterm.term}} (<a href="http://amigo.geneontology.org/cgi-bin/amigo/term_details?term={{goterm.id}}">{{goterm.id}}</a>)
+              <li>{{goterm.term}} (<a href="http://amigo.geneontology.org/amigo/term/{{goterm.id}}">{{goterm.id}}</a>)
               </li>
             {% endfor %}
             </ul>
@@ -215,7 +215,7 @@ li {
             <span class="subtitle">Biological Process</span>
             <ul>
             {% for goterm in gene.go.BP|alwayslist %}
-              <li>{{goterm.term}} (<a href="http://amigo.geneontology.org/cgi-bin/amigo/term_details?term={{goterm.id}}">{{goterm.id}}</a>)
+              <li>{{goterm.term}} (<a href="http://amigo.geneontology.org/amigo/term/{{goterm.id}}">{{goterm.id}}</a>)
               </li>
             {% endfor %}
             </ul>
@@ -226,7 +226,7 @@ li {
             <span class="subtitle">Cellular Component</span>
             <ul>
             {% for goterm in gene.go.CC|alwayslist %}
-              <li>{{goterm.term}} (<a href="http://amigo.geneontology.org/cgi-bin/amigo/term_details?term={{goterm.id}}">{{goterm.id}}</a>)
+              <li>{{goterm.term}} (<a href="http://amigo.geneontology.org/amigo/term/{{goterm.id}}">{{goterm.id}}</a>)
               </li>
             {% endfor %}
             </ul>
