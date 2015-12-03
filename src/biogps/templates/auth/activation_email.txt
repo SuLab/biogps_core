@@ -1,7 +1,0 @@
-Dear {{name}},
-
-    Your user account ("{{username}}") has been created at our BioGPS (http://{{ site }}) website. Please click the following link to activate your account within {{ expiration_days }} days:
-
-https://{{ site }}{% url adamauth_registration_activate  activation_key %}
-
-The BioGPS Team

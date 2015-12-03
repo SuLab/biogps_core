@@ -1,17 +1,18 @@
 #!/home/ubuntu/logpy/bin/python
 # -*- coding: utf-8 -*-
+import subprocess
 
-from datetime import date
+from django.utils import timezone
+
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
 from os import chdir, remove
-import subprocess
 
 
 def backup_logs():
     """Dump all BioGPS logs from MongoDB, send to AWS S3."""
 
-    now = date.today()
+    now = timezone.now().date()
     backup_datename = 'BioGPSP_logs_{}-{}-{}'.format(now.year, now.month,
         now.day)
 

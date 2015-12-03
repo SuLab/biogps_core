@@ -1,0 +1,23 @@
+{% extends "NEW/base_auth.html" %}
+
+{% block title %} BioGPS user account {% endblock %}
+
+{% block breadcrumbs %}<div class="breadcrumbs"><a href="/">Home</a> &rsaquo; Account</div>{% endblock %}
+
+{% block bodyclass %}authpage{% endblock %}
+{% block content %}
+<article>
+<div class="in">
+    {% if msg %}
+	    <p>{{ msg }}</p>
+	{% endif %}
+
+    <div class="roundBoxBlue">
+        <p><a href="{% url 'auth_password_change' %}">Change BioGPS password</a></p>
+        <p><a href="{% url 'auth_userinfo_edit' %}">Edit account information</a></p>
+        <p><a href="{{ user.get_absolute_url }}">Edit profile</a></p>
+        <p><a href="{% url 'socialaccount_connections' %}">Change Social Account Connections</a></p>
+    </div>
+</div>
+</article>
+{% endblock %}
