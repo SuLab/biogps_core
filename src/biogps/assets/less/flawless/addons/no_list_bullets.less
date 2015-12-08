@@ -1,0 +1,15 @@
+/*
+ * No List Bullets
+ * This removes list margin and item bullets (which are applied by default).
+ * Then items can then be styled separately.
+ */
+
+.no_list_bullets() {
+	ul, ol {
+		margin: 0;
+	}
+	
+	li {
+		list-style: none inside none;
+	}
+}

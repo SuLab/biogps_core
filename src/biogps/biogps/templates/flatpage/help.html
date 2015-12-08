@@ -1,0 +1,84 @@
+{% extends "NEW/base_site.html" %}
+{% load biogps_tags %}
+
+{% block title %}Help{% endblock %}
+
+{% block bodyclass %}flatpage help{% endblock %}
+{% block content %}
+<article>
+  <div class="in">
+    <div id="smallHow" class="roundBox">
+		<h1>How it works...</h1>
+		<a class="step" href="/help_steps/#step1">
+			<div class="stepNum">1</div>
+			<div class="stepName">Search</div>
+			for your gene of interest
+			<img src="/assets/img/kmag.png" />
+		</a>
+
+		<a class="step" href="/help_steps/#step2">
+			<div class="stepNum">2</div>
+			<div class="stepName">View</div>
+			the gene annotation report
+			<img src="/assets/img/fsview.png" />
+		</a>
+
+		<a class="step" href="/help_steps/#step3">
+			<div class="stepNum">3</div>
+			<div class="stepName">Browse</div>
+			the gene report layouts
+			<img src="/assets/img/kpager.png" />
+		</a>
+
+		<a class="step" href="/help_steps/#step4">
+			<div class="stepNum">4</div>
+			<div class="stepName">Build</div>
+			your own gene report
+			<img src="/assets/img/kpaint.png" />
+		</a>
+		<div class="clear"></div>
+		<span class="viewall"><a href="/help_steps/">Details &raquo;</a></span>
+	</div>
+  </div>
+</article>
+
+    <!-- <div class="roundBox" style="display:none;">
+        <h1>What is BioGPS good for?</h1>
+        <p>Use cases</p>
+    </div>-->
+
+<div class="half-box-container">
+	<section class="half-box">
+		<div class="in">
+	    <div class="help_screencasts roundBox">
+	        <h1>Screencasts</h1>
+	        <p>Short video tutorials that show you the basics of using BioGPS.</p>
+	        <ul class="list">
+	            <li><a target="_blank" href="http://plugins.biogps.org/screencasts/searching/">Searching in BioGPS</a> (1:58)</li>
+	            <li><a target="_blank" href="http://plugins.biogps.org/screencasts/default_layout_tour/">View the standard gene report</a> (2:18)</li>
+	            <li><a target="_blank" href="http://plugins.biogps.org/screencasts/default_layouts/">Tour the default layouts</a> (2:44)</li>
+	            <li><a target="_blank" href="http://plugins.biogps.org/screencasts/customizing_layouts/">Customizing gene report layouts</a> (3:24)</li>
+	            <li><a target="_blank" href="http://plugins.biogps.org/screencasts/plugin_registration/">Registering your own BioGPS plugin</a> (3:31)</li>
+	        </ul>
+	    </div>
+	    </div>
+	</section>
+
+	<section class="half-box">
+		<div class="in">
+	    <div class="help_group roundBox">
+	        <h1>Contact Us</h1>
+	        <p>To view the archive of past questions and comments, please see the
+	            <a href="http://groups.google.com/group/biogps" target="_blank">BioGPS Google Group.</a>
+	            </p>
+	            <p>To submit a new question or comment to the public discussion forum, please email us at:
+	            <b>{% emailus %}</b>.
+	            </p>
+	            <p>You can also reach us at our <a href="https://getsatisfaction.com/biogps" target="_blank">Get Satisfaction</a> page.</p>
+	            <!--<p><span class="smallNote">To submit a question or comment privately to the developers, please email {% emailus2 %}.</span>
+	        </p>-->
+	    </div>
+		</div>
+	</section>
+</div>
+{% endblock %}

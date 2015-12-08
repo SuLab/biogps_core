@@ -1,0 +1,156 @@
+.genesummary_head{
+    font: 8pt Arial, sans-serif;
+    font-weight: bold;
+    padding-bottom: 5px;
+}
+
+.genesummary_name{
+    font: 8pt Arial, sans-serif;
+    font-weight: bold;
+    padding-left:3px;
+    vertical-align: top;
+}
+.genesummary_text{
+    font: 8pt Arial, sans-serif;
+    font-weight: normal;
+    padding-left:10px;
+}
+
+.genereport_head{
+    font: 12pt Arial, sans-serif;
+    font-weight: bold;
+    padding-bottom: 5px;
+}
+
+.genereport_subhead{
+    font: 12pt Arial, sans-serif;
+    font-weight: bold;
+    padding-bottom: 5px;
+    padding-top: 50px;
+}
+
+.genereport_name{
+    font: 10pt Arial, sans-serif;
+    font-weight: bold;
+    padding-left:3px;
+    padding-bottom:5px;
+    width: 120px;
+    vertical-align: top;
+}
+.genereport_text{
+    font: 10pt Arial, sans-serif;
+    font-weight: normal;
+    padding-left:10px;
+}
+
+.genereport_ul{
+    font: 10pt Arial, sans-serif;
+    font-weight: normal;
+    text-indent: 5px;
+    /*list-style-position: outside;
+    list-style-image: url(arrow.gif);
+    list-style-type: disc;*/
+    list-style: disc url(/assets/img/bullet.gif) inside;
+    padding: 6px;
+    margin: 2px;
+}
+
+
+.genereportlink {
+    cursor:pointer;
+    cursor:hand;
+}
+
+
+.report_panel_back {
+    background: #E0E0C0 url('/assets/img/gradient_sand.gif') repeat-x;
+}
+
+.gene-report-page {
+    margin: 5px 10px 10px 10px;
+    background: #fff;
+}
+
+.gene-report-header {
+    background: #D0DEF0 url(/assets/img/genereport_header.gif) repeat-x;
+    color: #15428b;
+}
+
+.x-toolbar .gene-report-title {
+    color:#15428b;
+    font-size: 14px;
+	font-weight:bold;
+}
+
+
+
+/* Flag Plugin related code */
+
+#newlayoutform .x-form-item { overflow: hidden; }
+
+
+/* css for portlets */
+.portlet-body {
+    overflow: hidden;   /* to fix double scrollbars issue in plugin window */
+    /*color: #DDD;*/
+    /*font-family: Tahoma, Arial, sans-serif;
+    font-size: 10px;*/
+    background-color:#fff;
+}
+
+/*overwrite the default*/
+.x-window-header-text {
+    cursor:pointer;
+    white-space: nowrap;
+}
+
+.x-tool-flag {
+    background: transparent url(/assets/img/flag_red.png) no-repeat 0 0;
+}
+
+.x-tool-info {
+    background: transparent url(/assets/img/information.png) no-repeat 0 0;
+}
+
+.x-tool-species {
+    position:absolute;
+    top:1px;
+    right:55px;
+    cursor:pointer;
+    z-index:2000;
+}
+
+.x-tool-species .x-btn-tl, .x-tool-species .x-btn-tr, .x-tool-species .x-btn-tc,
+.x-tool-species .x-btn-ml, .x-tool-species .x-btn-mr, .x-tool-species .x-btn-mc,
+.x-tool-species .x-btn-bl, .x-tool-species .x-btn-br, .x-tool-species .x-btn-bc {
+    background: transparent !important;
+}
+
+.x-tool-species-label {
+	font-weight: bold;
+	color: #15428B;
+	text-decoration: underline;
+}
+
+.x-tool-species-label-over {
+    color: black !important;
+}
+
+/*
+.x-window-clean .x-window-bl, .x-window-clean .x-window-bc, .x-window-clean .x-window-br,
+    .x-window-clean .x-window-ml, .x-window-clean .x-window-mr,
+    .x-window-clean .x-window-tl, .x-window-clean.x-window-tc, .x-window-clean .x-window-tr,
+    .x-window-clean .x-window-header, .x-window-clean .x-window-footer
+     {
+    padding:0;
+}
+
+.x-window-clean .x-window-mc {
+    border:1 solid;
+}*/
+
+.ux-mif {
+    margin: 0;
+    madding: 0;
+    border: none;
+}

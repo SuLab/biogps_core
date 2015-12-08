@@ -1,0 +1,63 @@
+{% extends "NEW/base_site.html" %}
+{% load biogps_tags %}
+
+{% block title %}iPhone App{% endblock %}
+
+{% block content %}
+<article>
+    <div class="in">
+		<h1>BioGPS is an iPhone App too!</h1>
+		<p>
+		    So you're sitting in a lecture scrutinizing the speaker's PowerPoint,
+		    or in a meeting going over your group's latest data.
+		    And up comes a gene you don't recognize.  <b>What to do?</b>
+		</p>
+		<p>Fear not, intrepid scientist, for now you can <b>fit the power of BioGPS in your pocket!</b>
+		</p>
+		<div id="appstore-badge">
+	        <a title="BioGPS on the iTunes App Store" target="_blank"
+                href="http://itunes.apple.com/us/app/biogps/id511351705"
+                onClick="javascript:ga('send', 'pageview', '/iphone/download');">
+	            <img src="/assets/img/iphone/appstore_badge.gif" height="40px" width="116px" />
+	        </a>
+	    </div>
+	    <p class="large-quote">
+		    <span>&quot;The BioGPS iPhone app was the 1st serious biology-related app that 'made' me
+	        spend a significant time with science on the iPhone.&quot;</span><br>
+	        - <a href="http://friendfeed.com/the-life-scientists/166407e8/biogps-is-going-social" target="_blank">Attila Csordas</a>
+	    </p>
+
+		<h2>What can I do with it?</h2>
+		<p>
+		    Although every scientist who visits a gene portal wants to <b>view gene annotation</b>,
+		    the specific reasons are different for every person. A geneticist may be here to
+		    find the phenotype of the <b>mouse knockout</b>. A cell biologist may be here to view
+		    our <b>Gene Atlas expression profiles</b>. A molecular biologist may want to find
+		    information on <b>protein domains</b>. If everyone has their unique interests, gene
+		    portals should be adaptable to suit your individual needs.
+		</p><p>
+		    Now you can access this information <b>when you need it</b>, whether you are at a
+		    conference, meeting, or just lunch. The BioGPS app puts the knowledge of the
+		    genome at your fingertips.
+		</p>
+
+		<div class="apple-tm">
+		    Apple, the Apple logo, iPod, iPod touch, and iTunes are trademarks of Apple Inc.,
+            registered in the U.S. and other countries.<br>iPhone is a trademark of Apple Inc.
+            App Store is a service mark of Apple Inc.
+        </div>
+    </div>
+</article>
+
+<aside id="sidebar-right">
+    <div class="in">
+        <div id="iphone-preview">
+            <a title="BioGPS on the iTunes App Store" target="_blank"
+                href="http://itunes.apple.com/us/app/biogps/id511351705"
+                onClick="javascript:ga('send', 'pageview', '/iphone/download']);">
+                <img src="/assets/img/iphone/biogps_iPhone_v2_2012_03_26.png" height="473px" width="247px" />
+            </a>
+        </div>
+    </div>
+</aside>
+{% endblock %}

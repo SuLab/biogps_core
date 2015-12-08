@@ -1,0 +1,85 @@
+{% extends "NEW/base_site.html" %}
+
+{% block title %}Dataset Library{% endblock %}
+{% block bodyclass %}{% endblock %}
+
+{% block content %}
+<article class="shift-for-sidebar-left">
+    <div class="in">
+        <header id="page-header">
+            <h1 id="page-header-text">{{ navigation.title }}</h1>
+            <div id="page-alt-nav">
+                {% comment %}
+                <a href="/dataset/new/" class="jq-button ui-priority-primary">Create a Dataset</a>
+                {% endcomment %}
+            </div>
+        </header>
+        <p class="large-summary"><b>Datasets are collections of data.</b>
+            BioGPS has thousands of datasets available for browsing and which
+            can be easily viewed in our <a href="/plugin/9">interactive data chart</a>.
+            <a href="/help_steps/">Learn more</a>.</p>
+
+        <div class="browse-tabs jq-tabs">
+            <ul>
+                {% for l in list1 %}
+                    <li><a href="#tabs-{{ forloop.counter }}">{{ l.name }}</a></li>
+                {% endfor %}
+            </ul>
+            {% for l in list1 %}
+                <div id="tabs-{{ forloop.counter }}" class="browse-tab-list">
+                    <ul>
+                    {% for d in l.items %}
+                        <li><a href="/dataset/{{ d.geo_gse_id }}/{{ d.slug }}"
+                            {% if d.summary %}
+                                class="has-tooltip" title="{{ d.name }}"
+                            {% endif %}>{{ d.name }}</a></li>
+                    {% endfor %}
+                    {% if l.more %}
+                        <li><a class="more-link" href="{{ l.more }}">more &rsaquo;</a></li>
+                    {% endif %}
+                    </ul>
+                </div>
+            {% endfor %}
+        </div>
+
+        <section>
+            {% for l in list2 %}
+                <div class="browse-category-highlights"
+                    {% if l.height %}
+                        {# First row of categories uses height for visual alignment #}
+                        style="height: {{ l.height }}px"
+                    {% endif %}
+                >
+                    <h2><a href="{{ l.more }}">{{ l.name }}</a></h2>
+                    <ul>
+                    {% for d in l.items %}
+                        <li><a href="/dataset/{{ d.geo_gse_id }}/{{ d.slug }}">
+                            {{ d.name }}
+                            </a></li>
+                    {% endfor %}
+                        <li><a class="more-link" href="{{ l.more }}">more &rsaquo;</a></li>
+                    </ul>
+                </div>
+            {% endfor %}
+        </section>
+
+        <nav id="browse-footer-nav" style="display:none">
+            <div>
+                <a href="/dataset/all/" class="jq-button">List all Datasets</a>
+            </div>
+            <div>
+                <a href="/dataset/tag/" class="jq-button">Show all Categories</a>
+            </div>
+            <div>
+                <a href="/dataset/new/" class="jq-button">Suggest a Dataset</a>
+            </div>
+        </nav>
+    </div>
+</article>
+
+<aside id="sidebar-left" class="browse-navigation">
+    <div class="in">
+        {% include "search/navigation.html" %}
+    </div>
+</aside>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "NEW/base_auth.html" %}
+
+{% block title %}User account information change successful{% endblock %}
+
+{% block breadcrumbs %}<div class="breadcrumbs"><a href="/">Home </a> &rsaquo; <a href="{% url 'auth_dashboard' %}"> Account </a> &rsaquo; Edit user account information</div>{% endblock %}
+
+{% block content %}
+
+<h1>User account information change successful</h1>
+
+<p>Your account information was changed.</p>
+
+<!-- <p><b>Note:</b> you need to logout and login again to allow the changes be effective. </p>
+
+<p><span style="font:normal 18px tahoma, arial, sans-serif;"><a href="{% url 'auth_logout' %}">Logout Now</a></span></p> -->
+
+{% endblock %}

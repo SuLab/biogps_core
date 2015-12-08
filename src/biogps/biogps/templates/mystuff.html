@@ -1,0 +1,210 @@
+<script>
+
+onPanelLoad = function(){
+	if (biogps.usrMgr.is_anonymoususer) {
+//		Ext.getCmp('mystuff_panel').body.mask("<b>You must be logged in to view \"My Stuff\".</b><br />Either <a href='/auth/login'>login here</a> or <a href='/auth/signup'>create a free account here</a>.<br />",'maskBox');
+		biogps.usrMgr.maskForAnonymous({targetEl: Ext.getCmp('mystuff_panel').body,
+									    msg: "You must be logged in to view \"My Stuff\"."});
+    }
+	else{
+		markDefaultPlugin();
+	}
+};
+
+markDefaultPlugin = function(){
+	//highlight the default layout and disable "delete" link for it.
+	var layout_table = Ext.DomQuery.selectNode('div[class=mystuff] table[class=layout_table]');
+	var tr_list = Ext.DomQuery.select('div[class=mystuff] table[class=layout_table] tr');
+	var idx_td_list = Ext.DomQuery.select('div[class=mystuff] table[class=layout_table] td[class=index]');
+	for (var i=0;i<idx_td_list.length;i++){
+		var layout_id = idx_td_list[i].childNodes[1].value;
+		if (layout_id.toString() == biogps.usrMgr.profile.defaultlayout.toString()){
+			Ext.get(tr_list[i]).addClass('defaultlayout');
+			var td_index = Ext.DomQuery.selectNode('td[class=index]', tr_list[i]);
+			td_index.innerHTML += '(default)';
+			var td_delete_link = Ext.DomQuery.selectNode('td[class=actions] a', tr_list[i]);
+			td_delete_link.removeAttribute('href');
+			td_delete_link.style.color="gray";
+		}
+	}
+
+};
+
+scrollToTop = function(){
+	var container = Ext.getCmp('mystuff_panel');
+	container.body.scrollTo('top', 0, {duration:.75});
+};
+
+scrollToSection = function(section){
+	var section = Ext.DomQuery.selectNode('div[class=mystuff] div[id='+section+']');
+	if (section){
+		var container = Ext.getCmp('mystuff_panel');
+		var top = (Ext.get(section).getOffsetsTo(container.body)[1]) + container.body.dom.scrollTop;
+		container.body.scrollTo('top', top-25, {duration:.75});
+    }
+
+};
+
+togglePluginDetails = function(layout_id){
+	var link = Ext.get('toggle_plugindetails_'+layout_id.toString());
+	var pluginbox = Ext.get('plugindetails_'+layout_id.toString());
+	if (link && pluginbox){
+		if (pluginbox.isVisible()){
+			link.dom.innerHTML='view details';
+			pluginbox.setHeight(1); //required for IE to hide the box properly, and pluginbox need to set "overflow:hidden" for this to work.
+			pluginbox.hide();
+		}
+		else if (pluginbox.dom.innerHTML){
+			pluginbox.autoHeight();
+			pluginbox.show();
+			link.dom.innerHTML='hide details';
+		}
+		else if (biogps.Layout){
+			pluginbox.autoHeight();
+			pluginbox.show();
+			var loader = pluginbox.createChild({tag: 'div', cls:'loading-indicator', html:'Loading...'});
+			var layout = new biogps.Layout();
+			layout.on("load", function(){
+				loader.remove();
+				link.dom.innerHTML='hide details';
+				var tpl = '<ul class="pluginlist">';
+	            this.layout_data.each(function(p){
+	                tpl += String.format('<li>&ldquo;<a href="#goto=pluginlibrary&t=library-plugin&p={0}">{1}</a>&rdquo; by {2}</li>', p.id, p.title,p.author);
+	            });
+				tpl += '</ul>';
+
+				pluginbox.update(tpl, false, function(){
+					pluginbox.autoHeight();
+				});
+			},layout);
+			layout.load(layout_id, loadplugin=true);
+		}
+	}
+};
+
+deleteLayout = function(layout_id, layout_name){
+	if (biogps.Layout && layout_id && layout_name){
+
+		if (layout_id.toString() == biogps.usrMgr.profile.defaultlayout.toString()){
+        	Ext.MessageBox.show({ title: 'Error',
+				  msg: String.format('You can not delete your default layout "{0}"(ID: {1}).', layout_name, layout_id),
+				  buttons: Ext.Msg.OK,
+				  icon: Ext.MessageBox.ERROR
+        	});
+		}
+		else{
+			Ext.MessageBox.confirm('Confirm', String.format('Delete Layout "{0}"?', layout_name),
+			                       function(ans){
+			                       		if (ans == 'yes'){
+			                       			var layout = new biogps.Layout({id: layout_id});
+			                       			layout.on('deleted', function(){
+			                       				biogps.renderMyStuffPanel(forcerefresh=true);
+			                       				biogps.LayoutMgr.reloadAvailableLayout();
+			                       			},layout);
+			                       			layout.on('deletefailed', function(data){
+			                       		    	Ext.MessageBox.show({ title: 'Error',
+			                       					  msg: String.format('Failed to delete layout "{0}"(ID: {1}).<br/>&nbsp;&nbsp;&nbsp;Error: {2}', layout_name, layout_id, (data.error || "none")),
+			                       					  buttons: Ext.Msg.OK,
+			                       					  icon: Ext.MessageBox.ERROR
+			                       		  	});
+
+			                       			},layout);
+			                       			layout['delete']();
+			                       		}
+			                       },
+			                       this);
+		}
+	}
+};
+
+</script>
+
+<div class='mystuff' align="center">
+<h2>My Stuff <span class="tagline">(Everything I created so far...)</span></h2>
+
+<div class="navigation">Jump to:&nbsp;&nbsp;&nbsp; <a href="javascript:scrollToSection('mylayouts');">My Layouts</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="javascript:scrollToSection('myplugins');">My Plugins</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="javascript:scrollToSection('mygenelists');">My Saved Gene Lists</a></div>
+
+	<div id="mylayouts" class="section">
+	{% if mylayouts %}
+		<h2>My Layouts ({{mylayouts|length}} in total):
+			<span class="backtotop"><a href="javascript: scrollToTop();">Back to Top</a></span>
+			<span class="refreshlink"><a href="javascript:biogps.renderMyStuffPanel(forcerefresh=true)">Refresh List</a></span>
+		</h2>
+		<table class="layout_table" cellspacing="0"><tbody>
+		{% for layout in mylayouts %}
+				<tr>
+					<td class="index">{{forloop.counter}} <input type="hidden" value="{{layout.id}}" /></td>
+					<td class="details">
+						<span class="name">Name: </span><span class="value">{{layout.layout_name|truncatewords:20}}</span>
+					    <span class="name">Description: </span><span class="value">{{layout.description|default:"&lt;none&gt;"}}</span>
+					    <span class="name">Plugins used ({{layout.layout_data|length}}): </span><span class="value"><a id="toggle_plugindetails_{{layout.id}}" href="javascript:togglePluginDetails({{layout.id}});">view details</a></span>
+					    <div class="value" id="plugindetails_{{layout.id}}" style="visibility: hidden; overflow: hidden; height:1px;"></div>
+					</td>
+				    <td class="actions"><a href="javascript: deleteLayout({{layout.id}}, '{{layout.layout_name}}');" name="delete">delete</a></td>
+				</tr>
+		{% endfor %}
+		</tbody></table>
+	{% else %}
+		<h2>My Layouts:
+			<span class="backtotop"><a href="javascript: scrollToTop();">Back to Top</a></span>
+			<span class="refreshlink"><a href="javascript:biogps.renderMyStuffPanel(forcerefresh=true)">Refresh List</a></span>
+		</h2>
+		<h3>You have not created any layouts yet.</h3>
+	{% endif %}
+	</div>
+	<div id="myplugins" class="section">
+	{% if myplugins %}
+		<h2>My Plugins ({{myplugins|length}} in total):
+			<span class="backtotop"><a href="javascript: scrollToTop();">Back to Top</a></span>
+			<span class="refreshlink"><a href="javascript:biogps.renderMyStuffPanel(forcerefresh=true)">Refresh List</a></span>
+		</h2>
+		<table class="plugin_table" cellspacing="0"><tbody>
+			<thead><tr><th scope="col">no.</th><th scope="col">Name</th><th scope="col">Description</th><th scope="col">last updated</th></tr></thead><tbody>
+		{% for plugin in myplugins %}
+				<tr onclick="location.href='#goto=pluginlibrary&t=library-plugin&p={{plugin.id}}';">
+					<td class="pluginindex">{{forloop.counter}} <input type="hidden" value="{{plugin.id}}" /></td>
+					<td class="plugintitle">{{plugin.title}}</td>
+					<td class="plugindescription">{{plugin.description|truncatewords:20}}</td>
+					<td class="pluginlastupdated">{{plugin.lastmodified|timesince}} ago</td>
+				</tr>
+		{% endfor %}
+		</tbody></table>
+	{% else %}
+		<h2>My Plugins:
+			<span class="backtotop"><a href="javascript: scrollToTop();">Back to Top</a></span>
+			<span class="refreshlink"><a href="javascript:biogps.renderMyStuffPanel(forcerefresh=true)">Refresh List</a></span>
+		</h2>
+		<h3>You have not created any plugins yet.</h3>
+	{% endif %}
+	</div>
+
+	<div id="mygenelists" class="section">
+	{% if mygenelists %}
+		<h2>My Saved Gene Lists ({{mygenelists|length}} in total):
+			<span class="backtotop"><a href="javascript: scrollToTop();">Back to Top</a></span>
+			<span class="refreshlink"><a href="javascript:biogps.renderMyStuffPanel(forcerefresh=true)">Refresh List</a></span>
+		</h2>
+		<table class="genelist_table" cellspacing="0"><tbody>
+			<thead><tr><th scope="col">no.</th><th scope="col">Name</th><th scope="col"># of Genes</th><th scope="col">Description</th><th scope="col">last updated</th></tr></thead><tbody>
+		{% for genelist in mygenelists %}
+				<tr>
+					<td class="index">{{forloop.counter}} <input type="hidden" value="{{genelist.id}}" /></td>
+					<td class="title">{{genelist.name}}</td>
+					<td class="size">{{genelist.size}}</td>
+					<td class="description">{{genelist.description|truncatewords:20}}</td>
+					<td class="lastupdated">{{genelist.lastmodified|timesince}} ago</td>
+				</tr>
+		{% endfor %}
+		</tbody></table>
+	{% else %}
+		<h2>My Saved Gene Lists:
+			<span class="backtotop"><a href="javascript: scrollToTop();">Back to Top</a></span>
+			<span class="refreshlink"><a href="javascript:biogps.renderMyStuffPanel(forcerefresh=true)">Refresh List</a></span>
+		</h2>
+		<h3>You have not saved any gene lists yet.</h3>
+	{% endif %}
+	</div>
+
+
+<div id="spacer"></div>
+</div>
