@@ -1,0 +1,172 @@
+{% extends "base_site.html" %}
+
+{% load i18n %}
+{% load pagination_tags %}
+{% load user_tags %}
+
+{% block head_title %}{% trans "Contacts" %}{% endblock %}
+{% block extrahead %}
+    <link rel="stylesheet" href="/assets/css/friends.css" />
+    <link rel="stylesheet" href="/assets/css/pagination.css" />
+    <script>
+    confirmed_contacts_delete = function(deleteall){
+        var form;
+        var ans;
+        if (deleteall){
+        	form = document.form_contacts_delete_all;
+        	ans=window.confirm("Are you sure to delete all your contacts?");
+        	if (ans){
+            	form.submit();
+        	}
+        }
+        else{
+            form = document.form_contacts_delete_selected;
+            var selected_cnt=0;
+            for (var i=0; i< form.contact_id.length;i++){
+                if (form.contact_id[i].checked)
+                	selected_cnt+=1;
+            }
+            //form.contact_id.each(function(item){if (item.checked) selected_list.push(item);});
+            if (selected_cnt>0){
+	            ans=window.confirm("Are you sure to delete selected ("+selected_cnt.toString()+") contacts?");
+	            if (ans){
+	                form.submit();
+	            }
+            }
+            else{
+                alert("You have not selected any contact to delete.");
+            }
+        }
+    }
+
+    </script>
+{% endblock %}
+{% block breadcrumbs %}<div class="breadcrumbs"><a href="/">Home</a> &rsaquo; <a href="{% url 'friends' %}">Friends</a> &rsaquo; Contacts</div>{% endblock %}
+{% block title %}Contacts | BioGPS{% endblock %}
+{% block content %}
+<div id="fixedWrapper" class="clearfix">
+    <div class="roundBox clearfix">
+    <h1>{% trans "Contacts" %}</h1>
+
+    <div class="contacts_summary">Contacts are people you know but who may or may not be on this site (yet).</div>
+
+    <div class="roundBox contacts_import">
+    <p>You can import your contacts from either your google account or an exported vCard file.</p>
+
+    <ul>
+    <li>Import from Google Contacts</li>
+     <div class="google_import">
+     <p>This will be a two step process:</p>
+     <dl class="twostep_import">
+    {% comment %}
+    {% if not authsub_token %}
+        <!-- step one -->
+            <dt class="current_step">Step 1:<dt><dd class="current_step">First you must <a href="{% url 'authsub_login' %}">authenticate with Google</a>. Once you have agreed
+                to let BioGPS have access to your Google Contacts, you will be taken back here for step two.
+                </dd>
+            <dt>Step 2:</dt><dd>Click "Import Google Contacts" button here:
+                <input type="submit" value="Import Google Contacts" disabled />
+            </dd>
+    {% else %}
+        <!-- step two -->
+            <dt>Step 1:<dt><dd>First you must <a href="{% url 'authsub_login' %}">authenticate with Google</a>. Once you have agreed
+                to let BioGPS have access to your Google Contacts, you will be taken back here for step two.
+                </dd>
+            <dt class="current_step">Step 2:<dt><dd class="current_step">Click "Import Google Contacts" button here:
+		        <form method="POST" action="">
+		            <input type="hidden" name="action" value="import_google" />
+		            <input type="submit" value="Import Google Contacts" />
+		        </form>
+            </dd>
+    {% endif %}
+    {% endcomment %}
+    </dl>
+    </div>
+
+    {% comment %}
+    {% if authsub_token %}
+        <form method="POST" action="">
+            <input type="hidden" name="action" value="import_google" />
+            <input type="submit" value="{% trans 'Import Google Contacts' %}" />
+        </form>
+    {% else %}
+        <p>
+            This will be a two step process. First you must
+            <a href="{% url 'authsub_login' %}">authenticate with Google</a>.
+            Once you have agreed to let BioGPS have access to your Google Contacts, you will be taken back here and
+            an "Import Google Contacts" button will appear here.
+        </p>
+    {% endif %}
+    {% endcomment %}
+    {% if includeyahoo %}
+    <li>Import from Yahoo Address Book</li>
+    {% comment %}
+    {% if bbauth_token %}
+        <form method="POST" action="">
+            <input type="hidden" name="action" value="import_yahoo" />
+            <input type="submit" value="{% trans 'Import Yahoo Address Book' %}" />
+        </form>
+    {% else %}
+        <p>
+            This will be a two step process. First you must
+            <a href="{% url 'bbauth_login' %}">authenticate with Yahoo</a>.
+            Once you have agreed to let BioGPS have access to your Yahoo Address Book, you will be taken back here and
+            an "Import Yahoo Address Book" button will appear here.
+        </p>
+    {% endif %}
+    {% endcomment %}
+    {%endif%}
+    <li>Import vCard</li>
+    <div class="vcard_import">
+	    <form enctype="multipart/form-data" method="post" action="">
+	        <input type="hidden" name="action" value="upload_vcard" />
+	        <table>
+	            {{ import_vcard_form }}
+	            <tr><td></td><td><input type="submit" value="{% trans 'upload' %}" /></td></tr>
+	        </table>
+	    </form>
+    </div>
+    </ul>
+    </div>
+    <div class="roundBox contacts_list_box">
+    <h2>My Contacts
+    <form name="form_contacts_delete_all" enctype="multipart/form-data" method="post" action="">
+    <input type="hidden" name="action" value="contacts_delete_all" />
+    <input type="submit" value="Delete all contacts" onclick="javascript:confirmed_contacts_delete(true);return false;"/>
+    </form>
+    <form name="form_contacts_delete_selected" enctype="multipart/form-data" method="post" action="">
+    <input type="hidden" name="action" value="contacts_delete_selected" />
+    <input type="submit" value="Delete selected contacts" onclick="javascript:confirmed_contacts_delete(false);return false;" /></h2>
+    {% with user.contacts.all as contacts %}
+
+        {% autopaginate contacts %}
+
+        {% if contacts %}
+            <table class="contact_list">
+                <tr><th></th><th>NAME</th><th>EMAIL</th></tr>
+                {% for contact in contacts %}
+                    <tr>
+                        <td><input type="checkbox" name="contact_id" value="{{contact.id}}"></td>
+                        <td>{% if contact.name %}{{ contact.name }}{% else %}?{% endif %}</td>
+                        <td>{{ contact.email }}</td>
+                        <td><a href="{% url 'invite_friend' %}?email={{ contact.email }}">invite to join</a></td>
+                        <td>
+                            {% for other_user in contact.users.all %}
+                                <a href="{{ other_user.username }}">{% user_display other_user %}</a>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+
+            {% paginate %}
+
+        {% else %}
+            <p>{% trans "No contacts." %}</p>
+        {% endif %}
+    {% endwith %}
+    </form>
+    </div>
+</div>
+</div>
+{% endblock %}

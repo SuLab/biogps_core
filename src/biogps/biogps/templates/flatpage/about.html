@@ -1,0 +1,76 @@
+{% extends "NEW/base_site.html" %}
+
+{% block title %}About{% endblock %}
+
+{% block content %}
+<article>
+    <div class="in about">
+        <h1>About BioGPS</h1>
+        <p>
+        BioGPS is a gene portal built with two guiding principles in mind -- customizability and extensibility.  Check out our <a href="http://genomebiology.com/2009/10/11/R130" target="_blank">BioGPS publication in Genome Biology</a>!
+        </p>
+        <p>
+        First, although every scientist who visits a gene portal wants to view gene annotation, the specific reasons are different for every person.  A geneticist may be here to find candidate genes in a genomic interval.  A cell biologist may be here to view our Gene Atlas expression profiles.  A molecular biologist may want to find information on protein domains.  If everyone has their unique interests, gene portals should be adaptable to suit your individual needs.  Therefore, BioGPS offers a customizable gene report layout, where you can control which pieces of data are displayed and how they're displayed.  Select from our extensive plugin library only the sources that are relevant to you.
+        </p>
+        <p>
+        Second, are you tired of visiting a dozen different gene portals, each of which have 80% of the same data, for the 20% unique content?  Or are you a web developer whose website doesn't quite have the visibility you think it deserves?  We designed BioGPS to solve both of these problems by creating a simple plugin interface which allows anyone to add new plugins to BioGPS, completely autonomously.  Our goal is to completely remove ourselves from the critical path of extending BioGPS.  With other portals, you can beg and plead with the portal administrators to add new content.  In BioGPS, if you see data that's missing (or have data that others would be interested in), you can do it all yourself.  (Note that we're still finalizing this plugin architecture, so stay tuned!)
+        </p>
+        <p>
+        BioGPS is clearly a work in progress, but we think we've got a framework that's here to stay.  Let us know if you've got suggestions, but otherwise, just dig in!
+        </p>
+        <p>
+        Cheers,
+        <br>
+        <br>
+        The BioGPS team
+        </p>
+
+        <h2>Technology</h2>
+        <p>
+        	BioGPS was built on top of the <a href="http://www.djangoproject.com/" target="_blank">Django</a> web framework with <a href="http://www.postgresql.org" target="_blank">PostgreSQL</a> as the database backend. EXTJS and jQuery Javascript libraries, together with the latest HTML5 technology, were extensively used to render the frontend GUI interface.
+		</p>
+		<p>
+        	Up-to-date gene annotation data were retrieved regularly from common data sources (predominantly NCBI and Ensembl), and then stored in a <a href="http://couchdb.apache.org" target="_blank">CouchDB</a> instance and indexed via Lucene. BioGPS interfaces with the CouchDB instance via the REST-based web services for gene annotation queries and retrieval. These web services are now made publicly available at <a href="http://mygene.info" target="_blank">MyGene.info</a>.
+		</p>
+		<p>
+        	The entire BioGPS application is now completely hosted in Amazon's Elastic Compute Cloud (EC2).
+        </p>
+
+        <h2>Citations</h2>
+        <p> See <a href="/downloads/#citation">this link</a> for citations.</p>
+
+    </div>
+</article>
+
+<aside id="sidebar-right">
+    <div class="in">
+        <h2>Contact Info</h2>
+        <p>
+        The core BioGPS team is currently composed of the following individuals:
+        </p>
+        <p>
+        <a href="/profile/3/asu">Andrew Su</a><br>
+        <a href="/profile/2/cwu">Chunlei Wu</a><br>
+        <a href="/profile/5929/x0xMaximus">Max Nanis</a><br>
+        </p>
+        <p>
+        Past contributors:<br>
+        Ian MacLeod<br>
+        Camilo Orozco<br>
+        Marc Leglise<br>
+        James Goodale<br>
+        Jason Boyer<br>
+
+        </p>
+        <p>
+        Questions and comments can be sent to the <a href="http://groups.google.com/group/biogps" target="_blank">BioGPS Google Group</a> (biogps -at- googlegroups -dot- com).  Private email to the developers can be sent to help -at- biogps -dot- org. <br />
+        You are also welcome to leave us any feedback on our <a href="https://getsatisfaction.com/biogps" target="_blank">Get Satisfaction</a> page.
+        </p>
+
+        <h2>Funding</h2>
+        <p>
+        BioGPS is supported by Award Number R01GM083924 from the National Institute Of General Medical Sciences. However, BioGPS does not necessarily represent the official views of NIGMS or the National Institutes of Health.
+        </p>
+    </div>
+</aside>
+{% endblock %}

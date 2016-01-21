@@ -1,0 +1,90 @@
+#Before installing the following python modules, install these packages in ubuntu:
+#    sudo apt-get install python-dev libpq-dev libxml2 python-libxml2 python-numpy libmemcached-dev
+
+# Required python modules for BioGPS app running in prod mode
+# To install all requirements, run:
+#    pip install -r requirements.txt
+Django==1.8.5
+thrift==0.8.0
+Werkzeug==0.8.3
+boto==2.5.1
+docutils==0.9.1
+feedcache==1.4.1
+feedparser==5.1.2
+gdata==2.0.17
+html2text==3.02
+httplib2==0.7.4
+requests==2.8.1
+ipython>=0.12.1
+nose==1.3.7
+psycopg2==2.4.5   #require libpq-dev
+
+#pyes==0.19.1
+-e git+git://github.com/gustavoam/pyes@dd99479f017dc75ca32225387a69407d5c443eb7#egg=pyes
+
+pymongo==2.3
+python-dateutil==2.1
+python-openid==2.2.5
+pytz==2015.6
+urllib3==1.4  #needed by pyes
+vobject==0.8.1c
+
+# The following libxml2 and pyxslt are required for XML serialization
+# libxml2 may not work with pip, and need to install from the source
+# http://xmlsoft.org/python.html
+# use install binary packages as :
+# sudo apt-get install libxml2 python-libxml2
+#libxml2-python>=2.7.8
+
+# we made a patch on pyxslt
+#pyxslt==0.9.1
+-e git+git://github.com/newgene/pyxslt.git#egg=pyxslt   #this is a patched version of pyxslt
+
+#numpy is required for calculating correlations for dataset.
+#the easiest way to install it is using apt-get
+# sudo apt-get install python-numpy
+#numpy>=1.6.1
+
+#pylibmc is required for memcache based caching backend
+#required in prod deployment, need "apt-get install libmemcached-dev" first
+#pylibmc>=1.2.3
+
+
+## Django-specific apps ##
+django-breadcrumbs==1.1.0
+django-debug-toolbar==0.9.4
+
+django-extensions==1.5.6
+
+-e git+git://github.com/gustavoam/django-flag@a5ea5e0e0bc987ea4c1988633a0641bee33fa565#egg=django-flag
+
+django-mailer==0.1.0
+
+-e git+git://github.com/gustavoam/django-notification@8df0f3793fcb0d0ac4ee97a1b35fc9b038b2fbe5#egg=django-notification
+
+django-pagination==1.0.7
+django-ses==0.4.1
+django-tagging==0.3.6
+django-timezones==0.1.4
+
+#django-urlauth==0.1.8
+-e hg+https://bitbucket.org/gustavoam/django-urlauth@786cbc2d52924d1be245a9102574c01789db3bec#egg=django-urlauth   #this is a patched version for biogps
+
+django-uwsgi-admin==0.1-alpha
+
+#django-friends==0.1.5
+#-e git+git://github.com/newgene/django-friends.git#egg=django-friends   #this is a patched version for biogps
+-e git+git://github.com/gustavoam/django-friends@8c83cbc19faa9a668ce6d32494b9e10a6aca488c#egg=django-friends   #this is a patched version for biogps
+
+#django-threadedcomments==0.5.3
+#-e git+git://github.com/newgene/django-threadedcomments.git#egg=django-threadedcomments   #this is a patched version for biogps
+-e git+git://github.com/gustavoam/django-threadedcomments@272016f6d05561740fa72bf7ec920d33175be931#egg=django-threadedcomments   #this is a patched version for biogps
+
+django-pipeline==1.5.4
+
+#django-rest-interface
+-e hg+https://bitbucket.org/newgene/django-rest-interface#egg=django-rest-interface
+
+django-contrib-comments==1.6.1
+
+django-allauth==0.23.0

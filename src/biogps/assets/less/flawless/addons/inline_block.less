@@ -1,0 +1,14 @@
+/*
+ *  - Display: inline-block -
+ *  IE6/7 and FF2 don't properly support display:inline-block.  In some cases,
+ *  we expect and use that fact to our advantage.  On the other hand, when we
+ *  want to have them all behave properly, here's the code to put in.
+ *  Ref: http://blog.mozilla.com/webdev/2009/02/20/cross-browser-inline-block/
+ */
+
+.inline_block {
+    display: -moz-inline-stack;
+    display: inline-block;
+    zoom: 1;
+    *display: inline;
+}

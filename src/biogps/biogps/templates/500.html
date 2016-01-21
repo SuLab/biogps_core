@@ -1,0 +1,18 @@
+{% extends "NEW/base_site.html" %}
+{% load i18n %}
+
+{% block breadcrumbs %}<div class="breadcrumbs"></div>{% endblock %}
+
+{% block title %}{% trans 'Server error (500)' %}{% endblock %}
+
+{% block content %}
+<h1>{% trans 'Server Error <em>(500)</em>' %}</h1>
+
+<p>It appears we've blown a gasket, but don't worry!</p>
+
+<p>It's been reported to the site administrators via e-mail and should be fixed shortly. Thanks for your patience.</p>
+<p>You can also check out our <a href="http://twitter.com/#!/biogps">twitter</a> page and <a href="http://sulab.org/category/biogps/">blog</a> for updates."</p>
+<p>&nbsp;</p>
+{% endblock %}
+
+{% block ga %}{% endblock %}
