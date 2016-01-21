@@ -95,6 +95,7 @@ coreDispatcher.dispatch();
                 		    <div class="inline-block centerCol">
                 		        <div class="login-type">BioGPS account</div>
                     	        <form action="{%if with_https %}https://{{site}}{%endif%}{% url 'auth_login' %}" method="post" id="login-form">
+				    {% csrf_token %}
                     	            <input type="text" name="username" id="id_username"
                 	                        value="username" class="inactive"
                 	                        onfocus="coreDispatcher.onInputFocus(this,event);"
