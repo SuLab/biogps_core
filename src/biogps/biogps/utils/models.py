@@ -373,6 +373,9 @@ class BioGPSModel(ModelWithPermission):
             if not self.short_name:
                 raise ValueError('"short_name" attribute needs to be set first.')
             out['in'] = self.short_name
+            if 'options' in out and out['options'] == '':
+                out['options'] = None     # this is a tmp fix for ES error when creating a new plugin.
+
         return out
 
     def object_cvt(self, *args, **kwargs):
