@@ -56,7 +56,7 @@ class DatasetQuery():
         """Return default dataset for the given gene"""
         res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/default?gene=%s' % geneid)
         if res.json()['code'] != 0:
-            raise None
+            return None
         ds = res.json()['details']
         return ds
 

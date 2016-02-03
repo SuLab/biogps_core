@@ -341,9 +341,11 @@ class DatasetBotView(RestView):
         else:
             # Get default datasets corresponding to the geneID
             ds = DatasetQuery.get_default_ds(geneID)
-            ds_id = ds['dataset']
-            rep_li = rep_li.strip(' ').split(',')
-            ds_info = [{ds_id: {'name': ds['dataset'], 'reps': rep_li}}]
+            ds_info = []
+            if ds:
+                ds_id = ds['dataset']
+                rep_li = rep_li.strip(' ').split(',')
+                ds_info = [{ds_id: {'name': ds['dataset'], 'reps': rep_li}}]
 
             return render_to_response('dataset/bot.html',
                 {'gene_id': geneID, 'ds_info': ds_info})
