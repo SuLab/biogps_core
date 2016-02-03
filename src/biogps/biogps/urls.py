@@ -114,13 +114,13 @@ if settings.RELEASE_MODE == 'dev':
             {'document_root': os.path.join(settings.ROOT_PATH, 'doc')}),
     ]
 
-if settings.USE_UWSGI:
-    urlpatterns += [url(r'^uwsgi/', include('uwsgi_admin.urls'))]
-    from uwsgi_admin import views as uwsgi_views
-    urlpatterns += [
-        url(r'^siteadmin/uwsgi/$', uwsgi_views.index),
-        url(r'^siteadmin/uwsgi/reload/$', uwsgi_views.reload),
-    ]
+#if settings.USE_UWSGI:
+#    urlpatterns += [url(r'^uwsgi/', include('uwsgi_admin.urls'))]
+#    from uwsgi_admin import views as uwsgi_views
+#    urlpatterns += [
+#        url(r'^siteadmin/uwsgi/$', uwsgi_views.index),
+#        url(r'^siteadmin/uwsgi/reload/$', uwsgi_views.reload),
+#    ]
 
 if getattr(settings, 'SERVE_ASSETS', False):
     from django.contrib.staticfiles import views as sf_views
