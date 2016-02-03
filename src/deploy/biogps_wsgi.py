@@ -2,8 +2,9 @@ import os
 import os.path
 import sys
 src_dir = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
+src_dir = os.path.join(src_dir, 'biogps')
 sys.path.append(src_dir)
-from biogps.add_path import *
+from add_path import *
 
 #os.environ['DJANGO_SETTINGS_MODULE'] = 'biogps.settings_dev'
 os.environ['DJANGO_SETTINGS_MODULE'] = 'biogps.settings_prod'
