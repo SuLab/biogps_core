@@ -37,7 +37,7 @@ class DatasetQuery():
     def get_ds(ds_id):
         res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/'+ds_id+'/4-biogps/')
         if res.json()['code'] != 0:
-            raise None
+            return None
 
         ds = res.json()['details']
         owner_map = {
