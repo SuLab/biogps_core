@@ -52,8 +52,18 @@ class DatasetQuery():
         return ds
 
     @staticmethod
-    def get_default_ds(rep_li, q_term=None):
-        """Return default datasets"""
+    def get_default_ds(geneid):
+        """Return default dataset for the given gene"""
+        res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/default?gene=%s' % geneid)
+        if res.json()['code'] != 0:
+            raise None
+        ds = res.json()['details']
+        return ds
+
+    @staticmethod
+    def get_default_ds0(rep_li, q_term=None):
+        """Deprecated!!!
+           Return default datasets"""
         _conn = DatasetQuery.conn
         kwargs = {'doc_types': 'dataset', 'indices': 'biogps_dataset',
             'fields': 'id,name,factors'}

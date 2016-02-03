@@ -30,7 +30,7 @@ urlpatterns += [
         views.DatasetListView,
         name='dataset_list_for_tag'),
 
-    url(r'search/$', views.DatasetSearchView),
+    #url(r'search/$', views.DatasetSearchView),
     url(r'^(?P<datasetID>[^/]+)(?:/(?P<slug>[\w-]+))?/$',
         views.DatasetView,
         name='_dataset_show'),

@@ -271,7 +271,8 @@ class DatasetView(RestView):
 
 @csrf_exempt
 class DatasetSearchView(RestView):
-    """This class defines views for REST URL:
+    """Deprecated!!!
+       This class defines views for REST URL:
         /dataset/search/
 
        Given a list of reporters, return the datasets
@@ -338,22 +339,11 @@ class DatasetBotView(RestView):
                 '</b><br />Please confirm a valid '
                 'gene ID has been provided'.format(geneID))
         else:
-            # Get default datasets corresponding to reporters
-            ds_li = DatasetQuery.get_default_ds(rep_li)
-
-            # Determine reporters in each dataset
-            ds_info = list()  # [{'1': {'name':'U133A', 'reps':['1007_s_at']}}]
+            # Get default datasets corresponding to the geneID
+            ds = DatasetQuery.get_default_ds(geneID)
+            ds_id = ds['dataset']
             rep_li = rep_li.strip(' ').split(',')
-            for i in ds_li:
-                ds_id = i['id']
-                #ds_reps = BiogpsDatasetData.objects.filter(dataset=ds_id,
-                #    reporter__in=rep_li).values_list('reporter', flat=True)
-
-                # Combine dataset names and reporters based on ID
-                #_ds_dict = {ds_id: {'name': i['name'], 'reps': ds_reps}}
-                _ds_dict = {ds_id: {'name': i['name'], 'reps': rep_li}}
-                ds_info.append(_ds_dict)
+            ds_info = [{ds_id: {'name': ds['dataset'], 'reps': rep_li}}]
 
             return render_to_response('dataset/bot.html',
                 {'gene_id': geneID, 'ds_info': ds_info})
-

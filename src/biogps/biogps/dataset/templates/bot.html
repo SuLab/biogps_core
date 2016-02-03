@@ -6,7 +6,7 @@
     {% for ds_id, ds_vals in ds.items %}
         {% for rep in ds_vals.reps %}
             <p><h2>{{ds_vals.name}} - {{rep}}</h2>
-            <img src="http://dev.biogps.org/dataset/{{ds_id}}/chart/{{rep}}/" title="Probe Set Image ({{rep}})" alt="Probe Set Image ({{rep}})">
+            <img src="http://ds.biogps.org/dataset/chart/{{ds_id}}/reporter/{{rep}}/" title="Probe Set Image ({{rep}})" alt="Probe Set Image ({{rep}})">
         {% endfor %}
     {% endfor %}
 {% endfor %}
