@@ -196,7 +196,7 @@ INSTALLED_APPS = (
     'django_extensions',
     'django_authopenid',
     'urlauth',
-    'uwsgi_admin',
+    #'uwsgi_admin',
 
     'allauth',
     'allauth.account',
@@ -252,7 +252,7 @@ STATICFILES_FINDERS = (
     # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
-STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
+STATICFILES_STORAGE = 'pipeline.storage.PipelineStorage'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '*cp6weayxc%l908tl14len!t@w4ws*@j8*2s$$29h(rb55$791'
