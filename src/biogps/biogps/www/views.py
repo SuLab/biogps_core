@@ -84,11 +84,7 @@ def index(request, **kwargs):
             # check if alt_defaultdataset exists
             ds = DatasetQuery.get_ds(alt_defaultdataset)
             if ds:
-                alt_dataset = alt_defaultdataset
-            else:
-                alt_dataset = None
-            if alt_dataset:
-                d['alt_defaultdataset'] = alt_dataset.id
+                d['alt_defaultdataset'] = ds['id']
 
         #optional userfilter to add to mygene.info query
         search_filter = request.GET.get('search_filter', None)
