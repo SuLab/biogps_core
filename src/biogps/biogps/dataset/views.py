@@ -16,6 +16,7 @@ import textwrap
 import requests
 from django.conf import settings
 
+
 class DatasetLibraryView(RestView):
     '''This class defines views for REST URL:
          /dataset/
@@ -269,60 +270,6 @@ class DatasetView(RestView):
                 html_dictionary=html_dictionary)
 
 
-@csrf_exempt
-class DatasetSearchView(RestView):
-    """Deprecated!!!
-       This class defines views for REST URL:
-        /dataset/search/
-
-       Given a list of reporters, return the datasets
-       that contain them.
-
-       Given a gene ID, return the relevant datasets,
-       dataset names, and reporters.
-
-       Given a query term, return the relevant datasets.
-    """
-    def get(self, request):
-        dbug = False
-        json_response = None
-        page = request.GET.get('page', 1)
-        q_term = None
-        rep_li = None
-
-        if request.GET.get('debug'):
-            dbug = True
-            search_start = time()
-        if request.GET.get('gene'):
-            # Gene ID search
-            gene_id = request.GET['gene']
-
-            # Get reporters from mygene.info
-            rep_li = DatasetQuery.get_mygene_reps(gene_id)
-        elif request.GET.get('reporters'):
-            rep_li = request.GET['reporters']
-            if rep_li is not None:
-                # Get datasets corresponding to reporters
-                if request.GET.get('q'):
-                    # Query term search
-                    q_term = request.GET['q']
-                if request.GET.get('defaultDS'):
-                    # Get default datasets
-                    json_response = DatasetQuery.get_default_ds(rep_li, q_term)
-                else:
-                    # Get all datasets
-                    json_response = DatasetQuery.get_ds_page(rep_li,
-                        page, q_term)
-
-        if dbug:
-            search_end = time()
-            json_response += ('DEBUG:', 'Search {}'
-            ' secs'.format(round(search_end - search_start, 3)))
-        jsonp = request.GET.get('callback', None)
-        return JSONResponse(json_response, jsonp=jsonp)
-
-
-@csrf_exempt
 class DatasetBotView(RestView):
     """This class defines views for REST URL:
         /dataset/bot/<geneID>/
