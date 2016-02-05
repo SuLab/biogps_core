@@ -1,17 +1,15 @@
 from biogps.dataset.utils import DatasetQuery, sanitize
 from biogps.rating.models import Rating
 from biogps.search.navigations import BiogpsSearchNavigation, BiogpsNavigationDataset
-from biogps.utils.http import JSONResponse, render_to_formatted_response
+from biogps.utils.http import render_to_formatted_response
 from biogps.utils.models import Species
 from biogps.utils.restview import RestView
 from biogps.utils import (const, log)
 
 from django.http import HttpResponseNotFound
 from django.shortcuts import render_to_response
-from django.views.decorators.csrf import csrf_exempt
 from django.http import Http404
 from tagging.models import Tag
-from time import time
 import textwrap
 import requests
 from django.conf import settings
@@ -102,20 +100,17 @@ class DatasetLibraryView(RestView):
         list2.append({
             'name': 'Stem cell',
             'more': '/dataset/tag/stem-cell/',
-            'items': requests.get(settings.DATASET_SERVICE_HOST + '/dataset/tag/stem cell/')
-                      .json()['details']['results']
+            'items': requests.get(settings.DATASET_SERVICE_HOST + '/dataset/tag/stem cell/').json()['details']['results']
         })
         list2.append({
             'name': 'Immune System',
             'more': '/dataset/tag/immune-system/',
-            'items': requests.get(settings.DATASET_SERVICE_HOST + '/dataset/tag/immune system/')
-                      .json()['details']['results']
+            'items': requests.get(settings.DATASET_SERVICE_HOST + '/dataset/tag/immune system/').json()['details']['results']
         })
         list2.append({
             'name': 'Nervous System',
             'more': '/dataset/tag/nervous-system/',
-            'items': requests.get(settings.DATASET_SERVICE_HOST + '/dataset/tag/nervous system/')
-                      .json()['details']['results']
+            'items': requests.get(settings.DATASET_SERVICE_HOST + '/dataset/tag/nervous system/').json()['details']['results']
         })
 
         # Set up the navigation controls, getting category facets from ES
@@ -226,8 +221,8 @@ class DatasetView(RestView):
             raise Http404
 
         log.info('username=%s clientip=%s action=dataset_metadata id=%s',
-            getattr(request.user, 'username', ''),
-            request.META.get('REMOTE_ADDR', ''), dataset['id'])
+                 getattr(request.user, 'username', ''),
+                 request.META.get('REMOTE_ADDR', ''), dataset['id'])
 
         if 'format' in request.GET:
             sort_fac = request.GET.get('sortFactor', None)
@@ -239,7 +234,8 @@ class DatasetView(RestView):
                     pass
 
             return render_to_formatted_response(request,
-                data=dataset, allowed_formats=['json', 'xml'])
+                                                data=dataset,
+                                                allowed_formats=['json', 'xml'])
 
         else:
             def wrap_str(_str, max_len):
@@ -265,9 +261,11 @@ class DatasetView(RestView):
                 'navigation': nav
             }
             return render_to_formatted_response(request,
-                data=dataset, allowed_formats=['html', 'json', 'xml'],
-                model_serializer='object_cvt', html_template=html_template,
-                html_dictionary=html_dictionary)
+                                                data=dataset,
+                                                allowed_formats=['html', 'json', 'xml'],
+                                                model_serializer='object_cvt',
+                                                html_template=html_template,
+                                                html_dictionary=html_dictionary)
 
 
 class DatasetBotView(RestView):
@@ -279,20 +277,22 @@ class DatasetBotView(RestView):
             return HttpResponseNotFound('<b>No gene ID provided.</b>'
                                         '<br />Please provide a gene ID '
                                         'in the form of /dataset/bot/geneID')
-        # Get reporters from mygene.info
-        rep_li = DatasetQuery.get_mygene_reps(geneID)
-        if not rep_li:
-            return HttpResponseNotFound('<b>No reporters for gene ID {} found'
-                '</b><br />Please confirm a valid '
-                'gene ID has been provided'.format(geneID))
         else:
             # Get default datasets corresponding to the geneID
             ds = DatasetQuery.get_default_ds(geneID)
-            ds_info = []
             if ds:
+                ds_info = []
                 ds_id = ds['dataset']
-                rep_li = rep_li.strip(' ').split(',')
+                ds_data = DatasetQuery.get_ds_data(ds_id, geneID)
+                if ds_data:
+                    rep_li = [x.keys()[0] for x in ds_data['data']]
+                else:
+                    rep_li = []
                 ds_info = [{ds_id: {'name': ds['dataset'], 'reps': rep_li}}]
 
-            return render_to_response('dataset/bot.html',
-                {'gene_id': geneID, 'ds_info': ds_info})
+                return render_to_response('dataset/bot.html',
+                                          {'gene_id': geneID, 'ds_info': ds_info})
+            else:
+                return HttpResponseNotFound('<b>No dataset for gene ID {} found'
+                                            '</b><br />Please confirm a valid '
+                                            'gene ID has been provided'.format(geneID))
