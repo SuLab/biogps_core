@@ -34,13 +34,22 @@ class DatasetQuery():
         return ds
 
     @staticmethod
-    def get_default_ds(geneid):
+    def get_default_ds(gene_id):
         """Return default dataset for the given gene"""
-        res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/default?gene=%s' % geneid)
+        res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/default?gene=%s' % gene_id)
         if res.json()['code'] != 0:
             return None
         ds = res.json()['details']
         return ds
+
+    @staticmethod
+    def get_ds_data(ds_id, gene_id):
+        """Return data for the given dataset and gene"""
+        res = requests.get(settings.DATASET_SERVICE_HOST + '/dataset/data/{}/gene/{}/'.format(ds_id, gene_id))
+        if res.json()['code'] != 0:
+            return None
+        data = res.json()['details']
+        return data
 
     @staticmethod
     def get_mygene_reps(gene_id):
