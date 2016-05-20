@@ -1,5 +1,5 @@
 # use glob syntax
-syntax: glob
+#syntax: glob
 src/biogps/settings_*.py
 *.pyc
 *.pyo
@@ -12,15 +12,21 @@ src/assets/
 settings_dev.py
 settings_private.py
 settings_prod.py
-
+.tmp/
+.cache/
+src/.settings/
+src/assets/js/ext/
+site-packages/
+doc/
+sqlite/
 # use regexp syntax
-syntax: regexp
-^env$
-^.tmp/
-^.cache/
-^sqlite/
-^doc/
+#syntax: regexp
+#^env$
+#^.tmp/
+#^.cache/
+#^sqlite/
+#^doc/
 #^site-packages/
 #/migrations/
-^src/.settings/
-^src/assets/js/ext/
+#^src/.settings/
+#^src/assets/js/ext/
