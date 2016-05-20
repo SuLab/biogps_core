@@ -12,8 +12,9 @@ ROOT_PATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fi
 import subprocess, os
 cwd = os.getcwd()
 os.chdir(ROOT_PATH)
-hg_cmd = "hg log -r tip --template {latesttag}.{latesttagdistance}-{node|short}"
-BIOGPS_VERSION = subprocess.check_output(hg_cmd.split())
+#hg_cmd = "hg log -r tip --template {latesttag}.{latesttagdistance}-{node|short}"
+git_cmd = "git rev-parse --short HEAD"
+BIOGPS_VERSION = subprocess.check_output(git_cmd.split())
 os.chdir(cwd)
 
 try:
