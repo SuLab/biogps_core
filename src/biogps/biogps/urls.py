@@ -24,6 +24,7 @@ urlpatterns = [
 
     url(r'^boe/', include('biogps.boe.urls')),
     url(r'^gene/', include('biogps.gene.urls')),
+    url(r'^api/', include('biogps.api.urls')),
 
     url(r'^auth/', include('biogps.auth2.urls')),  # this is through https
     url(r'^authx/', include('biogps.auth2.urls_x')),
@@ -89,10 +90,10 @@ urlpatterns = [
         {'template': 'flatpage/iphone.html',
          'breadcrumbs': [('iPhone', '/iphone/')]},
         name='iphone'),
-    url(r'^api/$', www_views.flatpage,
+    url(r'^api2/$', www_views.flatpage,
         {'template': 'flatpage/api.html',
-         'breadcrumbs': [('API', '/api/')]},
-        name='api'),
+         'breadcrumbs': [('API', '/api2/')]},
+        name='api2'),
 
     #rss feeds
     url(r'^rss/', include('biogps.rss.urls')),
