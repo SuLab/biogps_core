@@ -243,7 +243,7 @@ li {
             {% if gene.interpro%}
             <ul>
              {% for term in gene.interpro|alwayslist %}
-              <li>{{term.desc}} (<a href="http://www.ebi.ac.uk/interpro/IEntry?ac={{term.id}}">{{term.id}}</a>)
+              <li>{{term.desc}} (<a href="http://www.ebi.ac.uk/interpro/entry/{{term.id}}">{{term.id}}</a>)
               </li>
             {% endfor %}
             </ul>
