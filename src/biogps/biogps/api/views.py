@@ -6,6 +6,10 @@ from django.contrib.auth.models import User
 from biogps.utils.helper import JSONResponse
 from biogps.plugin.models import BiogpsPlugin
 from biogps.layout.models import BiogpsGenereportLayout
+from biogps.boe.views import query
+from django.views.decorators.csrf import csrf_exempt
+
+main_query = csrf_exempt(query)
 
 # Create your views here.
 
