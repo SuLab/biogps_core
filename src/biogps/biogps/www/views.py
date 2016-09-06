@@ -293,7 +293,7 @@ def get_tickermsgs(request):
 
 def get_blog_feed(request):
     # Prepare blog feed
-    fc_file = os.path.join(settings.ROOT_PATH, '.cache/.feedcache')
+    fc_file = os.path.join(settings.ROOT_PATH, '../.cache/.feedcache')
     try:
         # Blog feed retrieval
         feedurl = 'http://feeds.feedburner.com/biogps'
