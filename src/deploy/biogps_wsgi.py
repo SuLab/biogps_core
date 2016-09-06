@@ -6,8 +6,8 @@ src_dir = os.path.join(src_dir, 'biogps')
 sys.path.append(src_dir)
 from add_path import *
 
-#os.environ['DJANGO_SETTINGS_MODULE'] = 'biogps.settings_dev'
-os.environ['DJANGO_SETTINGS_MODULE'] = 'biogps.settings_prod'
+os.environ['DJANGO_SETTINGS_MODULE'] = 'biogps.settings_dev'
+#os.environ['DJANGO_SETTINGS_MODULE'] = 'biogps.settings_prod'
 from django.core.wsgi import get_wsgi_application
 
 application = get_wsgi_application()
