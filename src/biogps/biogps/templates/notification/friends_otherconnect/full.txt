@@ -1,1 +1,0 @@
-{% load user_tags %}{% with invitation.from_user as invitation_from_user %}"{% user_display invitation_from_user %}" (view profile at http://{{current_site}}{{invitation_from_user.get_absolute_url}} ) and "{% user_display to_user %}" (view profile at http://{{current_site}}{{to_user.get_absolute_url}} ) are now friends.{% endwith %}

@@ -1,0 +1,448 @@
+<!doctype html>
+{% load static %}
+<html>
+<head>
+<meta charset="utf-8">
+<title>BIOGPS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="manifest" href="favicon/manifest.json">
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<script src="{% static 'myapp.js' %}" type="text/javascript"></script>
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet" type="text/css"/>
+<link href="{% static "css/custom.css" %}" rel="stylesheet" type="text/css"/>
+<!-- Latest compiled JavaScript -->
+<script type="text/javascript" src="{% static "js/bootstrap.min.js" %}"></script>
+<script type="text/javascript" src="{% static "js/app.js" %}"></script>
+<script src="//d1ks1friyst4m3.cloudfront.net/toolbar/prod/td.js" async data-trackduck-id="56fa56dd7062faed6f55a507"></script>
+<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600,600italic,700,700italic,800,800italic' rel='stylesheet' type='text/css' />
+</head>
+<body ng-app="myApp" ng-controller="myCtrl">
+<div class="container-fluid" data-speed="6" >
+    <div class="container">
+                <div class="row top-padding">
+                <div class="col-sm-12">
+                            <div class="col-sm-3">
+                                    <a href="index.html"><img src="{% static "images/logo.png" %}" alt="My image"/></a>
+                                </div>
+                                <div class="col-sm-9 menu-responsive">
+                                    <div class="col-sm-12 responsive-div">
+                                            <ul class="sing-up-sing-in-ul pull-right">
+                                                    <li><a href="#">Sign up</a></li>
+                                                        <li> | </li>
+                                                        <li><a href="#">Sign in</a></li>
+                                                </ul>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                        <div class="col-sm-12 responsive-div">
+                                       
+                              
+                                          <div class="navbar-header">
+      <button type="button" class="navbar-toggle">
+       Menu <span class="icon-bar glyphicon glyphicon-menu-hamburger"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      
+    </div>
+                                                     <ul class="main-menu">
+                                                          <li class="active"><a href="index.html">Home &nbsp; <i class="glyphicon glyphicon-menu-down"></i></a>
+                                                          <ul>
+                                                              
+                                                                <li><a href="account.html">Account</a></li>
+                                                               <li><a href="addplugin.html">Addplugin</a></li> 
+                                                               <li><a href="help.html">Help</a></li> 
+                                                               <li><a href="plugin-2.html">Plugin-2</a></li>
+                                                               <li><a href="plugin.html">Plugin</a></li>
+                                                               <li><a href="plugin-details.html">Plugin-details</a></li>
+                                                               <li><a href="plugin-details-2.html">Plugin-details-2</a></li>
+                                                               <li><a href="login.html">Login</a></li>
+                                                               <li><a href="BIOGPS-search-results.html">Search Page</a></li>
+                                                               </ul>
+                                                          </li>
+                                                          <li><a href="#">Help</a></li>
+                                                          <li>
+                                                            <a href="#">About </a>
+                                                              
+                                                          </li>
+                                                         <li><a href="#">Contact</a></li>
+                                                         <li><a href="#">Blog</a></li>
+                                                        </ul>
+                                        </div>
+                                </div>
+                        </div>
+                    </div>
+        </div>
+</div>
+<!--banner part-->
+<div class="container-fluid home-banner" data-type="background" id="home-banner">
+    <div class="container">
+            <div class="row text-center">
+               
+                <div class="col-sm-2"></div>
+                <div class="col-sm-8">
+                    <h1>Search <strong>Genes</strong> Here!</h1><div class="clearfix"></div><br>
+                        <div id="qsearch_examples">
+                            <form name="saveTemplateData" method = "POST" ng-submit ="submitForm()" action="" >
+                                <textarea id="qsearch_query" name="query" class="x-form-textarea x-form-field x-form-focus" ng-model='key' placeholder="E.g Gene Symbols, Wildcard quesries, Gene Ontology, Affymetrix IDs, Interpro, Genomic interval"></textarea></br>
+                                <input type="submit" class="query_btn" value="SUBMIT">
+                            </form>
+                        </div>
+                        <div class="clearfix"></div><br>
+                        <p class="text-left padding-zero">Example Searches (<span> click to try these samples</span> )</p>
+                        <ul class="home-banner-search">
+                            <li><button href="" ng-click="useSampleSearch('CDK2\nCDK3')">Gene Symbol(s)</button></li>
+                            <li><button href="" ng-click="useSampleSearch('CDK?')">Wildcare queries</button></li>
+                            <li><button href="" ng-click="useSampleSearch('GO:0006275')">Gene Ontology</button></li>
+                            <li><button href="" ng-click="useSampleSearch('1007_s_at\n1053_at\n117_at\n121_at\n1255_g_at\n1294_at\n1316_at\n1320_at\n1405_i_at\n1431_at')">Affymetrix IDs</button></li>
+                            <li><button href="" ng-click="useSampleSearch('IPR008351')">Interpro</button></li>
+                            <li><button href="" ng-click="useSampleSearch('chr1:151,073,054-151,383,976 and species:human')">Genomic interval</button></li>
+                            <li><a href="#"></a></li>
+                        </ul>
+                        <div class="clearfix"></div><br><br><br>
+                        
+      
+              <div class="Statistics-panel text-center">
+                        <div class="Statistics-panel2"></div>
+                          <div id="myCarousel" class="carousel slide" data-ride="carousel">
+  
+  <!-- Wrapper for slides -->
+  <div class="carousel-inner" role="listbox">
+    <div class="item active">
+    <h3><span>Statistics</span></h3>
+      <p>665 Registered Plugins</p>
+    </div>
+
+    <div class="item">
+     <h3><span>Statistics</span></h3>
+      <p>670 Registered Plugins</p>
+    </div>
+
+    <div class="item">
+        <h3><span>Statistics</span></h3>
+      <p>100 Registered Plugins</p>
+    </div>
+
+    <div class="item">
+    <h3><span>Statistics</span></h3>
+      <p>150 Registered Plugins</p>
+    </div>
+  </div>
+
+  <!-- Left and right controls -->
+  <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+  <img src="{% static "images/right-slider-arrow.png" %}" alt="My image"/>
+  
+  </a>
+  <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+  <img src="{% static "images/left-slider-arrow.png" %}" alt="My image"/>
+   
+  </a>
+</div>
+                            
+                          
+                             
+                           
+                        </div>
+     
+                   
+                    </div>
+                <div class="col-sm-2"></div>
+                
+                </div> 
+                <div class="clearfix"></div><br>
+<br><br>
+<br>
+        </div>
+</div>
+
+<!--how it work-->
+
+<div class="container-fluid how-it-work text-center">
+    <div class="container">
+            <div class="row">
+               
+                  <h2>How it Works</h2>
+                     <div class="clearfix"></div><br><br><br>
+                  <div class="col-sm-3 how-it-work-col-bg">
+                      <div class="col-sm-12">
+                            <img src="{% static "images/search-icon.png" %}" alt="My image"/>
+                            
+                        </div>
+                        <div class="col-sm-12">
+                            <h3>Search</h3>
+                            <p>Lorem Ipsum is simply dummy text of the printing and ...</p>
+                                <a href="#">Read More</a>
+                               
+                        </div>
+                         <div class="verticle-line"><img src="images/vercle.png"></div>
+                    </div>
+                    <div class="col-sm-3 how-it-work-col-bg-left">
+                      <div class="col-sm-12">
+                            <img src="{% static "images/view-icon.png" %}" alt="My image"/>
+                            
+                        </div>
+                        <div class="col-sm-12">
+                            <h3>View</h3>
+                            <p>Lorem Ipsum is simply dummy text of the printing and ...</p>
+                                <a href="#">Read More</a>
+                                <div class="verticle-line"><img src="images/vercle.png"></div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 how-it-work-col-bg-left">
+                      <div class="col-sm-12">
+                            <img src="{% static "images/browse-icon.png" %}" alt="My image"/>
+                           
+                        </div>
+                        <div class="col-sm-12">
+                            <h3>Browse</h3>
+                            <p>Lorem Ipsum is simply dummy text of the printing and ...</p>
+                                <a href="#">Read More</a>
+                               
+                        </div>
+                         <div class="verticle-line"><img src="images/vercle.png"></div>
+                    </div>
+                    <div class="col-sm-3 how-it-work-col-last">
+                      <div class="col-sm-12">
+                            <img src="{% static "images/build-icon.png" %}" alt="My image"/>
+                           
+                        </div>
+                        <div class="col-sm-12">
+                            <h3>Build</h3>
+                            <p>Lorem Ipsum is simply dummy text of the printing and ...</p>
+                                <a href="#">Read More</a>
+                        </div>
+                      
+                    </div>
+                     <div class="clearfix"></div><br><br><br>
+                </div>
+        </div>
+</div>
+
+
+<!--testmonial bottom-->
+
+<!--Whats Users Say-->
+<div class="container-fluid text-center blue-border">
+<img src="{% static "images/blue-border.jpg" %}" alt="My image"/>
+
+</div>
+<div class="container-fluid Whats-Users-Say text-center" data-speed="6" data-type="background" id="Whats-Users-Say">
+    <div class="container">
+  <div class="row">
+   
+    <h2>What Users Say</h2>
+        <div class="clearfix"></div><br>
+  </div>
+    </div>
+
+<script type="text/javascript">
+      jQuery(document).ready(function ($) {
+    });    
+
+</script>
+    <div class="container">
+        <div class="row position-relative">
+         <button class="control_next"><img src="{% static "images/right-arrow.png" %}" alt="My image"/></button>
+                                  <button class="control_prev"><img src="{% static "images/left-arrow.png" %}" alt="My image"/></button>
+              <div class="responsive-width">
+           <div id="testmonials">
+              
+                
+                <ul>
+                    <li><div class=" home-testm">
+                                <img src="{% static "images/testmonial-use1.png" %}" alt="My image"/>
+                                
+                            <h4>Yiming Z. Post Doc</h4>
+                                    <p><span>&ldquo;</span>The BioGPS iPhone app was the 1st serious biology-related app that made me spend a significant time with science on the iPhone<span>&rdquo;</span></p>
+                             </div></li>
+                    <li><div class=" home-testm">
+                                <img src="{% static "images/dona-img.png" %}" alt="My image"/>
+                                
+                            <h4>Dona Beasley</h4>
+                                     <p><span>&ldquo;</span>The BioGPS iPhone app was the 1st serious biology-related app that made me spend a significant time with science on the iPhone<span>&rdquo;</span></p>
+                             </div></li>
+                    <li><div class=" home-testm">
+                                <img src="{% static "images/john-img.png" %}" alt="My image"/>
+                               
+                            <h4>John Doe </h4>
+                                    <p><span>&ldquo;</span>The BioGPS iPhone app was the 1st serious biology-related app that made me spend a significant time with science on the iPhone<span>&rdquo;</span></p>
+                             </div></li>
+                     <li><div class=" home-testm">
+                                <img src="{% static "images/testmonial-use1.png" %}" alt="My image"/>
+                                
+                            <h4>Yiming Z. Post Doc</h4>
+                                    <p><span>&ldquo;</span>The BioGPS iPhone app was the 1st serious biology-related app that made me spend a significant time with science on the iPhone<span>&rdquo;</span></p>
+                             </div></li>
+                    <li><div class=" home-testm">
+                                <img src="{% static "images/dona-img.png" %}" alt="My image"/>
+                                
+                            <h4>Dona Beasley</h4>
+                                     <p><span>&ldquo;</span>The BioGPS iPhone app was the 1st serious biology-related app that made me spend a significant time with science on the iPhone<span>&rdquo;</span></p>
+                             </div></li>
+                    <li><div class=" home-testm">
+                                <img src="{% static "images/john-img.png" %}" alt="My image"/>
+                                
+                            <h4>John Doe </h4>
+                                    <p><span>&ldquo;</span>The BioGPS iPhone app was the 1st serious biology-related app that made me spend a significant time with science on the iPhone<span>&rdquo;</span></p>
+                             </div></li>
+                              <li><div class=" home-testm">
+                              <img src="{% static "images/testmonial-use1.png" %}" alt="My image"/>
+                                
+                            <h4>Yiming Z. Post Doc</h4>
+                                    <p><span>&ldquo;</span>The BioGPS iPhone app was the 1st serious biology-related app that made me spend a significant time with science on the iPhone<span>&rdquo;</span></p>
+                             </div></li>
+                    <li><div class=" home-testm">
+                                <img src="{% static "images/dona-img.png" %}" alt="My image"/>
+                               
+                            <h4>Dona Beasley</h4>
+                                     <p><span>&ldquo;</span>The BioGPS iPhone app was the 1st serious biology-related app that made me spend a significant time with science on the iPhone<span>&rdquo;</span></p>
+                             </div></li>
+                    <li><div class=" home-testm">
+                                <img src="{% static "images/john-img.png" %}" alt="My image"/>
+                                
+                            <h4>John Doe </h4>
+                                    <p><span>&ldquo;</span>The BioGPS iPhone app was the 1st serious biology-related app that made me spend a significant time with science on the iPhone<span>&rdquo;</span></p>
+                             </div></li>             
+                    </ul>
+             </div>
+            </div>
+        </div>
+    </div>
+
+  <div class="clearfix"></div><br><br><br>
+</div>
+
+
+
+<div class="container-fluid news-twitter" data-speed="6" data-type="background" id="news-twitter">
+    <div class="container">
+            <div class="row">
+               
+                    <div class="col-sm-6">
+                          <h2>News & Musings</h2>
+                            <div class="clearfix"></div><br>
+                              <div class="col-sm-12 News-Musings">
+                                    <h3>Updates to BioGPS</h3>
+                                    <p>The BioGPS team has been working hard behind the scenes to ensure that BioGPS is up-to-date with the latest Django code base and that some of the broken features have been either fixed or improved.
+</p>
+                <a href="#">READ MORE</a><div class="clearfix"></div><br>
+                                    </div>
+                                    <div class="col-sm-12 News-Musings margin-zero">
+                                    <h3>Happy New Year from BioGPS!</h3>
+                                    <p>It’s been an interesting year for BioGPS. Looking back at 2015, the BioGPS paper was cited 754 times according to google scholar. Of those citations, 137 were in 2015. The BioGPS application paper 
+
+</p>
+                <a href="#">READ MORE</a><div class="clearfix"></div><br>
+                                    </div>
+                        </div>
+                        <div class="col-sm-6">
+                        <h2>Twitter Stream</h2>
+                        <div class="clearfix"></div><br>
+                        <div class="twitter_box">
+                              <ul class="Twitter-Stream">
+                                        <li><img src="{% static "images/list-icon.png" %}" alt="My image"/>
+                                            <p class="head-twitter">BioGPS <span> @biogps</span></p>
+                                            <p class="des-twitter">The BioGPS team has been working hard behind. - Tweet</p>
+                                            <a href="#" class="url-twitter">http://3657576psd.com/day/243/</a>
+                                            <p class="date-twitter">11:40PM - 18 Feb, 2016</p>
+                                          
+                                            </li>
+                                            <li><img src="{% static "images/list-icon.png" %}" alt="My image"/>
+                                            <p class="head-twitter">BioGPS <span> @biogps</span></p>
+                                            <p class="des-twitter">The BioGPS team has been working hard behind. - Tweet</p>
+                                            <a href="#" class="url-twitter">http://3657576psd.com/day/243/</a>
+                                            <p class="date-twitter">11:40PM - 18 Feb, 2016</p>
+                                          
+                                            </li>
+                                            <li><img src="{% static "images/list-icon.png" %}" alt="My image"/>
+                                            <p class="head-twitter">BioGPS <span> @biogps</span></p>
+                                            <p class="des-twitter">The BioGPS team has been working hard behind. - Tweet</p>
+                                            <a href="#" class="url-twitter">http://3657576psd.com/day/243/</a>
+                                            <p class="date-twitter">11:40PM - 18 Feb, 2016</p>
+                                          
+                                            </li>
+                                            <li><img src="{% static "images/list-icon.png" %}" alt="My image"/>
+                                            <p class="head-twitter">BioGPS <span> @biogps</span></p>
+                                            <p class="des-twitter">The BioGPS team has been working hard behind. - Tweet</p>
+                                            <a href="#" class="url-twitter">http://3657576psd.com/day/243/</a>
+                                            <p class="date-twitter">11:40PM - 18 Feb, 2016</p>
+                                          
+                                            </li>
+                                            <li><img src="{% static "images/list-icon.png" %}" alt="My image"/>
+                                            <p class="head-twitter">BioGPS <span> @biogps</span></p>
+                                            <p class="des-twitter">The BioGPS team has been working hard behind. - Tweet</p>
+                                            <a href="#" class="url-twitter">http://3657576psd.com/day/243/</a>
+                                            <p class="date-twitter">11:40PM - 18 Feb, 2016</p>
+                                          
+                                            </li>
+                                            <li><img src="{% static "images/list-icon.png" %}" alt="My image"/>
+                                            <p class="head-twitter">BioGPS <span> @biogps</span></p>
+                                            <p class="des-twitter">The BioGPS team has been working hard behind. - Tweet</p>
+                                            <a href="#" class="url-twitter">http://3657576psd.com/day/243/</a>
+                                            <p class="date-twitter">11:40PM - 18 Feb, 2016</p>
+                                          
+                                            </li>
+                                            <li><img src="{% static "images/list-icon.png" %}" alt="My image"/>
+                                            <p class="head-twitter">BioGPS <span> @biogps</span></p>
+                                            <p class="des-twitter">The BioGPS team has been working hard behind. - Tweet</p>
+                                            <a href="#" class="url-twitter">http://3657576psd.com/day/243/</a>
+                                            <p class="date-twitter">11:40PM - 18 Feb, 2016</p>
+                                          
+                                            </li>
+                                    </ul>
+                         </div>
+                        </div>
+                        
+                 <div class="clearfix"></div><br><br><br>
+                </div>
+        </div>
+</div>
+
+
+<div class="container-fluid news-letter">
+    <div class="container">
+              <div class="row">
+                        <div class="news-letter-lett">
+                                <div class="new-letter-main">
+                                        <form >
+                                                <input type="text" class="new-letter-input" placeholder="YOUR E-MAIL" ><button class="news-subscribe pull-right">Subscribe NOW</button>
+                                            </form>
+                                    </div>
+                            </div>
+                            <div class="news-letter-right">
+                              <a href="#"><img src="{% static "images/apple.png" %}" alt="My image"/></a><a href="#"><img src="{% static "images/twitter-button.png" %}" alt="My image"/></a>
+                            </div>
+                    </div>
+        </div>
+</div>
+
+<div class="container-fluid com-footer top-bottom-padding">
+    <div class="container">
+              <div class="row">
+                    <div class="col-sm-8 verticle-middle padding-zero">
+                        <ul class="footer-menu">
+                           <li><a href="#"> Home</a></li>
+                           <li>   |</li>
+                           <li><a href="#">   help </a></li>
+                           <li>  |</li>
+                           <li><a href="#">   about</a></li>
+                           <li>   | </li>
+                           
+                           <li><a href="#">  Downloads</a> </li>
+                           <li>  | </li>  
+                           <li><a href="#">Api </a></li>
+                           <li>  |</li>
+                           <li><a href="#">   Terms of Use</a></li>
+                            </ul>
+                      </div>
+                      <div class="col-sm-4 verticle-middle">
+                      
+                        <p class="copy-right">© 2016   Privacy Policy   |   Disclaimer</p>
+                      </div>
+                    </div>
+        </div>
+</div>
+</body>
+</html>

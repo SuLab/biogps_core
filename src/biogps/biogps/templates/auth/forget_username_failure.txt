@@ -1,9 +1,0 @@
-{% load biogps_tags %}
-The email address you provided is not associated with any BioGPS user account. Please try another one. If you cannot remember which email you used for your account, please {% emailus2 "email us for the help" %}.
-{% if gnf_email %}
-<p><h3>GNF user: please use your GNF user account to login BioGPS.</h3></p>
-{% else %}
-   {%if nov_email %}
-<p><h3>Novartis user: you need to register through WIRE using your 5-2-1 user ID. Consult your IT department if you need more help.</h3></p>
-   {% endif %}
-{% endif %}

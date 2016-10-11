@@ -1,0 +1,170 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>BIOGPS Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="apple-touch-icon" sizes="57x57" href="/assets/favicon/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="/assets/favicon/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="/assets/favicon/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="/assets/favicon/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="/assets/favicon/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="/assets/favicon/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="/assets/favicon/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/assets/favicon/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="/assets/favicon/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/favicon/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon/favicon-16x16.png">
+<link rel="manifest" href="favicon/manifest.json">
+
+<meta name="msapplication-TileImage" content="/assets/favicon/ms-icon-144x144.png">
+
+<link rel="stylesheet" type="text/css" href="/assets/css/bootstrap.min.css" />
+<link rel="stylesheet" href="/assets/css/custom.css">
+<link rel="stylesheet" href="/assets/css/login.css">
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script src="/assets/js/bootstrap.min.js"></script>
+<script src="/assets/js/app.js"></script>
+<script src="//d1ks1friyst4m3.cloudfront.net/toolbar/prod/td.js" async data-trackduck-id="56fa56dd7062faed6f55a507"></script>
+<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600,600italic,700,700italic,800,800italic' rel='stylesheet' type='text/css' />
+
+</head>
+
+<body>
+<div class="container-fluid" data-speed="6" >
+		<div class="container">
+        				<div class="row top-padding">
+                        		<div class="col-sm-3">
+                                		<a href="/index/"><img src="/assets/images/logo.png" alt="logo" class="logo" /></a>
+                                </div>
+                                <div class="col-sm-9 menu-responsive">
+                                		<div class="col-sm-12 responsive-div">
+                                        		<ul class="sing-up-sing-in-ul pull-right">
+                                                		<li><a href="{% url 'auth_register' %}">Sign up</a></li>
+                                                        <li> | </li>
+                                                        <li><a href="{% url 'auth_login' %}">Sign in</a></li>
+                                                </ul>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                        <div class="col-sm-12 responsive-div">
+                                       
+                              
+                                          <div class="navbar-header">
+      <button type="button" class="navbar-toggle">
+       Menu <span class="icon-bar glyphicon glyphicon-menu-hamburger"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      
+    </div>
+                                      		           <ul class="main-menu">
+                                                          <li class="active"><a href="index">Home &nbsp; <i class="glyphicon glyphicon-menu-down"></i></a>
+                                                          <ul>
+                                                              
+                                                                <li><a href="/home_account/">Account</a></li>
+                                                               <li><a href="/addplugin/">Addplugin</a></li> 
+                                                               <li><a href="/help/">Help</a></li> 
+                                                               <li><a href="/plugin-2/">Plugin-2</a></li>
+                                                               <li><a href="/plugin/">Plugin</a></li>
+                                                               <li><a href="/plugin-details/">Plugin-details</a></li>
+                                                               <li><a href="/plugin-details-2/">Plugin-details-2</a></li>
+                                                               <li><a href="/login/">Login</a></li>
+                                                               <li><a href="/BIOGPS-search-results/">Search Page</a></li>
+                                                               </ul>
+                                                          </li>
+                                                          <li><a href="/help/">Help</a></li>
+                                                          <li>
+                                                            <a href="/about/">About </a>
+                                                              
+                                                          </li>
+                                                         <li><a href="#">Contact</a></li>
+                                                         <li><a href="#">Blog</a></li>
+                                                        </ul>
+                                        </div>
+                                </div>
+                        </div>
+        </div>
+</div>
+<!--banner part-->
+
+<div class="container-fluid padding-zero text-center banner-common">
+			
+                    		<img src="/assets/images/login.jpg" class="banner-responsive" /> 
+                           
+                  
+            </div>
+</div>
+
+<div class="container-fluid login-container">
+			
+            <div class="container">
+            		<div class="row">
+                    				<div class="col-sm-4">
+                                    </div>
+                                    <div class="col-sm-4 text-right ">
+                                    	<form action="">
+                                        <div class="form-group">
+                                        		<input style="height:45px; padding:8px 15px;margin:15px auto;" type="text" class="form-control input-text-2 new-input" placeholder="Username" />
+                                        </div>
+                                        <div class="form-group">
+                                        		<input style="height:45px; padding:8px 15px;margin:15px auto;" type="password" class="form-control input-text-2 new-input" placeholder="Password" />
+                                        </div>
+                                        <div class="form-group">
+                                        		<input type="submit" class="banner-link" value="Login" />
+                                        </div>
+                                        </form>
+                                        <ul class="text-center forget-password">
+                                        		<li><a href="#">Forget Password</a></li>
+                                                <li>     |  </li>
+                                                <li><a href="#">Create Account</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-sm-4">
+                                    </div>
+                    </div>
+            </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+<div class="container-fluid com-footer top-bottom-padding">
+		<div class="container">
+        			<div class="row">
+                    <div class="col-sm-8 verticle-middle padding-zero">
+                    		<ul class="footer-menu">
+                           <li><a href="#"> Home</a></li>
+                           <li>   |</li>
+                           <li><a href="#">   help </a></li>
+                           <li>  |</li>
+                           <li><a href="#">   about</a></li>
+                           <li>   | </li>
+                           
+                           <li><a href="#">  Downloads</a> </li>
+                           <li>  | </li>  
+                           <li><a href="#">Api </a></li>
+                           <li>  |</li>
+                           <li><a href="#">   Terms of Use</a></li>
+                            </ul>
+                      </div>
+                      <div class="col-sm-4 verticle-middle">
+                      
+                      	<p class="copy-right">© 2016   Privacy Policy   |   Disclaimer</p>
+                      </div>
+                    </div>
+        </div>
+</div>
+</body>
+</html>

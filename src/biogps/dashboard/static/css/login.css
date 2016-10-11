@@ -1,0 +1,36 @@
+
+.login-container
+{
+	display:block;
+	padding:120px 0px;
+	background:url(../images/login-bg.jpg);
+	background-size:cover;
+	-webkit-background-size:cover;
+	-moz-background-size:cover;
+	-ms-background-size:cover;
+	-o-background-size:cover;
+}
+ul.forget-password
+{
+	margin:30px 0px;
+	padding:0px;
+	list-style:none;
+	border-bottom:1px solid #1a9ca8;
+	border-top:1px solid #1a9ca8;
+}
+ul.forget-password li
+{
+	display:inline-block;
+	text-align:center;
+	padding:5px 3px;
+}
+ul.forget-password li a
+{
+	font-size:14px;
+	font-weight:600;
+	text-transform:uppercase;
+}
+ul.forget-password li a:hover
+{
+	color:#a46b0d !important;
+}
