@@ -1,0 +1,615 @@
+.add-plugin-header
+{
+	background-image:url(../images/account-header.jpg);
+	backgroun-size:cover;
+	-webkit-background-size:cover;
+	-moz-background-size:cover;
+	-ms-background-size:cover;
+}
+
+.add-plugin-container
+{
+	display:block;
+	padding:50px 0px;
+	background:url(../images/help-banner-bottom.png) no-repeat;
+	-webkit-background-size: cover !important;
+-moz-background-size: cover !important;
+-o-background-size: cover !important;
+background-size: cover !important;
+background-position:top center;
+padding-bottom:0px;
+}
+.first-top-part-add-plugin
+{
+	background-image:url(../images/step-1.png);
+	background-repeat:no-repeat;
+	background-position:left top;
+	
+	padding:25px 30px;
+	padding-bottom:0px;
+}
+.first-top-part-add-plugin label
+{
+	font-size: 18px;
+    font-weight: 700;
+    margin-right: 15px;
+    color: #000;
+    float: left;
+    margin-top: 3px;
+    width: 23%;
+    margin-left: 21px;
+    text-align: right;
+	
+}
+.first-top-part-add-plugin label p
+{
+	text-align:right;
+	font-size:13px;
+	font-weight:300;
+}
+.first-top-part-add-plugin-input,.first-top-part-add-plugin-text-area
+{
+	border:0px;
+	background:#fff;
+	margin:8px 0px;
+	border-radius:0px;
+	padding:8px 12px;
+	width:70%;
+}
+.first-top-part-add-plugin-text-area
+{
+	height:60px;
+}
+.SharingPermissions
+{
+	display:block;
+}
+.SharingPermissions label
+{
+	float:left;
+}
+ul.SharingPermissions-ul
+{
+	margin:0px;
+	padding:8px 10px;
+	width:auto !important;
+	max-width:348px !important;
+	padding-bottom:0px;
+	float:left;
+	margin-bottom:50px;
+	background-color:#f7a112;
+	
+}
+ul.SharingPermissions-ul li
+{
+	list-style:none;
+	display:inline-block;
+	
+	position:relative;
+	overflow:hidden;
+}
+ul.SharingPermissions-ul li label
+{
+	width:auto;
+	font-size:14px;
+	
+}
+ul.SharingPermissions-ul li input[type="radio"]:not(:checked),
+ul.SharingPermissions-ul li input[type="radio"]:checked {
+  position: absolute;
+  left: -9999px;
+}
+ul.SharingPermissions-ul li input[type="radio"]:not(:checked) + label,
+ul.SharingPermissions-ul li input[type="radio"]:checked + label {
+  position: relative;
+ padding:8px 35px;
+  cursor: pointer;
+  background:url(../images/un-check.png) no-repeat 0px 5px;
+}
+
+ul.SharingPermissions-ul li input[type="radio"]:checked + label {
+  position: relative;
+ padding:8px 35px;
+  cursor: pointer;
+  background:url(../images/check.png) no-repeat 0px 5px;
+}
+
+
+
+
+
+
+
+.add-plugin-container-2
+{
+	background:url(../images/Species-bg.png) no-repeat;
+	
+	-webkit-background-size: cover !important;
+-moz-background-size: cover !important;
+-o-background-size: cover !important;
+background-size: cover !important;
+}
+
+.sec-top-part-add-plugin
+{
+	background-image:url(../images/step-2.png);
+	background-repeat:no-repeat;
+	background-position:left top;
+	padding:0px;
+	padding-bottom:25px;
+	padding-top:25px;
+}
+.sec-top-part-add-plugin label
+{
+	font-size: 18px;
+    font-weight: 700;
+    margin-right: 15px;
+    color: #000;
+    float: left;
+    margin-top: 3px;
+    width: 23%;
+    margin-left: 21px;
+    text-align: right;
+	
+}
+.sec-top-part-add-plugin label p
+{
+	text-align:right;
+	font-size:13px;
+	font-weight:300;
+	
+}
+
+
+
+
+.Species
+{
+	display:block;
+	padding:0px 30px;
+}
+.Species label
+{
+	float:left;
+}
+ul.Species-ul
+{
+	margin:0px;
+	padding:8px 10px;
+	width:69%;
+	padding-bottom:0px;
+	float:left;
+	
+	
+}
+ul.Species-ul li
+{
+	list-style:none;
+	display:inline-block;
+	background-color:#fff;
+	position:relative;
+	overflow:hidden;
+	margin-right:8px;
+	margin-bottom:5px;
+}
+ul.Species-ul li label
+{
+	width:auto;
+	font-size:14px;
+	
+}
+ul.Species-ul li input[type="checkbox"]:not(:checked),
+ul.Species-ul li input[type="checkbox"]:checked {
+  position: absolute;
+  left: -9999px;
+}
+ul.Species-ul li #Human:not(:checked) + label,
+ul.Species-ul li #Human:checked + label {
+  position: relative;
+ padding:10px 54px;
+  cursor: pointer;
+  background:url(../images/human-grey.png) no-repeat 0px 0px;
+  margin-bottom:0px;
+  margin-top:0px;
+  padding-right:12px;
+}
+
+ul.Species-ul li #Human:checked + label {
+ 
+  background:url(../images/human-black-icon.png) no-repeat 0px 0px;
+}
+
+
+
+ul.Species-ul li #Mouse:not(:checked) + label,
+ul.Species-ul li #Mouse:checked + label {
+  position: relative;
+ padding:10px 54px;
+  cursor: pointer;
+  background:url(../images/mouse-grey.png) no-repeat 0px 0px;
+  margin-bottom:0px;
+  margin-top:0px;
+  padding-right:12px;
+}
+
+ul.Species-ul li #Mouse:checked + label {
+ 
+  background:url(../images/mouse-black.png) no-repeat 0px 0px;
+}
+
+
+ul.Species-ul li #Rate:not(:checked) + label,
+ul.Species-ul li #Rate:checked + label {
+  position: relative;
+ padding:10px 54px;
+  cursor: pointer;
+  background:url(../images/rat-grey.png) no-repeat 0px 0px;
+  margin-bottom:0px;
+  margin-top:0px;
+  padding-right:12px;
+}
+
+ul.Species-ul li #Rate:checked + label {
+ 
+  background:url(../images/rat-black.png) no-repeat 0px 0px;
+}
+
+ul.Species-ul li #Fruitfly:not(:checked) + label,
+ul.Species-ul li #Fruitfly:checked + label {
+  position: relative;
+ padding:10px 54px;
+  cursor: pointer;
+  background:url(../images/fruitefly-grey.png) no-repeat 0px 0px;
+  margin-bottom:0px;
+  margin-top:0px;
+  padding-right:12px;
+}
+
+ul.Species-ul li #Fruitfly:checked + label {
+ 
+  background:url(../images/fruitefly-black.png) no-repeat 0px 0px;
+}
+ul.Species-ul li #Nemotode:not(:checked) + label,
+ul.Species-ul li #Nemotode:checked + label {
+  position: relative;
+ padding:10px 54px;
+  cursor: pointer;
+  background:url(../images/fruitefly-grey.png) no-repeat 0px 0px;
+  margin-bottom:0px;
+  margin-top:0px;
+  padding-right:12px;
+}
+
+ul.Species-ul li #Nemotode:checked + label {
+ 
+  background:url(../images/fruitefly-black.png) no-repeat 0px 0px;
+}
+ul.Species-ul li #Zebrafish:not(:checked) + label,
+ul.Species-ul li #Zebrafish:checked + label {
+  position: relative;
+ padding:10px 54px;
+  cursor: pointer;
+  background:url(../images/fruitefly-grey.png) no-repeat 0px 0px;
+  margin-bottom:0px;
+  margin-top:0px;
+  padding-right:12px;
+}
+
+ul.Species-ul li #Zebrafish:checked + label {
+ 
+  background:url(../images/fruitefly-black.png) no-repeat 0px 0px;
+}
+ul.Species-ul li #Thale-cress:not(:checked) + label,
+ul.Species-ul li #Thale-cress:checked + label {
+  position: relative;
+ padding:10px 54px;
+  cursor: pointer;
+  background:url(../images/thale-grey.png) no-repeat 0px 0px;
+  margin-bottom:0px;
+  margin-top:0px;
+  padding-right:12px;
+}
+
+ul.Species-ul li #Thale-cress:checked + label {
+ 
+  background:url(../images/thale-black.png) no-repeat 0px 0px;
+}
+ul.Species-ul li #Frog:not(:checked) + label,
+ul.Species-ul li #Frog:checked + label {
+  position: relative;
+ padding:10px 54px;
+  cursor: pointer;
+  background:url(../images/frog-grey.png) no-repeat 0px 0px;
+  margin-bottom:0px;
+  margin-top:0px;
+  padding-right:12px;
+}
+
+ul.Species-ul li #Frog:checked + label {
+ 
+  background:url(../images/frog-black.png) no-repeat 0px 0px;
+}
+ul.Species-ul li #Pig:not(:checked) + label,
+ul.Species-ul li #Pig:checked + label {
+  position: relative;
+ padding:10px 54px;
+  cursor: pointer;
+  background:url(../images/pig-grey.png) no-repeat 0px 0px;
+  margin-bottom:0px;
+  margin-top:0px;
+  padding-right:12px;
+}
+
+ul.Species-ul li #Pig:checked + label {
+ 
+  background:url(../images/pig-black.png) no-repeat 0px 0px;
+}
+
+
+
+.third-top-part-add-plugin
+{
+	background-image:url(../images/step-3.png);
+	background-repeat:no-repeat;
+	background-position:left top;
+	padding:0px;
+	
+	padding:25px 30px;
+}
+.third-top-part-add-plugin label
+{
+	font-size: 18px;
+    font-weight: 700;
+    margin-right: 15px;
+    color: #000;
+    float: left;
+    margin-top: 3px;
+    width: 23%;
+    margin-left: 21px;
+    text-align: right;
+	
+}
+.third-top-part-add-plugin label p
+{
+	text-align:right;
+	font-size:13px;
+	font-weight:300;
+}
+
+
+
+
+
+
+
+
+
+.four-top-part-add-plugin
+{
+	background-image:url(../images/step-4.png);
+	background-repeat:no-repeat;
+	background-position:left top;
+	padding:0px;
+	padding:25px 30px;
+}
+.four-top-part-add-plugin label
+{
+	font-size: 18px;
+    font-weight: 700;
+    margin-right: 15px;
+    color: #000;
+    float: left;
+    margin-top: 3px;
+    width: 23%;
+    margin-left: 21px;
+    text-align: right;
+	
+}
+.four-top-part-add-plugin label p
+{
+	text-align:right;
+	font-size:13px;
+	font-weight:300;
+}
+
+
+
+.five-top-part-add-plugin
+{
+	background-image:url(../images/step-5.png);
+	background-repeat:no-repeat;
+	background-position:left top;
+	padding:0px;
+	padding:25px 30px;
+}
+.five-top-part-add-plugin label
+{
+	font-size: 18px;
+    font-weight: 700;
+    margin-right: 15px;
+    color: #000;
+    float: left;
+    margin-top: 3px;
+    width: 23%;
+    margin-left: 21px;
+    text-align: right;
+	
+}
+.five-top-part-add-plugin label p
+{
+	text-align:right;
+	font-size:13px;
+	font-weight:300;
+}
+.six-top-part-add-plugin
+{
+	
+	background-repeat:no-repeat;
+	background-position:left top;
+	padding:0px;
+	padding:10px 30px;
+}
+.six-top-part-add-plugin label
+{
+	font-size: 18px;
+    font-weight: 700;
+    margin-right: 15px;
+    color: #000;
+    float: left;
+    margin-top: 3px;
+    width: 23%;
+    margin-left: 21px;
+    text-align: right;
+	
+}
+.six-top-part-add-plugin label p
+{
+	text-align:right;
+	font-size:13px;
+	font-weight:300;
+}
+
+@media only screen and (max-width:987px )
+{
+	.first-top-part-add-plugin
+	{
+		background-image:none;
+	}
+	.sec-top-part-add-plugin
+	{
+		background-image:none;
+	}
+	.third-top-part-add-plugin
+	{
+		background-image:none;
+	}
+	.four-top-part-add-plugin
+	{
+		background-image:none;
+	}
+	.five-top-part-add-plugin
+	{
+		background-image:none;
+	}
+	.SharingPermissions
+	{
+		float:left;
+	}
+	ul.SharingPermissions-ul
+	{
+		width:42%;
+	}
+}
+@media only screen and (max-width:599px )
+{
+	.first-top-part-add-plugin label {
+    font-size: 18px;
+    font-weight: 700;
+    margin-right: 15px;
+    color: #000;
+    float: left;
+	
+    margin-top: 3px;
+    width: 100%;
+    text-align: left;
+}
+.first-top-part-add-plugin label p {
+    text-align: left;
+    font-size: 13px;
+    font-weight: 300;
+}
+.first-top-part-add-plugin-input, .first-top-part-add-plugin-text-area
+{
+	width:100% !important;
+}
+.sec-top-part-add-plugin label {
+    font-size: 18px;
+    font-weight: 700;
+    margin-right: 15px;
+    color: #000;
+    float: left;
+	
+    margin-top: 3px;
+    width: 100%;
+    text-align: left;
+}
+.sec-top-part-add-plugin label p {
+    text-align: left;
+    font-size: 13px;
+    font-weight: 300;
+}
+ul.Species-ul
+{
+	width:100%;
+}
+.third-top-part-add-plugin label {
+    font-size: 18px;
+    font-weight: 700;
+    margin-right: 15px;
+    color: #000;
+    float: left;
+	
+    margin-top: 3px;
+    width: 100%;
+    text-align: left;
+}
+.third-top-part-add-plugin label p {
+    text-align: left;
+    font-size: 13px;
+    font-weight: 300;
+}
+.four-top-part-add-plugin label {
+    font-size: 18px;
+    font-weight: 700;
+    margin-right: 15px;
+    color: #000;
+    float: left;
+	
+    margin-top: 3px;
+    width: 100%;
+    text-align: left;
+}
+.four-top-part-add-plugin label p {
+    text-align: left;
+    font-size: 13px;
+    font-weight: 300;
+}
+.five-top-part-add-plugin label {
+    font-size: 18px;
+    font-weight: 700;
+    margin-right: 15px;
+    color: #000;
+    float: left;
+	
+    margin-top: 3px;
+    width: 100%;
+    text-align: left;
+}
+.five-top-part-add-plugin label p {
+    text-align: left;
+    font-size: 13px;
+    font-weight: 300;
+}
+ul.SharingPermissions-ul
+{
+	width:100%;
+}
+.six-top-part-add-plugin label {
+    font-size: 18px;
+    font-weight: 700;
+    margin-right: 15px;
+    color: #000;
+    float: left;
+	
+    margin-top: 3px;
+    width: 100%;
+    text-align: left;
+}
+.six-top-part-add-plugin label p {
+    text-align: left;
+    font-size: 13px;
+    font-weight: 300;
+}
+}
+
+

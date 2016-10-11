@@ -1,7 +1,0 @@
-Dear {{login}},
-
-    Your user account ("{{login}}") has been created at our BioGPS (http://{{ domain }}) website. Please click the following link to activate your account:
-
-{{url}}
-
-The BioGPS Team

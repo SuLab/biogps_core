@@ -1,5 +1,0 @@
-You have received the following notice from BioGPS (http://{{ current_site }}):
-
-{{ message }}
-
-To see other notices or change how you receive notifications, please go to {{ notices_url }}.

@@ -1,0 +1,188 @@
+.help-banner
+{
+	background-image:url(../images/help-banner.jpg);
+	background-repeat:no-repeat;
+	background-size:cover;
+	-webkit-background-size:cover;
+	-o-background-size:cover;
+	-ms-background-size:cover;
+	-moz-background-size:cover;
+	background-position:top center;
+	padding:20px 0px;
+	padding-bottom:60px;
+}
+.help-banner h1
+{
+	color:#fff;
+	font-size:40px;
+	font-weight:400;
+}
+
+
+
+.help-fe-banner
+{
+	background-image:url(../images/help-banner-bottom.png);
+	background-repeat:no-repeat;
+	background-size:100% 100%;
+	background-position:top center;
+	padding:20px 0px;
+	padding-bottom:60px;
+}
+
+.help-fe-banner h3
+{
+	color:#000;
+	font-size:24px;
+	font-weight:300;
+	padding-bottom:20px;
+}
+
+
+
+
+
+
+
+
+
+.help-video-panel
+{
+	background-image:none;
+	background-repeat:no-repeat;
+	background-size:100% 100%;
+	background-position:top center;
+	padding:20px 0px;
+	padding-bottom:60px;
+}
+
+.help-video-panel h2
+{
+	color:#000;
+	font-size:40px;
+	font-weight:400;
+	
+}
+
+.help-video-panel h3
+{
+	color:#004f84;
+	font-size:24px;
+	padding:30px 0px;
+	font-weight:400;
+	
+}
+
+.active-help-tab
+{
+	background:#fff !important;
+
+}
+#help-tab-1,#help-tab-2,#help-tab-3,#help-tab-4
+{
+	cursor:pointer;
+	height:100% !important;
+}
+#help-tab-1 .col-sm-3, #help-tab-2 .col-sm-3, #help-tab-3 .col-sm-3, #help-tab-4 .col-sm-3
+{
+	height:100% !important; 
+}
+.help-fe-banner .col-sm-3:hover
+{
+	background:#fff;
+}
+.help-tab-content-1,.help-tab-content-2,.help-tab-content-3,.help-tab-content-4
+{
+	display:none;
+}
+.help-tab-content-1
+{
+	display:block;
+}
+table.gridtable
+{
+	border:1px solid #ccc;
+	padding:5px;
+	border-collapse:collapse;
+	width:100%;
+	margin:20px 0px;
+}
+table.gridtable tr th
+{
+	text-align:center;
+}
+table.gridtable tr td,table.gridtable tr th
+{
+	border:1px solid #ccc;
+	padding:10px 15px;
+}
+.yes {
+    background: #fff url(../images/v.png) no-repeat center center;
+}
+.no {
+    background: #fff url(../images/x.png) no-repeat center center;
+}
+.hidden-div2
+{
+
+	padding:0px 0px;
+	position:relative;
+	
+	
+}
+.hidden-first
+{
+	display:none;
+}
+.hidden-div2 a
+{
+	color:#f7a112;
+}
+.hidden-div2 a:hover
+{
+	color:#c17e0e;
+}
+.hidden-div2 h3
+{
+	color:#FFF;
+	font-size:40px;
+}
+.hidden-div-close
+{
+	position:absolute;
+	top:0px;
+	right:10px;
+	display:none;
+	cursor:pointer;
+}
+.help-step-1,.help-step-2,.help-step-3,.help-step-4,.help-step-5,.help-step-6,.help-step-7,.help-step-8,.help-step-9,.help-step-10,.help-step-11
+{
+	display:none;
+}
+@media only screen and (max-width:766px)
+{
+	#help-tab-1 .col-sm-3, #help-tab-2 .col-sm-3, #help-tab-3 .col-sm-3, #help-tab-4 .col-sm-3
+	{
+		width:25% !important;
+		float:left;
+	}
+	#help-tab-1 .col-sm-3 img, #help-tab-2 .col-sm-3 img, #help-tab-3 .col-sm-3 img, #help-tab-4 .col-sm-3 img
+	{
+		width:90px;
+		padding:10px 0px;
+	}
+	.help-fe-banner h3
+	{
+		display:none !important;
+	}
+}
+@media only screen and (max-width:555px)
+{
+	.video-responsive
+	{
+		height:350px;
+	}
+}
+
+
+
