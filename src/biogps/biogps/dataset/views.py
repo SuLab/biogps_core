@@ -252,7 +252,9 @@ class DatasetView(RestView):
             abs_url = '/dataset/' + dataset['geo_gse_id'] + '/' + slugify(dataset['name'])
             request.breadcrumbs(wrap_str(dataset['name'], 140), abs_url)
             html_template = 'dataset/show.html'
-            dataset['sample_geneid'] = const.sample_gene[dataset['species']]
+            if not dataset.get('sample_geneid', None):
+                # if the dataset does not have a "sample_geneid" value, using the preset one for supported species
+                dataset['sample_geneid'] = const.sample_gene.get(dataset['species'], 1017)   # for unknown species, just set it to 1017
             html_dictionary = {
                 'current_obj': dataset,
                 'obj_factors': dataset['factors'],
