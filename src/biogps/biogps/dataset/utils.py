@@ -25,7 +25,8 @@ class DatasetQuery():
         owner_map = {
             'Andrew Su': '/profile/3/asu',
             'Tom Freeman': '/profile/309/tfreeman',
-            'ArrayExpress Uploader': '/profile/8773/arrayexpressuploader'
+            'ArrayExpress Uploader': '/profile/8773/arrayexpressuploader',
+            'ERCC': '/profile/10501/ercc'
         }
         try:
             ds['owner_profile'] = owner_map[ds['owner']]
