@@ -69,8 +69,9 @@
         </div> <!-- object-summary -->
 
         <div class="object-full-details">
+            {% autoescape off %}
             <p>{{ current_obj.summary }}</p>
-
+            {% endautoescape %}
             <dl>
                 <dt>Species:</dt><dd>{{ current_obj.species}}</dd><br>
                 <dt>Samples:</dt><dd>{{ current_obj.sample_count }}</dd><br>
@@ -88,7 +89,7 @@
 
                 {% if obj_factors and current_obj.id >= 15 %}
                     <br>
-                    <div id="dataset-factors">
+                    <div id="dataset-factors" style="overflow:auto">
                     <span id="dataset-factors-title">Factors:</span>
                         {% if current_obj.sample_source%}
                             (via <a href="{{ current_obj.sample_source }}" target="_blank">ArrayExpress</a>)
