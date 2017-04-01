@@ -1,6 +1,6 @@
 from biogps.boe.views import MyGeneInfo
 from biogps.utils.helper import alwayslist
-
+from biogps.utils.const import species_d
 from django.conf import settings
 
 import types
@@ -11,6 +11,13 @@ def sanitize(ds_id):
     """Return sanitized (uppercase if applicable) dataset ID"""
     return ds_id.upper() if type(ds_id) in types.StringTypes else ds_id
 
+
+def safe_int(s):
+    try:
+        s = int(s)
+    except:
+        pass
+    return s
 
 class DatasetQuery():
     """Generic class container for dataset query functions"""
@@ -32,6 +39,8 @@ class DatasetQuery():
             ds['owner_profile'] = owner_map[ds['owner']]
         except:
             ds['owner_profile'] = None
+        if 'species' in ds:
+            ds['species'] = species_d.get(safe_int(ds['species']), ds['species'])
         return ds
 
     @staticmethod
