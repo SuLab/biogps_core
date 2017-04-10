@@ -50,7 +50,8 @@ class DatasetQuery():
         if res.json()['code'] != 0:
             return None
         ds = res.json()['details']
-        return ds
+        if ds['dataset']:
+            return ds
 
     @staticmethod
     def get_ds_data(ds_id, gene_id):
