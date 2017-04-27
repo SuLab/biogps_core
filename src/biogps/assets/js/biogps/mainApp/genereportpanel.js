@@ -424,12 +424,12 @@ Ext.extend(biogps.Portlet, Ext.ux.ManagedIFrame.Window, {
         if (this.plugin.url){
             this.showLoading();
             this.url = this.plugin.geturl(this.gene);
-            //set dataset plugin to default dataset
-            if (this.plugin.id == 9 && biogps.alt_defaultdataset){
-                this.url = this.url + '&show_dataset='+biogps.alt_defaultdataset;
-            }
             this.updateCurrentSpecies();
             if (this.url){
+                //set dataset plugin to default dataset
+                if (this.plugin.id == 9 && biogps.alt_defaultdataset){
+                    this.url = this.url + '&show_dataset='+biogps.alt_defaultdataset;
+                }
                 if (this.plugin.type=='iframe' && this.plugin.options.securityAware && !this.plugin.is_secure_cookie_set()){
                     //set_scecure_cookie first and then call _loadContent.
                     this.plugin.on('secure_cookie_set', function(){this._loadContent();}, this, {single:true});
