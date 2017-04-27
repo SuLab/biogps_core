@@ -16,6 +16,9 @@ import re
 import json
 import types
 
+species_d[9940] = 'sheep'
+assembly_d['sheep'] = 'oviAri3'
+genus_d['sheep'] = 'Ovis aries'
 
 class Gene(dotdict):
     '''A extension to dictionary to hold all gene annotation data and add more functions.'''
@@ -342,10 +345,10 @@ class MyGeneInfo():
         self._homologene_trimming(gene_list)
         return gene_list
 
-    def query_by_id(self, query):
+    def query_by_id(self, query, species=None):
         if query:
             #_query = re.split('[\s\r\n+|,]+', query)
-            _res = self._querymany(query, self.id_scopes)
+            _res = self._querymany(query, self.id_scopes, species=species)
             if isinstance(_res, dict) and _res.get('error', False):
                 out = _res
                 if out['error'] == 'timeout':
@@ -374,12 +377,12 @@ class MyGeneInfo():
 
             return out
 
-    def query_by_keyword(self, query):
+    def query_by_keyword(self, query, species=None):
         if query:
             kwargs = {}
             kwargs['q'] = query
             kwargs['fields'] = self.default_fields
-            kwargs['species'] = self.default_species
+            kwargs['species'] = species or self.default_species
             kwargs['size'] = 1000   # max 1000 hits returned
             if self.userfilter:
                 kwargs['userfilter'] = self.userfilter
@@ -415,9 +418,9 @@ class MyGeneInfo():
                    'success': True}
             return out
 
-    def get_gene(self, geneid, fields=None):
+    def get_gene(self, geneid, fields=None, species=None):
         _url = u'{}/gene/{}'.format(self.url, geneid)
-        params = {'species': self.default_species}
+        params = {'species': species or self.default_species}
         if fields:
             params['fields'] = self._format_list(fields)
         try:
@@ -524,6 +527,8 @@ class MyGeneInfo():
 
     def get_geneidentifiers(self, geneid):
         gdoc = self.get_gene(geneid)
+        if not gdoc:
+            gdoc = self.get_gene(geneid, species='all')
         if gdoc:
             if isinstance(gdoc, list):     # in few cases, one id might returns multiple gdoc as a list
                 gdoc = gdoc[0]             # in this case, we just take the first one
@@ -618,6 +623,7 @@ def split_queryterms(q):
 def do_query(params):
     _query = params.get('query', '').strip()
     _userfilter = params.get('userfilter', '').strip()
+    _species= params.get('species', '').strip() or None
     if _query:
         res = {}
         bs = MyGeneInfo()
@@ -651,12 +657,12 @@ def do_query(params):
                     res = {'success': False, 'error': "Please do wildcard query one at a time."}
                 elif multi_terms:
                     #do id query
-                    res = bs.query_by_id(terms)
+                    res = bs.query_by_id(terms, species=_species)
                     res['_log'] = {'qtype': 'id', 'qlen': len(_query), 'num_terms': len(terms)}
 
                 else:
                     #do keyword query
-                    res = bs.query_by_keyword(_query)
+                    res = bs.query_by_keyword(_query, species=_species)
                     res['_log'] = {'qtype': 'keyword', 'qlen': len(_query)}
     else:
         res = {'success': False, 'error': 'Invalid input parameters!'}
