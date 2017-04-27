@@ -162,6 +162,7 @@ Ext.extend(biogps.GeneResultPage, Ext.Panel, {
 	},
 */
     renderGeneList2: function(){
+        //this is now deprecated, replaced by renderGeneList3.
         var taxid_list = [9606, 10090, 10116, 7227, 6239, 7955, 3702, 8364, 9823];
         var prefix_d = {'9606':  'Hs',
                         '10090': 'Mm',
@@ -313,7 +314,6 @@ Ext.extend(biogps.GeneResultPage, Ext.Panel, {
                             'frog': 'X. tropicalis (frog)',
                             'pig': 'S. scrofa (pig)'
                 },
-
     toggle_species: function(cb, evt){
         $(cb).prev().attr('checked', !$(cb).prev().attr('checked'));
         biogps.resultpage.updateSpecies();
@@ -444,6 +444,11 @@ Ext.extend(biogps.GeneResultPage, Ext.Panel, {
         var species_d = this.species_d;
         var species_menu_labels = this.species_menu_labels;
 
+        if (biogps.AVAILABLE_SPECIES.indexOf('sheep') != -1){
+            species_d['9940'] = 'sheep';
+            species_menu_labels['sheep'] = 'O. aries (sheep)';
+            this.show_species = ['sheep'];
+        };
         var species_list = [];
         var species_counts = {}
         for (var i=0; i<this.geneList.length; i++){
