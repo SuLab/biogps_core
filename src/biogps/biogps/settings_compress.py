@@ -1,5 +1,11 @@
 #This file specify the css and js files will be compressed by "django-compress" app.
 #Add "compress" into INSTALLED_APPS in "settings.py"
+
+# This file has been migrated from django-compress to django-pipeline.
+# Run
+#     python manage.py --settings=biogps.settings_prod collectstatic
+# to collect and minify modified js and css files.
+
 import os, os.path
 from settings_base import ROOT_PATH
 
@@ -17,7 +23,8 @@ if(os.name == 'mac' or os.name == 'posix'):
         TOOL_PATH = '/Volumes/BioGPS$/tools'
     else:
         # Linux path
-        TOOL_PATH = '/opt/tools' if os.path.exists('/opt/tools') else '~/opt/tools'
+        # TOOL_PATH = '/opt/tools' if os.path.exists('/opt/tools') else '~/opt/tools'
+        TOOL_PATH = '/opt/biogps/tools'
 elif(os.name == 'nt'):
     # Windows path
     TOOL_PATH = '\\\\projects\\BioGPS\\tools'
