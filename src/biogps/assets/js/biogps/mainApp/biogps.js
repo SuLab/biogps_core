@@ -174,9 +174,11 @@ Ext.onReady(function(){
 	}
 
     window.onmessage = function(e){
-        var data   = JSON.parse(e.data);
-        if (data.geneid){
-            biogps.renderGeneReport2(data.geneid);
+        if (e.data) {
+            var data   = JSON.parse(e.data);
+            if (data.geneid){
+                biogps.renderGeneReport2(data.geneid);
+            }
         }
     };
 });
