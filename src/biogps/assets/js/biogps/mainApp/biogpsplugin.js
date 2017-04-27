@@ -341,6 +341,7 @@ Ext.extend(biogps.Plugin, Ext.util.Observable, {
             var kwd_list = this.getKeywords();
             if (kwd_list && kwd_list.length>0){
                 var species = this.getCurrrentSpecies(gene, true);
+                if (gene.sheep) species = 'sheep';   // tmp support for sheep
                 if (species){
                     //var current_gene = gene.getEntryGene(species);
 
