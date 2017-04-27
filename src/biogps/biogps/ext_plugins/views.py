@@ -38,7 +38,7 @@ def _get_gene(request, geneid):
     geneid = str(geneid).strip()
 
     mg = MyGeneInfo()
-    geneobj = mg.get_gene(geneid)
+    geneobj = mg.get_gene(geneid) or mg.get_gene(geneid, species='all')
     if not geneobj:
         return HttpResponseBadRequest('Invalid input parameters!')
 
