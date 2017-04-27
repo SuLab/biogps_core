@@ -84,7 +84,8 @@ def index(request, **kwargs):
             # check if alt_defaultdataset exists
             ds = DatasetQuery.get_ds(alt_defaultdataset)
             if ds:
-                d['alt_defaultdataset'] = ds['id']
+                #d['alt_defaultdataset'] = ds['id']
+                d['alt_defaultdataset'] = alt_defaultdataset
 
         #optional userfilter to add to mygene.info query
         search_filter = request.GET.get('search_filter', None)
@@ -98,6 +99,17 @@ def index(request, **kwargs):
         # Add any existing URL parameters to the 'goto_url' so that they
         # persist after the login event.
         d['goto_url'] = orig_url
+
+        # Special handling for sheepatlas
+        if alt_defaultdataset == 'BDS_00015':
+            import json
+            d['available_species'] = json.loads(d['available_species'])
+            d['sample_gene'] = json.loads(d['sample_gene'])
+            d['available_species'].append('sheep')
+            d['sample_gene']['sheep'] = 442994
+            d['available_species'] = json.dumps(d['available_species'])
+            d['sample_gene'] = json.dumps(d['sample_gene'])
+            d['species_for_query'] = '9940'  # sheep
 
         if settings.DEBUG:
             from django.template.context_processors import request as request_processor
@@ -135,7 +147,10 @@ def alternate_layout(request, altlayout):
         get_dict['search_filter'] = 'exrna'     #add additional userfilter to the default mygene.info gene query
     if altlayout == 'primarycellatlas':
         #get_dict['dataset'] = 2429              # "Primary Cell Atlas"
-        get_dict['dateset'] = 'BDS_00013'
+        get_dict['dataset'] = 'BDS_00013'
+
+    if altlayout == 'sheepatlas':
+        get_dict['dataset'] = 'BDS_00015'
 
     request.GET = get_dict
     return index(request, orig_url=request.get_full_path())

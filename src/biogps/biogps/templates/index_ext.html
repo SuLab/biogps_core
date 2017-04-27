@@ -452,7 +452,7 @@ coreDispatcher.dispatch();
 
 
     {% autoescape off %}
-        <script type="text/javascript">biogps.tip_array = {% biogpstips %}; biogps.ticker_msgs = []; biogps.MAX_QUERY_LENGTH={{max_query_len}}; biogps.AVAILABLE_SPECIES={{available_species}}; biogps.SAMPLE_GENE={{sample_gene}}; {%if alt_defaultlayout %} biogps.alt_defaultlayout = {{alt_defaultlayout}};{% endif %}{%if alt_defaultdataset %} biogps.alt_defaultdataset = {{alt_defaultdataset}};{% endif %}</script>
+        <script type="text/javascript">biogps.tip_array = {% biogpstips %}; biogps.ticker_msgs = []; biogps.MAX_QUERY_LENGTH={{max_query_len}}; biogps.AVAILABLE_SPECIES={{available_species}}; biogps.SAMPLE_GENE={{sample_gene}}; {%if alt_defaultlayout %} biogps.alt_defaultlayout = {{alt_defaultlayout}};{% endif %}{%if alt_defaultdataset %} biogps.alt_defaultdataset = "{{alt_defaultdataset}}";{% endif %}{%if species_for_query %} biogps.species_for_query = {{species_for_query}};{% endif %}</script>
     {% endautoescape %}
 </body>
 </html>
