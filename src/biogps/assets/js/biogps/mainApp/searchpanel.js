@@ -478,6 +478,9 @@ biogps.doSearch = function(cfg){
         if (userfilter){
             params.userfilter = userfilter;
         }
+        if (biogps.species_for_query) {
+            params.species = biogps.species_for_query;
+        }
         biogps.callRemoteService({
             url: '/boe/',
             params: params,
