@@ -32,6 +32,9 @@ class Gene(RemoteModel):
     def _get_obj_by_id(self, id):
         '''To support query like Gene.objects.get(id=1017)'''
         _g = self._ds.get_gene(id, ','.join(self._default_fields))
+        if not _g:
+            # query again using species='all'. This will support all species.
+            _g = self._ds.get_gene(id, ','.join(self._default_fields), species='all')
         return self._as_obj(_g)
 
     def _get_obj_by_id_list(self, id_list):
