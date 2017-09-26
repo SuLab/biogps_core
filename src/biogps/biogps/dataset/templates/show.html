@@ -83,6 +83,9 @@
                 {% if current_obj.mobile_url %}
                 <dt>Mobile URL:</dt><dd>{{ current_obj.mobile_url }}</dd><br>
                 {% endif %}
+                {% if current_obj.pubmed_id %}
+                    <dt>PubMed:</dt><dd><a href="https://www.ncbi.nlm.nih.gov/pubmed/{{ current_obj.pubmed_id}}">{{ current_obj.pubmed_id }}</a></dd><br>
+                {% endif %}
                 <dt>Updated:</dt><dd>{{ current_obj.lastmodified }}</dd><br>
                 <dt>Registered:</dt><dd>{{ current_obj.created }}</dd><br>
                 </dl>
