@@ -448,6 +448,17 @@ coreDispatcher.dispatch();
             $(pausePlayButton).toggleClass("pause-img play-img");
         }
     }
+
+// Extracts only the domain from a URL.  Used when displaying the 'small'
+// plugin template.  It works by doing 2 RegEx substitutions to:
+//   1. Strip out everything up to and including ://
+//   2. Strip out everything after and including the next /
+var shortUrl = function(url) {
+    var str = url.replace(/.*\:\/\//,'').replace(/\/.*/,'');
+    if (str == '') { str = 'biogps.org' };
+    return str;
+}
+
     </script>
 
 
