@@ -20,6 +20,14 @@ species_d[9940] = 'sheep'
 assembly_d['sheep'] = 'oviAri3'
 genus_d['sheep'] = 'Ovis aries'
 
+species_d[9031] = 'chicken'
+assembly_d['chicken'] = 'galGal5'
+genus_d['chicken'] = 'Gallus gallus'
+
+other_supported_species = [9940, 9031]    # supported but not part of default species
+
+
+
 class Gene(dotdict):
     '''A extension to dictionary to hold all gene annotation data and add more functions.'''
 
@@ -217,6 +225,7 @@ class MyGeneInfo():
             _out = a_list     # a_list is already a comma separated string
         return _out
 
+    '''
     def _get_httplib2_old(self, url, params={}):
         debug = params.pop('debug', False)
         return_raw = params.pop('return_raw', False)
@@ -236,6 +245,7 @@ class MyGeneInfo():
             return con
         else:
             return json.loads(con)
+    '''
 
     def _get(self, url, params={}):
         debug = params.pop('debug', False)
@@ -257,6 +267,7 @@ class MyGeneInfo():
         else:
             return res.json()
 
+    '''
     def _post_httplib2_old(self, url, params):
         debug = params.pop('debug', False)
         return_raw = params.pop('return_raw', False)
@@ -273,6 +284,7 @@ class MyGeneInfo():
             return con
         else:
             return json.loads(con)
+    '''
 
     def _post(self, url, params):
         debug = params.pop('debug', False)
@@ -296,12 +308,16 @@ class MyGeneInfo():
            from "homologene" attributes.
            convert _id field to id field as well.
         '''
-        species_set = set(taxid_d.values())
+        default_species_set = set(taxid_d.values())
         for idx, gdoc in enumerate(gdoc_li):
             if gdoc:
                 if '_id' in gdoc:
                     gdoc['id'] = gdoc['_id']
                     # del gdoc['_id']
+                if gdoc['taxid'] in other_supported_species:
+                    species_set = set([gdoc['taxid']]) | default_species_set
+                else:
+                    species_set = default_species_set
                 hgene = gdoc.get('homologene', None)
                 if hgene:
                     _genes = hgene.get('genes', None)

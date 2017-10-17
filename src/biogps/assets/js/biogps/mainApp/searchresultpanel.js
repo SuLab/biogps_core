@@ -449,6 +449,12 @@ Ext.extend(biogps.GeneResultPage, Ext.Panel, {
             species_menu_labels['sheep'] = 'O. aries (sheep)';
             this.show_species = ['sheep'];
         };
+        if (biogps.AVAILABLE_SPECIES.indexOf('chicken') != -1){
+            species_d['9031'] = 'chicken';
+            species_menu_labels['chicken'] = 'G. gallus (chicken)';
+            this.show_species = ['chicken'];
+        };
+
         var species_list = [];
         var species_counts = {}
         for (var i=0; i<this.geneList.length; i++){

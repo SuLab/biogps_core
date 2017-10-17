@@ -110,6 +110,18 @@ def index(request, **kwargs):
             d['available_species'] = json.dumps(d['available_species'])
             d['sample_gene'] = json.dumps(d['sample_gene'])
             d['species_for_query'] = '9940'  # sheep
+        # Special handling for chickenatlas
+        if alt_defaultdataset == 'BDS_00031':
+            import json
+            d['available_species'] = json.loads(d['available_species'])
+            d['sample_gene'] = json.loads(d['sample_gene'])
+            d['available_species'].append('chicken')
+            d['sample_gene']['chicken'] = 424554
+            d['available_species'] = json.dumps(d['available_species'])
+            d['sample_gene'] = json.dumps(d['sample_gene'])
+            d['species_for_query'] = '9031'  # chicken
+
+
 
         if settings.DEBUG:
             from django.template.context_processors import request as request_processor
@@ -151,6 +163,8 @@ def alternate_layout(request, altlayout):
 
     if altlayout == 'sheepatlas':
         get_dict['dataset'] = 'BDS_00015'
+    if altlayout == 'chickenatlas':
+        get_dict['dataset'] = 'BDS_00031'
 
     request.GET = get_dict
     return index(request, orig_url=request.get_full_path())
