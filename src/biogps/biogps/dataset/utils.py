@@ -42,6 +42,9 @@ class DatasetQuery():
             ds['owner_profile'] = None
         if 'species' in ds:
             ds['species'] = species_d.get(safe_int(ds['species']), ds['species'])
+        if 'pubmed_id' in ds and ds['pubmed_id'] in ['', 'unknown']:
+            del ds['pubmed_id']
+
         return ds
 
     @staticmethod
