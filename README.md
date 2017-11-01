@@ -45,10 +45,11 @@ Additional Python software for development (optional) is documented in "optional
 ## Credits ##
 ### Active Developers ###
  * Chunlei Wu
- * Ian MacLeod
+ * Cyrus Afrasiabi
  * Andrew Su
 
 ### Past Contributors ###
+ * Ian MacLeod
  * Marc Leglise
  * Camilo Orozco
  * James Goodale
