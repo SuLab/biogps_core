@@ -92,9 +92,10 @@ coreDispatcher.dispatch();
                     	        <a href="{% url 'auth_login' %}">Login</a>
                 	        </div>
 
-                		    <div class="inline-block centerCol">
-                		        <div class="login-type">BioGPS account</div>
-                    	        <form action="{%if with_https %}https://{{site}}{%endif%}{% url 'auth_login' %}" method="post" id="login-form">
+                		   <div class="inline-block centerCol">
+                                   <div class="login-type">&nbsp;</div>
+                		  <!--  <div class="login-type">BioGPS account</div>
+                    	            <form action="{%if with_https %}https://{{site}}{%endif%}{% url 'auth_login' %}" method="post" id="login-form">
 				    {% csrf_token %}
                     	            <input type="text" name="username" id="id_username"
                 	                        value="username" class="inactive"
@@ -109,7 +110,7 @@ coreDispatcher.dispatch();
                     	            {% if goto_url %}
                     	                <input type="hidden" name="goto" value="{{ goto_url }}" />
                     	            {% endif %}
-                    	        </form>
+                    	        </form> -->
                     	    </div>
 
                     	    <div class="inline-block">
