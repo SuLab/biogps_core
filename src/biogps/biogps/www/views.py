@@ -116,7 +116,7 @@ def index(request, **kwargs):
             d['available_species'] = json.loads(d['available_species'])
             d['sample_gene'] = json.loads(d['sample_gene'])
             d['available_species'].append('chicken')
-            d['sample_gene']['chicken'] = 424554
+            d['sample_gene']['chicken'] = 422706
             d['available_species'] = json.dumps(d['available_species'])
             d['sample_gene'] = json.dumps(d['sample_gene'])
             d['species_for_query'] = '9031'  # chicken
