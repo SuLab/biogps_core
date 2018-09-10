@@ -261,7 +261,8 @@ class MyGeneInfo():
         if res.status_code == 404:
             raise MyGeneInfo404
         else:
-            assert res.status_code == 200, (_url, res)
+            # query error will return 400 with an error msg from mygene.info
+            assert res.status_code in [200, 400], (_url, res)
         if return_raw:
             return res.content
         else:
