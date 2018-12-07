@@ -19,7 +19,12 @@
     		{% endfor %}
     		</ul>
     	{% else %}
-    	    No results were found for your search.
+            {% if error %}
+                Could not execute query due to the following exception(s):
+                <pre style="white-space: pre-wrap;">{{ error }}</pre>
+            {% else %}
+                No results were found for your search.
+            {% endif %}
 	    {% endif %}
 	</div>
 </div>

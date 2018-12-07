@@ -34,9 +34,12 @@ def query_gene(request):
 
     response = boe_views.query(request, mobile=True)
     if response.status_code == 200:
-        data = json.loads(response.content)['data']
+        data = json.loads(response.content)
+        results = data.get('data', None)
+        error = data.get('error', None)
         return render_to_response('m_search.html',
-                                  {'results': data},
+                                  {'results': results,
+                                   'error': error},
                                   context_instance=RequestContext(request))
     else:
         return response
