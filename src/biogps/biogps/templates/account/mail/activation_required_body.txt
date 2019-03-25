@@ -5,3 +5,5 @@ Dear {{login}},
 {{url}}
 
 The BioGPS Team
+
+Note: If you did not sign up an user account at biogps.org by yourself, it's likely that someone else did with your email. You can always ignore this email, and your account will remain inactive and be deleted automatically in about one month.
