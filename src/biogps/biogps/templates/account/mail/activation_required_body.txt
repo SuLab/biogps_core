@@ -6,4 +6,4 @@ Dear {{login}},
 
 The BioGPS Team
 
-Note: If you did not sign up an user account at biogps.org by yourself, it's likely that someone else did with your email. You can always ignore this email, and your account will remain inactive and be deleted automatically in about one month.
+Note: If you did not sign up a user account at biogps.org by yourself, it's likely that someone else did with your email. In this case, please just ignore this email, and your account will remain inactive and be deleted automatically in about one month.
