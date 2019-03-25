@@ -135,6 +135,10 @@ def registration(request, form_class=RegistrationForm):
         form = form_class()
 
     if form.is_valid():
+        if form.cleaned_data['username'].endswith('mesuchesy'):
+            # handling a possible spam user registration 2019/03/25
+            return message_view(request, _('Sorry. Registration is disabled.'))
+
         user = form.save(request)
 
         user_signed_up.send(None, user=user, request=request)
