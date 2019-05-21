@@ -146,7 +146,10 @@ def list(request, *args, **kwargs):
         }
     elif ctype == 'dataset':
         page = request.GET.get('page', 1)
-        page = int(page)
+        try:
+            page = int(page)
+        except ValueError:
+            page = 1
         #page_by = common_params.get('page_by', 10)
         #page_by equals list.html pagination setting
         page_by = 10
@@ -290,7 +293,10 @@ def search(request, _type=None):
 
     elif ctype == 'dataset':
         page = request.GET.get('page', 1)
-        page = int(page)
+        try:
+            page = int(page)
+        except ValueError:
+            page = 1
         #page_by = common_params.get('page_by', 10)
         #page_by equals list.html pagination setting
         page_by = 10
