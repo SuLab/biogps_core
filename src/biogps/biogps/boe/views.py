@@ -708,7 +708,7 @@ def query(request, mobile=False, iphone=False):
     if '_log' in res:
         _log.update(res['_log'])
         del res['_log']
-        log.info(' '.join(['{}={}'.format(*x) for x in _log.items()]))
+        log.info(' '.join([u'{}={}'.format(*x) for x in _log.items()]))
 
     return JSONResponse(res)
 
