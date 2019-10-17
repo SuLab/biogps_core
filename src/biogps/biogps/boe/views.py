@@ -450,7 +450,11 @@ class MyGeneInfo():
                 _n = len(gene)
                 gene = gene[0]
                 gene[u'warning'] = u"Matching {} genes and only the first one is returned.".format(_n)
-            gene = self._homologene_trimming([gene])[0]
+            if int(gene.get('taxid', -1)) not in species_d:
+                # if gene is not from supported species (defined in species_d)
+                gene = None
+            else:
+                gene = self._homologene_trimming([gene])[0]
 
         return gene
 
