@@ -17,11 +17,11 @@ import json
 import types
 
 species_d[9940] = 'sheep'
-assembly_d['sheep'] = 'oviAri3'
+assembly_d['sheep'] = 'oviAri4'
 genus_d['sheep'] = 'Ovis aries'
 
 species_d[9031] = 'chicken'
-assembly_d['chicken'] = 'galGal5'
+assembly_d['chicken'] = 'galGal6'
 genus_d['chicken'] = 'Gallus gallus'
 
 other_supported_species = [9940, 9031]    # supported but not part of default species
