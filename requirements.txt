@@ -26,7 +26,7 @@ pymongo==2.3
 python-dateutil==2.1
 python-openid==2.2.5
 pytz==2015.6
-urllib3==1.4  #needed by pyes
+urllib3==1.24.2  #needed by pyes
 vobject==0.8.1c
 
 # The following libxml2 and pyxslt are required for XML serialization
