@@ -6,7 +6,7 @@
 #    pip install -r requirements.txt
 Django==1.8.9
 thrift==0.8.0
-Werkzeug==0.8.3
+Werkzeug==0.15.3
 boto==2.5.1
 docutils==0.9.1
 feedcache==1.4.1
