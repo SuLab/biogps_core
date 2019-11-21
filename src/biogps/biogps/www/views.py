@@ -120,6 +120,9 @@ def index(request, **kwargs):
             d['available_species'] = json.dumps(d['available_species'])
             d['sample_gene'] = json.dumps(d['sample_gene'])
             d['species_for_query'] = '9031'  # chicken
+        # Special handling for pigatlas
+        if alt_defaultdataset == 'BDS_00053':
+            d['species_for_query'] = '9823'  # pig
 
 
 
@@ -165,6 +168,8 @@ def alternate_layout(request, altlayout):
         get_dict['dataset'] = 'BDS_00015'
     if altlayout == 'chickenatlas':
         get_dict['dataset'] = 'BDS_00031'
+    if altlayout == 'pigatlas':
+        get_dict['dataset'] = 'BDS_00053'
 
     request.GET = get_dict
     return index(request, orig_url=request.get_full_path())
