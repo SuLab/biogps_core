@@ -138,6 +138,9 @@ def registration(request, form_class=RegistrationForm):
         if form.cleaned_data['username'].endswith('mesuchesy'):
             # handling a possible spam user registration 2019/03/25
             return message_view(request, _('Sorry. Registration is disabled.'))
+        elif form.cleaned_data['username'].endswith('NutsMeve'):
+            # handling a possible spam user registration 2020/05/18
+            return message_view(request, _('Sorry. Registration is disabled.'))
 
         user = form.save(request)
 
