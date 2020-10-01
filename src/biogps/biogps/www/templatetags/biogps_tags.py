@@ -28,9 +28,9 @@ def jqueryjsfiles():
 @register.simple_tag
 def extcorejsfile():
     extcorejs = '''
-    <script type="text/javascript" src="/assets/js/ext/%(extver)s/ext-core.js"></script>
+    <script type="text/javascript" src="/assets/js/min/ext-core.min.js"></script>
     '''
-    return extcorejs % {'extver': settings.EXT_VERSION}
+    return extcorejs
 
 
 @register.simple_tag
