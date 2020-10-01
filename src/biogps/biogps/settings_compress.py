@@ -3,7 +3,9 @@
 
 # This file has been migrated from django-compress to django-pipeline.
 # Run
-#     python manage.py --settings=biogps.settings_prod collectstatic
+#     python manage.py collectstatic --settings=biogps.settings_prod
+#    or
+#     pmp collectstatic
 # to collect and minify modified js and css files.
 
 import os, os.path
@@ -35,11 +37,15 @@ elif(os.name == 'nt'):
 #COMPRESS = True  #force to toggle compress on/off, default not DEBUG
 COMPRESS_VERSION = True
 
+PIPELINE_YUGLIFY_BINARY = '/usr/local/bin/yuglify'
 PIPELINE_YUI_BINARY = "java -jar " + os.path.join(TOOL_PATH, "yuicompressor-2.4.6.jar")
 PIPELINE_CLOSURE_BINARY = "java -jar " + os.path.join(TOOL_PATH, "closure/compiler.jar")
 
-PIPELINE_JS_COMPRESSOR = 'pipeline.compressors.closure.ClosureCompressor'
-PIPELINE_CSS_COMPRESSOR = 'pipeline.compressors.yuglify.YuglifyCompressor'
+#PIPELINE_JS_COMPRESSOR = 'pipeline.compressors.closure.ClosureCompressor'
+#PIPELINE_CSS_COMPRESSOR = 'pipeline.compressors.yuglify.YuglifyCompressor'
+
+PIPELINE_JS_COMPRESSOR = 'pipeline.compressors.yui.YUICompressor'
+PIPELINE_CSS_COMPRESSOR = 'pipeline.compressors.yui.YUICompressor'
 
 COMPRESS_CSS_FILTERS = ('compress.filters.yui.YUICompressorFilter',)
 COMPRESS_JS_FILTERS = (
