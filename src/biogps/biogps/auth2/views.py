@@ -120,6 +120,43 @@ def check_username(request, username):
     return JSONResponse(data)
 
 
+def validate_captcha(request):
+    '''Validate request using Google Recaptcha API'''
+    response = request.POST.get('g-recaptcha-response', '')
+    remote_ip = request.META.get("REMOTE_ADDR", "")
+    forwarded_ip = request.META.get("HTTP_X_FORWARDED_FOR", "")
+    remote_ip = remote_ip if not forwarded_ip else forwarded_ip
+    url = settings.RECAPTCHA_API
+    params = {
+        'secret': settings.RECAPTCHA_PRIVATE_KEY,
+        'response': response,
+        'remote_ip': remote_ip
+    }
+    headers = {
+        "Content-type": "application/x-www-form-urlencoded",
+        "User-agent": "reCAPTCHA BioGPS"
+    }
+    res = requests.post(url, data=params, headers=headers)
+    validation = {'is_valid': False}
+    if res.status_code == 200:
+        data = res.json()
+        success = data.pop('success', False)
+        if success:
+            score = data.pop('score', 0)
+            if score >= settings.RECAPTCHA_REQUIRED_SCORE:
+                validation['is_valid'] = True
+            else:
+                validation['error_code'] = 'captcha_invalid'
+        else:
+            validation['error_code'] = 'captcha_error: {}'.format(data.pop('error-codes', None))
+    else:
+        validation['error_code'] = 'captcha_error: {}'.format(res.text[:500])
+    # print('signup recaptcha={} remote_ip={}'.format(response, remote_ip))
+    # print('signup status={} result={} len={}'.format(res.status_code, res.json(), len(res.text)))
+    # print('signup validation={}'.format(validation))
+    return validation
+
+
 #@render_to('account/registration.html')
 @not_authenticated
 @render_to('auth/registration_form.html')
@@ -130,6 +167,12 @@ def registration(request, form_class=RegistrationForm):
         return message_view(request, _('You have to logout before registration'))
 
     if 'POST' == request.method:
+        # validate recaptcha first, skip it in debug mode
+        if not settings.DEBUG:
+            captcha = validate_captcha(request)
+            if not captcha['is_valid']:
+                return message_view(request, _('Sorry. Registration is invalid [{}].'.format(captcha.pop('error_code', None))))
+
         form = form_class(request.POST, request.FILES)
     else:
         form = form_class()
@@ -171,7 +214,7 @@ def registration(request, form_class=RegistrationForm):
             email_template(user.email, 'account/mail/registration_complete', **args)
             return redirect(reverse(settings.ACCOUNT_REGISTRATION_REDIRECT_URLNAME))
 
-    return {'form': form}
+    return {'form': form, 'recaptcha_sitekey': getattr(settings, "RECAPTCHA_PUBLIC_KEY", "")}
 
 
 @not_authenticated

@@ -56,7 +56,7 @@ Sign up
     {% if openid_form %}
     <form name="f" action="{% url 'auth_register_openid' %}" method="POST">
     {% else %}
-    <form name="f" action="{% url 'auth_register' %}" method="POST">
+    <form name="f" action="{% url 'auth_register' %}" id="signup_form" method="POST">
     {% endif %}
     <div class="half-box-container">
     <section class="half-box">
@@ -204,7 +204,11 @@ Sign up
     		    <td>&nbsp;</td>
     		    <td>
     		        {{ form.invitation_key }}
-    		        <input type="submit" name="bnewaccount" value="Sign up" style="font-weight: bold" />&nbsp;&nbsp;&nbsp;
+		        <input type="submit" name="bnewaccount" value="Sign up" style="font-weight: bold"
+        class="g-recaptcha"
+        data-sitekey="{{recaptcha_sitekey}}"
+        data-callback='onSubmit'
+        data-action='submit'/>&nbsp;&nbsp;&nbsp;
     		        <input type="button" value="Cancel" onClick="parent.location='/'" />
     		    </td>
     		</tr>
@@ -212,8 +216,12 @@ Sign up
     	</div>
     </form>
 
+<script src="https://www.google.com/recaptcha/api.js"></script>
 <script type="text/javascript">
-document.getElementById('id_username').focus()
+   function onSubmit(token) {
+     document.getElementById("signup_form").submit();
+   }
+   document.getElementById('id_username').focus();
 </script>
 </div>
 </article>
