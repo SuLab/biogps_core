@@ -6,15 +6,15 @@
 #    pip install -r requirements.txt
 Django==1.8.9
 thrift==0.8.0
-Werkzeug==0.8.3
+Werkzeug==0.16.1
 boto==2.5.1
 docutils==0.9.1
 feedcache==1.4.1
 feedparser==5.1.2
 gdata==2.0.17
 html2text==3.02
-httplib2==0.7.4
-requests==2.8.1
+httplib2==0.18.1
+requests==2.24.0
 ipython>=0.12.1
 nose==1.3.7
 psycopg2==2.4.5   #require libpq-dev
@@ -26,7 +26,7 @@ pymongo==2.3
 python-dateutil==2.1
 python-openid==2.2.5
 pytz==2015.6
-urllib3==1.4  #needed by pyes
+#urllib3==1.4  #needed by pyes
 vobject==0.8.1c
 
 # The following libxml2 and pyxslt are required for XML serialization
