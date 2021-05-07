@@ -11,3 +11,11 @@ Crawl-Delay: 20
 User-Agent: 360Spider
 Disallow: /
 
+User-agent: BLEXBot
+Disallow: /
+
+User-agent: dotbot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
