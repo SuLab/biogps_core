@@ -152,8 +152,9 @@ class ESQuery():
             # result._do_search()
             result = self.conn.search_raw(query=q, doc_types=doc_types)
         except (ElasticSearchException, SearchPhaseExecutionException, InvalidQuery):
-            exc_name = sys.exc_type.__name__
-            err_msg =  sys.exc_value.args[0] if (sys.exc_value.args)>0 else ""
+            exc_type, exc_value = sys.exc_info()[:2]
+            exc_name = exc_type.__name__
+            err_msg =  exc_value.args[0] if len(exc_value.args)>0 else ""
             err_msg = exc_name + ": " + err_msg
             result = {'error': err_msg}
 
