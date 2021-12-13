@@ -123,6 +123,9 @@ def index(request, **kwargs):
         # Special handling for pigatlas
         if alt_defaultdataset == 'BDS_00053':
             d['species_for_query'] = '9823'  # pig
+        # Special handling for ratatlas
+        if alt_defaultdataset == 'BDS_00054':
+            d['species_for_query'] = '10116' # rat
 
 
 
@@ -170,6 +173,8 @@ def alternate_layout(request, altlayout):
         get_dict['dataset'] = 'BDS_00031'
     if altlayout == 'pigatlas':
         get_dict['dataset'] = 'BDS_00053'
+    if altlayout == 'ratatlas':
+        get_dict['dataset'] = 'BDS_00054'
 
     request.GET = get_dict
     return index(request, orig_url=request.get_full_path())
