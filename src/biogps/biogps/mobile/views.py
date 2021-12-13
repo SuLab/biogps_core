@@ -51,6 +51,7 @@ def getgeneurls(request, geneid):
                 http://biogps.org/m/gene/1017/?layout=1404
     '''
     layoutid = request.GET.get('layoutid', 83)
+    layoutid = layoutid or 83   # in case layoutid was passed as '' (empty string)
     data = get_plugin_urls(request, layoutid, geneid, mobile=True)
     return render_to_response('m_geneurls.html',
                               {'results': data},
